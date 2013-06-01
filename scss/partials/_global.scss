@@ -1,0 +1,216 @@
+$text-color: #333;
+$background-color: #EEE;
+$header-background-color: #0f787e;
+$header-background-color-end: darken($header-background-color, 5%);
+$header-text-color: #fbffdb;
+
+html, body {
+	font-family: Arial;
+	color: $text-color;
+	background: $background-color;
+}
+
+h1 {
+	font-size: 1.5em;
+	line-height: 1.5em;
+	margin: 0.5rem;
+}
+
+h2 {
+	font-size: 1.25em;
+	line-height: 1.25em;
+	color: lighten($text-color, 30%);
+	margin: 0.25rem 0;
+}
+
+b, strong {
+	font-weight: bold;
+}
+
+i, italic {
+	font-style: italic;
+}
+
+p {
+	margin: 0.5rem 0;
+}
+#header {
+	@include clearfix;
+	background-color: $header-background-color;
+	background-image: -webkit-linear-gradient(top, $header-background-color 0%, $header-background-color-end 100%);
+	color: $header-text-color;
+	height: 3em;
+	box-shadow: 0 1px 10px rgba(0,0,0,0.2);
+	.title {
+		font-size: 1.75em;
+		float: left;
+		padding: 0.25em;
+		width: 30%;
+		white-space: nowrap;
+		text-shadow: 0px 0px 10px rgba(255,255,255,0.5);
+		&:before {
+			padding-right:0.5em;
+		}
+	}
+	a {
+		color: $header-text-color;
+		text-decoration: none;
+		&:hover {
+			color: lighten($header-text-color, 20%)
+		}
+	}
+	.buttons {
+		//width: 30%;
+		padding: 0.5em;
+		float: right;
+		margin-right: 2em;
+		a2 {
+			float: right;
+			border: 1px solid rgba(255,255,255,0.2);
+			padding: 0.25rem;
+			margin: 0.25rem;
+			&:hover {
+				background-color:  rgba(255,255,255,0.2);
+			}
+		}
+	}
+}
+
+#content {
+	@include clearfix;
+	padding: 0.25em;
+	.path {
+		font-size: 1.5rem;
+		padding: 0.5rem;
+		display: inline;
+		font-weight: bold;
+		i {
+			padding-right:0.15rem;
+			color: $header-background-color;
+		}
+		a {
+			color: lighten($text-color, 25%);
+			text-decoration: none;
+			&:hover {
+				color: $header-background-color;
+			}
+		}
+	}
+}
+
+form {
+	.field {
+		font-size:1.25rem;
+		margin: 0.5rem;
+		label {
+			display: inline-block;
+			width: 200px;
+			text-align: right;
+			vertical-align:top;
+			padding: 0.25rem;
+		}
+		input, textarea {
+			font-size: 1em;
+			width: 300px;
+		}
+	}
+	.submit {
+		padding-left: 220px;
+		input {
+			font-size: 1rem;
+		}
+	}
+}
+
+.project-list {
+	li {
+		font-size: 1.5em;
+		margin: 1rem;
+		a {
+			color: $header-background-color;
+			text-decoration: none;
+			&:hover {
+				color: initial;
+			}
+		}
+		&:before {
+			padding-right:0.15rem;
+			font-family: FontAwesome;
+			content: "\f02d";
+		}
+	}
+}
+
+.backlog-list {
+	li {
+		font-size: 1.5em;
+		margin: 1rem;
+		a {
+			color: $header-background-color;
+			text-decoration: none;
+			&:hover {
+				color: initial;
+			}
+		}
+		&:before {
+			padding-right:0.15rem;
+			font-family: FontAwesome;
+			content: "\f03a";
+		}
+	}
+}
+
+.button {
+	display: inline-block !important;
+	white-space: nowrap;
+	text-decoration: none;
+	cursor: pointer;
+	border: 1px solid rgba(0,0,0,0.2);
+	background-color: $header-background-color;
+	color: $header-text-color;
+	padding: 0.25rem 0.5rem;
+	box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+	border-radius:3px;
+	&:hover {
+		background-color: lighten( $header-background-color, 10%);
+		color: lighten($header-text-color, 20%);
+	}
+	&:before {
+		padding-right:0.2rem;
+	}
+}
+
+.project-count {
+	padding: 1rem;
+	font-weight: bold;
+	background-color: rgba(0,0,0,0.2);
+}
+
+.description {
+	margin: 1em;
+}
+
+.actions {
+	padding: 1em;
+	border-top: 1px solid $header-background-color;
+}
+
+p.errorlist {
+	background-color: lighten(red,35%);
+	padding: 0.5rem;
+	border: 1px solid red;
+}
+
+ul.errorlist li {
+	color: red;
+	font-size: 1rem;
+	padding-left: 220px;
+	margin: 0.25em 0;
+}
+
+.story-count {
+	font-size: 1rem;
+	font-family: monospace;
+	padding: 0.2rem;
+	border: 1px solid rgba(0,0,0,0.2);
+}

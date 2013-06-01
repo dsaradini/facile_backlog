@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load staticfiles sekizai_tags i18n %}
+
+{% block title %}{% trans "Project List" %}{% endblock %}
+
+{% block content %}
+	<h1>{% trans "My projects" %}</h1>
+	<a class="button icon-magic" href="{% url "project_create" %}">{% trans "Create new project" %}</a>
+
+	{% if object_list|length %}
+		<ul class="project-list">
+			{% for object in object_list %}
+				<li>
+					<a href="{% url 'project_detail' object.pk %}">{{ object.name }}</a>
+					<span class="story-count">{{ object.user_stories.count }}</span>
+				</li>
+			{% endfor %}
+		</ul>
+		<div class="project-count">
+			{% blocktrans count object_list|length as counter %}
+				one project found.
+			{% plural %}
+				{{ counter }} projects found.
+			{% endblocktrans %}
+		</div>
+	{%  else %}
+		<div class="project-count">
+		{% trans "No active project found" %}
+		</div>
+	{% endif %}
+
+{% endblock %}

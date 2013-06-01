@@ -1,0 +1,6 @@
+bleach==1.2.1
+Django==1.5
+django-extensions==1.1.1
+django-sekizai==0.7
+html5lib==0.95
+Markdown==2.2.1

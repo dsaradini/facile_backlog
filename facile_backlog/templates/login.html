@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Login" %}{% endblock %}
+
+
+{% block content %}
+	{% if next %}
+		<p>{% trans "You must be logged in to see this page." %}</p>
+	{% endif %}
+
+	<form action="." id="login-form" method="post">
+		{% csrf_token %}
+		{{ form.non_field_errors }}
+		{% for field in form %}
+			<div class="field">
+				<label>{{ field.label }}:</label>
+				{{ field }}
+			</div>
+		{% endfor %}
+		{% if next %}
+			<input type="hidden" name="next" value="{{ next }}">
+		{% endif %}
+
+        <div class="submit">
+			<input class="button" type="submit" value="{% trans "login" %}">
+		</div>
+	</form>
+{% endblock %}

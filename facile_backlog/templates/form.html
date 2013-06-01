@@ -1,0 +1,12 @@
+{% load i18n %}
+{% if form.errors and not form.non_field_errors %}
+	<p class="errorlist">{% trans "Please correct the errors below and submit the form again." %}</p>
+{% endif %}
+{{ form.non_field_errors }}
+{% for field in form %}
+	<div class="field">
+		<label>{{ field.label }}:</label>
+		{{ field }}
+		{{ field.errors }}
+	</div>
+{% endfor %}

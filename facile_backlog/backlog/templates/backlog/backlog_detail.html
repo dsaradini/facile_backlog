@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load staticfiles sekizai_tags i18n markup %}
+
+{% block title %}{% trans "Backlog" %} &mdash; {{ backlog.name }}{% endblock %}
+
+{% block content %}
+	<div class="path">
+		<a href="{%  url "home" %}"><i class="icon-beer"></i>{% trans "Home" %}</a> /
+		<a href="{%  url "project_detail" project.pk %}"> <i class="icon-book"></i> {{ project.name }}</a> /
+		<i class="icon-list"></i>{{ backlog.name }}
+	</div>
+	<div class="description">
+		{% if backlog.description %}
+			{{ backlog.description|markdown }}
+		{% endif %}
+	</div>
+	<h2>User stories</h2>
+	<div class="backlog-list">
+		<ul>
+			{% for story in backlog.user_stories.all %}
+				<li>
+					as {{ story.as_a }} i want to {{ story.i_want_to }} so i can {{ story.so_i_can }}
+				</li>
+			{% empty %}
+				{% trans "No stories" %}
+			{% endfor %}
+		</ul>
+	</div>
+	{% comment %}
+	<div class="actions">
+		<a class="button" href="{% url "project_edit" backlog.pk %}">{% trans "Edit" %}</a>
+		<a class="button" href="{% url "project_delete" backlog.pk %}">{% trans "Delete" %}</a>
+	</div>
+	{% endcomment %}
+{% endblock %}
