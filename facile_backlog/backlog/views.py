@@ -1,11 +1,17 @@
+import json
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.views import generic
+from django.db import transaction
+from django.http import Http404
+from django.http.response import (HttpResponseNotAllowed,
+                                  HttpResponseBadRequest, HttpResponse)
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
+from django.views import generic
 
-from .models import Project, Backlog
+from .models import Project, Backlog, UserStory, BacklogUserStoryAssociation
 from .forms import ProjectCreationForm, ProjectEditionForm
 
 
@@ -49,6 +55,18 @@ class ProjectCreate(generic.CreateView):
 
     def form_valid(self, form):
         super(ProjectCreate, self).form_valid(form)
+        Backlog.objects.create(
+            name=_("Main backlog"),
+            description=_("This is the main backlog for the project."),
+            project=self.object,
+            kind=Backlog.MAIN,
+        )
+        Backlog.objects.create(
+            name=_("Completed stories"),
+            description=_("This is the backlog to hold completed stories."),
+            project=self.object,
+            kind=Backlog.COMPLETED,
+        )
         messages.success(self.request,
                          _("Your project was successfully created."))
         return redirect(reverse("project_list"))
@@ -90,10 +108,15 @@ class BacklogMixin(object):
     Mixin to fetch a project and backlog by a view.
     """
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project,
-                                         pk=kwargs['project_id'])
-        self.backlog = get_object_or_404(Backlog,
-                                         pk=kwargs['backlog_id'])
+        project_id = kwargs['project_id']
+        try:
+            self.backlog = Backlog.objects.select_related().get(
+                pk=kwargs['backlog_id'])
+        except Backlog.DoesNotExist:
+            raise Http404('Not found.')
+        if self.backlog.project.pk != int(project_id):
+            raise Http404('No matches found.')
+        self.project = self.backlog.project
         return super(BacklogMixin, self).dispatch(request, *args, **kwargs)
 
 
@@ -109,3 +132,62 @@ class BacklogDetail(BacklogMixin, generic.DetailView):
         context['backlog'] = self.backlog
         return context
 backlog_detail = login_required(BacklogDetail.as_view())
+
+
+class StoryMixin(object):
+    """
+    Mixin to fetch a project and user story by a view.
+    """
+    def dispatch(self, request, *args, **kwargs):
+        project_id = kwargs['project_id']
+        try:
+            self.story = UserStory.objects.select_related("project").get(
+                pk=kwargs['story_id'])
+        except UserStory.DoesNotExist:
+            raise Http404('Not found.')
+        if self.story.project.pk != int(project_id):
+            raise Http404('No matches found.')
+        self.project = self.story.project
+        return super(StoryMixin, self).dispatch(request, *args, **kwargs)
+
+
+class StoryDetail(StoryMixin, generic.DetailView):
+    template_name = "backlog/story_detail.html"
+
+    def get_object(self):
+        return self.story
+
+    def get_context_data(self, **kwargs):
+        context = super(StoryDetail, self).get_context_data(**kwargs)
+        context['project'] = self.project
+        context['story'] = self.story
+        return context
+story_detail = login_required(StoryDetail.as_view())
+
+
+@transaction.commit_on_success
+def backlog_story_reorder(request, project_id, backlog_id):
+    """
+    view used o reorder stories in a backlog
+    post-content:
+    {
+        "order": [1,2,3,4,5]  // array of user_story pk
+    }
+    """
+    if request.method != 'POST':
+        return HttpResponseNotAllowed("Use POST")
+    order = json.loads(request.body)['order']
+    if not order:
+        return HttpResponseBadRequest()
+    backlog = Backlog.objects.get(pk=backlog_id)
+    if backlog.project_id != int(project_id):
+        raise Http404('No matches found.')
+
+    for association in BacklogUserStoryAssociation.objects.filter(
+            backlog=backlog):
+        new_index = order.index(association.user_story_id)
+        if new_index != association.order:
+            association.order = new_index
+            association.save(update_fields=('order',))
+    return HttpResponse(json.dumps({'status': 'ok'}),
+                        content_type='application/json')

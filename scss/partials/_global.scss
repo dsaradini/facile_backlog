@@ -40,7 +40,7 @@ p {
 	background-image: -webkit-linear-gradient(top, $header-background-color 0%, $header-background-color-end 100%);
 	color: $header-text-color;
 	height: 3em;
-	box-shadow: 0 1px 10px rgba(0,0,0,0.2);
+	box-shadow: 0 2px 10px rgba(0,0,0,0.3);
 	.title {
 		font-size: 1.75em;
 		float: left;
@@ -78,23 +78,39 @@ p {
 
 #content {
 	@include clearfix;
-	padding: 0.25em;
+	width:900px;
+	margin: 0 auto;
+	padding: 0 0.25em;
 	.path {
+		display: block;
 		font-size: 1.5rem;
-		padding: 0.5rem;
-		display: inline;
-		font-weight: bold;
+		padding: 0.5rem 1rem;
+		font-weight: normal;
+		background-color: mix($header-background-color-end ,$background-color, 80%);
+		border-top: 1px solid rgba(0,0,0,0.3);
+		box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+		border-radius: 0  0 1rem 1rem;
 		i {
-			padding-right:0.15rem;
-			color: $header-background-color;
+			padding-right: 0.25rem;
+			color: mix($header-background-color-end , white, 10%);
 		}
 		a {
-			color: lighten($text-color, 25%);
+			color: mix($header-background-color-end , white, 10%);
 			text-decoration: none;
 			&:hover {
-				color: $header-background-color;
+				color: $header-text-color;
 			}
 		}
+		.current {
+			color: $header-text-color;
+		}
+	}
+
+	.sub-field {
+		color: lighten($text-color, 25%);
+		font-size: 0.75rem;
+		padding: 0.25rem;
+		font-weight: bold;
 	}
 }
 
@@ -124,6 +140,7 @@ form {
 
 .project-list {
 	li {
+		display: block;
 		font-size: 1.5em;
 		margin: 1rem;
 		a {
@@ -133,7 +150,7 @@ form {
 				color: initial;
 			}
 		}
-		&:before {
+		&:before2 {
 			padding-right:0.15rem;
 			font-family: FontAwesome;
 			content: "\f02d";
@@ -143,6 +160,7 @@ form {
 
 .backlog-list {
 	li {
+		display: block;
 		font-size: 1.5em;
 		margin: 1rem;
 		a {
@@ -152,7 +170,7 @@ form {
 				color: initial;
 			}
 		}
-		&:before {
+		&:before2 {
 			padding-right:0.15rem;
 			font-family: FontAwesome;
 			content: "\f03a";
@@ -188,6 +206,7 @@ form {
 
 .description {
 	margin: 1em;
+	line-height: 1.2em;
 }
 
 .actions {
@@ -208,9 +227,162 @@ ul.errorlist li {
 	margin: 0.25em 0;
 }
 
+.markdown {
+	ul {
+		margin-left: 1rem;
+		list-style-position: inside;
+		list-style-type: circle;
+		li {
+			margin: 0.2rem 0;
+		}
+	}
+}
+
+.acceptance-criteria {
+	ul {
+		list-style-type: lower-alpha !important;
+	}
+}
 .story-count {
 	font-size: 1rem;
 	font-family: monospace;
 	padding: 0.2rem;
 	border: 1px solid rgba(0,0,0,0.2);
+}
+
+article.story {
+	display:block;
+	position: relative;
+	margin: 1.5em 0 0.5em 0;
+	padding: 1px;
+	.handle {
+		position: absolute;
+		top: 1px;
+		width: 10px;
+		bottom: 1px;
+		left: 0px;
+		background-image: url('../img/stripe.png');
+		background-color: white;
+		border-top:1px solid rgba(0,0,0,0.2);
+		border-left:1px solid rgba(0,0,0,0.2);
+		border-bottom:1px solid rgba(0,0,0,0.2);
+		cursor: pointer;
+	}
+	.handled {
+		padding-left:15px;
+		background-color: rgba(0,0,0,0.1);
+		border-top:1px solid rgba(0,0,0,0.2);
+		border-right:1px solid rgba(0,0,0,0.2);
+		border-bottom:1px solid rgba(0,0,0,0.2);
+		border-left:1px solid rgba(255,255,255,0.6);
+		padding: 8px 2px 8px 18px;
+	}
+	.color {
+		content: "\00a0";
+		width: 1em;
+		float: left;
+		font-size: 1.25rem;
+		line-height: 1.25rem;
+		border: 1px solid rgba(0,0,0,0.2);
+		margin: 0.5em 0.25em 0 0;
+	}
+	.code {
+		display: inline-block;
+		width: 140px;
+		float: left;
+		font-size: 1.25rem;
+		a {
+			color: $header-background-color;
+			font-weight: bold;
+			text-decoration: none;
+			&:hover {
+				color: $text-color;
+			}
+		}
+		margin: 0.5em 0;
+	}
+	.text {
+		display: inline-block;
+		margin: 0.5em 0;
+		width: 600px;
+		min-height: 2em;
+	}
+	.points {
+		display: block;
+		float: right;
+		text-align: right;
+		margin: 0.25em;
+		font-size: 1.5rem;
+		background-color: $text-color;
+		color: $background-color;
+		padding:0.25em;
+		width: 40px;
+	}
+	.theme {
+		color: lighten($text-color, 30%);
+		padding: 0.25rem;
+		i {
+			padding-right: 0.25rem;
+		}
+	}
+	.no-points {
+		background-color: mix($text-color, $background-color, 50%);
+	}
+	&.highlighted {
+		box-shadow: 0px 0px 10px green;
+	}
+	&.opacified {
+		opacity: 0.3;
+	}
+}
+
+.handle-highlight {
+	background-color: rgba(255,255,255,0.5);
+	border:1px dashed rgba(0,0,0,0.2);
+	// should be the same as article ( jquery-ui-soratbale )
+	margin: 1.5em 0 0.5em 0;
+	// do not forget dashed border
+	padding: -1px;
+}
+
+.story-detail {
+	.points {
+		display: inline-block;
+		float: right;
+		//width: 4em;
+		text-align: right;
+		font-size: 2em;
+		margin: 0 0.5em;
+		background-color: $text-color;
+		color: $background-color;
+		padding: 0.25em 0.5em;
+		box-shadow: 3px 3px 18px rgba(0,0,0,0.5);
+		border-radius: 0.25em;
+	}
+	.no-points {
+		background-color: mix($text-color, $background-color, 10%);
+	}
+	.description {
+		font-size: 1.5em;
+		line-height: 1.5em;
+		display: block;
+		width: 700px;
+		background: white;
+		padding: 1em;
+		box-shadow: 3px 3px 18px rgba(0,0,0,0.5);
+		border-radius: 0.25em;
+	}
+	.theme {
+		color: lighten($text-color, 30%);
+		padding: 0.25rem;
+		i {
+			padding-right: 0.25rem;
+		}
+	}
+}
+
+.poutre {
+	background-color: mix($header-background-color,$background-color, 10%);
+	border: 1px solid mix($header-background-color,$background-color, 30%);
+	padding: 0.25em;
 }

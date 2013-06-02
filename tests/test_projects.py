@@ -2,8 +2,6 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django_webtest import WebTest
 
-from facile_backlog.backlog.models import Project
-
 from . import factories
 
 

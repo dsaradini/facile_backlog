@@ -6,7 +6,7 @@ from .models import Project
 class ProjectCreationForm(ModelForm):
     class Meta:
         model = Project
-        fields = ["name", "description"]
+        fields = ["name", "code",  "description"]
 
     def save(self, commit=True):
         project = super(ProjectCreationForm, self).save(commit=False)
@@ -19,4 +19,4 @@ class ProjectCreationForm(ModelForm):
 class ProjectEditionForm(ModelForm):
     class Meta:
         model = Project
-        fields = ["name", "description"]
+        fields = ["name", "code",  "description"]

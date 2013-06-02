@@ -4,15 +4,30 @@
 {% block title %}{% trans "Project List" %}{% endblock %}
 
 {% block content %}
+	<div class="path">
+		<i class="icon-home"></i><span class="current">{% trans "Home" %}</span>
+	</div>
 	<h1>{% trans "My projects" %}</h1>
 	<a class="button icon-magic" href="{% url "project_create" %}">{% trans "Create new project" %}</a>
 
 	{% if object_list|length %}
 		<ul class="project-list">
 			{% for object in object_list %}
-				<li>
+				<li class="icon-book">
 					<a href="{% url 'project_detail' object.pk %}">{{ object.name }}</a>
-					<span class="story-count">{{ object.user_stories.count }}</span>
+					<span class="story-count">
+						{% with object.user_stories.count as counter %}
+							{% if counter %}
+								{% blocktrans count counter as counter %}
+									one story
+								{% plural %}
+									{{ counter }} stories
+								{% endblocktrans %}
+							{% else %}
+								{% trans "No story" %}
+							{% endif %}
+						{% endwith %}
+					</span>
 				</li>
 			{% endfor %}
 		</ul>

@@ -35,4 +35,3 @@ def rand_lorem_phrase(min=1, max=100):
         else:
             phrase = u"{0} {1}".format(phrase, rand_lorem_word())
     return phrase[:-1] + "."
-

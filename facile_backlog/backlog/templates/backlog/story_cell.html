@@ -1,0 +1,20 @@
+<article class="story" data-id="{{ story.pk }}" theme-id="{{ story.theme }}">
+	<div class="handle"></div>
+	<div class="handled">
+		<div class="color" style="background-color: #{{ story.color }} !important;">&nbsp;</div>
+		<div class="code">
+			<a href="{% url "story_detail" project.pk story.pk %}">{{ story.code }}</a>
+		</div>
+		<div class="points {% if not story.points %}no-points{% endif %}">
+			{% if story.points %}
+				{{ story.points|floatformat:"0" }}
+			{% else %}
+			&nbsp;
+			{% endif %}
+		</div>
+		<div class="text">
+			{% include "backlog/user_story_text.html" %}
+		</div>
+		<div class="theme"><i class="icon-tag"></i>{{ story.theme }}</div>
+	</div>
+</article>

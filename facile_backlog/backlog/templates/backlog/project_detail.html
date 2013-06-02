@@ -4,8 +4,8 @@
 {% block title %}{% trans "Project" %} &mdash; {{ project.name }}{% endblock %}
 {% block content %}
 	<div class="path">
-		<a href="{%  url "home" %}"><i class="icon-beer"></i>{% trans "Home" %}</a> /
-		<i class="icon-book"></i> {{ project.name }} /
+		<a href="{%  url "home" %}"><i class="icon-home"></i>{% trans "Home" %}</a> /
+		<i class="icon-book"></i> <span class="current">{{ project.name }}</span>
 	</div>
 
 	<div class="description">
@@ -13,11 +13,15 @@
 			{{ project.description|markdown }}
 		{% endif %}
 	</div>
-	<h2>Backlogs</h2>
+	<div class="actions">
+		<a class="button" href="{% url "project_edit" project.pk %}">{% trans "Edit" %}</a>
+		<a class="button" href="{% url "project_delete" project.pk %}">{% trans "Delete" %}</a>
+	</div>
+	<h2 class="poutre">Backlogs</h2>
 	<div class="backlog-list">
 		<ul>
 			{% for backlog in project.backlogs.all %}
-				<li>
+				<li class="icon-list-ul">
 					<a href="{% url 'backlog_detail' project.pk backlog.pk %}">{{ backlog.name }}</a>
 				</li>
 			{% empty %}
@@ -25,8 +29,5 @@
 			{% endfor %}
 		</ul>
 	</div>
-	<div class="actions">
-		<a class="button" href="{% url "project_edit" project.pk %}">{% trans "Edit" %}</a>
-		<a class="button" href="{% url "project_delete" project.pk %}">{% trans "Delete" %}</a>
-	</div>
+
 {% endblock %}
