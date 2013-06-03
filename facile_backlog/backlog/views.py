@@ -12,7 +12,8 @@ from django.utils.translation import ugettext as _
 from django.views import generic
 
 from .models import Project, Backlog, UserStory, BacklogUserStoryAssociation
-from .forms import ProjectCreationForm, ProjectEditionForm
+from .forms import (ProjectCreationForm, ProjectEditionForm,
+                    BacklogCreationForm, BacklogEditionForm)
 
 
 class ProjectList(generic.ListView):
@@ -90,7 +91,6 @@ project_edit = login_required(ProjectEdit.as_view())
 
 class ProjectDelete(ProjectMixin, generic.DeleteView):
     template_name = "backlog/project_confirm_delete.html"
-    form_class = ProjectEditionForm
 
     def get_object(self):
         return self.project
@@ -117,7 +117,20 @@ class BacklogMixin(object):
         if self.backlog.project.pk != int(project_id):
             raise Http404('No matches found.')
         self.project = self.backlog.project
+        self.request = request
+        render = self.pre_dispatch()
+        if render:
+            return render
         return super(BacklogMixin, self).dispatch(request, *args, **kwargs)
+
+    def pre_dispatch(self):
+        pass
+
+    def get_context_data(self, **kwargs):
+        context = super(BacklogMixin, self).get_context_data(**kwargs)
+        context['project'] = self.project
+        context['backlog'] = self.backlog
+        return context
 
 
 class BacklogDetail(BacklogMixin, generic.DetailView):
@@ -125,13 +138,69 @@ class BacklogDetail(BacklogMixin, generic.DetailView):
 
     def get_object(self):
         return self.backlog
+backlog_detail = login_required(BacklogDetail.as_view())
+
+
+class BacklogCreate(ProjectMixin, generic.CreateView):
+    template_name = "backlog/backlog_form.html"
+    model = Backlog
+    form_class = BacklogCreationForm
+
+    def get_form_kwargs(self):
+        kwargs = super(BacklogCreate, self).get_form_kwargs()
+        kwargs['project'] = self.project
+        return kwargs
 
     def get_context_data(self, **kwargs):
-        context = super(BacklogDetail, self).get_context_data(**kwargs)
+        context = super(BacklogCreate, self).get_context_data(**kwargs)
         context['project'] = self.project
-        context['backlog'] = self.backlog
         return context
-backlog_detail = login_required(BacklogDetail.as_view())
+
+    def form_valid(self, form):
+        super(BacklogCreate, self).form_valid(form)
+        messages.success(self.request,
+                         _("Your backlog was successfully created."))
+        return redirect(reverse("project_detail", args=(
+            self.project.pk,
+        )))
+backlog_create = login_required(BacklogCreate.as_view())
+
+
+class BacklogEdit(BacklogMixin, generic.UpdateView):
+    template_name = "backlog/backlog_form.html"
+    form_class = BacklogEditionForm
+
+    def pre_dispatch(self):
+        if not self.backlog.can_edit():
+            return HttpResponseBadRequest("Cannot delete this backlog")
+
+    def get_object(self):
+        return self.backlog
+
+    def form_valid(self, form):
+        backlog = form.save()
+        messages.success(self.request,
+                         _("Your backlog was successfully updated."))
+        return redirect(backlog.get_absolute_url())
+backlog_edit = login_required(BacklogEdit.as_view())
+
+
+class BacklogDelete(BacklogMixin, generic.DeleteView):
+    template_name = "backlog/backlog_confirm_delete.html"
+
+    def pre_dispatch(self):
+        if not self.backlog.can_edit():
+            return HttpResponseBadRequest("Cannot delete this backlog")
+
+    def get_object(self):
+        return self.backlog
+
+    def delete(self, request, *args, **kwargs):
+        self.backlog.delete()
+        messages.success(request,
+                         _("Backlog successfully deleted."))
+        return redirect(reverse('project_detail', args=(self.project.pk,)))
+backlog_delete = login_required(BacklogDelete.as_view())
 
 
 class StoryMixin(object):

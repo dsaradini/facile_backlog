@@ -1,8 +1,9 @@
 from django.conf.urls import patterns, url
 
 from .views import (project_list, project_detail, project_create, project_edit,
-                    project_delete, backlog_detail, story_detail,
-                    backlog_story_reorder)
+                    project_delete, backlog_detail, backlog_create,
+                    backlog_delete, backlog_edit,
+                    story_detail, backlog_story_reorder)
 
 # projects
 urlpatterns = patterns(
@@ -35,6 +36,20 @@ urlpatterns += patterns(
     url(r'^projects/(?P<project_id>[\d]+)/backlogs/(?P<backlog_id>[\d]+)/$',
         backlog_detail,
         name='backlog_detail'),
+
+    url(r'^projects/(?P<project_id>[\d]+)/backlogs/(?P<backlog_id>[\d]+)/'
+        r'edit/$',
+        backlog_edit,
+        name='backlog_edit'),
+
+    url(r'^projects/(?P<project_id>[\d]+)/backlogs/(?P<backlog_id>[\d]+)/'
+        r'delete/$',
+        backlog_delete,
+        name='backlog_delete'),
+
+    url(r'^projects/(?P<project_id>[\d]+)/backlogs/new/$',
+        backlog_create,
+        name='backlog_create'),
 )
 
 # user stories

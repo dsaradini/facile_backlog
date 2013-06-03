@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% if object %}{% trans "Edit backlog" %}{% else %}{% trans "Add a new backlog" %}{% endif %}{% endblock %}
+
+{% block content %}
+	{% if not object %}<h1>{% trans "Add a new backlog" %}</h1>{% endif %}
+    <form method="post" id="edit_project_form" action="{% if object %}{% url "backlog_edit" project.pk object.pk %}{% else %}{% url "backlog_create" project.pk %}{% endif %}">
+
+        {% csrf_token %}
+        {% include "form.html" %}
+        <div class="submit actions">
+			<input class="button" type="submit" value="{% if object %}{% trans "Save changes" %}{% else %}{% trans "Create backlog" %}{% endif %}">
+			<a href="{% if object %}{% url "backlog_detail" project.pk object.pk %}{% else %}{% url "project_detail" project.pk %}{% endif %}">{% trans "Cancel" %}</a>
+		</div>
+	</form>
+{% endblock %}

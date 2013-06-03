@@ -121,6 +121,12 @@ class Backlog(models.Model):
                                                'user_story__project')
         ]
 
+    def can_edit(self):
+        return self.kind not in (Backlog.MAIN, Backlog.COMPLETED)
+
+    def get_absolute_url(self):
+        return reverse("backlog_detail", args=(self.project.pk, self.pk))
+
 
 class BacklogUserStoryAssociation(models.Model):
     backlog = models.ForeignKey(Backlog)

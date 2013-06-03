@@ -2,4 +2,4 @@
 env
 .sass-cache
 *.sqlite
-**/*.pyc
+*.pyc

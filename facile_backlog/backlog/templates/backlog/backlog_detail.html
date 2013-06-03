@@ -14,14 +14,20 @@
 			{{ backlog.description|markdown }}
 		{% endif %}
 	</div>
+	<div class="actions">
+		{% if backlog.can_edit %}
+			<a class="button" href="{% url "backlog_edit" project.pk backlog.pk %}">{% trans "Edit" %}</a>
+			<a class="button" href="{% url "backlog_delete" project.pk backlog.pk %}">{% trans "Delete" %}</a>
+		{% endif %}
+	</div>
 	<div class="poutre">
 		<h2>User stories</h2>
-		<span class="sub-field">{% trans "Highlight:" %}</span><select id="theme-select">
+		<span class="sub-field filter" style="display:none">{% trans "Highlight:" %}<select id="theme-select">
 			<option value=""></option>
 			{% for theme in project.all_themes %}
 				<option value="{{ theme }}">{{ theme }}</option>
 			{% endfor %}
-		</select>
+		</select></span>
 	</div>
 	<div class="stories">
 		{% for story in backlog.ordered_stories %}
@@ -30,12 +36,7 @@
 			{% trans "No stories" %}
 		{% endfor %}
 	</div>
-	{% comment %}
-	<div class="actions">
-		<a class="button" href="{% url "project_edit" backlog.pk %}">{% trans "Edit" %}</a>
-		<a class="button" href="{% url "project_delete" backlog.pk %}">{% trans "Delete" %}</a>
-	</div>
-	{% endcomment %}
+
 
 {% addtoblock "js" %}
 <script type="text/javascript" src="{% static "core/js/jquery.js" %}"></script>
@@ -54,6 +55,7 @@
 	$(function() {
 		// keep a clone of speakers to replace the cell
 		// if an error occurs on server
+		$(".handle").show(); // hidden by default, if scripting is disabled, they should not show
 		var $stories_clone = $(".stories").clone(false);
 		var setup = function() {
 			$('.stories').sortable({
@@ -98,6 +100,7 @@
 		setup();
 
 		// handle selection of themes
+		$(".filter").show(); // hidden by default, if scripting is disabled, they should not show
 		$("#theme-select").change(function() {
 			var theme_id = $(this).val();
 			$(".highlighted").removeClass("highlighted");
