@@ -9,7 +9,7 @@ from django.utils.translation import ugettext as _
 
 from optparse import make_option
 
-from ...models import Project, Backlog, UserStory, BacklogUserStoryAssociation
+from ...models import Project, Backlog, UserStory
 
 logger = logging.getLogger(__name__)
 
@@ -69,8 +69,16 @@ class Command(BaseCommand):
         project.save()
         backlog = Backlog(
             project=project,
+            name=_("Completed stories backlog"),
+            description=_("This is the backlog for completed stories"),
+            kind=Backlog.COMPLETED
+        )
+        backlog.save()
+        backlog = Backlog(
+            project=project,
             name=_("Main backlog"),
             description=_("This is the main backlog for the project"),
+            kind=Backlog.TODO
         )
         backlog.save()
         themes = easy_request(
@@ -100,13 +108,10 @@ class Command(BaseCommand):
             color=empty_string_dict(easy_story, 'color'),
             acceptances=acceptances,
             theme=empty_string_dict(easy_theme, 'name'),
+            backlog=backlog,
+            order=int(easy_story['position'])
         )
         story.save()
-        BacklogUserStoryAssociation.objects.create(
-            backlog=backlog,
-            user_story=story,
-            order=easy_story['position']
-        )
         logger.log(logging.INFO, "Story {0} imported".format(story.code))
 
     def get_acceptances(self, story_id):

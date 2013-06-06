@@ -22,6 +22,10 @@ class UserStoryFactory(Factory):
     FACTORY_FOR = UserStory
 
     @lazy_attribute
+    def backlog(self):
+        return BacklogFactory.create()
+
+    @lazy_attribute
     def as_a(self):
         return rand_lorem_phrase(2, 5)
 
@@ -36,6 +40,10 @@ class UserStoryFactory(Factory):
 
 class BacklogFactory(Factory):
     FACTORY_FOR = Backlog
+
+    @lazy_attribute
+    def project(self):
+        return ProjectFactory.create()
 
     @lazy_attribute
     def name(self):

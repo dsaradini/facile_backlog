@@ -5,7 +5,7 @@
 
 {% block content %}
 	{% if not object %}<h1>{% trans "Add a new backlog" %}</h1>{% endif %}
-    <form method="post" id="edit_project_form" action="{% if object %}{% url "backlog_edit" project.pk object.pk %}{% else %}{% url "backlog_create" project.pk %}{% endif %}">
+    <form method="post" id="edit_backlog_form" action="{% if object %}{% url "backlog_edit" project.pk object.pk %}{% else %}{% url "backlog_create" project.pk %}{% endif %}">
 
         {% csrf_token %}
         {% include "form.html" %}

@@ -7,6 +7,9 @@
 	<div class="path">
 		<a href="{%  url "home" %}"><i class="icon-home"></i>{% trans "Home" %}</a> /
 		<a href="{%  url "project_detail" project.pk %}"> <i class="icon-book"></i> {{ project.name }}</a> /
+		{% if backlog %}
+			<a href="{%  url "backlog_detail" project.pk backlog.pk %}"> <i class="icon-list-ul"></i> {{ backlog.name }}</a> /
+		{% endif %}
 		<i class="icon-lightbulb"></i><span class="current">{{ story.code }}</span>
 	</div>
 	<div class="story-detail">
@@ -31,10 +34,8 @@
 			{{ story.comments|markdown }}
 		</div>
 	</div>
-	{% comment %}
 	<div class="actions">
-		<a class="button" href="{% url "project_edit" backlog.pk %}">{% trans "Edit" %}</a>
-		<a class="button" href="{% url "project_delete" backlog.pk %}">{% trans "Delete" %}</a>
+		<a class="button" href="{% url "story_backlog_edit" project.pk backlog.pk object.pk %}">{% trans "Edit" %}</a>
+		<a class="button" href="{% url "story_backlog_delete" project.pk backlog.pk object.pk %}">{% trans "Delete" %}</a>
 	</div>
-	{% endcomment %}
 {% endblock %}

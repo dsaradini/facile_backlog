@@ -1,3 +1,5 @@
+import re
+
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.db import models, transaction
@@ -20,29 +22,48 @@ class Project(models.Model):
         return self.name
 
     def all_themes(self):
-        result = self.user_stories.values_list('theme', flat=True).distinct()
+        result = self.stories.values_list('theme', flat=True).distinct()
         return result
 
     def save(self, *args, **kwargs):
         if not self.code:
-            self.code = self.name[:5].upper()
+            self.code = re.sub('[\W]*', '', self.name)[:5].upper()
         return super(Project, self).save(*args, **kwargs)
 
 
-class UserStory(models.Model):
-    TO_DO = "todo"
-    IN_PROGRESS = "in_progress"
-    ACCEPTED = "accepted"
+class Backlog(models.Model):
+    TODO = "todo"
     COMPLETED = "completed"
+    GENERAL = "general"
 
-    STATUS_CHOICES = (
-        (TO_DO, _("To do")),
-        (IN_PROGRESS, _("In progress")),
-        (ACCEPTED, _("Accepted")),
+    KIND_CHOICE = (
+        (TODO, _("To do")),
         (COMPLETED, _("Completed")),
+        (GENERAL, _("General")),
     )
+
     project = models.ForeignKey(Project, verbose_name=_("Project"),
-                                related_name="user_stories")
+                                related_name='backlogs', null=True)
+    name = models.CharField(_("Name"), max_length=256)
+    description = models.TextField(_("Description"))
+    kind = models.CharField(_("Kind"), max_length=16,
+                            choices=KIND_CHOICE, default=GENERAL)
+    last_modified = models.DateTimeField(_("Last modified"), auto_now=True)
+
+    def ordered_stories(self):
+        return self.stories.order_by('order').select_related(
+            'user_story__project')
+
+    def can_edit(self):
+        return self.kind not in (Backlog.TODO, Backlog.COMPLETED)
+
+    def get_absolute_url(self):
+        return reverse("backlog_detail", args=(self.project.pk, self.pk))
+
+
+class UserStory(models.Model):
+    project = models.ForeignKey(Project, verbose_name=_("Project"),
+                                related_name="stories")
 
     as_a = models.TextField(_("As"))
     i_want_to = models.TextField(_("I want to"))
@@ -52,10 +73,12 @@ class UserStory(models.Model):
     acceptances = models.TextField(_("acceptances"), blank=True)
     points = models.CharField(_("Points"), max_length=5, blank=True)
     create_date = models.DateTimeField(_("Created at"), auto_now_add=True)
-    status = models.CharField(_("Status"), max_length=20,
-                              choices=STATUS_CHOICES, default=TO_DO)
     number = models.IntegerField()
     theme = models.CharField(_("Theme"), max_length=128, blank=True)
+
+    backlog = models.ForeignKey(Backlog, verbose_name=_("Backlog"),
+                                related_name="stories")
+    order = models.PositiveIntegerField()
 
     @transaction.commit_on_success
     def setup_number(self):
@@ -84,54 +107,22 @@ class UserStory(models.Model):
             self.i_want_to,
             self.so_i_can)
 
+    @property
+    def status(self):
+        if not hasattr(self, "__status__"):
+            self.__status = self.backlog.kind
+        return self.__status
+
+    def get_absolute_url(self):
+        return reverse("story_detail", args=(self.project.pk, self.pk))
+
     def __unicode__(self):
         return self.text
 
-
-class Backlog(models.Model):
-    MAIN = "main"
-    COMPLETED = "completed"
-    GENERAL = "general"
-
-    KIND_CHOICE = (
-        (MAIN, _("Main")),
-        (COMPLETED, _("Completed")),
-        (GENERAL, _("General")),
-    )
-
-    project = models.ForeignKey(Project,
-                                verbose_name=_("Project"),
-                                related_name='backlogs')
-    name = models.CharField(_("Name"), max_length=256)
-    description = models.TextField(_("Description"))
-    kind = models.CharField(_("Kind"), max_length=16,
-                            choices=KIND_CHOICE, default=GENERAL)
-    user_stories = models.ManyToManyField(
-        UserStory,
-        verbose_name=_('User stories'),
-        related_name='backlogs',
-        through='BacklogUserStoryAssociation',
-    )
-
-    def ordered_stories(self):
-        return [
-            a.user_story for a in BacklogUserStoryAssociation.objects.filter(
-                backlog=self
-            ).order_by('order').select_related('user_story',
-                                               'user_story__project')
-        ]
-
-    def can_edit(self):
-        return self.kind not in (Backlog.MAIN, Backlog.COMPLETED)
-
-    def get_absolute_url(self):
-        return reverse("backlog_detail", args=(self.project.pk, self.pk))
-
-
-class BacklogUserStoryAssociation(models.Model):
-    backlog = models.ForeignKey(Backlog)
-    user_story = models.ForeignKey(UserStory)
-    order = models.PositiveIntegerField(_('Order'))
-
-    class Meta:
-        ordering = ('order',)
+    @transaction.commit_on_success
+    def move_to(self, backlog):
+        # touch old and new backlog
+        self.backlog.save(update_fields=("last_modified",))
+        self.backlog = backlog
+        self.save(update_fields=('backlog_id',))
+        backlog.save(update_fields=("last_modified",))

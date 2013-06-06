@@ -15,6 +15,7 @@
 		{% endif %}
 	</div>
 	<div class="actions">
+			<a class="button icon-magic" href="{% url "story_create" project.pk backlog.pk %}">{% trans "Add user story" %}</a>
 		{% if backlog.can_edit %}
 			<a class="button" href="{% url "backlog_edit" project.pk backlog.pk %}">{% trans "Edit" %}</a>
 			<a class="button" href="{% url "backlog_delete" project.pk backlog.pk %}">{% trans "Delete" %}</a>
@@ -51,6 +52,10 @@
 {% endaddtoblock %}
 
 {% addtoblock "js" %}
+<script type="text/javascript" src="{% static "core/js/dropit.js" %}"></script>
+{% endaddtoblock %}
+
+{% addtoblock "js" %}
 <script type="text/javascript">
 	$(function() {
 		// keep a clone of speakers to replace the cell
@@ -81,7 +86,7 @@
 						data: JSON.stringify({order: order}),
 						error: function( jqXHR, textStatus, errorThrown ){
 							$("#messages").empty().append(
-								$("<p>").addClass("error").text( '{% trans "Error while reordering elements."%}' )
+								$("<div>").addClass("error").text( '{% trans "Error while reordering elements."%}' )
 							);
 							$('.stories').replaceWith($stories_clone.clone());
 							setup();
@@ -110,6 +115,29 @@
 				$("article[theme-id='"+theme_id+"']").addClass("highlighted").removeClass("opacified")
 			}
 		})
+
+		$(".dropdown-button").dropit();
+		$.move_story = function(story_pk, backlog_pk) {
+			$.ajax({
+				url: '{% url "story_move" project.pk %}',
+				type: "POST",
+				dataType: "json",
+				data: JSON.stringify({
+					story_id: story_pk,
+					backlog_id: backlog_pk
+				}),
+				error: function( jqXHR, textStatus, errorThrown ){
+					$("#messages").empty().append(
+						$("<div>").addClass("error").text( '{% trans "Error while moving story."%}' )
+					);
+				},
+				success: function() {
+					// replace the copy to be able to re-order again
+					$("[data-id="+story_pk+"]").fadeOut();
+				}
+			});
+
+		}
 	});
 </script>
 {% endaddtoblock %}
