@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+	<h2>Edit profile</h2>
+	<form method="post" action="{% url "auth_profile" %}">
+		{% autoescape off %}{{ form }}{% endautoescape %}
+		<div class="submit">
+			<input type="submit" value="Update profile">
+			<a href="/">Cancel</a>
+		</div>
+	</form>
+{% endblock %}

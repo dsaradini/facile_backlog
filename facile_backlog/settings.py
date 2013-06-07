@@ -1,5 +1,6 @@
 # Django settings for facile_backlog project.
 import os
+from django.core.urlresolvers import reverse_lazy
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -20,6 +21,16 @@ DATABASES = {
         'NAME': 'backlog.sqlite',
     }
 }
+
+AUTH_USER_MODEL = 'core.User'
+
+LOGIN_URL = reverse_lazy('auth_login')
+
+LOGIN_REDIRECT_URL = reverse_lazy('project_list')
+
+PASSWORD_HASHERS = (
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+)
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -127,6 +138,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 INSTALLED_APPS = (
+    'facile_backlog.core',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -138,7 +150,6 @@ INSTALLED_APPS = (
     'sekizai',
     'facile_backlog',
     'facile_backlog.backlog',
-    'facile_backlog.core',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

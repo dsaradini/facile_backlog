@@ -1,0 +1,7 @@
+{% blocktrans with name=user.full_name %}Dear {{ name }},{% endblocktrans %}
+
+{% blocktrans %}To complete your registration, please navigate the URL below:{% endblocktrans %}
+
+{{ scheme }}://{{ site.domain }}{% url "registration_activate" activation_key %}
+
+{% include "email_footer.txt" %}

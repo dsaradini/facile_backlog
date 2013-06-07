@@ -1,0 +1,1 @@
+{% blocktrans with domain=site.domain %}Activate your account on {{ domain }}{% endblocktrans %}

@@ -1,8 +1,23 @@
 import re
 
-from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models, transaction
+from django.utils.translation import ugettext_lazy as _
+
+
+User = settings.AUTH_USER_MODEL
+
+
+class AuthorizationAssociation(models.Model):
+    project = models.ForeignKey('Project')
+    user = models.ForeignKey(User)
+    is_active = models.BooleanField(default=True)
+    is_admin = models.BooleanField(default=False)
+    date_joined = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return u"{0} - {1}".format(self.project.name, self.user.email)
 
 
 class Project(models.Model):
@@ -11,6 +26,12 @@ class Project(models.Model):
     active = models.BooleanField(_("Active"), default=False)
     code = models.CharField(_("Code"), max_length=5)
     story_counter = models.IntegerField(default=0)
+    authorizations = models.ManyToManyField(
+        User,
+        verbose_name=_('Authorization'),
+        related_name='projects',
+        through='AuthorizationAssociation'
+    )
 
     class Meta:
         ordering = ("name",)
@@ -25,13 +46,58 @@ class Project(models.Model):
         result = self.stories.values_list('theme', flat=True).distinct()
         return result
 
+    def add_user(self, user, is_active=True, is_admin=False):
+        try:
+            auth = AuthorizationAssociation.objects.get(
+                user=user, project=self)
+            auth.is_admin = is_admin
+            auth.is_active = is_active
+            auth.save()
+        except models.Model.DoesNotExist:
+            AuthorizationAssociation.objects.create(
+                user=user, project=self, is_admin=is_admin,
+                is_active=is_active,
+            )
+
+    def remove_user(self, user):
+        AuthorizationAssociation.objects.filter(
+            user=user, project=self
+        ).delete()
+
     def save(self, *args, **kwargs):
         if not self.code:
             self.code = re.sub('[\W]*', '', self.name)[:5].upper()
         return super(Project, self).save(*args, **kwargs)
 
+    def get_acl(self):
+        if not hasattr(self, '__acl__'):
+            self.__acl__ = {
+                'read': [],
+                'admin': []
+            }
+            for auth in AuthorizationAssociation.objects.filter(
+                    project=self, is_active=True).prefetch_related():
+                self.__acl__['read'].append(auth.user.email)
+                if auth.is_admin:
+                    self.__acl__['admin'].append(auth.user.email)
+        return self.__acl__
 
-class Backlog(models.Model):
+    def can_read(self, user):
+        return user.is_staff or (user.email in self.get_acl()['read'])
+
+    def can_admin(self, user):
+        return user.is_staff or (user.email in self.get_acl()['admin'])
+
+
+class ProjectSecurityMixin(object):
+    def can_read(self, user):
+        return user.is_staff or self.project.can_read(user)
+
+    def can_admin(self, user):
+        return user.is_staff or self.project.can_admin(user)
+
+
+class Backlog(ProjectSecurityMixin, models.Model):
     TODO = "todo"
     COMPLETED = "completed"
     GENERAL = "general"
@@ -61,7 +127,7 @@ class Backlog(models.Model):
         return reverse("backlog_detail", args=(self.project.pk, self.pk))
 
 
-class UserStory(models.Model):
+class UserStory(ProjectSecurityMixin, models.Model):
     project = models.ForeignKey(Project, verbose_name=_("Project"),
                                 related_name="stories")
 
@@ -102,10 +168,10 @@ class UserStory(models.Model):
 
     @property
     def text(self):
-        return u"As {0}, I want to {1}, so I can {2}".format(
-            self.as_a,
-            self.i_want_to,
-            self.so_i_can)
+        return u"{0} {1}, {2} {3}, {4} {5}".format(
+            _("As"), self.as_a,
+            _("I want to"), self.i_want_to,
+            _("so I can"), self.so_i_can)
 
     @property
     def status(self):

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}{% trans "Account activation" %}{% endblock %}
+
+{% block content %}
+	<h1>{% trans "Account activation" %}</h1>
+	<p>{% url "auth_login" as login_url %}{% blocktrans %}There was a problem activating your account. Please double-check your activation link. If you have already clicked on the activation link before, your account is probably alread active. You may then try to <a href="{{ login_url }}">login</a>.{% endblocktrans %}</p>
+	<p>{% trans "If you keep having issues, please reply to your activation email explaining what's wrong." %}</p>
+{% endblock %}

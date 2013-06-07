@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load staticfiles sekizai_tags i18n markup %}
+{% load staticfiles sekizai_tags markup %}
 
 {% block title %}{% trans "Project" %} &mdash; {{ project.name }}{% endblock %}
 {% block content %}
@@ -14,9 +14,11 @@
 		{% endif %}
 	</div>
 	<div class="actions">
-		<a class="button icon-magic" href="{% url "backlog_create" project.pk %}">{% trans "Create backlog" %}</a>
-		<a class="button icon-edit" href="{% url "project_edit" project.pk %}">{% trans "Edit" %}</a>
-		<a class="button icon-remove" href="{% url "project_delete" project.pk %}">{% trans "Delete" %}</a>
+		{% if project.can_admin %}
+			<a class="button icon-magic" href="{% url "backlog_create" project.pk %}">{% trans "Create backlog" %}</a>
+			<a class="button icon-edit" href="{% url "project_edit" project.pk %}">{% trans "Edit" %}</a>
+			<a class="button icon-remove" href="{% url "project_delete" project.pk %}">{% trans "Delete" %}</a>
+		{% endif %}
 	</div>
 	<h2 class="poutre">Backlogs</h2>
 	<div class="backlog-list">

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load staticfiles sekizai_tags i18n markup %}
+{% load staticfiles sekizai_tags markup %}
 
 {% block title %}{% trans "Backlog" %} &mdash; {{ backlog.name }}{% endblock %}
 
@@ -15,8 +15,8 @@
 		{% endif %}
 	</div>
 	<div class="actions">
-			<a class="button icon-magic" href="{% url "story_create" project.pk backlog.pk %}">{% trans "Add user story" %}</a>
-		{% if backlog.can_edit %}
+		<a class="button icon-magic" href="{% url "story_create" project.pk backlog.pk %}">{% trans "Add user story" %}</a>
+		{% if backlog.can_admin %}
 			<a class="button" href="{% url "backlog_edit" project.pk backlog.pk %}">{% trans "Edit" %}</a>
 			<a class="button" href="{% url "backlog_delete" project.pk backlog.pk %}">{% trans "Delete" %}</a>
 		{% endif %}
@@ -64,13 +64,11 @@
 		var $stories_clone = $(".stories").clone(false);
 		var setup = function() {
 			$('.stories').sortable({
-				// containment: 'parent',
 				placeholder: "handle-highlight",
 				forcePlaceholderSize: true,
 				distance: 3,
 				cursor: "move",
 				handle: ".handle",
-				axis: 'y',
 				revert: true,
 				update: function(event, ui) {
 					var $this = $(this);

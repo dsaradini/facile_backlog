@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}{% trans "New password set" %}{% endblock %}
+
+{% block content %}
+	<h1>{% trans "New password set" %}</h1>
+
+	<p>{% url "auth_login" as login_url %}{% blocktrans %}Your password has successfully been reset. You can use it right now on the <a href="{{ login_url }}">login page</a>.{% endblocktrans %}</p>
+{% endblock %}

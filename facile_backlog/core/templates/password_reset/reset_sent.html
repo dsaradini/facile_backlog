@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}{% trans "Password recovery sent" %}{% endblock %}
+
+{% block content %}
+	{% if invalid %}
+		<h1>{% trans "Invalid URL" %}</h1>
+		<p>{% trans "This URL is invalid. If you copy-pasted it by hand there probably was a mistake in the process. If you keep seeing this page please contact support." %}</p>
+	{% else %}
+		<h1>{% trans "Password recovery sent" %}</h1>
+		<p>{% blocktrans with ago=timestamp|timesince %}An email was sent to <strong>{{ email }}</strong> {{ ago }} ago. Use the link in it to set a new password.{% endblocktrans %}</p>
+	{% endif %}
+{% endblock %}

@@ -14,9 +14,12 @@
 
 			<div class="buttons">
 				{% if user.is_authenticated %}
-					<a class="button icon-off" href="{% url 'logout' %}">{% trans "logout" %}</a>
+					<form id="logout_form" method="POST" action="{% url 'auth_logout' %}">
+						{% csrf_token %}
+						<i class="icon-signout"></i> <input class="icon-off logout" type="submit" value="{% trans "logout" %}">
+					</form>
 				{% else %}
-					<a class="button icon-user" href="{% url 'login' %}">{% trans "Sign in" %}</a>
+					<a class="icon-user" href="{% url 'auth_login' %}">{% trans "Sign in" %}</a>
 				{% endif %}
 			</div>
 		</div>

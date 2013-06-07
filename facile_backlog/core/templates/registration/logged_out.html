@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}{% trans "Logged out" %}{% endblock %}
+
+{% block content %}
+	<h1>{% trans "Logged out" %}</h1>
+
+	<p>{% trans "You have been successfully logged out." %}</p>
+	<p><a href="{% url "home" %}">{% trans "Back to the homepage" %}</a></p>
+{% endblock %}

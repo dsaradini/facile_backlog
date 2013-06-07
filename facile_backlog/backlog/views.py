@@ -18,9 +18,26 @@ from .forms import (ProjectCreationForm, ProjectEditionForm,
                     StoryEditionForm, StoryCreationForm)
 
 
+def get_projects(user):
+    if user.is_staff:
+        qs = Project.objects
+    else:
+        qs = user.projects
+    return qs.filter(active=True)
+
+
+def get_project_or_404(user, pk):
+    project = get_object_or_404(Project, pk=pk)
+    if not project.can_read(user):
+        return Http404()
+    return project
+
+
 class ProjectList(generic.ListView):
     template_name = "backlog/project_list.html"
-    queryset = Project.objects.filter(active=True)
+
+    def get_queryset(self):
+        return get_projects(self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super(ProjectList, self).get_context_data(**kwargs)
@@ -33,8 +50,8 @@ class ProjectMixin(object):
     Mixin to fetch a project by a view.
     """
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project,
-                                         pk=kwargs['project_id'])
+        self.project = get_project_or_404(request.user,
+                                          pk=kwargs['project_id'])
         return super(ProjectMixin, self).dispatch(request, *args, **kwargs)
 
 

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}{% trans "Profile" %}{% endblock %}
+
+{% block content %}
+	<h1>{% trans "Update your profile" %}</h1>
+
+	<form method="post" action="{% url "auth_profile" %}">
+		{% include "form.html" %}
+		<div class="submit">
+			<input class="button" type="submit" value="{% trans "Save changes" %}">
+		</div>
+	</form>
+{% endblock %}
