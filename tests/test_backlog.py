@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django_webtest import WebTest
 
@@ -7,18 +6,20 @@ from facile_backlog.backlog.models import Backlog
 from . import factories
 
 
-class LoginTest(WebTest):
+class BacklogTest(WebTest):
     def test_backlog_list(self):
-        user = User.objects.create_user('test@epyx.ch', 'pass')
-        backlog = factories.BacklogFactory.create()
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        backlog = factories.create_sample_backlog(user)
         url = reverse("project_detail", args=(backlog.project.pk,))
         self.app.get(url, status=302)
         response = self.app.get(url, user=user)
         self.assertContains(response, backlog.name)
 
     def test_backlog_create(self):
-        user = User.objects.create_user('test@epyx.ch', 'pass')
-        project = factories.ProjectFactory.create()
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        project = factories.create_sample_project(user)
 
         url = reverse('backlog_create', args=(project.pk,))
         # login redirect
@@ -38,11 +39,12 @@ class LoginTest(WebTest):
         self.assertTrue(Backlog.objects.exists())
 
     def test_backlog_edit(self):
-        user = User.objects.create_user('test@epyx.ch', 'pass')
-        backlog = factories.BacklogFactory.create(
-            name="Backlog 1",
-            description="Description 1"
-        )
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        backlog = factories.create_sample_backlog(user, backlog_kwargs={
+            'name': "Backlog 1",
+            'description': "Description 1",
+        })
         url = reverse('backlog_edit', args=(backlog.project.pk, backlog.pk))
         # login redirect
         self.app.get(url, status=302)
@@ -63,8 +65,9 @@ class LoginTest(WebTest):
         self.assertEqual(project.description, "New Description")
 
     def test_backlog_delete(self):
-        user = User.objects.create_user('test@epyx.ch', 'pass')
-        backlog = factories.BacklogFactory.create()
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        backlog = factories.create_sample_backlog(user)
         url = reverse('backlog_delete', args=(backlog.project.pk, backlog.pk))
         # login redirect
         self.app.get(url, status=302)

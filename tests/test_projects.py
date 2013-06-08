@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django_webtest import WebTest
 
@@ -16,9 +15,10 @@ class LoginTest(WebTest):
         self.assertEqual(project.code, "MYPRO")
 
     def test_project_list(self):
-        User.objects.create_user('test@epyx.ch', 'pass')
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
         for i in range(0, 10):
-            factories.ProjectFactory.create()
+            factories.create_sample_project(user)
         factories.ProjectFactory.create(active=False)
 
         url = reverse("project_list")
@@ -27,7 +27,8 @@ class LoginTest(WebTest):
         self.assertContains(response, '10 projects found.')
 
     def test_project_create(self):
-        user = User.objects.create_user('test@epyx.ch', 'pass')
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
         url = reverse('project_create')
         # login redirect
         self.app.get(url, status=302)
@@ -44,14 +45,17 @@ class LoginTest(WebTest):
         response = form.submit().follow()
         self.assertContains(response, u"Project successfully created.")
         self.assertContains(response, u"Project one")
-        self.assertTrue(Project.objects.exists())
+        project = Project.objects.get()
+        self.assertTrue(project.can_read(user))
+        self.assertTrue(project.can_admin(user))
 
     def test_project_edit(self):
-        user = User.objects.create_user('test@epyx.ch', 'pass')
-        project = factories.ProjectFactory.create(
-            name="My project",
-            description="Project desc."
-        )
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        project = factories.create_sample_project(user, project_kwargs={
+            'name': "My project",
+            'description': "Project desc.",
+        })
         url = reverse('project_edit', args=(project.pk,))
         # login redirect
         self.app.get(url, status=302)
@@ -74,11 +78,9 @@ class LoginTest(WebTest):
         self.assertEqual(project.code, "NEWCO")
 
     def test_project_delete(self):
-        user = User.objects.create_user('test@epyx.ch', 'pass')
-        project = factories.ProjectFactory.create(
-            name="My project",
-            description="Project desc."
-        )
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        project = factories.create_sample_project(user)
         url = reverse('project_delete', args=(project.pk,))
         # login redirect
         self.app.get(url, status=302)

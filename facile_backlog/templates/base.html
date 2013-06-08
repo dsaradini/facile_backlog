@@ -10,17 +10,19 @@
 	</head>
 	<body>
 		<div id="header">
-			<div class="title icon-thumbs-up"><a href="{% url "home" %}">Facile! backlog</a></div>
+			<div class="header-in">
+				<div class="title"><a href="{% url "home" %}"><img src="{% static "core/img/backlogman.png" %}" height=30></a></div>
 
-			<div class="buttons">
-				{% if user.is_authenticated %}
-					<form id="logout_form" method="POST" action="{% url 'auth_logout' %}">
-						{% csrf_token %}
-						<i class="icon-signout"></i> <input class="icon-off logout" type="submit" value="{% trans "logout" %}">
-					</form>
-				{% else %}
-					<a class="icon-user" href="{% url 'auth_login' %}">{% trans "Sign in" %}</a>
-				{% endif %}
+				<div class="buttons">
+					{% if user.is_authenticated %}
+						<form id="logout_form" method="POST" action="{% url 'auth_logout' %}">
+							{% csrf_token %}
+							<i class="icon-signout"></i> <input class="icon-off logout" type="submit" value="{% trans "logout" %}">
+						</form>
+					{% else %}
+						<a class="icon-user" href="{% url 'auth_login' %}">{% trans "Sign in" %}</a>
+					{% endif %}
+				</div>
 			</div>
 		</div>
 		<div id="content">

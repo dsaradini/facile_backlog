@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 from django.views import generic
 
-from .models import Project, Backlog, UserStory
+from .models import Project, Backlog, UserStory, AuthorizationAssociation
 from .forms import (ProjectCreationForm, ProjectEditionForm,
                     BacklogCreationForm, BacklogEditionForm,
                     StoryEditionForm, StoryCreationForm)
@@ -29,7 +29,7 @@ def get_projects(user):
 def get_project_or_404(user, pk):
     project = get_object_or_404(Project, pk=pk)
     if not project.can_read(user):
-        return Http404()
+        raise Http404()
     return project
 
 
@@ -87,6 +87,12 @@ class ProjectCreate(generic.CreateView):
             project=self.object,
             kind=Backlog.COMPLETED,
         )
+        AuthorizationAssociation.objects.create(
+            project=form.instance,
+            user=self.request.user,
+            is_admin=True,
+            is_active=True
+        )
         messages.success(self.request,
                          _("Project successfully created."))
         return redirect(reverse("project_list"))
@@ -128,21 +134,21 @@ class BacklogMixin(object):
     """
     def dispatch(self, request, *args, **kwargs):
         project_id = kwargs['project_id']
+        self.project = get_project_or_404(request.user, project_id)
         try:
             self.backlog = Backlog.objects.select_related().get(
                 pk=kwargs['backlog_id'])
         except Backlog.DoesNotExist:
             raise Http404('Not found.')
-        if self.backlog.project.pk != int(project_id):
+        if self.backlog.project.pk != self.project.pk:
             raise Http404('No matches found.')
-        self.project = self.backlog.project
         self.request = request
-        render = self.pre_dispatch()
+        render = self.pre_dispatch(request, **kwargs)
         if render:
             return render
         return super(BacklogMixin, self).dispatch(request, *args, **kwargs)
 
-    def pre_dispatch(self):
+    def pre_dispatch(self, request, **kwargs):
         pass
 
     def get_context_data(self, **kwargs):
@@ -196,10 +202,6 @@ class BacklogEdit(BacklogMixin, generic.UpdateView):
     template_name = "backlog/backlog_form.html"
     form_class = BacklogEditionForm
 
-    def pre_dispatch(self):
-        if not self.backlog.can_edit():
-            return HttpResponseBadRequest("Cannot delete this backlog")
-
     def get_object(self):
         return self.backlog
 
@@ -214,10 +216,6 @@ backlog_edit = login_required(BacklogEdit.as_view())
 class BacklogDelete(BacklogMixin, generic.DeleteView):
     template_name = "backlog/backlog_confirm_delete.html"
 
-    def pre_dispatch(self):
-        if not self.backlog.can_edit():
-            return HttpResponseBadRequest("Cannot delete this backlog")
-
     def get_object(self):
         return self.backlog
 
@@ -231,34 +229,18 @@ backlog_delete = login_required(BacklogDelete.as_view())
 
 class StoryMixin(object):
     """
-    Mixin to fetch a project and user story by a view.
-    """
-    def dispatch(self, request, *args, **kwargs):
-        project_id = kwargs['project_id']
-        try:
-            self.story = UserStory.objects.select_related("project").get(
-                pk=kwargs['story_id'])
-        except UserStory.DoesNotExist:
-            raise Http404('Not found.')
-        if self.story.project.pk != int(project_id):
-            raise Http404('No matches found.')
-        self.project = self.story.project
-        return super(StoryMixin, self).dispatch(request, *args, **kwargs)
-
-
-class StoryMixin(object):
-    """
     Mixin to fetch a story, backlog  and project used by a view.
     """
     def dispatch(self, request, *args, **kwargs):
         project_id = kwargs['project_id']
         backlog_id = kwargs.get('backlog_id', None)
+        self.project = get_project_or_404(request.user, project_id)
         try:
             self.story = UserStory.objects.select_related().get(
                 pk=kwargs['story_id'])
         except UserStory.DoesNotExist:
             raise Http404('Not found.')
-        if self.story.project.pk != int(project_id):
+        if self.story.project.pk != self.project.pk:
             raise Http404('No matches found.')
         if backlog_id and self.story.backlog.pk != int(backlog_id):
             raise Http404('No matches found.')
@@ -301,20 +283,6 @@ class StoryCreate(BacklogMixin, generic.CreateView):
     model = UserStory
     form_class = StoryCreationForm
 
-    def dispatch(self, request, *args, **kwargs):
-        project_id = kwargs['project_id']
-        backlog_id = kwargs.get('backlog_id', None)
-        if backlog_id:
-            self.backlog = get_object_or_404(Backlog, pk=backlog_id)
-            self.project = self.backlog.project
-        else:
-            self.project = get_object_or_404(Project, pk=project_id)
-            self.backlog = None
-
-        if self.backlog and self.backlog.project.pk != int(project_id):
-            raise Http404('No matches found.')
-        return super(BacklogMixin, self).dispatch(request, *args, **kwargs)
-
     def get_form_kwargs(self):
         kwargs = super(StoryCreate, self).get_form_kwargs()
         kwargs['project'] = self.project
@@ -332,10 +300,10 @@ class StoryCreate(BacklogMixin, generic.CreateView):
     def form_valid(self, form):
         super(StoryCreate, self).form_valid(form)
         messages.success(self.request,
-                         _("User story was successfully created."))
+                         _("Story successfully created."))
         if self.backlog:
             return redirect(reverse("backlog_detail", args=(
-                self.project.pk, self.backlog,
+                self.project.pk, self.backlog.pk,
             )))
         else:
             return redirect(reverse("project_detail", args=(
@@ -354,7 +322,7 @@ class StoryEdit(StoryMixin, generic.UpdateView):
     def form_valid(self, form):
         story = form.save()
         messages.success(self.request,
-                         _("Your backlog was successfully updated."))
+                         _("Story successfully updated."))
         if self.backlog:
             return redirect(reverse('story_backlog_detail', args=(
                 self.project.pk, self.backlog.pk, story.pk
@@ -372,7 +340,7 @@ class StoryDelete(StoryMixin, generic.DeleteView):
     def delete(self, request, *args, **kwargs):
         self.story.delete()
         messages.success(request,
-                         _("User story successfully deleted."))
+                         _("Story successfully deleted."))
         return redirect(reverse('backlog_detail', args=(self.project.pk,
                                                         self.backlog.pk)))
 story_delete = login_required(StoryDelete.as_view())
@@ -390,12 +358,13 @@ def backlog_story_reorder(request, project_id, backlog_id):
     if request.method != 'POST':
         return HttpResponseNotAllowed("Use POST")
     if not request.user.is_authenticated():
-        return HttpResponseForbidden()
+        raise Http404()
     order = json.loads(request.body).get('order', None)
     if not order:
         return HttpResponseBadRequest()
+    project = get_project_or_404(request.user, project_id)
     backlog = Backlog.objects.get(pk=backlog_id)
-    if backlog.project_id != int(project_id):
+    if backlog.project_id != project.pk:
         raise Http404('No matches found.')
 
     for story in backlog.ordered_stories():
@@ -421,18 +390,50 @@ def story_move(request, project_id):
     if request.method != 'POST':
         return HttpResponseNotAllowed("Use POST")
     if not request.user.is_authenticated():
-        return HttpResponseForbidden()
+        raise Http404()
     body = json.loads(request.body)
     backlog_id = body.get('backlog_id', None)
     story_id = body.get('story_id', None)
 
     if not backlog_id or not story_id:
         return HttpResponseBadRequest()
-    story = UserStory.objects.get(pk=story_id)
+    project = get_project_or_404(request.user, project_id)
     backlog = Backlog.objects.get(pk=backlog_id)
-    if story.project_id != int(project_id):
+
+    if project.pk != backlog.project_id:
+        # verify access rights on target project
+        get_project_or_404(request.user, backlog.project_id)
+    story = UserStory.objects.get(pk=story_id)
+    if story.project_id != project.pk:
         raise Http404('No matches found.')
     if story.backlog_id != backlog.pk:
         story.move_to(backlog)
     return HttpResponse(json.dumps({'status': 'ok'}),
                         content_type='application/json')
+
+
+def story_change_status(request, project_id):
+    """
+    view used to move a story to a backlog
+    post-content:
+    {
+        "story_id": STORY_PK_TO_MOVE
+        "backlog_id": TARGET_BACKLOG_PK
+    }
+    """
+    if request.method != 'POST':
+        return HttpResponseNotAllowed("Use POST")
+    if not request.user.is_authenticated():
+        return HttpResponseForbidden()
+    body = json.loads(request.body)
+    new_status = body.get('new_status', None)
+    story_id = body.get('story_id', None)
+    story = UserStory.objects.get(pk=story_id)
+    if story.project_id != int(project_id):
+        raise Http404('No matches found.')
+    story.status = new_status
+    story.save()
+    return HttpResponse(json.dumps({
+        'status': 'ok',
+        'new_status': story.get_status_display(),
+    }), content_type='application/json')

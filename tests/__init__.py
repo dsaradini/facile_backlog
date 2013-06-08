@@ -1,6 +1,7 @@
 import os
 import random
 import re
+import string
 
 TEST_DATA = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data')
 
@@ -35,3 +36,23 @@ def rand_lorem_phrase(min=1, max=100):
         else:
             phrase = u"{0} {1}".format(phrase, rand_lorem_word())
     return phrase[:-1] + "."
+
+
+def rand_color():
+    """
+    Return a random color string between "#000000" and "#ffffff"
+    """
+    return "#{0:0>6x}".format(random.randint(0, 16777215))
+
+
+def rand_ascii(min_val, max_val):
+    return "".join([random.choice(string.ascii_letters)
+                    for i in range(random.randint(min_val, max_val))])
+
+
+def rand_domain():
+    return "{0}.{1}".format(rand_ascii(4, 20), rand_ascii(2, 4))
+
+
+def rand_email():
+    return "{0}@{1}".format(rand_ascii(4, 50), rand_domain())

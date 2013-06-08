@@ -4,7 +4,7 @@ from .views import (project_list, project_detail, project_create, project_edit,
                     project_delete, backlog_detail, backlog_create,
                     backlog_delete, backlog_edit, story_edit, story_create,
                     story_detail, backlog_story_reorder, story_delete,
-                    story_move)
+                    story_move, story_change_status)
 
 # projects
 urlpatterns = patterns(
@@ -88,4 +88,9 @@ urlpatterns += patterns(
     url(r'^projects/(?P<project_id>[\d]+)/_move_story/$',
         story_move,
         name='story_move'),
+
+    url(r'^projects/(?P<project_id>[\d]+)/_change_story_status/$',
+        story_change_status,
+        name='story_change_status'),
+
 )

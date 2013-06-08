@@ -48,7 +48,7 @@ class StoryEditionForm(ModelForm):
     class Meta:
         model = UserStory
         fields = ("as_a", "i_want_to", "so_i_can", "acceptances", "points",
-                  "theme", "color", "comments")
+                  "status", "theme", "color", "comments")
 
 
 class StoryCreationForm(StoryEditionForm):
@@ -62,7 +62,7 @@ class StoryCreationForm(StoryEditionForm):
         story = super(StoryCreationForm, self).save(commit=False)
         story.project = self.project
         story.backlog = self.backlog
+        story.order = -1  # Put it on the top of the backlog
         if commit:
             story.save()
         return story
-

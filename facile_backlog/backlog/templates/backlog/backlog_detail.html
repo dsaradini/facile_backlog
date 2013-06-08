@@ -25,7 +25,7 @@
 		<h2>User stories</h2>
 		<span class="sub-field filter" style="display:none">{% trans "Highlight:" %}<select id="theme-select">
 			<option value=""></option>
-			{% for theme in project.all_themes %}
+			{% for theme in backlog.all_themes %}
 				<option value="{{ theme }}">{{ theme }}</option>
 			{% endfor %}
 		</select></span>
@@ -112,7 +112,7 @@
 				$("article").addClass("opacified");
 				$("article[theme-id='"+theme_id+"']").addClass("highlighted").removeClass("opacified")
 			}
-		})
+		});
 
 		$(".dropdown-button").dropit();
 		$.move_story = function(story_pk, backlog_pk) {
@@ -130,11 +130,30 @@
 					);
 				},
 				success: function() {
-					// replace the copy to be able to re-order again
 					$("[data-id="+story_pk+"]").fadeOut();
 				}
 			});
+		}
 
+		$(".status-button").dropit();
+		$.change_story_status = function(story_pk, status) {
+			$.ajax({
+				url: '{% url "story_change_status" project.pk %}',
+				type: "POST",
+				dataType: "json",
+				data: JSON.stringify({
+					story_id: story_pk,
+					new_status: status
+				}),
+				error: function( jqXHR, textStatus, errorThrown ){
+					$("#messages").empty().append(
+						$("<div>").addClass("error").text( '{% trans "Error while changing status."%}' )
+					);
+				},
+				success: function(data) {
+					$("[data-id="+story_pk+"] .current-status").text(data.new_status);
+				}
+			});
 		}
 	});
 </script>

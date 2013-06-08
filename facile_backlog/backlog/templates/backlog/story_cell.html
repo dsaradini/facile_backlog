@@ -16,15 +16,28 @@
 			{% include "backlog/user_story_text.html" %}
 		</div>
 		<div class="theme"><i class="icon-tag"></i>{{ story.theme }}</div>
-		<ul class="dropdown-button">
-			<li>
-				<a href="/test">{% trans "Move to" %} <i class="icon-chevron-down"></i></a>
-				<ul>
-					{% for target in target_backlogs %}
-						<li><a href="javascript:$.move_story('{{ story.pk }}','{{ target.pk }}')">{{ target.name }}</a></li>
-					{% endfor %}
-				</ul>
-			</li>
-		</ul>
+		<div class="actions-button">
+			<ul class="dropdown-button">
+				<li>
+					<a href="."><span class="current-status">{{ story.get_status_display }}</span> <i class="icon-chevron-down"></i></a>
+					<ul>
+						<li><a class="to_do" href="javascript:$.change_story_status('{{ story.pk }}','to_do')">{% trans "To do" %}</a></li>
+						<li><a class="in_progress" href="javascript:$.change_story_status('{{ story.pk }}','in_progress')">{% trans "In progress" %}</a></li>
+						<li><a class="accepted" href="javascript:$.change_story_status('{{ story.pk }}','accepted')">{% trans "Accepted" %}</a></li>
+						<li><a class="rejected" href="javascript:$.change_story_status('{{ story.pk }}','rejected')">{% trans "Rejected" %}</a></li>
+					</ul>
+				</li>
+			</ul>
+			<ul class="dropdown-button">
+				<li>
+					<a href=".">{% trans "Move to" %} <i class="icon-double-angle-right"></i></a>
+					<ul>
+						{% for target in target_backlogs %}
+							<li><a href="javascript:$.move_story('{{ story.pk }}','{{ target.pk }}')">{{ target.name }}</a></li>
+						{% endfor %}
+					</ul>
+				</li>
+			</ul>
+		</div>
 	</div>
 </article>

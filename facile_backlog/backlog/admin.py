@@ -33,4 +33,4 @@ class AuthorizationAssociationAdmin(admin.ModelAdmin):
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Backlog, BacklogAdmin)
 admin.site.register(UserStory, UserStoryAdmin)
-admin.site.register(AuthorizationAssociation ,AuthorizationAssociationAdmin)
+admin.site.register(AuthorizationAssociation, AuthorizationAssociationAdmin)

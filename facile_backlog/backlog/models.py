@@ -126,8 +126,25 @@ class Backlog(ProjectSecurityMixin, models.Model):
     def get_absolute_url(self):
         return reverse("backlog_detail", args=(self.project.pk, self.pk))
 
+    def all_themes(self):
+        result = self.stories.values_list('theme', flat=True).distinct()
+        return result
+
 
 class UserStory(ProjectSecurityMixin, models.Model):
+    NEW = "new"
+    TODO = "to_do"
+    ACCEPTED = "accepted"
+    IN_PROGRESS = "in_progress"
+    REJECTED = "Rejected"
+
+    STATUS_CHOICE = (
+        (NEW, _("New")),
+        (TODO, _("To do")),
+        (IN_PROGRESS, _("In progress")),
+        (ACCEPTED, _("Accepted")),
+        (REJECTED, _("In progress")),
+    )
     project = models.ForeignKey(Project, verbose_name=_("Project"),
                                 related_name="stories")
 
@@ -145,9 +162,17 @@ class UserStory(ProjectSecurityMixin, models.Model):
     backlog = models.ForeignKey(Backlog, verbose_name=_("Backlog"),
                                 related_name="stories")
     order = models.PositiveIntegerField()
+    status = models.CharField(_("Status"), max_length=20, default=TODO,
+                              choices=STATUS_CHOICE)
+
+    class Meta(object):
+        ordering = ('order',)
 
     @transaction.commit_on_success
     def setup_number(self):
+        """
+        Create an unique number for this story based on project counter
+        """
         if not self.number:
             query_set = Project.objects.filter(pk=self.project.pk)
             query_set.select_for_update().update(
@@ -172,12 +197,6 @@ class UserStory(ProjectSecurityMixin, models.Model):
             _("As"), self.as_a,
             _("I want to"), self.i_want_to,
             _("so I can"), self.so_i_can)
-
-    @property
-    def status(self):
-        if not hasattr(self, "__status__"):
-            self.__status = self.backlog.kind
-        return self.__status
 
     def get_absolute_url(self):
         return reverse("story_detail", args=(self.project.pk, self.pk))

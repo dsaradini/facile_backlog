@@ -46,6 +46,7 @@ class Command(BaseCommand):
     )
 
     def handle(self, *args, **options):
+        self.fill_status()
         accounts = self.get_accounts()
         for account in accounts:
             self.handle_account(account)
@@ -67,13 +68,13 @@ class Command(BaseCommand):
             active=True,
         )
         project.save()
-        backlog = Backlog(
+        accepted_backlog = Backlog(
             project=project,
-            name=_("Completed stories backlog"),
-            description=_("This is the backlog for completed stories"),
+            name=_("Accepted stories"),
+            description=_("This is the backlog for accepted stories"),
             kind=Backlog.COMPLETED
         )
-        backlog.save()
+        accepted_backlog.save()
         backlog = Backlog(
             project=project,
             name=_("Main backlog"),
@@ -81,25 +82,36 @@ class Command(BaseCommand):
             kind=Backlog.TODO
         )
         backlog.save()
+        story_status = self.get_stories_status(backlog_id)
+
         themes = easy_request(
             "backlogs/{0}/themes".format(backlog_id)
         ).json()
         for theme in themes:
-            self.handle_theme(project, backlog, theme)
+            self.handle_theme(project, backlog, theme, story_status)
 
-    def handle_theme(self, project, backlog, easy_theme):
+        # place stories in the right backlog
+        for story in UserStory.objects.filter(project=project):
+            if story.status == UserStory.ACCEPTED:
+                story.backlog = accepted_backlog
+                story.save()
+
+    def handle_theme(self, project, backlog, easy_theme, story_status):
         theme_id = easy_theme['id']
         stories = easy_request(
             "themes/{0}/stories".format(theme_id)
         ).json()
         for story in stories:
-            self.handle_story(project, backlog, story, easy_theme)
+            self.handle_story(project, backlog, story,
+                              easy_theme, story_status)
 
-    def handle_story(self, project, backlog, easy_story, easy_theme):
+    def handle_story(self, project, backlog, easy_story,
+                     easy_theme, story_status):
         story_id = easy_story['id']
         acceptances = self.get_acceptances(story_id)
         story = UserStory(
             project=project,
+            status=story_status.get(story_id, UserStory.TODO),
             as_a=empty_string_dict(easy_story, 'as_a'),
             i_want_to=empty_string_dict(easy_story, 'i_want_to'),
             so_i_can=empty_string_dict(easy_story, 'so_i_can'),
@@ -123,6 +135,25 @@ class Command(BaseCommand):
             for a in acceptances
         ))
 
+    def get_stories_status(self, backlog_id):
+        sprints = easy_request(
+            "backlogs/{0}/sprints?include_associated_data=true".format(
+                backlog_id)
+        ).json()
+        result = dict()
+        for sprint in sprints:
+            for story in sprint['sprint_stories']:
+                status = self.status[story['sprint_story_status_id']]
+                result[story['story_id']] = status
+        return result
+
     def get_accounts(self):
         result = easy_request("accounts")
         return result.json()
+
+    def fill_status(self):
+        status_list = easy_request("sprint-story-statuses").json()
+        result = dict()
+        for status in status_list:
+            result[status['id']] = status['status'].lower().replace(" ", "_")
+        self.status = result

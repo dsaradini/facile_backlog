@@ -1,12 +1,14 @@
-from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django_webtest import WebTest
+
+import factories
 
 
 class LoginTest(WebTest):
     def test_login(self):
-        User.objects.create_user('test@epyx.ch', 'pass')
-        url = reverse('login')
+        factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        url = reverse('auth_login')
         response = self.app.get(url)
         self.assertContains(response, 'Login')
         form = response.form
@@ -14,10 +16,10 @@ class LoginTest(WebTest):
         form['password'] = 'lol'
         response = form.submit()
         self.assertFormError(response, 'form', None, [
-            "Please enter a correct username and password. Note that both "
-            "fields may be case-sensitive."])
+            u"Please enter a correct username and password. "
+            u"Note that both fields are case-sensitive."])
 
         form['password'] = 'pass'
         response = form.submit()
         # redirection == successfull login
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
