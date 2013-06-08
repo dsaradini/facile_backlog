@@ -23,3 +23,10 @@ class LoginTest(WebTest):
         response = form.submit()
         # redirection == successfull login
         self.assertEqual(response.status_code, 302)
+
+    def test_logout(self):
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        url = reverse('auth_logout')
+
+        self.app.get(url, user=user, status=405)

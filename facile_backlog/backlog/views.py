@@ -424,7 +424,7 @@ def story_change_status(request, project_id):
     if request.method != 'POST':
         return HttpResponseNotAllowed("Use POST")
     if not request.user.is_authenticated():
-        return HttpResponseForbidden()
+        raise Http404()
     body = json.loads(request.body)
     new_status = body.get('new_status', None)
     story_id = body.get('story_id', None)

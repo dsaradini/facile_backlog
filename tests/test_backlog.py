@@ -77,3 +77,35 @@ class BacklogTest(WebTest):
         response = form.submit().follow()
         self.assertContains(response, u"Backlog successfully deleted.")
         self.assertFalse(Backlog.objects.filter(pk=backlog.pk).exists())
+
+    def test_security(self):
+        user_1 = factories.UserFactory.create()
+        user_2 = factories.UserFactory.create()
+
+        backlog = factories.create_sample_backlog(user_1)
+        project = backlog.project
+        url = reverse('backlog_detail', args=(project.pk, backlog.pk))
+        self.app.get(url, user=user_1)
+        self.app.get(url, user=user_2, status=404)
+
+        self.assertFalse(backlog.can_read(user_2))
+        self.assertFalse(backlog.can_admin(user_2))
+        project.add_user(user_2, is_admin=False)
+
+        backlog = Backlog.objects.get(pk=backlog.pk)
+        self.assertTrue(backlog.can_read(user_2))
+        self.assertFalse(backlog.can_admin(user_2))
+
+        # make user 2 admin
+        project.add_user(user_2, is_admin=True)
+
+        backlog = Backlog.objects.get(pk=backlog.pk)
+        self.assertTrue(backlog.can_read(user_2))
+        self.assertTrue(backlog.can_admin(user_2))
+
+        self.assertEqual(project.authorizations.count(), 2)
+
+        self.app.get(url, user=user_2)
+
+        project.remove_user(user_1)
+        self.app.get(url, user=user_1, status=404)

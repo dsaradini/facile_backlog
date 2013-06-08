@@ -42,10 +42,6 @@ class Project(models.Model):
     def __unicode__(self):
         return self.name
 
-    def all_themes(self):
-        result = self.stories.values_list('theme', flat=True).distinct()
-        return result
-
     def add_user(self, user, is_active=True, is_admin=False):
         try:
             auth = AuthorizationAssociation.objects.get(
@@ -53,7 +49,7 @@ class Project(models.Model):
             auth.is_admin = is_admin
             auth.is_active = is_active
             auth.save()
-        except models.Model.DoesNotExist:
+        except AuthorizationAssociation.DoesNotExist:
             AuthorizationAssociation.objects.create(
                 user=user, project=self, is_admin=is_admin,
                 is_active=is_active,
@@ -119,9 +115,6 @@ class Backlog(ProjectSecurityMixin, models.Model):
     def ordered_stories(self):
         return self.stories.order_by('order').select_related(
             'user_story__project')
-
-    def can_edit(self):
-        return self.kind not in (Backlog.TODO, Backlog.COMPLETED)
 
     def get_absolute_url(self):
         return reverse("backlog_detail", args=(self.project.pk, self.pk))

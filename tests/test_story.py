@@ -167,3 +167,22 @@ class AjaxTest(WebTest):
             'backlog_id': backlog_wrong.pk
         })
         self.app.post(url, data, status=404)
+
+    def test_story_status_change(self):
+        user = factories.UserFactory.create()
+        story = factories.create_sample_story(user, story_kwargs={
+            'status': UserStory.IN_PROGRESS
+        })
+        url = reverse('story_change_status', args=(
+            story.project.pk, ))
+
+        data = json.dumps({
+            'story_id': story.pk,
+            'new_status': UserStory.ACCEPTED
+        })
+         # if no write access, returns a 404
+        self.app.post(url, data, status=404)
+        self.app.post(url, data, content_type="application/json", user=user)
+
+        story = UserStory.objects.get(pk=story.pk)
+        self.assertEqual(story.status, UserStory.ACCEPTED)

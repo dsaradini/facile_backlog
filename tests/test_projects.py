@@ -90,3 +90,22 @@ class LoginTest(WebTest):
         response = form.submit().follow()
         self.assertContains(response, u"Project successfully deleted.")
         self.assertFalse(Project.objects.filter(pk=project.pk).exists())
+
+    def test_security(self):
+        user_1 = factories.UserFactory.create()
+        user_2 = factories.UserFactory.create()
+
+        project = factories.create_sample_project(user_1)
+        url = reverse('project_detail', args=(project.pk,))
+        self.app.get(url, user=user_1)
+        self.app.get(url, user=user_2, status=404)
+
+        project.add_user(user_2)
+        project.add_user(user_2)
+        #  check we do not add twice the authorization
+        self.assertEqual(project.authorizations.count(), 2)
+
+        self.app.get(url, user=user_2)
+
+        project.remove_user(user_1)
+        self.app.get(url, user=user_1, status=404)
