@@ -6,8 +6,7 @@ from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.http import Http404
 from django.http.response import (HttpResponseNotAllowed,
-                                  HttpResponseBadRequest, HttpResponse,
-                                  HttpResponseForbidden)
+                                  HttpResponseBadRequest, HttpResponse)
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 from django.views import generic
@@ -234,6 +233,7 @@ class StoryMixin(object):
     def dispatch(self, request, *args, **kwargs):
         project_id = kwargs['project_id']
         backlog_id = kwargs.get('backlog_id', None)
+        self.direct = request.GET.get('direct', False)
         self.project = get_project_or_404(request.user, project_id)
         try:
             self.story = UserStory.objects.select_related().get(
@@ -254,11 +254,15 @@ class StoryMixin(object):
         context['project'] = self.project
         if self.backlog:
             context['backlog'] = self.backlog
-            context['cancel_url'] = reverse("backlog_detail", args=(
-                self.project.pk, self.backlog.pk))
+            if self.direct:
+                context['cancel_url'] = reverse("backlog_detail", args=(
+                    self.project.pk, self.backlog.pk))
+            else:
+                context['cancel_url'] = reverse("story_backlog_detail", args=(
+                    self.project.pk, self.backlog.pk, self.story.pk))
         else:
-            context['cancel_url'] = reverse("project_detail", args=(
-                self.project.pk,))
+            context['cancel_url'] = reverse("story_detail", args=(
+                self.project.pk, self.story.pk))
         context['story'] = self.story
         return context
 
@@ -295,6 +299,11 @@ class StoryCreate(BacklogMixin, generic.CreateView):
         context['project'] = self.project
         if self.backlog:
             context['backlog'] = self.backlog
+            context['cancel_url'] = reverse("backlog_detail", args=(
+                self.project.pk, self.backlog.pk))
+        else:
+            context['cancel_url'] = reverse("project_detail", args=(
+                self.project.pk,))
         return context
 
     def form_valid(self, form):
@@ -324,9 +333,12 @@ class StoryEdit(StoryMixin, generic.UpdateView):
         messages.success(self.request,
                          _("Story successfully updated."))
         if self.backlog:
-            return redirect(reverse('story_backlog_detail', args=(
-                self.project.pk, self.backlog.pk, story.pk
-            )))
+            base_url = reverse(
+                'backlog_detail',
+                args=(self.project.pk, self.backlog.pk)
+            )
+            return redirect("{0}#story-{1}".format(base_url, story.pk))
+
         return redirect(story.get_absolute_url())
 story_edit = login_required(StoryEdit.as_view())
 
@@ -367,7 +379,7 @@ def backlog_story_reorder(request, project_id, backlog_id):
     if backlog.project_id != project.pk:
         raise Http404('No matches found.')
 
-    for story in backlog.ordered_stories():
+    for story in backlog.ordered_stories:
         new_index = order.index(story.pk)
         if new_index != story.order:
             story.order = new_index
@@ -436,4 +448,5 @@ def story_change_status(request, project_id):
     return HttpResponse(json.dumps({
         'status': 'ok',
         'new_status': story.get_status_display(),
+        'code': story.status,
     }), content_type='application/json')

@@ -112,6 +112,7 @@ class Backlog(ProjectSecurityMixin, models.Model):
                             choices=KIND_CHOICE, default=GENERAL)
     last_modified = models.DateTimeField(_("Last modified"), auto_now=True)
 
+    @property
     def ordered_stories(self):
         return self.stories.order_by('order').select_related(
             'user_story__project')
@@ -158,8 +159,8 @@ class UserStory(ProjectSecurityMixin, models.Model):
     status = models.CharField(_("Status"), max_length=20, default=TODO,
                               choices=STATUS_CHOICE)
 
-    class Meta(object):
-        ordering = ('order',)
+    # DOT NOT PUT META ORDERING HERE it will break the distinct theme
+    # fetching !
 
     @transaction.commit_on_success
     def setup_number(self):

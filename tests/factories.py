@@ -1,7 +1,5 @@
 from factory import Factory, lazy_attribute, Sequence
 
-from django.conf import settings
-
 from facile_backlog.backlog.models import (Project, UserStory, Backlog,
                                            AuthorizationAssociation)
 

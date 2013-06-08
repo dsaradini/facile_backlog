@@ -1,9 +1,10 @@
-<article class="story" data-id="{{ story.pk }}" theme-id="{{ story.theme }}">
+<article class="story" id="story-{{ story.pk }}" data-id="{{ story.pk }}" theme-id="{{ story.theme }}">
 	<div class="handle" style="display:none"></div>
 	<div class="handled">
 		<div class="color" style="background-color: #{{ story.color }} !important;">&nbsp;</div>
 		<div class="code">
 			<a href="{% url "story_backlog_detail" project.pk backlog.pk story.pk %}">{{ story.code }}</a>
+			<a href="{% url "story_backlog_edit" project.pk backlog.pk story.pk %}?direct=true"><i class="icon-edit"></i></a>
 		</div>
 		<div class="points {% if not story.points %}no-points{% endif %}">
 			{% if story.points %}
@@ -15,19 +16,22 @@
 		<div class="text">
 			{% include "backlog/user_story_text.html" %}
 		</div>
+
+		<ul class="dropdown-button status st-{{ story.status }}" status="{{ story.status }}">
+			<li>
+				<a href="."><span class="current-status">{{ story.get_status_display }}</span> <i class="icon-chevron-down"></i></a>
+				<ul>
+					<li><a class="to_do" href="javascript:$.change_story_status('{{ story.pk }}','to_do')">{% trans "To do" %}</a></li>
+					<li><a class="in_progress" href="javascript:$.change_story_status('{{ story.pk }}','in_progress')">{% trans "In progress" %}</a></li>
+					<li><a class="accepted" href="javascript:$.change_story_status('{{ story.pk }}','accepted')">{% trans "Accepted" %}</a></li>
+					<li><a class="rejected" href="javascript:$.change_story_status('{{ story.pk }}','rejected')">{% trans "Rejected" %}</a></li>
+				</ul>
+			</li>
+		</ul>
+
 		<div class="theme"><i class="icon-tag"></i>{{ story.theme }}</div>
+
 		<div class="actions-button">
-			<ul class="dropdown-button">
-				<li>
-					<a href="."><span class="current-status">{{ story.get_status_display }}</span> <i class="icon-chevron-down"></i></a>
-					<ul>
-						<li><a class="to_do" href="javascript:$.change_story_status('{{ story.pk }}','to_do')">{% trans "To do" %}</a></li>
-						<li><a class="in_progress" href="javascript:$.change_story_status('{{ story.pk }}','in_progress')">{% trans "In progress" %}</a></li>
-						<li><a class="accepted" href="javascript:$.change_story_status('{{ story.pk }}','accepted')">{% trans "Accepted" %}</a></li>
-						<li><a class="rejected" href="javascript:$.change_story_status('{{ story.pk }}','rejected')">{% trans "Rejected" %}</a></li>
-					</ul>
-				</li>
-			</ul>
 			<ul class="dropdown-button">
 				<li>
 					<a href=".">{% trans "Move to" %} <i class="icon-double-angle-right"></i></a>

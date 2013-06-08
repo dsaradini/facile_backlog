@@ -120,7 +120,7 @@ class AjaxTest(WebTest):
                 order=i,
             )
 
-        order = [c.pk for c in backlog.stories.all()]
+        order = [c.pk for c in backlog.ordered_stories.all()]
         order.reverse()
         url = reverse('backlog_story_reorder', args=(
             backlog.project.pk, backlog.pk, ))
@@ -131,7 +131,7 @@ class AjaxTest(WebTest):
                       content_type="application/json",
                       user=user)
         backlog = Backlog.objects.get(pk=backlog.pk)
-        result_order = [c.pk for c in backlog.stories.all()]
+        result_order = [c.pk for c in backlog.ordered_stories.all()]
         self.assertEqual(order, result_order)
 
     def test_story_move(self):

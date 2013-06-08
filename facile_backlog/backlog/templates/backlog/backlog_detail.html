@@ -152,6 +152,7 @@
 				},
 				success: function(data) {
 					$("[data-id="+story_pk+"] .current-status").text(data.new_status);
+					$("[data-id="+story_pk+"] .status").attr('status', data.code);
 				}
 			});
 		}
