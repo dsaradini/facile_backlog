@@ -12,9 +12,7 @@
 		<div id="header">
 			<div class="header-in">
 				<div class="title"><a href="{% url "home" %}"><img src="{% static "core/img/backlogman.png" %}" height=30></a></div>
-				{% if user.is_authenticated %}
-					<img class="avatar" src="{{ user.get_gravatar_url }}">
-				{% endif %}
+
 				<div class="buttons">
 					{% if user.is_authenticated %}
 						<a href="{% url "auth_profile" %}">{% trans "Profile" %}</a>
@@ -27,6 +25,9 @@
 						<a class="icon-user" href="{% url 'auth_login' %}">{% trans "Sign in" %}</a>
 					{% endif %}
 				</div>
+				{% if user.is_authenticated %}
+					<div class="identity"><a href="{% url "auth_profile" %}">{{ user.full_name }}</a><img class="avatar" src="{{ user.get_gravatar_url }}"></div>
+				{% endif %}
 			</div>
 		</div>
 		<div id="content">

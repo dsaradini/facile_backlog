@@ -103,7 +103,7 @@ class ProjectTest(WebTest):
         project.add_user(user_2)
         project.add_user(user_2)
         #  check we do not add twice the authorization
-        self.assertEqual(project.authorizations.count(), 2)
+        self.assertEqual(project.users.count(), 2)
 
         self.app.get(url, user=user_2)
 

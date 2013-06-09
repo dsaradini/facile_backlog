@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}{% trans "Delete project" %}{% endblock %}
+
+{% block content %}
+	<h1>{% trans "Revoke user" %}</h1>
+	<div class="delete_message">
+		{% blocktrans with user=user.full_name project=project.name %}Are you sure you want to revoke '{{ user }}' from the project '{{ project }}'?{% endblocktrans %}
+	</div>
+
+	<form method="post" id="delete_form" action="{% url "auth_delete" project.pk object.pk %}">
+		{% csrf_token %}
+		{{ form }}
+		<div class="submit-delete actions">
+			<button class="button icon-remove" type="submit">{% trans "Revoke user" %}</button>
+			<a href="{% url "project_detail" project.pk %}">{% trans "Cancel" %}</a>
+		</div>
+	</form>
+{% endblock %}

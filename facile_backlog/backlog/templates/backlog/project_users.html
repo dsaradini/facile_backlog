@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load staticfiles sekizai_tags markup acl %}
+
+{% block title %}{% trans "Project" %} &mdash; {{ project.name }}{% endblock %}
+{% block content %}
+	<div class="path">
+		<a href="{%  url "home" %}"><i class="icon-home"></i>{% trans "Home" %}</a> /
+		<a href="{%  url "project_detail" project.pk %}"> <i class="icon-book"></i> {{ project.name }}</a> /
+		<i class="icon-group"></i><span class="current">{% trans "Users" %}</span>
+	</div>
+	<h2 class="poutre">{% trans "Users" %}</h2>
+
+	<div class="description">
+		<p>{% blocktrans %}Here is the list of all users participating to this project.{% endblocktrans %}</p>
+	</div>
+	<div class="actions">
+		{% if project|can_admin:request.user %}
+			<a class="button icon-user" href="{% url "invite_user" project.pk %}">{% trans "Invite user" %}</a>
+		{% endif %}
+	</div>
+	<table class="project-users">
+		<thead class="headers">
+			<tr>
+				<td class="user-image"></td>
+				<td class="user-name">{% trans "User name" %}</td>
+				<td class="user-email">{% trans "email" %}</td>
+				<td class="user-invitation">{% trans "Invitation" %}</td>
+				<td class="user-role">{% trans "Role" %}</td>
+				<td class="user-actions"></td>
+			</tr>
+		</thead>
+		<tbody>
+			{% for auth in project.authorizations.all %}
+				<tr>
+					<td class="user-image"><img src="{{ auth.user.get_gravatar_url }}"></td>
+					<td class="user-name">{{ auth.user.full_name }}</td>
+					<td class="user-email">{{ auth.user.email }}</td>
+					<td class="user-invitation">{% if auth.is_active %}{% trans "Accepted" %}{% else %}{% trans "Pending" %}{% endif %}</td>
+					<td class="user-role">{% if auth.is_active %}{% trans "Administrator" %}{% else %}{% trans "User" %}{% endif %}</td>
+					<td class="user-actions"><a title="{% trans "Delete" %}" href="{% url "auth_delete" project.pk auth.pk %}"><i class="icon-remove"></i></a></td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+{% endblock %}

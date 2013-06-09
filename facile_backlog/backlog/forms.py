@@ -1,6 +1,11 @@
 from django.forms.models import ModelForm
+from django.forms import Form
+from django.forms import EmailField
+from django.utils.translation import ugettext as _
 
-from .models import Project, Backlog, UserStory
+from .models import Project, Backlog, UserStory, AuthorizationAssociation
+
+from ..core.models import User
 
 
 class ProjectEditionForm(ModelForm):
@@ -66,3 +71,9 @@ class StoryCreationForm(StoryEditionForm):
         if commit:
             story.save()
         return story
+
+
+class InviteUserForm(Form):
+    email = EmailField(label=_('Email address'))
+
+

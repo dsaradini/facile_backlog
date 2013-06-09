@@ -18,7 +18,6 @@ class RegistrationTest(WebTest):
             'full_name': 'John Doe',
             'email': 'jdoe@test.com',
             'password': 'xxx',
-            'tos': True,
         }.iteritems():
             form[key] = value
         response = form.submit().follow()
@@ -48,7 +47,6 @@ class RegistrationTest(WebTest):
         user = User.objects.get()
         self.assertTrue(user.is_active)
         self.assertTrue(user.is_staff)
-        print user.get_gravatar_url(50)
 
     def test_reset_password(self):
         user = UserFactory.create()

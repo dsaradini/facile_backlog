@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}{% trans "Invite user" %}{% endblock %}
+
+{% block content %}
+	<h1>{% trans "Invite user" %}</h1>
+
+	<p>{% trans "Enter user email yout want to invite." %}</p>
+
+	<form method="post" id="register_form" action="{% url "invite_user" project.pk %}">
+		{% include "form.html" %}
+		<div class="submit">
+			<input class="button" type="submit" value="{% trans "Invite" %}">
+			<a href="{% url "project_detail" project.pk %}">{% trans "Cancel" %}</a>
+		</div>
+	</form>
+{% endblock %}

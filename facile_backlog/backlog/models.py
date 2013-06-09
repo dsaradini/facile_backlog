@@ -26,7 +26,7 @@ class Project(models.Model):
     active = models.BooleanField(_("Active"), default=False)
     code = models.CharField(_("Code"), max_length=5)
     story_counter = models.IntegerField(default=0)
-    authorizations = models.ManyToManyField(
+    users = models.ManyToManyField(
         User,
         verbose_name=_('Authorization'),
         related_name='projects',
@@ -41,6 +41,18 @@ class Project(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    @classmethod
+    def my_projects(cls, user):
+        """ Return all project user is admin """
+        return user.projects.filter(
+            authorizationassociation__is_admin=True
+        )
+
+    def authorizations(self):
+        return AuthorizationAssociation.objects.filter(
+            project=self
+        ).order_by("-is_active", "user__full_name")
 
     def add_user(self, user, is_active=True, is_admin=False):
         try:

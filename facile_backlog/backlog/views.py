@@ -1,28 +1,36 @@
 import json
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.sites.models import RequestSite
+from django.core import signing
+from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.http import Http404
 from django.http.response import (HttpResponseNotAllowed,
                                   HttpResponseBadRequest, HttpResponse)
 from django.shortcuts import get_object_or_404, redirect
+from django.template import loader
 from django.utils.translation import ugettext as _
 from django.views import generic
 
 from .models import Project, Backlog, UserStory, AuthorizationAssociation
 from .forms import (ProjectCreationForm, ProjectEditionForm,
                     BacklogCreationForm, BacklogEditionForm,
-                    StoryEditionForm, StoryCreationForm)
+                    StoryEditionForm, StoryCreationForm, InviteUserForm)
+
+
+from ..core.models import User
 
 
 def get_projects(user):
     if user.is_staff:
-        qs = Project.objects
+        qs = Project.objects.filter(active=True)
     else:
-        qs = user.projects
-    return qs.filter(active=True)
+        qs = Project.my_projects(user)
+    return qs
 
 
 def get_project_or_404(user, pk):
@@ -45,12 +53,15 @@ project_list = login_required(ProjectList.as_view())
 
 
 class ProjectMixin(object):
+    admin_only = False
     """
     Mixin to fetch a project by a view.
     """
     def dispatch(self, request, *args, **kwargs):
         self.project = get_project_or_404(request.user,
                                           pk=kwargs['project_id'])
+        if self.admin_only and not self.project.can_admin(request.user):
+            return HttpResponseNotAllowed()
         return super(ProjectMixin, self).dispatch(request, *args, **kwargs)
 
 
@@ -99,6 +110,7 @@ project_create = login_required(ProjectCreate.as_view())
 
 
 class ProjectEdit(ProjectMixin, generic.UpdateView):
+    admin_only = True
     template_name = "backlog/project_form.html"
     form_class = ProjectEditionForm
 
@@ -114,6 +126,7 @@ project_edit = login_required(ProjectEdit.as_view())
 
 
 class ProjectDelete(ProjectMixin, generic.DeleteView):
+    admin_only = True
     template_name = "backlog/project_confirm_delete.html"
 
     def get_object(self):
@@ -127,7 +140,20 @@ class ProjectDelete(ProjectMixin, generic.DeleteView):
 project_delete = login_required(ProjectDelete.as_view())
 
 
+class ProjectUsers(ProjectMixin, generic.TemplateView):
+    template_name = "backlog/project_users.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectUsers, self).get_context_data(**kwargs)
+        context['project'] = self.project
+        return context
+project_users = login_required(ProjectUsers.as_view())
+
+
+# Backlogs
+
 class BacklogMixin(object):
+    admin_only = False
     """
     Mixin to fetch a project and backlog by a view.
     """
@@ -141,6 +167,8 @@ class BacklogMixin(object):
             raise Http404('Not found.')
         if self.backlog.project.pk != self.project.pk:
             raise Http404('No matches found.')
+        if self.admin_only and not self.project.can_admin(request.user):
+            return HttpResponseNotAllowed()
         self.request = request
         render = self.pre_dispatch(request, **kwargs)
         if render:
@@ -173,6 +201,7 @@ backlog_detail = login_required(BacklogDetail.as_view())
 
 
 class BacklogCreate(ProjectMixin, generic.CreateView):
+    admin_only = True
     template_name = "backlog/backlog_form.html"
     model = Backlog
     form_class = BacklogCreationForm
@@ -198,6 +227,7 @@ backlog_create = login_required(BacklogCreate.as_view())
 
 
 class BacklogEdit(BacklogMixin, generic.UpdateView):
+    admin_only = True
     template_name = "backlog/backlog_form.html"
     form_class = BacklogEditionForm
 
@@ -213,6 +243,7 @@ backlog_edit = login_required(BacklogEdit.as_view())
 
 
 class BacklogDelete(BacklogMixin, generic.DeleteView):
+    admin_only = True
     template_name = "backlog/backlog_confirm_delete.html"
 
     def get_object(self):
@@ -450,3 +481,138 @@ def story_change_status(request, project_id):
         'new_status': story.get_status_display(),
         'code': story.status,
     }), content_type='application/json')
+
+
+class InviteUser(ProjectMixin, generic.FormView):
+    admin_only = True
+    salt = 'facile_user_invitation'
+    template_name = "users/invite_user.html"
+    email_template_name = "users/invitation_email.txt"
+    email_subject_template_name = "users/invitation_email_subject.txt"
+    form_class = InviteUserForm
+
+    def get_context_data(self, **kwargs):
+        data = super(InviteUser, self).get_context_data(**kwargs)
+        data['project'] = self.project
+        return data
+
+    def send_notification(self, user):
+        context = {
+            'site': RequestSite(self.request),
+            'user': user,
+            'activation_key': signing.dumps(
+                self.project.pk,
+                salt=self.salt),
+            'secure': self.request.is_secure(),
+            'project': self.project,
+        }
+        body = loader.render_to_string(self.email_template_name,
+                                       context).strip()
+        subject = loader.render_to_string(self.email_subject_template_name,
+                                          context).strip()
+        send_mail(subject, body, settings.DEFAULT_FROM_EMAIL,
+                  [user.email])
+
+    def form_valid(self, form):
+        super(InviteUser, self).form_valid(form)
+        email = form.cleaned_data['email']
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            user = User.objects.create_user(email)
+
+        try:
+            AuthorizationAssociation.objects.get(
+                project=self.project,
+                user=user,
+            )
+        except AuthorizationAssociation.DoesNotExist:
+            AuthorizationAssociation.objects.create(
+                project=self.project,
+                user=user,
+                is_active=False
+            )
+        self.send_notification(user)
+        messages.success(self.request,
+                         _('Invitation has been sent to {0}.'.format(email)))
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse("project_users", args=(self.project.pk,))
+
+invite_user = login_required(InviteUser.as_view())
+
+
+class InvitationActivate(generic.TemplateView):
+    template_name = "users/invitation_completed.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        token = kwargs['token']
+        project_pk = signing.loads(token, salt=InviteUser.salt,
+                                   max_age=60*60*24*7)
+        if project_pk != kwargs['project_id']:
+            raise Http404()
+        try:
+            auth = AuthorizationAssociation.objects.get(
+                project_id=project_pk,
+                user=request.user
+            )
+        except AuthorizationAssociation.DoesNotExist:
+            raise Http404()
+        auth.is_active = True
+        auth.save()
+        self.project = get_project_or_404(request.user, project_pk)
+        return super(InvitationActivate, self).dispatch(
+            request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        data = super(InvitationActivate, self).get_context_data(**kwargs)
+        data['project'] = self.project
+        return data
+
+invitation_activate = login_required(InvitationActivate.as_view())
+
+
+class RevokeAuthorization(ProjectMixin, generic.DeleteView):
+    admin_only = True
+    template_name = "users/auth_confirm_delete.html"
+    email_template_name = "users/revoke_email.txt"
+    email_subject_template_name = "users/revoke_email_subject.txt"
+
+    def dispatch(self, request, *args, **kwargs):
+        self.auth = get_object_or_404(AuthorizationAssociation,
+                                      pk=kwargs['auth_id'])
+        if request.user == self.auth.user:
+            return HttpResponseNotAllowed("Can't revoke yourself")
+        return super(RevokeAuthorization, self).dispatch(request, *args,
+                                                         **kwargs)
+
+    def get_object(self, queryset=None):
+        return self.auth
+
+    def get_context_data(self, **kwargs):
+        data = super(RevokeAuthorization, self).get_context_data(**kwargs)
+        data['project'] = self.project
+        return data
+
+    def send_notification(self, user):
+        context = {
+            'site': RequestSite(self.request),
+            'user': user,
+            'secure': self.request.is_secure(),
+            'project': self.project,
+        }
+        body = loader.render_to_string(self.email_template_name,
+                                       context).strip()
+        subject = loader.render_to_string(self.email_subject_template_name,
+                                          context).strip()
+        send_mail(subject, body, settings.DEFAULT_FROM_EMAIL,
+                  [user.email])
+
+    def delete(self, request, *args, **kwargs):
+        user = self.auth.user
+        if user.is_active:
+            self.send_notification(user)
+        self.auth.delete()
+        return redirect(reverse('project_users', args=(self.project.pk,)))
+auth_delete = login_required(RevokeAuthorization.as_view())

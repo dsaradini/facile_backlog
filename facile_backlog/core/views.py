@@ -45,7 +45,7 @@ def logout(request):
 
 class ProfileView(generic.UpdateView):
     form_class = ProfileEditionForm
-    success_url = reverse_lazy('auth_profile')
+    success_url = reverse_lazy('home')
     template_name = "profile/user_form.html"
 
     def get_object(self, queryset=None):

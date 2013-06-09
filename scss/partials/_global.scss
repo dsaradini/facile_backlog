@@ -43,6 +43,8 @@ p {
 	color: $header-text-color;
 	height: 3em;
 	box-shadow: 0 1px 5px rgba(0,0,0,0.5);
+	border-top: 1px solid black;
+	border-bottom: 1px solid rgba(0,0,0,0.3);
 	.header-in {
 		width:900px;
 		margin: 0 auto;
@@ -64,11 +66,14 @@ p {
 			padding-right:0.5em;
 		}
 	}
-	img.avatar {
+	.identity {
 		float: right;
-		border: 1px solid $header-text-color;
 		margin-top: 0.5em;
 		margin-right: 2px;
+		a {
+			margin: 0.5em;
+			vertical-align: super;
+		}
 	}
 	.buttons {
 		margin-top: 0.5em;
@@ -134,7 +139,8 @@ p {
 			}
 		}
 		background-color: mix($header-background-color-end ,$background-color, 100%);
-		border-top: 1px solid rgba(255,255,255,0.1);
+		//border-top: 1px solid rgba(255,255,255,0.2);
+		//border-bottom: 1px solid rgba(0,0,0,0.3);
 	}
 	.path {
 		display: block;
@@ -142,10 +148,11 @@ p {
 		padding: 0.5rem 1rem;
 		font-weight: normal;
 		background-color: mix($header-background-color-end ,$background-color, 100%);
-		border-top: 1px solid rgba(0,0,0,0.1);
+		border-top: 1px solid rgba(255,255,255,0.2);
+		border-bottom: 1px solid rgba(0,0,0,0.3);
+
 		box-shadow: 0px 1px 1px white;
-		border-radius: 0 0 1rem 1rem;
-		border-bottom: 1px solid rgba(0,0,0,0.1);
+		border-radius: 0 0 0rem 0rem;
 		i {
 			padding-right: 0.25rem;
 			color: mix($header-background-color-end , white, 10%);
@@ -170,6 +177,19 @@ p {
 		font-size: 0.75rem;
 		padding: 0.25rem;
 		font-weight: bold;
+	}
+}
+
+#header, #links {
+	a {
+		color: $header-text-color;
+		text-decoration: none;
+		&:hover {
+			color: lighten($header-text-color, 20%)
+		}
+		&:before {
+			padding-right:0.5em;
+		}
 	}
 }
 
@@ -536,5 +556,50 @@ article.story {
 		background: #248fc1;
 		color: #fff;
 		text-decoration: none;
+	}
+}
+
+.project-users {
+	width: 100%;
+	thead {
+		tr {
+			background-color: mix($header-background-color,$background-color, 10%);
+			border: 1px solid mix($header-background-color,$background-color, 30%);
+		}
+		td {
+			padding:0.25em;
+			font-weight: bold;
+		}
+	}
+	tbody {
+		tr:nth-child(even) {
+			background-color: mix($header-background-color,$background-color, 10%);
+		}
+		.user-image {
+			min-height: 28px;
+			min-width: 28px;
+		}
+		td {
+			padding:0.25em;
+		}
+		.user-actions a{
+			text-decoration: none;
+			color: mix(red,$background-color, 50%);
+			font-size: 1.5em;
+			&:hover {
+				color: mix(red,$background-color, 80%);
+			}
+		}
+	}
+}
+
+#links {
+	background-color: $header-background-color-end;
+	border-top: 1px solid rgba(255,255,255,0.2);
+
+	padding: 0.25em 0.5em;
+	a {
+		padding: 0.25em 0.5em;
+		display:inline-block;
 	}
 }

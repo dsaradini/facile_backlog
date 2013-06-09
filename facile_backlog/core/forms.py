@@ -51,8 +51,6 @@ class RegistrationForm(forms.Form):
     email = forms.EmailField(label=_('Email address'))
     password = forms.CharField(label=_('Password'),
                                widget=forms.PasswordInput)
-    tos = forms.BooleanField(label=_('Terms of service'),
-                             help_text=_('I agree with the Terms of Service.'))
 
     def clean_email(self):
         email = self.cleaned_data['email']

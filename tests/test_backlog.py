@@ -103,7 +103,7 @@ class BacklogTest(WebTest):
         self.assertTrue(backlog.can_read(user_2))
         self.assertTrue(backlog.can_admin(user_2))
 
-        self.assertEqual(project.authorizations.count(), 2)
+        self.assertEqual(project.users.count(), 2)
 
         self.app.get(url, user=user_2)
 

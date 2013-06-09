@@ -1,0 +1,5 @@
+{% blocktrans with name=user.full_name %}Dear {{ name }},{% endblocktrans %}
+
+{% blocktrans with project=project.name %}You have been revoked from the project {{ project }}{% endblocktrans %}
+
+{% include "email_footer.txt" %}

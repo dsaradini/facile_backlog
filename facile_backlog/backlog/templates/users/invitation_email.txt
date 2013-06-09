@@ -1,0 +1,7 @@
+{% blocktrans with name=user.full_name %}Dear {{ name }},{% endblocktrans %}
+
+{% blocktrans %}To accept the invitation, please navigate the URL below:{% endblocktrans %}
+
+http{% if secure %}s{% endif %}://{{ site.domain }}{% url "invitation_activate" project.pk activation_key %}
+
+{% include "email_footer.txt" %}
