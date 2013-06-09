@@ -1,15 +1,15 @@
 run:
-	foreman start
+	envdir envdir foreman start
 
 test:
-	python manage.py test --traceback --failfast --noinput
+	envdir tests/envdir python manage.py test --traceback --failfast --noinput
 
 freshdb:
-	python manage.py reset_db --router=default --noinput
-	python manage.py  syncdb --noinput
+	envdir envdir python manage.py reset_db --router=default --noinput
+	envdir envdir python manage.py  syncdb --noinput
 
 
 coverage:
-	coverage run --source=facile_backlog manage.py test  --noinput
+	envdir tests/envdir coverage run --source=facile_backlog manage.py test  --noinput
 	coverage html
 	open htmlcov/index.html

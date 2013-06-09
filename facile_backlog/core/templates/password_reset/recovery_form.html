@@ -7,7 +7,7 @@
 
 	<p>{% trans "If you have forgotten your password, simply enter your email address in the field below to recover it." %}</p>
 
-	<form method="post" action="{% url "password_reset_recover" %}">
+	<form method="post" id="reset_form" action="{% url "password_reset_recover" %}">
 		{% include "form.html" %}
 		<div class="submit">
 			<input class="button" type="submit" value="{% trans "Recover my password" %}">

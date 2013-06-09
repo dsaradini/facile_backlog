@@ -1,3 +1,5 @@
+import hashlib
+
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 from django.utils import timezone
@@ -57,3 +59,9 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
+
+    def get_gravatar_url(self, size=32):
+        return "http://www.gravatar.com/avatar/{0}?s={1}".format(
+            hashlib.md5(self.email).hexdigest(),
+            size,
+        )

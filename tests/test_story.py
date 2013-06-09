@@ -8,7 +8,7 @@ from facile_backlog.backlog.models import UserStory, Backlog
 from . import factories
 
 
-class LoginTest(WebTest):
+class StoryTest(WebTest):
     def test_stories_list(self):
         user = factories.UserFactory.create(
             email='test@epyx.ch', password='pass')

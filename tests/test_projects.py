@@ -6,7 +6,7 @@ from facile_backlog.backlog.models import Project
 from . import factories
 
 
-class LoginTest(WebTest):
+class ProjectTest(WebTest):
     def test_project_code(self):
         project = factories.ProjectFactory.create(
             name="M,y .Project",

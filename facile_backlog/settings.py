@@ -1,8 +1,11 @@
 # Django settings for facile_backlog project.
 import os
+import urlparse
+
 from django.core.urlresolvers import reverse_lazy
 
-DEBUG = True
+DEBUG = bool(os.environ.get('DEBUG', False))
+
 TEMPLATE_DEBUG = DEBUG
 
 HERE = os.path.abspath(os.path.dirname(__file__))
@@ -92,8 +95,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = '7$^s-ni_z63xa*2if!d(c9*vr4knfmb_jh&r^8)+zx!z^@5g1+'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 if DEBUG:
     TEMPLATE_LOADERS = (
@@ -173,7 +175,7 @@ LOGGING = {
             'class': 'logging.StreamHandler',
         },
         'mail_admins': {
-            'level': 'ERROR',
+            'level': 'DEBUG',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         }
@@ -181,7 +183,7 @@ LOGGING = {
     'loggers': {
         'django.request': {
             'handlers': ['mail_admins'],
-            'level': 'ERROR',
+            'level': 'DEBUG',
             'propagate': True,
         },
         'facile_backlog': {
@@ -190,6 +192,20 @@ LOGGING = {
         },
     }
 }
+
+SERVER_EMAIL = DEFAULT_FROM_EMAIL = os.environ['FROM_EMAIL']
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    parsed_email_url = urlparse.urlparse(os.environ['SMTP_URL'])
+    EMAIL_HOST = parsed_email_url.hostname
+    EMAIL_PORT = parsed_email_url.port
+    if parsed_email_url.username:
+        EMAIL_HOST_USER = parsed_email_url.username
+    if parsed_email_url.password:
+        EMAIL_HOST_PASSWORD = parsed_email_url.password
+    EMAIL_USE_TLS = False
 
 TEST_RUNNER = 'discover_runner.DiscoverRunner'
 TEST_DISCOVER_TOP_LEVEL = os.path.join(HERE, os.pardir)

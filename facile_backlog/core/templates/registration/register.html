@@ -10,7 +10,7 @@
 	{% url "auth_login" as login_url %}
 	<p>{% blocktrans %}If you already have an account, try <a href="{{ login_url }}">logging in</a> instead.{% endblocktrans %}</p>
 
-	<form method="post" action="{% url "registration_register" %}">
+	<form method="post" id="register_form" action="{% url "registration_register" %}">
 		{% include "form.html" %}
 		<div class="submit">
 			<input class="button" type="submit" value="{% trans "Register" %}">

@@ -30,3 +30,10 @@ class LoginTest(WebTest):
         url = reverse('auth_logout')
 
         self.app.get(url, user=user, status=405)
+
+    def test_login_again(self):
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        url = reverse('auth_login')
+        response = self.app.get(url, user=user).follow()
+        self.assertContains(response, 'My projects')

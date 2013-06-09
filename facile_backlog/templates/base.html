@@ -12,12 +12,16 @@
 		<div id="header">
 			<div class="header-in">
 				<div class="title"><a href="{% url "home" %}"><img src="{% static "core/img/backlogman.png" %}" height=30></a></div>
-
+				{% if user.is_authenticated %}
+					<img class="avatar" src="{{ user.get_gravatar_url }}">
+				{% endif %}
 				<div class="buttons">
 					{% if user.is_authenticated %}
+						<a href="{% url "auth_profile" %}">{% trans "Profile" %}</a>
+						<span class="sep"></span>
 						<form id="logout_form" method="POST" action="{% url 'auth_logout' %}">
 							{% csrf_token %}
-							<i class="icon-signout"></i> <input class="icon-off logout" type="submit" value="{% trans "logout" %}">
+							<i class="icon-signout"></i> <input class="logout" type="submit" value="{% trans "logout" %}">
 						</form>
 					{% else %}
 						<a class="icon-user" href="{% url 'auth_login' %}">{% trans "Sign in" %}</a>

@@ -9,7 +9,7 @@
 	{% else %}
 		<h1>{% trans "Password reset" %}</h1>
 		<p>{% blocktrans %}Welcome, <strong>{{ username }}</strong>. Please choose your new password.{% endblocktrans %}</p>
-		<form method="post" action="{% url "password_reset_reset" token %}">
+		<form method="post" id="reset_password_form" action="{% url "password_reset_reset" token %}">
 			{% include "form.html" %}
 			<div class="submit">
 				<input class="button" type="submit" value="{% trans "Set new password" %}">
