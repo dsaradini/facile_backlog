@@ -6,6 +6,8 @@ from facile_backlog.core.models import User
 
 from factories import UserFactory
 
+from . import line_starting
+
 
 class RegistrationTest(WebTest):
 
@@ -67,9 +69,7 @@ class RegistrationTest(WebTest):
         message = mail.outbox[-1]
         self.assertIn(user.email, message.to)
         self.assertTrue(message.body.find(user.full_name) != -1)
-        start = message.body.find("http://localhost:80/")
-        end = message.body.find("\n", start)
-        recover_url = message.body[start+19:end]
+        recover_url = line_starting(message.body, u"http://localhost:80/")
         response = self.app.get(recover_url)
         self.assertContains(response, "Password reset")
         form = response.forms['reset_password_form']

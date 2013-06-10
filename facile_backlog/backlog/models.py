@@ -44,9 +44,9 @@ class Project(models.Model):
 
     @classmethod
     def my_projects(cls, user):
-        """ Return all project user is admin """
+        """ Return all project user accepted the invitation """
         return user.projects.filter(
-            authorizationassociation__is_admin=True
+            authorizationassociation__is_active=True
         )
 
     def authorizations(self):

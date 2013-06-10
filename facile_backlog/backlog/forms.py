@@ -1,6 +1,6 @@
 from django.forms.models import ModelForm
 from django.forms import Form
-from django.forms import EmailField
+from django.forms import EmailField, BooleanField
 from django.utils.translation import ugettext as _
 
 from .models import Project, Backlog, UserStory
@@ -73,3 +73,5 @@ class StoryCreationForm(StoryEditionForm):
 
 class InviteUserForm(Form):
     email = EmailField(label=_('Email address'))
+    admin = BooleanField(label=_('Administrator'),
+                         initial=False, required=False)

@@ -56,3 +56,10 @@ def rand_domain():
 
 def rand_email():
     return "{0}@{1}".format(rand_ascii(4, 50), rand_domain())
+
+
+def line_starting(text, start):
+    for l in text.split("\n"):
+        if l.find(start) == 0:
+            return l
+    return None

@@ -61,7 +61,7 @@ class ProjectMixin(object):
         self.project = get_project_or_404(request.user,
                                           pk=kwargs['project_id'])
         if self.admin_only and not self.project.can_admin(request.user):
-            return HttpResponseNotAllowed()
+            raise Http404
         return super(ProjectMixin, self).dispatch(request, *args, **kwargs)
 
 
@@ -496,7 +496,7 @@ class InviteUser(ProjectMixin, generic.FormView):
         data['project'] = self.project
         return data
 
-    def send_notification(self, user):
+    def send_notification(self, user, is_admin):
         context = {
             'site': RequestSite(self.request),
             'user': user,
@@ -505,6 +505,7 @@ class InviteUser(ProjectMixin, generic.FormView):
                 salt=self.salt),
             'secure': self.request.is_secure(),
             'project': self.project,
+            'is_admin': is_admin,
         }
         body = loader.render_to_string(self.email_template_name,
                                        context).strip()
@@ -516,23 +517,29 @@ class InviteUser(ProjectMixin, generic.FormView):
     def form_valid(self, form):
         super(InviteUser, self).form_valid(form)
         email = form.cleaned_data['email']
+        admin = form.cleaned_data['admin']
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             user = User.objects.create_user(email)
 
         try:
-            AuthorizationAssociation.objects.get(
+            auth = AuthorizationAssociation.objects.get(
                 project=self.project,
                 user=user,
             )
+            # Can upgrade to admin only (no downgrade)
+            if not auth.is_admin and admin:
+                auth.is_admin = True
+                auth.save()
         except AuthorizationAssociation.DoesNotExist:
             AuthorizationAssociation.objects.create(
                 project=self.project,
                 user=user,
-                is_active=False
+                is_active=False,
+                is_admin=admin,
             )
-        self.send_notification(user)
+        self.send_notification(user, admin)
         messages.success(self.request,
                          _('Invitation has been sent to {0}.'.format(email)))
         return redirect(self.get_success_url())
@@ -550,8 +557,9 @@ class InvitationActivate(generic.TemplateView):
         token = kwargs['token']
         project_pk = signing.loads(token, salt=InviteUser.salt,
                                    max_age=60*60*24*7)
-        if project_pk != kwargs['project_id']:
+        if project_pk != int(kwargs['project_id']):
             raise Http404()
+        self.project = get_object_or_404(Project, pk=project_pk)
         try:
             auth = AuthorizationAssociation.objects.get(
                 project_id=project_pk,
@@ -561,7 +569,6 @@ class InvitationActivate(generic.TemplateView):
             raise Http404()
         auth.is_active = True
         auth.save()
-        self.project = get_project_or_404(request.user, project_pk)
         return super(InvitationActivate, self).dispatch(
             request, *args, **kwargs)
 
@@ -582,8 +589,6 @@ class RevokeAuthorization(ProjectMixin, generic.DeleteView):
     def dispatch(self, request, *args, **kwargs):
         self.auth = get_object_or_404(AuthorizationAssociation,
                                       pk=kwargs['auth_id'])
-        if request.user == self.auth.user:
-            return HttpResponseNotAllowed("Can't revoke yourself")
         return super(RevokeAuthorization, self).dispatch(request, *args,
                                                          **kwargs)
 
@@ -614,5 +619,7 @@ class RevokeAuthorization(ProjectMixin, generic.DeleteView):
         if user.is_active:
             self.send_notification(user)
         self.auth.delete()
+        messages.success(self.request,
+                         _('User {0} has been revoked.'.format(user.email)))
         return redirect(reverse('project_users', args=(self.project.pk,)))
 auth_delete = login_required(RevokeAuthorization.as_view())

@@ -3,6 +3,6 @@
 
 {% block content %}
 	<h1>{% trans "Invitation accepted" %}</h1>
-	<p>{% blocktrans %}Invitation to project {{ project.name }} has been accepted. You can access it using the url below." {% endblocktrans %}</p>
+	<p>{% blocktrans with project=project.name %}Invitation to project '{{ project }}' has been accepted. You can access it using the url below." {% endblocktrans %}</p>
 	<p><a href="{% url "project_detail" project.pk %}">{% trans "Project:" %} {{ project.name }}</a></p>
 {% endblock %}

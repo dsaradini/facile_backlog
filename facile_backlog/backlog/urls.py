@@ -105,7 +105,7 @@ urlpatterns += patterns(
         invite_user,
         name='invite_user'),
 
-    url(r'^projects/(?P<project_id>[\d]+)/invitation/(?P<token>.+)/$',
+    url(r'^projects/(?P<project_id>[\d]+)/invitation/(?P<token>[\w:-]+)/$',
         invitation_activate,
         name='invitation_activate'),
 
