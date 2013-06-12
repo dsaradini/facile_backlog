@@ -8,7 +8,7 @@
 		<meta name="apple-mobile-web-app-title" content="Facile Backlog">
 		<title>{% block title %}{% trans "Welcome" %}{% endblock %} &mdash; Backlogman</title>
 	</head>
-	<body>
+	<body class="{% block content_class %}{% endblock %}">
 		<div id="header">
 			<div class="header-in">
 				<div class="title"><a href="{% url "home" %}"><img src="{% static "core/img/backlogman.png" %}" height=30></a></div>
@@ -30,7 +30,7 @@
 				{% endif %}
 			</div>
 		</div>
-		<div id="content">
+		<div id="content" >
 			<div id="messages">
 				{% for m in messages %}
 					<div class="{{ m.tags }}">{{ m|safe }}</div>

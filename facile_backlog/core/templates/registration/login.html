@@ -2,7 +2,10 @@
 
 {% block title %}{% trans "Login" %}{% endblock %}
 
+{% block content_class %}login-background{% endblock %}
+
 {% block content %}
+	<div class="login-zone">
 	<h1>{% trans "Login" %}</h1>
 
 	{% if next %}
@@ -20,4 +23,5 @@
 			<a href="{% url "password_reset_recover" %}">{% trans "Forgot your password?" %}</a>
 		</div>
 	</form>
+	</div>
 {% endblock %}

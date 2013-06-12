@@ -17,6 +17,7 @@ class HomeView(TemplateView):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated():
             return redirect(reverse('project_list'))
+        request.session.set_test_cookie()
         return super(HomeView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):

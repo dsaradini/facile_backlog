@@ -1,6 +1,9 @@
 run:
 	envdir envdir foreman start
 
+start:
+	envdir envdir python manage.py runserver 0.0.0.0:8000
+
 test:
 	envdir tests/envdir python manage.py test --traceback --failfast --noinput
 

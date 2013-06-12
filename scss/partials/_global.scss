@@ -608,11 +608,14 @@ article.story {
 
 .home-login {
 	width: 300px;
+	float:right;
+	clear: right;
 	background-color: rgba(0,0,0,0.1);
 	border: 1px solid rgba(0,0,0,0.2);
 	border-radius: 0.25em;
 	box-shadow: 3px 3px 6px rgba(0,0,0,0.2);
 	padding: 1em;
+	margin: 1em;
 	input {
 		font-size: 1.2em;
 	}
@@ -641,4 +644,25 @@ article.story {
 
 input[colorpicker=true] {
 	width: 6em !important;
+}
+
+.login-background, .home-background {
+	maring-top:-8px;
+	background-image: url("../img/backlog_background.jpg");
+	position: absolute;
+	top:0;
+	bottom:0;
+	left:0;
+	right:0;
+	h1, label {
+		text-shadow: 1px 1px 1px rgba(255,255,255,0.3);
+	}
+	a {
+		color: black;
+		text-shadow: 1px 1px 1px rgba(255,255,255,0.3);
+	}
+	#content {
+		width: auto;
+		margin: 3em;
+	}
 }
