@@ -293,6 +293,9 @@ form {
 .actions {
 	padding: 1em;
 	border-top: 1px solid $header-background-color;
+	border-top: 1px solid white;
+	box-shadow: 0 -1px 1px #bbbbbb;
+	padding: 0.5em 0.25em;
 }
 
 p.errorlist {
@@ -516,10 +519,9 @@ article.story {
 }
 
 .poutre {
-	background-color: mix($header-background-color,$background-color, 10%);
-	border: 1px solid mix($header-background-color,$background-color, 30%);
+	border-bottom: 1px solid #bbbbbb;
 	box-shadow: 0 1px 1px white;
-	padding: 0.25em;
+	padding: 0.5em 0.25em;
 }
 
 .dropdown-button {
@@ -635,4 +637,8 @@ article.story {
 		font-size: 4rem;
 
 	}
+}
+
+input[colorpicker=true] {
+	width: 6em !important;
 }

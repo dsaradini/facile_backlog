@@ -22,8 +22,8 @@
 		{% endif %}
 	</div>
 	<div class="poutre">
-		<h2>User stories</h2>
-		<span class="sub-field filter" style="display:none">{% trans "Highlight:" %}<select id="theme-select">
+		<h2>{%  trans "User stories" %}</h2>
+		<span class="sub-field filter" style="display:none">{% trans "Highlight theme:" %}<select id="theme-select">
 			<option value=""></option>
 			{% for theme in backlog.all_themes %}
 				<option value="{{ theme }}">{{ theme }}</option>

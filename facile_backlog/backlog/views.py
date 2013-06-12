@@ -264,7 +264,10 @@ class StoryMixin(object):
     def dispatch(self, request, *args, **kwargs):
         project_id = kwargs['project_id']
         backlog_id = kwargs.get('backlog_id', None)
-        self.direct = request.GET.get('direct', False)
+        if request.method == "GET":
+            self.direct = request.GET.get('direct', False)
+        elif request.method == "POST":
+            self.direct = request.POST.get('direct', False)
         self.project = get_project_or_404(request.user, project_id)
         try:
             self.story = UserStory.objects.select_related().get(
@@ -295,6 +298,7 @@ class StoryMixin(object):
             context['cancel_url'] = reverse("story_detail", args=(
                 self.project.pk, self.story.pk))
         context['story'] = self.story
+        context['direct'] = self.direct
         return context
 
 
@@ -368,7 +372,12 @@ class StoryEdit(StoryMixin, generic.UpdateView):
                 'backlog_detail',
                 args=(self.project.pk, self.backlog.pk)
             )
-            return redirect("{0}#story-{1}".format(base_url, story.pk))
+            if self.direct:
+                return redirect("{0}#story-{1}".format(base_url, story.pk))
+            else:
+                return redirect(reverse("story_backlog_detail", args=(
+                    self.project.pk, self.backlog.pk, self.story.pk
+                )))
 
         return redirect(story.get_absolute_url())
 story_edit = login_required(StoryEdit.as_view())

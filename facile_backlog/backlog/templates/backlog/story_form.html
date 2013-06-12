@@ -9,6 +9,9 @@
     <form method="post" id="edit_story_form" action="{% if object %}{% url "story_backlog_edit" project.pk backlog.pk object.pk %}{% else %}{% url "story_create" project.pk backlog.pk %}{% endif %}">
 
         {% csrf_token %}
+		{% if direct %}
+			<input type="hidden" name="direct" value="true">
+		{% endif %}
         {% include "form.html" %}
         <div class="submit actions">
 			<input class="button" type="submit" value="{% if object %}{% trans "Save changes" %}{% else %}{% trans "Create story" %}{% endif %}">
@@ -29,7 +32,7 @@
 
 {% addtoblock "js" %}
 <script type="text/javascript">
-	$('select[name="color"]').simplecolorpicker({
+	$('[name="color"]').simpleColorPicker({
 		picker: true
 	});
 </script>
