@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load static sekizai_tags %}
+
 {% block title %}{% if object %}{% trans "Edit story" %}{% else %}{% trans "Add a new story" %}{% endif %}{% endblock %}
 
 {% block content %}
@@ -13,4 +15,24 @@
 			<a href="{{ cancel_url }}">{% trans "Cancel" %}</a>
 		</div>
 	</form>
+{% addtoblock "js" %}
+<script type="text/javascript" src="{% static "core/js/jquery.js" %}"></script>
+{% endaddtoblock %}
+
+{% addtoblock "js" %}
+<script type="text/javascript" src="{% static "core/js/jquery.csrf.js" %}"></script>
+{% endaddtoblock %}
+
+{% addtoblock "js" %}
+<script type="text/javascript" src="{% static "core/js/jquery.colorpicker.js" %}"></script>
+{% endaddtoblock %}
+
+{% addtoblock "js" %}
+<script type="text/javascript">
+	$('select[name="color"]').simplecolorpicker({
+		picker: true
+	});
+</script>
+{% endaddtoblock %}
+
 {% endblock %}

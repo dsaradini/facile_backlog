@@ -142,14 +142,14 @@ class UserStory(ProjectSecurityMixin, models.Model):
     TODO = "to_do"
     ACCEPTED = "accepted"
     IN_PROGRESS = "in_progress"
-    REJECTED = "Rejected"
+    REJECTED = "rejected"
 
     STATUS_CHOICE = (
         (NEW, _("New")),
         (TODO, _("To do")),
         (IN_PROGRESS, _("In progress")),
         (ACCEPTED, _("Accepted")),
-        (REJECTED, _("In progress")),
+        (REJECTED, _("Rejected")),
     )
     project = models.ForeignKey(Project, verbose_name=_("Project"),
                                 related_name="stories")
@@ -157,7 +157,7 @@ class UserStory(ProjectSecurityMixin, models.Model):
     as_a = models.TextField(_("As"))
     i_want_to = models.TextField(_("I want to"))
     so_i_can = models.TextField(_("so I can"))
-    color = models.CharField(_("Color"), max_length=6, blank=True)
+    color = models.CharField(_("Color"), max_length=7, blank=True)
     comments = models.TextField(_("Comments"), blank=True)
     acceptances = models.TextField(_("acceptances"), blank=True)
     points = models.CharField(_("Points"), max_length=5, blank=True)

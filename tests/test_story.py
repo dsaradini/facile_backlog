@@ -42,7 +42,7 @@ class StoryTest(WebTest):
             'points': '20',
             'status': 'to_do',
             'theme': 'Main theme',
-            'color': 'aabbcc',
+            'color': '#7bd148',
         }.iteritems():
             form[key] = value
         response = form.submit().follow()
@@ -73,7 +73,7 @@ class StoryTest(WebTest):
             'points': '20',
             'status': 'to_do',
             'theme': 'Main theme',
-            'color': 'aabbcc',
+            'color': '#7bd148',
         }.iteritems():
             form[key] = value
         response = form.submit().follow()
@@ -88,7 +88,7 @@ class StoryTest(WebTest):
         self.assertEqual(story.points, "20")
         self.assertEqual(story.status, "to_do")
         self.assertEqual(story.theme, "Main theme")
-        self.assertEqual(story.color, "aabbcc")
+        self.assertEqual(story.color, "#7bd148")
 
     def test_story_delete(self):
         user = factories.UserFactory.create(

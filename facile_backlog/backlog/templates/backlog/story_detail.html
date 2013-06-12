@@ -21,7 +21,7 @@
 				&nbsp;&nbsp;
 			{% endif %}
 		</div>
-		<div class="description">
+		<div style="border-left:10px solid {{ story.color }};" class="description">
 			{% include "backlog/user_story_text.html" with story=story %}
 		</div>
 		<div class="theme"><i class="icon-tag"></i>{{ story.theme }}</div>

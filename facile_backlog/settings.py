@@ -188,7 +188,7 @@ LOGGING = {
         },
         'facile_backlog': {
             'handlers': ['console'],
-            'level': 'INFO',
+            'level': 'DEBUG',
         },
     }
 }

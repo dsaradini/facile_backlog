@@ -117,7 +117,7 @@ class Command(BaseCommand):
             so_i_can=empty_string_dict(easy_story, 'so_i_can'),
             comments=empty_string_dict(easy_story, 'comments'),
             points=empty_string_dict(easy_story, 'score'),
-            color=empty_string_dict(easy_story, 'color'),
+            color="#{0}".format(empty_string_dict(easy_story, 'color')),
             acceptances=acceptances,
             theme=empty_string_dict(easy_theme, 'name'),
             backlog=backlog,

@@ -5,7 +5,7 @@ $header-background-color-end: darken($header-background-color, 5%);
 $header-text-color: #fbffdb;
 
 html, body {
-	font-family: Arial;
+	font-family: OpenSansCondensedBold, 'Helvetica Neue', Helvetica, Arial, sans-serif;;
 	color: $text-color;
 	background: $background-color;
 }
@@ -351,8 +351,8 @@ article.story {
 		width: 10px;
 		bottom: 1px;
 		left: 0px;
-		background-image: url('../img/stripe.png');
-		background-color: white;
+		background-image: url('../img/grab.png');
+		background-color: rgba(127,127,127,0.5);
 		border-top:1px solid rgba(0,0,0,0.2);
 		border-left:1px solid rgba(0,0,0,0.2);
 		border-bottom:1px solid rgba(0,0,0,0.2);
@@ -601,5 +601,38 @@ article.story {
 	a {
 		padding: 0.25em 0.5em;
 		display:inline-block;
+	}
+}
+
+.home-login {
+	width: 300px;
+	background-color: rgba(0,0,0,0.1);
+	border: 1px solid rgba(0,0,0,0.2);
+	border-radius: 0.25em;
+	box-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+	padding: 1em;
+	input {
+		font-size: 1.2em;
+	}
+	.full {
+		width: 100%;
+		margin-bottom:0.5em;
+	}
+	#id_password {
+		width: 60%;
+	}
+	.button {
+		font-size: 1em;
+		width: 30%;
+		max-width: 30%;
+		float:right;
+	}
+	h3 {
+		font-weight: bold;
+		padding: 0 0 0.5em 0;
+	}
+	h1 {
+		font-size: 4rem;
+
 	}
 }

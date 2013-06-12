@@ -1,7 +1,7 @@
 <article class="story" id="story-{{ story.pk }}" data-id="{{ story.pk }}" theme-id="{{ story.theme }}">
 	<div class="handle" style="display:none"></div>
 	<div class="handled">
-		<div class="color" style="background-color: #{{ story.color }} !important;">&nbsp;</div>
+		<div class="color" style="background-color: {{ story.color }} !important;">&nbsp;</div>
 		<div class="code">
 			<a href="{% url "story_backlog_detail" project.pk backlog.pk story.pk %}">{{ story.code }}</a>
 			<a href="{% url "story_backlog_edit" project.pk backlog.pk story.pk %}?direct=true"><i class="icon-edit"></i></a>

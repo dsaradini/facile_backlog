@@ -4,6 +4,7 @@ from django.forms import EmailField, BooleanField
 from django.utils.translation import ugettext as _
 
 from .models import Project, Backlog, UserStory
+from .fields import ColorPickerField
 
 
 class ProjectEditionForm(ModelForm):
@@ -48,6 +49,11 @@ class BacklogCreationForm(BacklogEditionForm):
 
 
 class StoryEditionForm(ModelForm):
+    color = ColorPickerField()
+
+    def __init__(self, *args, **kwargs):
+        super(StoryEditionForm, self).__init__(*args, **kwargs)
+
     class Meta:
         model = UserStory
         fields = ("as_a", "i_want_to", "so_i_can", "acceptances", "points",

@@ -7,4 +7,5 @@ django-ratelimit-backend==0.6
 django-sekizai==0.7
 html5lib==0.95
 Markdown==2.2.1
+palette==0.2
 requests==1.2.3

@@ -10,4 +10,4 @@ class HomeTest(WebTest):
             email='test@epyx.ch', password='pass')
         url = reverse('home')
         response = self.app.get(url)
-        self.assertEqual(response.status_code, 302)
+        self.assertContains(response, "Welcome")

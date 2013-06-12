@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}{% trans "Home" %}{% endblock %}
+
+{% block content %}
+	<h1>{% trans "Welcome to Backlogman." %}</h1>
+	<p>A smart way to manage your projects backlogs</p>
+	<p>
+		<form class="home-login" method="POST" action="{% url "auth_login" %}">
+			<h3>{% trans "Already an account?" %}</h3>
+			{% csrf_token %}
+			<input class="full" id="id_username" maxlength="254" name="username" type="text" placeholder="{% trans "username or email" %}">
+			<input id="id_password" name="password" type="password" placeholder="{% trans "Password" %}">
+			<input class="button" type="submit" value="{% trans "Login" %}">
+		</form>
+	</p>
+	<p>
+		<form class="home-login" method="POST" action="{% url "registration_register" %}">
+			<h3>{% trans "New to backlogman?" %}</h3> <span class="full">{% trans "Register now." %}</span>
+			{% csrf_token %}
+			<input class="full" id="id_full_name" name="full_name" type="text" placeholder="{% trans "Full name" %}">
+			<input class="full" id="id_email" maxlength="254" name="email" type="text" placeholder="{% trans "Email" %}">
+			<input id="id_password" name="password" type="password" placeholder="{% trans "Password" %}">
+			<input class="button" type="submit" value="{% trans "Register" %}">
+		</form>
+	</p>
+{% endblock %}
