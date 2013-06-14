@@ -15,6 +15,14 @@
 
 				<div class="buttons">
 					{% if user.is_authenticated %}
+						<a href="{% url "my_notifications" %}" title="{% trans "Notifications" %}">
+							{% with notification_count=request.user.notification_count %}
+								{% if notification_count %}
+									<span class="notification_count">{{ notification_count }}</span>
+								{% endif %}
+							{% endwith %}
+						</a>
+						<span class="sep"></span>
 						<a href="{% url "auth_profile" %}">{% trans "Profile" %}</a>
 						<span class="sep"></span>
 						<form id="logout_form" method="POST" action="{% url 'auth_logout' %}">

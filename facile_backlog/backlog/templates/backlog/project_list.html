@@ -9,12 +9,16 @@
 	</div>
 	<h1>{% trans "My projects" %}</h1>
 	<div class="actions">
-		<a class="button icon-magic" href="{% url "project_create" %}">{% trans "Create new project" %}</a>
+		<a class="button" href="{% url "project_create" %}">
+			<i class="icon-magic"></i>
+			{% trans "Create new project" %}
+		</a>
 	</div>
 	{% if object_list|length %}
 		<ul class="project-list">
 			{% for object in object_list %}
-				<li class="icon-book">
+				<li>
+					<i class="icon-book"></i>
 					<a href="{% url 'project_detail' object.pk %}">{{ object.name }}</a>
 					<span class="story-count">
 						{% with object.stories.count as counter %}

@@ -15,7 +15,7 @@
         {% include "form.html" %}
         <div class="submit actions">
 			<input class="button" type="submit" value="{% if object %}{% trans "Save changes" %}{% else %}{% trans "Create story" %}{% endif %}">
-			<a href="{{ cancel_url }}">{% trans "Cancel" %}</a>
+			<a class="alt-button" href="{{ cancel_url }}">{% trans "Cancel" %}</a>
 		</div>
 	</form>
 {% addtoblock "js" %}

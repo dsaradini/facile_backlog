@@ -15,6 +15,8 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template import loader
 from django.utils.translation import ugettext as _
 from django.views import generic
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_protect
 
 from .models import Project, Backlog, UserStory, AuthorizationAssociation
 from .forms import (ProjectCreationForm, ProjectEditionForm,
@@ -632,3 +634,43 @@ class RevokeAuthorization(ProjectMixin, generic.DeleteView):
                          _('User {0} has been revoked.'.format(user.email)))
         return redirect(reverse('project_users', args=(self.project.pk,)))
 auth_delete = login_required(RevokeAuthorization.as_view())
+
+
+class NotificationView(generic.TemplateView):
+    template_name = "users/notifications.html"
+
+    def get_context_data(self, **kwargs):
+        data = super(NotificationView, self).get_context_data(**kwargs)
+        data['invitations'] = AuthorizationAssociation.objects.filter(
+            user=self.request.user,
+            is_active=False,
+        )
+        return data
+notification_view = login_required(NotificationView.as_view())
+
+
+@require_POST
+@login_required
+@csrf_protect
+def invitation_accept(request, auth_id):
+    auth = AuthorizationAssociation.objects.get(pk=auth_id)
+    if auth.user != request.user:
+        raise Http404
+    if not auth.is_active:
+        auth.is_active = True
+        auth.save()
+    messages.success(request, _("You are now a member of this project"))
+    return redirect(reverse("project_detail", args=(auth.project_id,)))
+
+
+@require_POST
+@login_required
+@csrf_protect
+def invitation_decline(request, auth_id):
+    auth = AuthorizationAssociation.objects.get(pk=auth_id)
+    if auth.user != request.user:
+        raise Http404
+    if not auth.is_active:
+        auth.delete()
+    messages.info(request, _("Invitation has been declined"))
+    return redirect(reverse("my_notifications"))

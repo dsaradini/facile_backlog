@@ -5,7 +5,8 @@ $header-background-color-end: darken($header-background-color, 5%);
 $header-text-color: #fbffdb;
 
 html, body {
-	font-family: OpenSansCondensedBold, 'Helvetica Neue', Helvetica, Arial, sans-serif;;
+	//font-family: OpenSansCondensedBold, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-family: comic Sans MS, arial, courrier;;
 	color: $text-color;
 	background: $background-color;
 }
@@ -48,6 +49,10 @@ p {
 	.header-in {
 		width:900px;
 		margin: 0 auto;
+	}
+	.avatar {
+		// fit user model get_gravatar_url
+		min-height: 32px;
 	}
 	.title {
 		font-size: 1.25em;
@@ -109,6 +114,15 @@ p {
 			color: lighten($header-text-color, 20%)
 		}
 	}
+	.notification_count {
+		border: 1px solid rgba(0,0,0,0.3);
+		background-color: rgba(255,0,0,0.5);
+		box-shadow: 1px 1px 1px rgba(255,255,255,0.3);
+		border-radius: 2em;
+		padding: 0.25em 0.5em;
+		box-sizing: border-box;
+		display: inline-block;
+	}
 }
 
 #content {
@@ -116,6 +130,7 @@ p {
 	width:900px;
 	margin: 0 auto;
 	padding: 0 0.25em;
+	overflow: visible;
 	#messages {
 		& > div {
 			padding: 0.5em;
@@ -138,7 +153,7 @@ p {
 				padding-right:0.5em;
 			}
 		}
-		background-color: mix($header-background-color-end ,$background-color, 100%);
+		background-color: mix($header-background-color-end ,black, 60%);
 		//border-top: 1px solid rgba(255,255,255,0.2);
 		//border-bottom: 1px solid rgba(0,0,0,0.3);
 	}
@@ -257,8 +272,10 @@ form {
 	}
 }
 
+
 .button {
 	font-size: 1em;
+	line-height: 1em;
 	font-weight: normal;
 	display: inline-block !important;
 	white-space: nowrap;
@@ -279,10 +296,25 @@ form {
 	}
 }
 
+.alt-button {
+	cursor: pointer;
+	border: none;
+	background: none;
+	font-size: 1em;
+	font-family: inherit;
+	padding: 0 0.25em;
+	color: $header-background-color;
+	font-weight: bold;
+	text-decoration: none;
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
 .project-count {
 	padding: 1rem;
 	font-weight: bold;
-	background-color: rgba(0,0,0,0.2);
+	background-color: rgba(0,0,0,0.1);
 }
 
 .description {
@@ -291,11 +323,10 @@ form {
 }
 
 .actions {
-	padding: 1em;
+	padding: 1em 0;
 	border-top: 1px solid $header-background-color;
 	border-top: 1px solid white;
 	box-shadow: 0 -1px 1px #bbbbbb;
-	padding: 0.5em 0.25em;
 }
 
 p.errorlist {
@@ -307,7 +338,6 @@ p.errorlist {
 ul.errorlist li {
 	color: red;
 	font-size: 1rem;
-	padding-left: 220px;
 	margin: 0.25em 0;
 }
 
@@ -423,6 +453,7 @@ article.story {
 	.actions-button {
 		float: right;
 		display: block;
+		box-sizing: border-box;
 	}
 	.dropdown-button {
 		display: inline-block;
@@ -610,8 +641,9 @@ article.story {
 	width: 300px;
 	float:right;
 	clear: right;
-	background-color: rgba(0,0,0,0.1);
-	border: 1px solid rgba(0,0,0,0.2);
+	background-color: rgba(255,255,255,0.3);
+	border-top: 1px solid rgba(255,255,255,0.3);
+	border-left: 1px solid rgba(255,255,255,0.3);
 	border-radius: 0.25em;
 	box-shadow: 3px 3px 6px rgba(0,0,0,0.2);
 	padding: 1em;
@@ -621,7 +653,7 @@ article.story {
 	}
 	.full {
 		width: 100%;
-		margin-bottom:0.5em;
+		margin-bottom:0.25em;
 	}
 	#id_password {
 		width: 60%;
@@ -662,7 +694,33 @@ input[colorpicker=true] {
 		text-shadow: 1px 1px 1px rgba(255,255,255,0.3);
 	}
 	#content {
-		width: auto;
-		margin: 3em;
+		//width: auto;
+		//margin: 3em;
 	}
+}
+
+.invitation {
+	margin: 0.5em;
+	box-sizing: border-box;
+	border: 1px solid rgba(0,0,0,0.1);
+	p {
+		padding: 0.5em;
+	}
+	.invit-actions {
+		background-color: rgba(0,0,0,0.1);
+		padding: 0.5em;
+		form {
+			display: inline-block;
+		}
+	}
+}
+
+textarea[name=as_a] {
+	height: 3rem;
+}
+textarea[name=so_i_can] {
+	height: 6rem;
+}
+textarea[name=i_want_to] {
+	height: 6rem;
 }

@@ -5,7 +5,8 @@ from .views import (project_list, project_detail, project_create, project_edit,
                     backlog_delete, backlog_edit, story_edit, story_create,
                     story_detail, backlog_story_reorder, story_delete,
                     story_move, story_change_status, invite_user,
-                    invitation_activate, project_users, auth_delete)
+                    invitation_activate, project_users, auth_delete,
+                    notification_view, invitation_accept, invitation_decline)
 
 # projects
 urlpatterns = patterns(
@@ -112,4 +113,17 @@ urlpatterns += patterns(
     url(r'^projects/(?P<project_id>[\d]+)/revoke/(?P<auth_id>[\d]+)/$',
         auth_delete,
         name='auth_delete'),
+
+    url(r'^projects_invitation_accept/(?P<auth_id>[\d]+)/$',
+        invitation_accept,
+        name='invitation_accept'),
+
+    url(r'^projects_invitation_decline/(?P<auth_id>[\d]+)/$',
+        invitation_decline,
+        name='invitation_decline'),
+
+    url(r'^my_notifications/$',
+        notification_view,
+        name='my_notifications'),
+
 )

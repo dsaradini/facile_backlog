@@ -15,7 +15,10 @@
 	</div>
 	<div class="actions">
 		{% if project|can_admin:request.user %}
-			<a class="button icon-user" href="{% url "invite_user" project.pk %}">{% trans "Invite user" %}</a>
+			<a class="button" href="{% url "invite_user" project.pk %}">
+				<i class="icon-user"></i>
+				{% trans "Invite user" %}
+			</a>
 		{% endif %}
 	</div>
 	<table class="project-users">

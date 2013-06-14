@@ -10,6 +10,7 @@
 	<div id="links">
 		<a href="{% url "project_users" project.pk %}">{% trans "Users" %} <i class="icon-double-angle-right"></i></a>
 	</div>
+	<h1>{{ project.name }}</h1>
 	<div class="description">
 		{% if project.description %}
 			{{ project.description|markdown }}
@@ -17,16 +18,28 @@
 	</div>
 	<div class="actions">
 		{% if project|can_admin:request.user %}
-			<a class="button icon-magic" href="{% url "backlog_create" project.pk %}">{% trans "Create backlog" %}</a>
-			<a class="button icon-edit" href="{% url "project_edit" project.pk %}">{% trans "Edit" %}</a>
-			<a class="button icon-remove" href="{% url "project_delete" project.pk %}">{% trans "Delete" %}</a>
+			<a class="alt-button" href="{% url "project_edit" project.pk %}">
+				{% trans "Edit" %}
+			</a>
+			<a class="alt-button" href="{% url "project_delete" project.pk %}">
+				{% trans "Delete project" %}
+			</a>
 		{% endif %}
 	</div>
-	<h2 class="poutre">{% trans "Backlogs" %}</h2>
+	<h2>{% trans "Backlogs" %}</h2>
+	<div class="actions">
+		{% if project|can_admin:request.user %}
+			<a class="button" href="{% url "backlog_create" project.pk %}">
+				<i class="icon-magic"></i>
+				{% trans "Create backlog" %}
+			</a>
+		{% endif %}
+	</div>
 	<div class="backlog-list">
 		<ul>
 			{% for backlog in project.backlogs.all %}
-				<li class="icon-list-ul">
+				<li>
+					<i class="icon-list-alt"></i>
 					<a href="{% url 'backlog_detail' project.pk backlog.pk %}">{{ backlog.name }}</a>
 					<span class="story-count">
 						{% with backlog.stories.count as counter %}

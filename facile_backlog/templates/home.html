@@ -15,13 +15,16 @@
 			<input class="full" id="id_username" maxlength="254" name="username" type="text" placeholder="{% trans "username or email" %}">
 			<input id="id_password" name="password" type="password" placeholder="{% trans "Password" %}">
 			<input class="button" type="submit" value="{% trans "Login" %}">
+			<p>
 				<a href="{% url "password_reset_recover" %}">{% trans "Forgot your password?" %}</a>
+			</p>
+
 
 		</form>
 	</p>
 	<p>
 		<form class="home-login" method="POST" action="{% url "registration_register" %}">
-			<h3>{% trans "New to backlogman?" %}</h3> <span class="full">{% trans "Register now." %}</span>
+			<h3>{% trans "New to backlogman?" %}</h3> <p>{% trans "Register now." %}</p>
 			{% csrf_token %}
 			<input class="full" id="id_full_name" name="full_name" type="text" placeholder="{% trans "Full name" %}">
 			<input class="full" id="id_email" maxlength="254" name="email" type="text" placeholder="{% trans "Email" %}">

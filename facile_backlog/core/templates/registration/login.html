@@ -12,16 +12,23 @@
 		<p>{% trans "You must be logged in to see this page." %}</p>
 	{% endif %}
 
-	<form method="post" id="login_form" action="{% url "auth_login" %}">
-		{% include "form.html" %}
-		{% if next %}
-			<input type="hidden" name="next" value="{{ next }}">
+	<form class="home-login" method="POST" action="{% url "auth_login" %}">
+		{% csrf_token %}
+		{% if form.errors and not form.non_field_errors %}
+			<p class="errorlist">{% trans "Please correct the errors below and submit the form again." %}</p>
 		{% endif %}
-		<div class="submit">
-			<input class="button" type="submit" value="{% trans "Login" %}"> or
-			<a href="{% url "registration_register" %}">Register</a><br>
+		{{ form.non_field_errors }}
+		<input class="full" id="id_username" maxlength="254" name="username" type="text" placeholder="{% trans "username or email" %}">
+		<input id="id_password" name="password" type="password" placeholder="{% trans "Password" %}">
+		<input class="button" type="submit" value="{% trans "Login" %}">
+		<p>
 			<a href="{% url "password_reset_recover" %}">{% trans "Forgot your password?" %}</a>
-		</div>
+		</p>
+		<p>
+			<span class="full">{% trans "New to backlogman?" %}</span>
+			<a href="{% url "registration_register" %}">{% trans "Register now?" %}</a>
+		</p>
 	</form>
+
 	</div>
 {% endblock %}

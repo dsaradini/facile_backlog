@@ -170,21 +170,33 @@ LOGGING = {
         }
     },
     'handlers': {
+        'null': {
+            'level': 'DEBUG',
+            'class': 'django.utils.log.NullHandler',
+        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
         },
         'mail_admins': {
-            'level': 'DEBUG',
+            'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         }
     },
     'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'DEBUG',
             'propagate': True,
+        },
+        'ratelimitbackend': {
+            'handlers': ['console'],
+            'level': 'WARNING',
         },
         'facile_backlog': {
             'handlers': ['console'],

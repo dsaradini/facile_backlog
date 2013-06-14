@@ -5,6 +5,7 @@ from palette import Color
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models, transaction
+from django.db.models.loading import get_model
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -21,12 +22,17 @@ class AuthorizationAssociation(models.Model):
     def __unicode__(self):
         return u"{0} - {1}".format(self.project.name, self.user.email)
 
+    @property
+    def role(self):
+        return _("Administrator") if self.is_admin else _("Team member")
+
 
 class Project(models.Model):
     name = models.CharField(_("Name"), max_length=128)
     description = models.TextField(_("Description"))
     active = models.BooleanField(_("Active"), default=False)
-    code = models.CharField(_("Code"), max_length=5)
+    code = models.CharField(_("Code"), max_length=5, help_text=_(
+        "Prefix for all stories (maximum 5 characters)"))
     story_counter = models.IntegerField(default=0)
     users = models.ManyToManyField(
         User,
@@ -228,3 +234,12 @@ class UserStory(ProjectSecurityMixin, models.Model):
         self.backlog = backlog
         self.save(update_fields=('backlog_id',))
         backlog.save(update_fields=("last_modified",))
+
+
+# Enhance User model to add notifications
+def user_notification_count(self):
+    return AuthorizationAssociation.objects.filter(
+        user=self,
+        is_active=False
+    ).count()
+get_model(*User.split('.', 1)).notification_count = user_notification_count
