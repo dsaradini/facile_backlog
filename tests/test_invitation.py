@@ -77,3 +77,45 @@ class RegistrationTest(WebTest):
         url = reverse("project_list")
         response = self.app.get(url, user=user_b)
         self.assertNotContains(response, u"My first project")
+
+    def test_accept_invitation(self):
+        user_a = UserFactory.create(email="a@test.ch")
+        user_b = UserFactory.create(email="b@test.ch")
+        project = create_sample_project(user_a, project_kwargs={
+            'name': u"My first project",
+        })
+        auth = AuthorizationAssociation.objects.create(
+            project=project,
+            user=user_b,
+            is_active=False,
+            is_admin=True
+        )
+        url = reverse("my_notifications")
+        response = self.app.get(url, user=user_b)
+        self.assertContains(response, project.name)
+        form = response.forms['form_accept_{0}'.format(auth.pk)]
+        response = form.submit().follow()
+        self.assertContains(response, "You are now a member of this project")
+        auth = AuthorizationAssociation.objects.get(pk=auth.pk)
+        self.assertTrue(auth.is_active)
+
+    def test_decline_invitation(self):
+        user_a = UserFactory.create(email="a@test.ch")
+        user_b = UserFactory.create(email="b@test.ch")
+        project = create_sample_project(user_a, project_kwargs={
+            'name': u"My first project",
+        })
+        auth = AuthorizationAssociation.objects.create(
+            project=project,
+            user=user_b,
+            is_active=False,
+            is_admin=True
+        )
+        url = reverse("my_notifications")
+        response = self.app.get(url, user=user_b)
+        self.assertContains(response, project.name)
+        form = response.forms['form_decline_{0}'.format(auth.pk)]
+        response = form.submit().follow()
+        self.assertContains(response, "Invitation has been declined")
+        auth_filter = AuthorizationAssociation.objects.filter(pk=auth.pk)
+        self.assertFalse(auth_filter.exists())

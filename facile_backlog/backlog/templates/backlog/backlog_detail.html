@@ -17,8 +17,8 @@
 	</div>
 	<div class="actions">
 		{% if backlog|can_admin:request.user %}
-			<a class="alt-button" href="{% url "backlog_edit" project.pk backlog.pk %}">{% trans "Edit" %}</a>
-			<a class="alt-button" href="{% url "backlog_delete" project.pk backlog.pk %}">{% trans "Delete" %}</a>
+			<a class="alt-button" href="{% url "backlog_edit" project.pk backlog.pk %}">{% trans "Edit backlog" %}</a>
+			<a class="alt-button" href="{% url "backlog_delete" project.pk backlog.pk %}">{% trans "Delete backlog" %}</a>
 		{% endif %}
 	</div>
 	<div class="poutre">

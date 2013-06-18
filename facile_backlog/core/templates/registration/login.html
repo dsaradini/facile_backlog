@@ -12,7 +12,7 @@
 		<p>{% trans "You must be logged in to see this page." %}</p>
 	{% endif %}
 
-	<form class="home-login" method="POST" action="{% url "auth_login" %}">
+	<form class="home-login" id="login_form" method="POST" action="{% url "auth_login" %}">
 		{% csrf_token %}
 		{% if form.errors and not form.non_field_errors %}
 			<p class="errorlist">{% trans "Please correct the errors below and submit the form again." %}</p>

@@ -9,12 +9,12 @@
 	<div class="invitation">
 		<p>{% blocktrans with project=i.project.name role=i.role%}You have been invited to project <b>{{ project }}</b> as <b>{{ role }}</b>{% endblocktrans %}</p>
 		<div class="invit-actions">
-			<form method="POST" action="{% url "invitation_accept" i.pk %}">
+			<form method="POST" id="form_accept_{{ i.pk }}" action="{% url "invitation_accept" i.pk %}">
 				{% csrf_token %}
 				<button class="alt-button" type="submit">{% trans "Accept invitation" %}</button>
 			</form>
 			<span>|</span>
-			<form method="POST" action="{% url "invitation_decline" i.pk %}">
+			<form method="POST" id="form_decline_{{ i.pk }}"action="{% url "invitation_decline" i.pk %}">
 				{% csrf_token %}
 				<button class="alt-button" type="submit">{% trans "I'm not interested!" %}</button>
 			</form>

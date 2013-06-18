@@ -11,8 +11,8 @@
 		{% csrf_token %}
 		{{ form }}
 		<div class="submit-delete actions">
-			<button class="button icon-remove" type="submit">{% trans "Delete this project" %}</button>
-			<a href="{% url "project_detail" project.pk %}">{% trans "Cancel" %}</a>
+			<button class="button" type="submit">{% trans "Delete this project" %}</button>
+			<a class="alt-button" href="{% url "project_detail" project.pk %}">{% trans "Cancel" %}</a>
 		</div>
 	</form>
 {% endblock %}

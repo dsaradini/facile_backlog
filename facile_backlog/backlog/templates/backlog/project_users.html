@@ -8,6 +8,12 @@
 		<a href="{%  url "project_detail" project.pk %}"> <i class="icon-book"></i> {{ project.name }}</a> /
 		<i class="icon-group"></i><span class="current">{% trans "Users" %}</span>
 	</div>
+	<div id="links">
+		<span class="tab">
+			<a href="{% url "project_detail" project.pk %}">{% trans "Backlogs" %}</a>
+		</span>
+		<span class="tab active">{% trans "Users" %}</span>
+	</div>
 	<h2 class="poutre">{% trans "Users" %}</h2>
 
 	<div class="description">

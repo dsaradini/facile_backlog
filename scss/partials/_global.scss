@@ -4,9 +4,12 @@ $header-background-color: #0f787e;
 $header-background-color-end: darken($header-background-color, 5%);
 $header-text-color: #fbffdb;
 
+$button-background-color: #ff5900;
+$button-background-color-alt: darken($button-background-color, 8%);
+
 html, body {
-	//font-family: OpenSansCondensedBold, 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	font-family: comic Sans MS, arial, courrier;;
+	font-family: OpenSansCondensedBold, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	//font-family: comic Sans MS, arial, courrier;;
 	color: $text-color;
 	background: $background-color;
 }
@@ -39,8 +42,8 @@ p {
 	@include clearfix;
 	background-color: $header-background-color;
 	background-image: -webkit-linear-gradient(top, $header-background-color 0%, $header-background-color-end 100%);
-	background-image: -moz-linear-gradient(top, $header-background-color 0%, $header-background-color-end 100%);
-	background-image: linear-gradient(top, $header-background-color 0%, $header-background-color-end 100%);
+	background-image:    -moz-linear-gradient(top, $header-background-color 0%, $header-background-color-end 100%);
+	background-image:         linear-gradient(top, $header-background-color 0%, $header-background-color-end 100%);
 	color: $header-text-color;
 	height: 3em;
 	box-shadow: 0 1px 5px rgba(0,0,0,0.5);
@@ -154,8 +157,6 @@ p {
 			}
 		}
 		background-color: mix($header-background-color-end ,black, 60%);
-		//border-top: 1px solid rgba(255,255,255,0.2);
-		//border-bottom: 1px solid rgba(0,0,0,0.3);
 	}
 	.path {
 		display: block;
@@ -165,8 +166,7 @@ p {
 		background-color: mix($header-background-color-end ,$background-color, 100%);
 		border-top: 1px solid rgba(255,255,255,0.2);
 		border-bottom: 1px solid rgba(0,0,0,0.3);
-
-		box-shadow: 0px 1px 1px white;
+		box-shadow: 0px -2px 5px rgba(0,0,0,0.2);
 		border-radius: 0 0 0rem 0rem;
 		i {
 			padding-right: 0.25rem;
@@ -280,15 +280,23 @@ form {
 	display: inline-block !important;
 	white-space: nowrap;
 	text-decoration: none;
+	text-shadow: 1px 1px 0 rgba(0,0,0,.2);
 	cursor: pointer;
 	border: 1px solid rgba(0,0,0,0.2);
-	background-color: $header-background-color;
+	background-color: $button-background-color;
+	background-image: -webkit-linear-gradient(top, $button-background-color 50%, $button-background-color-alt 55%);
+	background-image:    -moz-linear-gradient(top, $button-background-color 50%, $button-background-color-alt 55%);
+	background-image:     -ms-linear-gradient(top, $button-background-color 50%, $button-background-color-alt 55%);
+	background-image:      -o-linear-gradient(top, $button-background-color 50%, $button-background-color-alt 55%);
+	background-image:         linear-gradient(top, $button-background-color 50%, $button-background-color-alt 55%);
+
 	color: $header-text-color;
-	padding: 0.25rem 0.5rem;
-	box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-	border-radius:3px;
+	padding: 0.5rem 0.5rem;
+	box-shadow: 0 0 1px 1px rgba(255,255,255,.4) inset, 0 1px 0 rgba(0,0,0,.2);
+	border-radius:0.25rem;
 	&:hover {
-		background-color: lighten( $header-background-color, 10%);
+		background-color: lighten( $button-background-color, 10%);
+		background-image: none;
 		color: lighten($header-text-color, 20%);
 	}
 	&:before {
@@ -303,7 +311,7 @@ form {
 	font-size: 1em;
 	font-family: inherit;
 	padding: 0 0.25em;
-	color: $header-background-color;
+	color: $button-background-color;
 	font-weight: bold;
 	text-decoration: none;
 	&:hover {
@@ -324,9 +332,7 @@ form {
 
 .actions {
 	padding: 1em 0;
-	border-top: 1px solid $header-background-color;
-	border-top: 1px solid white;
-	box-shadow: 0 -1px 1px #bbbbbb;
+	border-top: 1px solid rgba(0,0,0,0.3);
 }
 
 p.errorlist {
@@ -628,12 +634,30 @@ article.story {
 
 #links {
 	background-color: $header-background-color-end;
-	border-top: 1px solid rgba(255,255,255,0.2);
 
-	padding: 0.25em 0.5em;
+	border-top: 1px solid rgba(255,255,255,0.2);
+	border-bottom: 1px solid rgba(0,0,0,0.5);
+
+	padding: 1em 0.5em 0em 0.5em;
 	a {
 		padding: 0.25em 0.5em;
 		display:inline-block;
+	}
+	.tab {
+		padding: 0.1em 0.5em 7px 0.5em;
+		margin: 0 0.5em;
+		background-color: lighten($header-background-color-end, 1%);
+		box-shadow: 0 0 1px 1px rgba(255,255,255,.1) inset, 0 1px 2px rgba(0,0,0,.5);
+		border: 1px solid rgba(0,0,0,.2);
+		&.active {
+			background-color: $background-color;
+			border-top: 1px solid rgba(0,0,0,0.5);
+			border-bottom: 0 solid transparent;
+			border-left: 0 solid transparent;
+			border-right: 0 solid transparent;
+			box-shadow: none;
+			font-weight: bold;
+		}
 	}
 }
 

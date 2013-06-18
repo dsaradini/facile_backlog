@@ -185,13 +185,9 @@ LOGGING = {
         }
     },
     'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-        },
         'django.request': {
             'handlers': ['mail_admins'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': True,
         },
         'ratelimitbackend': {
@@ -200,7 +196,7 @@ LOGGING = {
         },
         'facile_backlog': {
             'handlers': ['console'],
-            'level': 'DEBUG',
+            'level': 'INFO',
         },
     }
 }
