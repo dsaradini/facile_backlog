@@ -4,7 +4,14 @@ import urlparse
 
 from django.core.urlresolvers import reverse_lazy
 
-DEBUG = bool(os.environ.get('DEBUG', False))
+
+DEBUG = (os.environ.get('DEBUG', "False").lower() not in [
+    'false', 'no', 'none'])
+
+if os.environ.get('DEBUG', "False").lower() in ("false", "no"):
+    DEBUG = False
+else:
+    DEBUG = True
 
 TEMPLATE_DEBUG = DEBUG
 
@@ -37,7 +44,7 @@ PASSWORD_HASHERS = (
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["backlogman.com", "*.backlogman.com"]
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
