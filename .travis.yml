@@ -3,11 +3,6 @@ language: python
 python:
   - "2.7"
 
-env:
-  - SECRET_KEY=test-secret-key
-  - DATABASE_URL=sqlite://file.sqlite
-  - DJANGO_SETTINGS_MODULE=facile_backlog.settings
-
 before_install:
   - sudo apt-get install daemontools
 
