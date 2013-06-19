@@ -12,8 +12,8 @@ install:
   - pip install pep8 --use-mirrors
 
 before_script:
-  - flake8 facile_backlog
-  - flake8 tests
+  - pep8 --exclude=migrations facile_backlog
+  - pep8 tests
 
 script:
   - PYTHONPATH=. make test
