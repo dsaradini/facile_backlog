@@ -3,8 +3,14 @@ language: python
 python:
   - "2.7"
 
+env:
+  - SECRET_KEY=test-secret-key
+  - DATABASE_URL=sqlite://file.sqlite
+  - DJANGO_SETTINGS_MODULE=facile_backlog.settings
+
 install:
   - pip install -r requirements.txt --use-mirrors
+  - pip install -r requirements-dev.txt --use-mirrors
   - pip install pep8 --use-mirrors
 
 script:
