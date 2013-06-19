@@ -1,6 +1,7 @@
 # Django settings for facile_backlog project.
 import os
 import urlparse
+import dj_database_url
 
 from django.core.urlresolvers import reverse_lazy
 
@@ -25,12 +26,9 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'backlog.sqlite',
-    }
-}
+DATABASES = {'default': dj_database_url.config(
+    default="postgresql://backlogman:back01@localhost:5432/backlogman"
+)}
 
 AUTH_USER_MODEL = 'core.User'
 
