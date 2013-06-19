@@ -8,10 +8,17 @@ env:
   - DATABASE_URL=sqlite://file.sqlite
   - DJANGO_SETTINGS_MODULE=facile_backlog.settings
 
+before_install:
+  - sudo apt-get install daemontools
+
 install:
   - pip install -r requirements.txt --use-mirrors
   - pip install -r requirements-dev.txt --use-mirrors
   - pip install pep8 --use-mirrors
 
+before_script:
+  - flake8 facile_backlog
+  - flake8 tests
+
 script:
-  - make travistest
+  - PYTHONPATH=. make test
