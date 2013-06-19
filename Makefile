@@ -7,6 +7,9 @@ start:
 test:
 	envdir tests/envdir python manage.py test --traceback --failfast --noinput
 
+travistest:
+	python manage.py test --traceback --noinput
+
 freshdb:
 	envdir envdir python manage.py reset_db --router=default --noinput
 	envdir envdir python manage.py  syncdb --noinput
