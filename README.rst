@@ -6,7 +6,7 @@ Backlogman
    :target: https://travis-ci.org/dsaradini/facile_backlog
 
 
-Manage your project using https://backlogman.com
+Manage your project using https://app.backlogman.com
 
 Project
 =======
