@@ -1,7 +1,15 @@
+Backlogman
+==========
 
 .. image:: https://travis-ci.org/dsaradini/facile_backlog.png?branch=master
    :alt: Build Status
    :target: https://travis-ci.org/dsaradini/facile_backlog
+
+
+Manage your project using https://backlogman.com
+
+Project
+=======
 
 The goal of this project is to provide a simple agile backlog management
 
