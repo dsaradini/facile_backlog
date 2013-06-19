@@ -61,7 +61,7 @@ class User(AbstractBaseUser):
         return True
 
     def get_gravatar_url(self, size=32):
-        return "http://www.gravatar.com/avatar/{0}?s={1}".format(
+        return "https://www.gravatar.com/avatar/{0}?s={1}".format(
             hashlib.md5(self.email).hexdigest(),
             size,
         )
