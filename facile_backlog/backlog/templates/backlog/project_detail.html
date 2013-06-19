@@ -12,6 +12,9 @@
 		<span class="tab">
 			<a href="{% url "project_users" project.pk %}">{% trans "Users" %} </a>
 		</span>
+		<span class="tab">
+			<a href="{% url "project_stories" project.pk %}">{% trans "Stories" %}</a>
+		</span>
 	</div>
 	<h1>{{ project.name }}</h1>
 	<div class="actions">
@@ -34,7 +37,6 @@
 	<div class="actions">
 		{% if project|can_admin:request.user %}
 			<a class="button" href="{% url "backlog_create" project.pk %}">
-				<i class="icon-magic"></i>
 				{% trans "Create backlog" %}
 			</a>
 		{% endif %}
@@ -43,7 +45,7 @@
 		<ul>
 			{% for backlog in project.backlogs.all %}
 				<li>
-					<i class="icon-list-alt"></i>
+					<i class="icon-list-ul"></i>
 					<a href="{% url 'backlog_detail' project.pk backlog.pk %}">{{ backlog.name }}</a>
 					<span class="story-count">
 						{% with backlog.stories.count as counter %}

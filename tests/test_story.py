@@ -85,7 +85,7 @@ class StoryTest(WebTest):
         self.assertEqual(story.so_i_can, "maintain my code")
         self.assertEqual(story.comments, "This is not negotiable")
         self.assertEqual(story.acceptances, "- Each view, 1 test")
-        self.assertEqual(story.points, "20")
+        self.assertEqual(story.points, 20.0)
         self.assertEqual(story.status, "to_do")
         self.assertEqual(story.theme, "Main theme")
         self.assertEqual(story.color, "#7bd148")

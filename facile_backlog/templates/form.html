@@ -7,6 +7,7 @@
 	<div class="field">
 		<label>{{ field.label }}:</label>
 		{{ field }}
+		{% if field.help_text %}<p class="helptext">{{ field.help_text|safe }}</p>{% endif %}
 		{{ field.errors }}
 	</div>
 {% endfor %}

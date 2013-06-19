@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load staticfiles sekizai_tags markup acl %}
+
+{% block title %}{% trans "Project" %} &mdash; {{ project.name }}{% endblock %}
+{% block content %}
+	<div class="path">
+		<a href="{%  url "home" %}"><i class="icon-home"></i>{% trans "Home" %}</a> /
+		<i class="icon-book"></i> <span class="current">{{ project.name }}</span>
+	</div>
+	<div id="links">
+		<span class="tab">
+			<a href="{% url "project_detail" project.pk %}">{% trans "Backlogs" %}</a>
+		</span>
+		<span class="tab">
+			<a href="{% url "project_users" project.pk %}">{% trans "Users" %}</a>
+		</span>
+		<span class="tab active">{% trans "Stories" %}</span>
+	</div>
+	<h2 class="poutre">{% trans "Stories" %}</h2>
+
+	<div class="description">
+		<p>{% blocktrans %}Here is the list of all stories in this project. Those stories are not sorted, to have a sorted "view" of project sotries, use backlogs.{% endblocktrans %}</p>
+	</div>
+
+	{% url "project_stories" project.pk as base_url %}
+	<table class="project-stories">
+		<thead class="headers">
+			<tr>
+				<td class="story-code">
+					{% include "backlog/_td_sort.html" with key="number" title="ID" %}
+				</td>
+				<td class="story-desc">{% trans "Description" %}</td>
+				<td class="story-points">
+					{% include "backlog/_td_sort.html" with key="points" title="Points" %}
+				</td>
+				<td class="story-backlog">
+					{% include "backlog/_td_sort.html" with key="backlog__name" title="Backlog" %}
+				</td>
+				<td class="story-status">
+					{% include "backlog/_td_sort.html" with key="status" title="Status" %}
+				</td>
+				<td class="story-theme">
+					{% include "backlog/_td_sort.html" with key="theme" title="Theme" %}
+				</td>
+			</tr>
+		</thead>
+		<tbody>
+			{% for story in stories %}
+				<tr id="story-{{ story.pk }}">
+					<td class="story-code" style="border-left: 3px solid {{ story.color }}">
+						<a href="{% url "story_backlog_detail" project.pk story.backlog.pk story.pk %}">{{ story.code }}</a>
+					</td>
+					<td class="story-desc">
+						{% include "backlog/user_story_text.html" %}
+					</td>
+					<td class="story-points">
+						{{ story.points|floatformat:"0" }}
+					</td>
+					<td class="story-backlog">
+						<a href="{% url "backlog_detail" project.pk story.backlog.pk %}">{{story.backlog.name }}</a>
+					</td>
+					<td class="story-status">
+						<span status="{{ story.status }}">{{ story.get_status_display }}</span>
+					</td>
+					<td class="story-theme">{{ story.theme }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+
+	</table>
+
+{% endblock %}

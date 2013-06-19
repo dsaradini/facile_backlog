@@ -1,0 +1,19 @@
+{% if sort == key %}
+	{% if sort_sign == '+' %}
+		<a class="active" href="{{ base_url }}?s=-{{ key }}">
+			{% trans title %}
+		</a>
+		<i class="icon-caret-down"></i>
+	{% elif sort_sign == '-' %}
+		<a class="active" href="{{ base_url }}?s={{ key }}">
+			{% trans title %}
+		</a>
+		<i class="icon-caret-up"></i>
+	{% else %}
+		{% trans title %}
+	{% endif %}
+{% else %}
+	<a href="{{ base_url }}?s={{ key }}">
+		{% trans title %}
+	</a>
+{% endif %}

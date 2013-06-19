@@ -1,3 +1,5 @@
+import random
+
 from factory import Factory, lazy_attribute, Sequence
 
 from facile_backlog.backlog.models import (Project, UserStory, Backlog,
@@ -47,7 +49,7 @@ class UserStoryFactory(Factory):
 
     @lazy_attribute
     def backlog(self):
-        return BacklogFactory.create()
+        return BacklogFactory.create(project=self.project)
 
     @lazy_attribute
     def as_a(self):
@@ -60,6 +62,10 @@ class UserStoryFactory(Factory):
     @lazy_attribute
     def so_i_can(self):
         return rand_lorem_phrase(3, 12)
+
+    @lazy_attribute
+    def points(self):
+        return random.randrange(-1, 100)
 
 
 class BacklogFactory(Factory):

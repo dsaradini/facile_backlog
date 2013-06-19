@@ -11,7 +11,7 @@
 		{% include "form.html" %}
 		<div class="submit">
 			<input class="button" type="submit" value="{% trans "Recover my password" %}">
-			<a href="{% url "auth_login" %}">{% trans "Back to login" %}</a>
+			<a class="alt-button" href="{% url "auth_login" %}">{% trans "Back to login" %}</a>
 		</div>
 	</form>
 {% endblock %}

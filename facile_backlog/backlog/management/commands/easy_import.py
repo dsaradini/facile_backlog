@@ -27,13 +27,13 @@ def easy_request(path):
     )
 
 
-def empty_string_dict(dico, key):
+def empty_string_dict(dico, key, default=""):
     """
     Special method to return empty string even if the value in dico is None
     """
     val = dico.get(key, None)
     if not val:
-        val = ""
+        val = default
     return val
 
 
@@ -116,7 +116,8 @@ class Command(BaseCommand):
             i_want_to=empty_string_dict(easy_story, 'i_want_to'),
             so_i_can=empty_string_dict(easy_story, 'so_i_can'),
             comments=empty_string_dict(easy_story, 'comments'),
-            points=empty_string_dict(easy_story, 'score'),
+            points=float(empty_string_dict(easy_story, 'score',
+                                           default="-1.0")),
             color="#{0}".format(empty_string_dict(easy_story, 'color')),
             acceptances=acceptances,
             theme=empty_string_dict(easy_theme, 'name'),

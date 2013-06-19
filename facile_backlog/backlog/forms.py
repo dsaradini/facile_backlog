@@ -1,6 +1,6 @@
 from django.forms.models import ModelForm
 from django.forms import Form
-from django.forms import EmailField, BooleanField
+from django.forms import EmailField, BooleanField, ChoiceField
 from django.utils.translation import ugettext as _
 
 from .models import Project, Backlog, UserStory
@@ -49,11 +49,23 @@ class BacklogCreationForm(BacklogEditionForm):
 
 
 class StoryEditionForm(ModelForm):
+    points = ChoiceField(label=_("Points"), help_text=_("Fibonacci series"))
 
     def __init__(self, *args, **kwargs):
         super(StoryEditionForm, self).__init__(*args, **kwargs)
         self.fields['as_a'].widget.attrs['autofocus'] = ''
         self.fields['color'].widget.attrs['colorpicker'] = 'true'
+
+        self.fields['as_a'].widget.attrs['placeholder'] = _("a user")
+        self.fields['i_want_to'].widget.attrs['placeholder'] = _(
+            "be able to input text here")
+        self.fields['so_i_can'].widget.attrs['placeholder'] = _(
+            "write user stories")
+        self.fields['acceptances'].widget.attrs['placeholder'] = _(
+            "- user story readable by human")
+        self.fields['acceptances'].help_text = _(
+            "Use markdown list format: line with '-' in front")
+        self.fields['points'].choices = UserStory.FIBONACCI_CHOICE
 
     class Meta:
         model = UserStory
@@ -72,7 +84,7 @@ class StoryCreationForm(StoryEditionForm):
         story = super(StoryCreationForm, self).save(commit=False)
         story.project = self.project
         story.backlog = self.backlog
-        story.order = -1  # Put it on the top of the backlog
+        story.order = 0  # Put it on the top of the backlog
         if commit:
             story.save()
         return story

@@ -152,7 +152,33 @@ class ProjectUsers(ProjectMixin, generic.TemplateView):
 project_users = login_required(ProjectUsers.as_view())
 
 
+class ProjectStories(ProjectMixin, generic.TemplateView):
+    template_name = "backlog/project_stories.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        self.sort = request.GET.get('s', "")
+        return super(ProjectStories, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectStories, self).get_context_data(**kwargs)
+        context['project'] = self.project
+        stories_qs = self.project.stories.select_related("backlog")
+        if self.sort:
+            stories_qs = stories_qs.extra(order_by=["{0}".format(self.sort)])
+
+        context['stories'] = stories_qs
+        if self.sort:
+            if self.sort[0] == '-':
+                context['sort_sign'] = "-"
+                context['sort'] = self.sort[1:]
+            else:
+                context['sort_sign'] = "+"
+                context['sort'] = self.sort
+        return context
+project_stories = login_required(ProjectStories.as_view())
+
 # Backlogs
+
 
 class BacklogMixin(object):
     admin_only = False
@@ -197,6 +223,8 @@ class BacklogDetail(BacklogMixin, generic.DetailView):
         context = super(BacklogDetail, self).get_context_data(**kwargs)
         context['target_backlogs'] = self.project.backlogs.exclude(
             pk=self.backlog.pk).all()
+        context['stories'] = self.backlog.ordered_stories.select_related(
+            "backlog", "project").all()
         return context
 
 backlog_detail = login_required(BacklogDetail.as_view())

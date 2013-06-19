@@ -3,16 +3,22 @@
 
 {% block content %}
 	<h1>{% trans "Revoke user" %}</h1>
-	<div class="delete_message">
-		{% blocktrans with user=user.full_name project=project.name %}Are you sure you want to revoke '{{ user }}' from the project '{{ project }}'?{% endblocktrans %}
-	</div>
+	{% if object.user.pk == request.user.pk %}
+		<h1>{% blocktrans %}You cannot revoke yourself from the project{% endblocktrans %}</h1>
+		<a class="alt-button" href="{% url "project_detail" project.pk %}">{% trans "Back" %}</a>
+	{% else %}
 
-	<form method="post" id="delete_form" action="{% url "auth_delete" project.pk object.pk %}">
-		{% csrf_token %}
-		{{ form }}
-		<div class="submit-delete actions">
-			<button class="button icon-remove" type="submit">{% trans "Revoke user" %}</button>
-			<a href="{% url "project_detail" project.pk %}">{% trans "Cancel" %}</a>
+		<div class="delete_message">
+			{% blocktrans with user=user.full_name project=project.name %}Are you sure you want to revoke '{{ user }}' from the project '{{ project }}'?{% endblocktrans %}
 		</div>
-	</form>
+
+		<form method="post" id="delete_form" action="{% url "auth_delete" project.pk object.pk %}">
+			{% csrf_token %}
+			{{ form }}
+			<div class="submit-delete actions">
+				<button class="button" type="submit">{% trans "Revoke user" %}</button>
+				<a class="alt-button" href="{% url "project_detail" project.pk %}">{% trans "Cancel" %}</a>
+			</div>
+		</form>
+	{% endif %}
 {% endblock %}

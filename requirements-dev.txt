@@ -5,4 +5,5 @@ django-discover-runner==0.3
 django-webtest==1.6
 factory-boy==1.2.0
 pep8==1.4.5
+PyQuery==1.2.4
 WebTest==2.0.1

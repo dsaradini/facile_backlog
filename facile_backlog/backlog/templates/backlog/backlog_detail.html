@@ -25,7 +25,6 @@
 		<h2>{%  trans "User stories" %}</h2>
 		<div class="actions">
 		<a class="button" href="{% url "story_create" project.pk backlog.pk %}">
-			<i class="icon-magic"></i>
 			{% trans "Add user story" %}
 		</a>
 		</div>
@@ -37,7 +36,7 @@
 		</select></span>
 	</div>
 	<div class="stories">
-		{% for story in backlog.ordered_stories %}
+		{% for story in stories %}
 			{% include "backlog/story_cell.html" %}
 		{% empty %}
 			{% trans "No stories" %}

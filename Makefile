@@ -12,7 +12,7 @@ travistest:
 
 freshdb:
 	envdir envdir python manage.py reset_db --router=default --noinput
-	envdir envdir python manage.py  syncdb --noinput
+	envdir envdir python manage.py syncdb --noinput
 
 gunicorn:
 	envdir envdir gunicorn facile_backlog.wsgi -b 0.0.0.0:8000

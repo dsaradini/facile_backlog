@@ -8,34 +8,11 @@
 		<i class="icon-home"></i><span class="current">{% trans "Home" %}</span>
 	</div>
 	<h1>{% trans "My projects" %}</h1>
+
 	<div class="actions">
 		<a class="button" href="{% url "project_create" %}">
-			<i class="icon-plus"></i>
 			{% trans "Create new project" %}
 		</a>
-	</div>
-	{% if object_list|length %}
-		<ul class="project-list">
-			{% for object in object_list %}
-				<li>
-					<i class="icon-book"></i>
-					<a href="{% url 'project_detail' object.pk %}">{{ object.name }}</a>
-					<span class="story-count">
-						{% with object.stories.count as counter %}
-							{% if counter %}
-								{% blocktrans count counter as counter %}
-									one story
-								{% plural %}
-									{{ counter }} stories
-								{% endblocktrans %}
-							{% else %}
-								{% trans "No story" %}
-							{% endif %}
-						{% endwith %}
-					</span>
-				</li>
-			{% endfor %}
-		</ul>
 		<div class="project-count">
 			{% blocktrans count object_list|length as counter %}
 				one project found.
@@ -43,6 +20,31 @@
 				{{ counter }} projects found.
 			{% endblocktrans %}
 		</div>
+	</div>
+	{% if object_list %}
+		<ul class="project-list">
+			{% for object in object_list %}
+				<li>
+					<div class="title">
+						<i class="icon-book"></i>
+						<a href="{% url 'project_detail' object.pk %}">{{ object.name }}</a>
+					</div>
+					<div class="stats">
+						<span class="story-count">
+							{% trans "Stories Estimated:" %} {{ object.stats.estimated_stories }} / {{ object.stats.total_stories }}
+						</span>
+						<span class="story-count">
+							{% trans "Completed:" %} {{ object.stats.completed_stories }} / {{ object.stats.estimated_stories }}
+						</span>
+						<br>
+						<span class="points-count">
+							{% trans "Completed:" %} {{ object.stats.completed_points }} / {{ object.stats.total_points }} pts
+						</span>
+					</div>
+				</li>
+			{% endfor %}
+		</ul>
+
 	{%  else %}
 		<div class="project-count">
 		{% trans "No active project found" %}

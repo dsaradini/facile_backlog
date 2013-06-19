@@ -223,6 +223,15 @@ form {
 			font-size: 1em;
 			width: 500px;
 		}
+		.helptext {
+			color: #aaa;
+			font-size: 0.75em;
+		}
+		.errorlist, .helptext {
+			width: 500px;
+			padding: 0.25em 0.25em;
+			margin: 0 0 10px 214px;
+		}
 	}
 	.submit {
 		padding-left: 220px;
@@ -233,10 +242,26 @@ form {
 }
 
 .project-list {
+	border: 1px solid rgba(0,0,0,0.2);
+	border-radius: 1rem;
+	overflow: hidden;
 	li {
+		border-top: 1px solid rgba(255,255,255,0.8);
+		border-right: 1px solid rgba(255,255,255,0.8);
+		border-left: 1px solid rgba(255,255,255,0.8);
+		border-bottom: 1px solid rgba(0,0,0,0.2);
 		display: block;
 		font-size: 1.5em;
-		margin: 1rem;
+		min-height: 100px;
+		overflow: hidden;
+		.title {
+			border-top: 1px solid rgba(255,255,255,0.8);
+			padding: 0.25em;
+			background-color: mix($header-background-color, $background-color, 10%)
+		}
+		.stats {
+			margin-left: 2rem;
+		}
 		a {
 			color: $header-background-color;
 			text-decoration: none;
@@ -320,9 +345,11 @@ form {
 }
 
 .project-count {
-	padding: 1rem;
+	padding: 0.5rem;
 	font-weight: bold;
 	background-color: rgba(0,0,0,0.1);
+	border:1px solid rgba(0,0,0,0.3);
+	display: inline-block;
 }
 
 .description {
@@ -370,10 +397,12 @@ ul.errorlist li {
 		}
 	}
 }
-.story-count, .kind {
+.story-count, .kind, .points-count {
 	font-size: 1rem;
 	font-family: monospace;
-	padding: 0.2rem;
+	padding: 0.25em;
+	margin: 0.25em;
+	display: inline-block;
 	border: 1px solid rgba(0,0,0,0.1);
 	background-color: rgba(0,0,0,0.05);
 	color: lighten($text-color, 30%)
@@ -598,16 +627,29 @@ article.story {
 	}
 }
 
-.project-users {
+.project-users, .project-stories {
 	width: 100%;
+	a {
+		text-decoration: none;
+		color: $header-background-color;
+		font-weight: normal;
+	}
+	a.active {
+		font-weight: bold;
+	}
+	a:hover {
+		text-decoration: underline;
+	}
 	thead {
 		tr {
-			background-color: mix($header-background-color,$background-color, 10%);
-			border: 1px solid mix($header-background-color,$background-color, 30%);
+			background-color: mix(white,$background-color, 90%);
+			border-bottom: 2px solid mix($header-background-color,$background-color, 30%);
 		}
 		td {
 			padding:0.25em;
 			font-weight: bold;
+			white-space: nowrap;
+
 		}
 	}
 	tbody {
@@ -629,8 +671,37 @@ article.story {
 				color: mix(red,$background-color, 80%);
 			}
 		}
+		[status] {
+			font-size: 0.75em;
+			white-space: nowrap;
+			padding: 0.25em 0.5em;
+			background-color: gray;
+			color: white;
+			&[status=accepted] {
+				background-color: rgb(0,180,50);
+			}
+			&[status=rejected] {
+				background-color: rgb(200,0,50);
+			}
+			&[status=completed] {
+				background-color: rgb(0,100,150);
+			}
+		}
+		.story-theme {
+			color: gray;
+			font-size: 0.75em;
+		}
 	}
+	.story-code {
+		width: 100px;
+		font-weight: bold;
+	}
+	.story-desc {
+		padding: 0.5em;
+	}
+
 }
+
 
 #links {
 	background-color: $header-background-color-end;
@@ -650,6 +721,7 @@ article.story {
 		box-shadow: 0 0 1px 1px rgba(255,255,255,.1) inset, 0 1px 2px rgba(0,0,0,.5);
 		border: 1px solid rgba(0,0,0,.2);
 		&.active {
+			padding: 0.1em 1em 7px 1em;
 			background-color: $background-color;
 			border-top: 1px solid rgba(0,0,0,0.5);
 			border-bottom: 0 solid transparent;
@@ -674,6 +746,8 @@ article.story {
 	margin: 1em;
 	input {
 		font-size: 1.2em;
+		font-size: 1.2em;
+		margin: 6px 0;
 	}
 	.full {
 		width: 100%;
@@ -704,14 +778,19 @@ input[colorpicker=true] {
 
 .login-background, .home-background {
 	maring-top:-8px;
-	background-image: url("../img/backlog_background.jpg");
+	background-image: url("../img/background.jpg");
 	position: absolute;
 	top:0;
 	bottom:0;
 	left:0;
 	right:0;
 	h1, label {
-		text-shadow: 1px 1px 1px rgba(255,255,255,0.3);
+		text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+		color: #ff5900;
+		font-size: 2em;
+	}
+	p {
+		color: rgba(255,255,255,0.5);
 	}
 	a {
 		color: black;

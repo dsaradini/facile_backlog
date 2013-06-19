@@ -33,7 +33,7 @@ class Project(models.Model):
     active = models.BooleanField(_("Active"), default=False)
     code = models.CharField(_("Code"), max_length=5, help_text=_(
         "Prefix for all stories (maximum 5 characters)"))
-    story_counter = models.IntegerField(default=0)
+    story_counter = models.IntegerField(default=0, blank=True, null=True)
     users = models.ManyToManyField(
         User,
         verbose_name=_('Authorization'),
@@ -104,6 +104,25 @@ class Project(models.Model):
     def can_admin(self, user):
         return user.is_staff or (user.email in self.get_acl()['admin'])
 
+    @property
+    def stats(self):
+        if not hasattr(self, "_stats"):
+            result = dict()
+            stats = self.stories.values_list("points", "status")
+            estimated = [v[0] for v in stats if v[0] >= 0]
+            completed = [v[0] for v in stats if
+                         v[1] in (UserStory.COMPLETED, UserStory.ACCEPTED)]
+            result['total_stories'] = len(stats)
+            result['estimated_stories'] = len(estimated)
+            result['completed_stories'] = len(completed)
+
+            result['total_points'] = sum(estimated)
+            result['estimated_points'] = sum(estimated)
+            result['completed_points'] = sum(completed)
+
+            self._stats = result
+        return self._stats
+
 
 class ProjectSecurityMixin(object):
     def can_read(self, user):
@@ -142,7 +161,13 @@ class Backlog(ProjectSecurityMixin, models.Model):
 
     def all_themes(self):
         result = self.stories.values_list('theme', flat=True).distinct()
-        return result
+        return list(result)
+
+    @property
+    def total_points(self):
+        val = self.stories.filter(points__gte=0).aggregate(
+            models.Sum('points')).get('points__sum', 0.0)
+        return val if val else 0.0
 
 
 class UserStory(ProjectSecurityMixin, models.Model):
@@ -151,6 +176,7 @@ class UserStory(ProjectSecurityMixin, models.Model):
     ACCEPTED = "accepted"
     IN_PROGRESS = "in_progress"
     REJECTED = "rejected"
+    COMPLETED = "completed"
 
     STATUS_CHOICE = (
         (NEW, _("New")),
@@ -158,7 +184,22 @@ class UserStory(ProjectSecurityMixin, models.Model):
         (IN_PROGRESS, _("In progress")),
         (ACCEPTED, _("Accepted")),
         (REJECTED, _("Rejected")),
+        (COMPLETED, _("Completed")),
     )
+
+    FIBONACCI_CHOICE = (
+        (-1, _("Not set")),
+        (1, "1"),
+        (2, "2"),
+        (3, "3"),
+        (5, "5"),
+        (8, "8"),
+        (13, "13"),
+        (20, "20"),
+        (40, "40"),
+        (100, "100"),
+    )
+
     project = models.ForeignKey(Project, verbose_name=_("Project"),
                                 related_name="stories")
 
@@ -168,7 +209,7 @@ class UserStory(ProjectSecurityMixin, models.Model):
     color = models.CharField(_("Color"), max_length=7, blank=True)
     comments = models.TextField(_("Comments"), blank=True)
     acceptances = models.TextField(_("acceptances"), blank=True)
-    points = models.CharField(_("Points"), max_length=5, blank=True)
+    points = models.FloatField(_("Points"), default=-1.0)
     create_date = models.DateTimeField(_("Created at"), auto_now_add=True)
     number = models.IntegerField()
     theme = models.CharField(_("Theme"), max_length=128, blank=True)

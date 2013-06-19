@@ -5,8 +5,8 @@
 			<a href="{% url "story_backlog_detail" project.pk backlog.pk story.pk %}">{{ story.code }}</a>
 			<a class="edit-action" href="{% url "story_backlog_edit" project.pk backlog.pk story.pk %}?direct=true"><i class="icon-edit"></i></a>
 		</div>
-		<div class="points {% if not story.points %}no-points{% endif %}">
-			{% if story.points %}
+		<div class="points {% if story.points == -1 %}no-points{% endif %}">
+			{% if story.points >= 0%}
 				{{ story.points|floatformat:"0" }}
 			{% else %}
 			&nbsp;

@@ -1,7 +1,8 @@
 from django.core.urlresolvers import reverse
 from django_webtest import WebTest
 
-from facile_backlog.backlog.models import Project
+from facile_backlog.backlog.models import (Project, AuthorizationAssociation,
+                                           UserStory)
 
 from . import factories
 
@@ -109,3 +110,43 @@ class ProjectTest(WebTest):
 
         project.remove_user(user_1)
         self.app.get(url, user=user_1, status=404)
+
+    def test_project_users(self):
+        user_1 = factories.UserFactory.create()
+        user_2 = factories.UserFactory.create()
+        project = factories.create_sample_project(user_1)
+        for i in range(0, 12):
+            project.add_user(
+                is_admin=(divmod(i, 3) == 0),
+                is_active=(divmod(i, 2) == 0),
+                user=factories.UserFactory.create()
+            )
+        url = reverse('project_users', args=(project.pk,))
+        self.app.get(url, user=user_2, status=404)
+        response = self.app.get(url, user=user_1)
+        for auth in AuthorizationAssociation.objects.filter(project=project):
+            elm = response.pyquery("#auth-{0}".format(auth.pk))
+            self.assertEqual(elm.find("td.user-name").text(),
+                             auth.user.full_name)
+            self.assertEqual(elm.find("td.user-role").text(),
+                             "Administrator" if auth.is_admin else "User")
+            self.assertEqual(elm.find("td.user-invitation").text(),
+                             "Accepted" if auth.is_active else "Pending")
+
+    def test_project_stories(self):
+        user_1 = factories.UserFactory.create()
+        user_2 = factories.UserFactory.create()
+        project = factories.create_sample_project(user_1)
+        for i in range(0, 12):
+            factories.UserStoryFactory.create(
+                project=project
+            )
+        url = reverse('project_stories', args=(project.pk,))
+        self.app.get(url, user=user_2, status=404)
+        response = self.app.get(url, user=user_1)
+        for story in UserStory.objects.filter(project=project):
+            elm = response.pyquery("#story-{0}".format(story.pk))
+            self.assertEqual(elm.find("td.story-code").text(),
+                             story.code)
+            self.assertEqual(elm.find("td.story-points").text(),
+                             "{0:.0f}".format(story.points))
