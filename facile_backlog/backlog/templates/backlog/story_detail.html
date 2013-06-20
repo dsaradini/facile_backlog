@@ -15,8 +15,8 @@
 	<div class="story-detail">
 
 		<div class="points">
-			{% if story.points %}
-				{{ story.points|floatformat:"0" }}
+			{% if story.points >= 0 %}
+				<span>{{ story.points|floatformat:"0" }}</span>
 			{% else %}
 				&nbsp;&nbsp;
 			{% endif %}

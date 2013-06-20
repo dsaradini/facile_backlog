@@ -54,7 +54,11 @@
 						{% include "backlog/user_story_text.html" %}
 					</td>
 					<td class="story-points">
-						{{ story.points|floatformat:"0" }}
+						{% if story.points >= 0 %}
+							{{ story.points|floatformat:"0" }}
+						{% else %}
+							&nbsp;
+						{% endif %}
 					</td>
 					<td class="story-backlog">
 						<a href="{% url "backlog_detail" project.pk story.backlog.pk %}">{{story.backlog.name }}</a>

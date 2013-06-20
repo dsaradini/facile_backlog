@@ -112,13 +112,22 @@ class Project(models.Model):
             estimated = [v[0] for v in stats if v[0] >= 0]
             completed = [v[0] for v in stats if
                          v[1] in (UserStory.COMPLETED, UserStory.ACCEPTED)]
-            result['total_stories'] = len(stats)
-            result['estimated_stories'] = len(estimated)
-            result['completed_stories'] = len(completed)
+            if len(stats):
+                result['total_stories'] = len(stats)
+                result['estimated_stories'] = len(estimated)
+                result['completed_stories'] = len(completed)
+                result['percent_estimated'] = \
+                    float(len(estimated)) / float(len(stats)) * 100.0
+                result['percent_completed'] = \
+                    float(len(completed)) / float(len(stats)) * 100.0
 
-            result['total_points'] = sum(estimated)
-            result['estimated_points'] = sum(estimated)
-            result['completed_points'] = sum(completed)
+                result['total_points'] = sum(estimated)
+                result['estimated_points'] = sum(estimated)
+                result['completed_points'] = sum(completed)
+            else:
+                result['total_stories'] = 0
+                result['percent_estimated'] = 0
+                result['percent_completed'] = 0
 
             self._stats = result
         return self._stats

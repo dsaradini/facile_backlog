@@ -19,7 +19,10 @@
 			{% plural %}
 				{{ counter }} projects found.
 			{% endblocktrans %}
+			<span class="legend bg-blue">{% trans "Estimated stories" %}</span>
+			<span class="legend bg-green">{% trans "Completed stories" %}</span>
 		</div>
+
 	</div>
 	{% if object_list %}
 		<ul class="project-list">
@@ -30,13 +33,11 @@
 						<a href="{% url 'project_detail' object.pk %}">{{ object.name }}</a>
 					</div>
 					<div class="stats">
-						<span class="story-count">
-							{% trans "Stories Estimated:" %} {{ object.stats.estimated_stories }} / {{ object.stats.total_stories }}
-						</span>
-						<span class="story-count">
-							{% trans "Completed:" %} {{ object.stats.completed_stories }} / {{ object.stats.estimated_stories }}
-						</span>
-						<br>
+						<div class="story-stats percent-cell">
+							<span class="name">{% trans "Stories:" %} {{ object.stats.total_stories }}</span>
+							<span class="percent bg-blue" style="width:{{ object.stats.percent_estimated }}%">{{ object.stats.estimated_stories }}</span>
+							<span class="percent bg-green" style="width:{{ object.stats.percent_completed }}%">{{ object.stats.completed_stories }}</span>
+						</div>
 						<span class="points-count">
 							{% trans "Completed:" %} {{ object.stats.completed_points }} / {{ object.stats.total_points }} pts
 						</span>
