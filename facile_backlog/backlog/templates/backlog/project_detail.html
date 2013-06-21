@@ -10,29 +10,18 @@
 	<div id="links">
 		<span class="tab active">{% trans "Backlogs" %}</span>
 		<span class="tab">
-			<a href="{% url "project_users" project.pk %}">{% trans "Users" %} </a>
+			<a href="{% url "project_users" project.pk %}">{% trans "Members" %} </a>
 		</span>
 		<span class="tab">
 			<a href="{% url "project_stories" project.pk %}">{% trans "Stories" %}</a>
 		</span>
 	</div>
-	<h1>{{ project.name }}</h1>
-	<div class="actions">
-		{% if project|can_admin:request.user %}
-			<a class="alt-button" href="{% url "project_edit" project.pk %}">
-				{% trans "Edit project" %}
-			</a>
-			<a class="alt-button" href="{% url "project_delete" project.pk %}">
-				{% trans "Delete project" %}
-			</a>
-		{% endif %}
-	</div>
+	{% include "backlog/_project_head.html" %}
 	<div class="description">
 		{% if project.description %}
 			{{ project.description|markdown }}
 		{% endif %}
 	</div>
-
 	<h2>{% trans "Backlogs" %}</h2>
 	<div class="actions">
 		{% if project|can_admin:request.user %}
@@ -45,21 +34,30 @@
 		<ul>
 			{% for backlog in project.backlogs.all %}
 				<li>
-					<i class="icon-list-ul"></i>
-					<a href="{% url 'backlog_detail' project.pk backlog.pk %}">{{ backlog.name }}</a>
-					<span class="story-count">
-						{% with backlog.stories.count as counter %}
-							{% if counter %}
-								{% blocktrans count counter as counter %}
-									one story
-								{% plural %}
-									{{ counter }} stories
-								{% endblocktrans %}
+					<div class="title">
+						<a href="{% url 'backlog_detail' project.pk backlog.pk %}"><i class="icon-list-ul black"></i> {{ backlog.name }}</a>
+					</div>
+					<div class="stats">
+						<div class="story-stats percent-cell">
+							<div class="name">
+								<i class="icon-list-alt info"></i> <b>{{ backlog.stats.total_stories }}</b>
+								&nbsp;</span><a href="{% url "backlog_detail" project.pk backlog.pk %}" class="info">{% trans "Stories" %} </a>
+								&nbsp;
+								<i class="icon-circle info"></i> <b>{{ backlog.stats.total_points }}</b>
+								&nbsp;</span><a href="{% url "backlog_detail" project.pk backlog.pk %}" class="info">{% trans "Points" %} </a>
+							</div>
+							{% if backlog.stats.estimated_stories %}
+								<span class="percent bg-blue" style="width:{{ backlog.stats.percent_estimated }}%">{{ backlog.stats.estimated_stories }} <i class="icon-circle info"></i> {{ backlog.stats.estimated_points }}</span>
 							{% else %}
-								{% trans "No story" %}
+								<span class="percent" style="width:0"></span>
 							{% endif %}
-						{% endwith %}
-					</span>
+							{% if backlog.stats.completed_stories %}
+								<span class="percent bg-green" style="width:{{ backlog.stats.percent_completed }}%">{{ backlog.stats.completed_stories }} <i class="icon-circle info"></i> {{ backlog.stats.completed_points }}</span>
+							{% else %}
+								<span class="percent" style="width:0"></span>
+							{% endif %}
+						</div>
+					</div>
 				</li>
 			{% empty %}
 				{% trans "No backlog" %}

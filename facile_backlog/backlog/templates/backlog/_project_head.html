@@ -1,0 +1,13 @@
+{% load staticfiles markup acl %}
+
+<div class="project-head">
+	<span class="name">{{ project.name }}</span>
+	{% if project|can_admin:request.user %}
+		<a class="alt-button" href="{% url "project_edit" project.pk %}">
+			{% trans "Edit" %}
+		</a>
+		<a class="alt-button" href="{% url "project_delete" project.pk %}">
+			{% trans "Delete" %}
+		</a>
+	{% endif %}
+</div>

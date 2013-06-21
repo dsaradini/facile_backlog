@@ -29,13 +29,18 @@
 							{% csrf_token %}
 							<i class="icon-signout"></i> <input class="logout" type="submit" value="{% trans "logout" %}">
 						</form>
+					{% if user.is_authenticated %}
+						<span class="sep"></span>
+						<a href="{% url 'admin:index' %}">{% trans "Admin" %}</a>
+					{% endif %}
 					{% else %}
-						<a class="icon-user" href="{% url 'auth_login' %}">{% trans "Sign in" %}</a>
+						<a href="{% url 'auth_login' %}">{% trans "Sign in" %}</a>
 					{% endif %}
 				</div>
 				{% if user.is_authenticated %}
 					<div class="identity"><a href="{% url "auth_profile" %}">{{ user.full_name }}</a><img class="avatar" src="{{ user.get_gravatar_url }}"></div>
 				{% endif %}
+
 			</div>
 		</div>
 		<div id="content" >

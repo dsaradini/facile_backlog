@@ -7,8 +7,17 @@
 
 {% block content %}
 	<h1>{% trans "Welcome to Backlogman." %}</h1>
-	<p>A smart way to manage your projects backlogs</p>
 	<p>
+		<i class="icon-quote-left"></i>
+		{% trans "The smartest way to manage your projects backlogs" %}
+		<i class="icon-quote-right"></i>
+	</p>
+
+	<p class="alert">
+		<span class="icon-warning-sign"></span>
+		This application is currently in construction, all data may be whipped at any time.
+	</p>
+
 		<form class="home-login" method="POST" action="{% url "auth_login" %}">
 			<h3>{% trans "Already an account?" %}</h3>
 			{% csrf_token %}
@@ -21,8 +30,8 @@
 
 
 		</form>
-	</p>
-	<p>
+
+
 		<form class="home-login" method="POST" action="{% url "registration_register" %}">
 			<h3>{% trans "New to backlogman?" %}</h3> <p>{% trans "Register now." %}</p>
 			{% csrf_token %}
@@ -31,5 +40,5 @@
 			<input id="register_id_password" name="password" type="password" placeholder="{% trans "Password" %}">
 			<input class="button" type="submit" value="{% trans "Register" %}">
 		</form>
-	</p>
+
 {% endblock %}

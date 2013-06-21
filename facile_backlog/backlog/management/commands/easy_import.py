@@ -4,12 +4,14 @@ import os
 
 import requests
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.utils.translation import ugettext as _
 
 from optparse import make_option
 
-from ...models import Project, Backlog, UserStory
+from ...models import Project, Backlog, UserStory, AuthorizationAssociation
+
+from ....core.models import User
 
 logger = logging.getLogger(__name__)
 
@@ -37,8 +39,17 @@ def empty_string_dict(dico, key, default=""):
     return val
 
 
+def get_user(name):
+    try:
+        return User.objects.get(
+            email=name
+        )
+    except User.DoesNotExist:
+        raise CommandError("User with email '{0}' not found.".format(name))
+
+
 class Command(BaseCommand):
-    args = '[<document id to import>] [<other document>] ...'
+    args = '[<user_email> <project id>]'
     help = 'Imports easybacklog backlogs and stories'
     option_list = BaseCommand.option_list + (
         make_option('--ignore-errors', action='store_true', default=False,
@@ -46,18 +57,25 @@ class Command(BaseCommand):
     )
 
     def handle(self, *args, **options):
+        if len(args) > 0:
+            self.user = get_user(args[0])
+        if len(args) > 1:
+            lookup_backlog_id = args[1]
+        else:
+            lookup_backlog_id = None
         self.fill_status()
         accounts = self.get_accounts()
         for account in accounts:
-            self.handle_account(account)
+            self.handle_account(account, lookup_backlog_id)
 
-    def handle_account(self, account):
+    def handle_account(self, account, lookup_backlog=None):
         account_id = account['id']
         backlogs = easy_request(
             "accounts/{0}/backlogs".format(account_id)
         ).json()
         for backlog in backlogs:
-            self.handle_backlog(backlog)
+            if not lookup_backlog or int(lookup_backlog) == int(backlog['id']):
+                self.handle_backlog(backlog)
 
     def handle_backlog(self, easy_backlog):
         backlog_id = easy_backlog['id']
@@ -68,6 +86,9 @@ class Command(BaseCommand):
             active=True,
         )
         project.save()
+        if self.user:
+            project.add_user(self.user, is_admin=True)
+
         accepted_backlog = Backlog(
             project=project,
             name=_("Accepted stories"),

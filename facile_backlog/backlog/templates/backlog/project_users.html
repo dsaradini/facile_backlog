@@ -11,11 +11,12 @@
 		<span class="tab">
 			<a href="{% url "project_detail" project.pk %}">{% trans "Backlogs" %}</a>
 		</span>
-		<span class="tab active">{% trans "Users" %}</span>
+		<span class="tab active">{% trans "Members" %}</span>
 		<span class="tab">
 			<a href="{% url "project_stories" project.pk %}">{% trans "Stories" %}</a>
 		</span>
 	</div>
+	{% include "backlog/_project_head.html" %}
 	<h2 class="poutre">{% trans "Users" %}</h2>
 
 	<div class="description">

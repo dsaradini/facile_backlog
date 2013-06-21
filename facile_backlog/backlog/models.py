@@ -12,6 +12,40 @@ from django.utils.translation import ugettext_lazy as _
 User = settings.AUTH_USER_MODEL
 
 
+class StatsMixin(object):
+    @property
+    def stats(self):
+        if not hasattr(self, "_stats"):
+            result = dict()
+            story_stats = self.stories.values_list("points", "status")
+            estimated = [v[0] for v in story_stats if v[0] >= 0]
+            completed = [v[0] for v in story_stats if
+                         v[1] in (UserStory.COMPLETED, UserStory.ACCEPTED)]
+            if len(story_stats):
+                result['total_stories'] = len(story_stats)
+                result['estimated_stories'] = len(estimated)
+                result['completed_stories'] = len(completed)
+                result['percent_estimated'] = \
+                    float(len(estimated)) / float(len(story_stats)) * 100.0
+                result['percent_completed'] = \
+                    float(len(completed)) / float(len(story_stats)) * 100.0
+
+                result['total_points'] = sum(estimated)
+                result['estimated_points'] = sum(estimated)
+                result['completed_points'] = sum(completed)
+            else:
+                result['total_stories'] = 0
+                result['percent_estimated'] = 0
+                result['percent_completed'] = 0
+
+            result.update(self.get_stats())
+            self._stats = result
+        return self._stats
+
+    def get_stats(self):
+        return {}
+
+
 class AuthorizationAssociation(models.Model):
     project = models.ForeignKey('Project')
     user = models.ForeignKey(User)
@@ -27,7 +61,7 @@ class AuthorizationAssociation(models.Model):
         return _("Administrator") if self.is_admin else _("Team member")
 
 
-class Project(models.Model):
+class Project(StatsMixin, models.Model):
     name = models.CharField(_("Name"), max_length=128)
     description = models.TextField(_("Description"))
     active = models.BooleanField(_("Active"), default=False)
@@ -104,33 +138,11 @@ class Project(models.Model):
     def can_admin(self, user):
         return user.is_staff or (user.email in self.get_acl()['admin'])
 
-    @property
-    def stats(self):
-        if not hasattr(self, "_stats"):
-            result = dict()
-            stats = self.stories.values_list("points", "status")
-            estimated = [v[0] for v in stats if v[0] >= 0]
-            completed = [v[0] for v in stats if
-                         v[1] in (UserStory.COMPLETED, UserStory.ACCEPTED)]
-            if len(stats):
-                result['total_stories'] = len(stats)
-                result['estimated_stories'] = len(estimated)
-                result['completed_stories'] = len(completed)
-                result['percent_estimated'] = \
-                    float(len(estimated)) / float(len(stats)) * 100.0
-                result['percent_completed'] = \
-                    float(len(completed)) / float(len(stats)) * 100.0
-
-                result['total_points'] = sum(estimated)
-                result['estimated_points'] = sum(estimated)
-                result['completed_points'] = sum(completed)
-            else:
-                result['total_stories'] = 0
-                result['percent_estimated'] = 0
-                result['percent_completed'] = 0
-
-            self._stats = result
-        return self._stats
+    def get_stats(self):
+        return {
+            'user_count': self.users.count(),
+            'backlog_count': self.backlogs.count(),
+        }
 
 
 class ProjectSecurityMixin(object):
@@ -141,7 +153,7 @@ class ProjectSecurityMixin(object):
         return user.is_staff or self.project.can_admin(user)
 
 
-class Backlog(ProjectSecurityMixin, models.Model):
+class Backlog(StatsMixin, ProjectSecurityMixin, models.Model):
     TODO = "todo"
     COMPLETED = "completed"
     GENERAL = "general"

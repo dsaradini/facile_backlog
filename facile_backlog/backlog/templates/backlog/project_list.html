@@ -13,40 +13,63 @@
 		<a class="button" href="{% url "project_create" %}">
 			{% trans "Create new project" %}
 		</a>
-		<div class="project-count">
-			{% blocktrans count object_list|length as counter %}
-				one project found.
-			{% plural %}
-				{{ counter }} projects found.
-			{% endblocktrans %}
-			<span class="legend bg-blue">{% trans "Estimated stories" %}</span>
-			<span class="legend bg-green">{% trans "Completed stories" %}</span>
-		</div>
-
 	</div>
+
 	{% if object_list %}
+
+	<div>
+		<form class="search" method="get" action="{% url "project_list" %}">
+			<input type="test" name="q" placeholder="{% trans "Find a project..."%}" value="{{ query }}">
+			<button class="alt-button" type="submit"><i class="icon-search"></i></button>
+			{% if query %}
+					<a class="alt-button" href=".">{% trans "Reset filter" %}</a>
+			{% endif %}
+		</form>
+
 		<ul class="project-list">
 			{% for object in object_list %}
 				<li>
 					<div class="title">
-						<i class="icon-book"></i>
-						<a href="{% url 'project_detail' object.pk %}">{{ object.name }}</a>
+						<a href="{% url 'project_detail' object.pk %}"><i class="icon-book black"></i> {{ object.name }}</a>
 					</div>
 					<div class="stats">
 						<div class="story-stats percent-cell">
-							<span class="name">{% trans "Stories:" %} {{ object.stats.total_stories }}</span>
-							<span class="percent bg-blue" style="width:{{ object.stats.percent_estimated }}%">{{ object.stats.estimated_stories }}</span>
-							<span class="percent bg-green" style="width:{{ object.stats.percent_completed }}%">{{ object.stats.completed_stories }}</span>
+							<div class="name">
+								<i class="icon-list-alt info"></i> <b>{{ object.stats.total_stories }}</b> </span><a href="{% url "project_stories" object.pk %}" class="info">{% trans "Stories" %} </a>
+								&nbsp;
+								<i class="icon-circle info"></i> <b>{{ object.stats.total_points }}</b> </span><a href="{% url "project_stories" object.pk %}" class="info">{% trans "Points" %} </a>
+							</div>
+							{% if object.stats.estimated_stories %}
+								<span class="percent bg-blue" style="width:{{ object.stats.percent_estimated }}%">{{ object.stats.estimated_stories }} <i class="icon-circle info"></i> {{ object.stats.estimated_points }}</span>
+							{% else %}
+								<span class="percent" style="width:0"></span>
+							{% endif %}
+							{% if object.stats.completed_stories %}
+								<span class="percent bg-green" style="width:{{ object.stats.percent_completed }}%">{{ object.stats.completed_stories }} <i class="icon-circle info"></i> {{ object.stats.completed_points }}</span>
+							{% else %}
+								<span class="percent" style="width:0"></span>
+							{% endif %}
 						</div>
-						<span class="points-count">
-							{% trans "Completed:" %} {{ object.stats.completed_points }} / {{ object.stats.total_points }} pts
-						</span>
+						<div class="story-stats percent-cell">
+							<div class="name">
+								<i class="icon-list-ul info"></i> <b>{{ object.stats.backlog_count }}</b> </span><a href="{% url "project_detail" object.pk %}" class="info">{% trans "Backlogs" %} </a>
+								&nbsp;
+								<i class="icon-user info"></i> <b>{{ object.stats.user_count }}</b> </span><a href="{% url "project_users" object.pk %}" class="info">{% trans "Team members" %} </a>
+							</div>
+						</div>
 					</div>
 				</li>
 			{% endfor %}
+			{% if is_paginated and page_obj.has_next %}
+				<li>
+					<span class="info"> <a href="?page={{ page_obj.next_page_number }}">{% trans "More project available..." %}</a> </span>
+
+				</li>
+			{% endif %}
 		</ul>
 
 	{%  else %}
+	</div>
 		<div class="project-count">
 		{% trans "No active project found" %}
 		</div>

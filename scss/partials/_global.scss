@@ -12,6 +12,7 @@ html, body {
 	//font-family: comic Sans MS, arial, courrier;;
 	color: $text-color;
 	background: $background-color;
+	height:100%;
 }
 
 h1 {
@@ -241,23 +242,22 @@ form {
 	}
 }
 
-.project-list {
-	border: 1px solid rgba(0,0,0,0.2);
-	border-radius: 1rem;
-	overflow: hidden;
+.project-list, .backlog-list {
 	li {
-		border-top: 1px solid rgba(255,255,255,0.8);
-		border-right: 1px solid rgba(255,255,255,0.8);
-		border-left: 1px solid rgba(255,255,255,0.8);
-		border-bottom: 1px solid rgba(0,0,0,0.2);
 		display: block;
 		font-size: 1.5em;
 		min-height: 100px;
 		overflow: hidden;
+		margin-bottom:1em;
 		.title {
-			border-top: 1px solid rgba(255,255,255,0.8);
-			padding: 0.25em;
-			background-color: mix($header-background-color, $background-color, 10%)
+			border-bottom: 2px solid $header-background-color;
+			padding: 0.2em 0;
+			.black {
+				color: $text-color;
+			}
+		}
+		.info {
+			color: #999;
 		}
 		.stats {
 			margin-left: 2rem;
@@ -269,36 +269,14 @@ form {
 				color: initial;
 			}
 		}
-		&:before2 {
-			padding-right:0.15rem;
-			font-family: FontAwesome;
-			content: "\f02d";
-		}
 	}
 	.story-stats {
+		float:left;
+		display: inline-block;
 		width: 300px;
 		margin: 0.25em;
-		background-color: rgba(0,0,0,0.1);
-	}
-}
-
-.backlog-list {
-	li {
-		display: block;
-		font-size: 1.5em;
-		margin: 1rem;
-		a {
-			color: $header-background-color;
-			text-decoration: none;
-			&:hover {
-				color: initial;
-			}
-		}
-		&:before2 {
-			padding-right:0.15rem;
-			font-family: FontAwesome;
-			content: "\f03a";
-		}
+		background-color: rgba(0,0,0,0.05);
+		height: 59px;
 	}
 }
 
@@ -352,14 +330,15 @@ form {
 .project-count {
 	padding: 0.5rem;
 	font-weight: bold;
-	background-color: rgba(0,0,0,0.1);
-	border:1px solid rgba(0,0,0,0.3);
-	display: inline-block;
+	background-color: white;
+	border-bottom: 2px solid rgba(0,0,0,0.3);
+	display: block;
 }
 
 .description {
-	margin: 1em;
+	margin: 0.5em 0;
 	line-height: 1.2em;
+	color: #999;
 }
 
 .actions {
@@ -789,13 +768,9 @@ input[colorpicker=true] {
 }
 
 .login-background, .home-background {
-	maring-top:-8px;
 	background-image: url("../img/background.jpg");
-	position: absolute;
-	top:0;
-	bottom:0;
-	left:0;
-	right:0;
+	background-color: alpha($header-background-color-end);
+
 	h1, label {
 		text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
 		color: #ff5900;
@@ -811,6 +786,15 @@ input[colorpicker=true] {
 	#content {
 		//width: auto;
 		//margin: 3em;
+	}
+	.alert {
+		span {
+			font-size: 3em;
+			color: rgba(0,0,0,0.3);
+			text-shadow: 1px 1px 1px rgba(255,255,255,0.1);
+		}
+		float: left;
+		width: 500px;
 	}
 }
 
@@ -853,7 +837,6 @@ textarea[name=i_want_to] {
 	.percent {
 		font-size: 0.75em;
 		color: rgba(0,0,0,0.5);
-		font-weight: bold;
 		text-align: left;
 		line-height: 1.25em;
 		padding-left: 0.25em;
@@ -865,6 +848,7 @@ textarea[name=i_want_to] {
 		border: 1px solid rgba(0,0,0,0.2);
 		box-sizing: border-box;
 		overflow-x: visible;
+		white-space: nowrap;
 	}
 }
 
@@ -881,4 +865,22 @@ textarea[name=i_want_to] {
 }
 .bg-blue {
 	background-color: rgb(200,230,255) !important;
+}
+
+.search {
+	input {
+		font-size: 1rem;
+	}
+}
+
+.project-head {
+	.name {
+		display: inline-block;
+		font-size: 1.5em;
+		margin: 0.5em 0;
+	}
+	a {
+		font-size: 0.75em;
+		vertical-align: text-top;
+	}
 }

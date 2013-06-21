@@ -18,7 +18,7 @@ class ProjectTest(WebTest):
     def test_project_list(self):
         user = factories.UserFactory.create(
             email='test@epyx.ch', password='pass')
-        for i in range(0, 10):
+        for i in range(0, 20):
             factories.create_sample_project(user)
         factories.ProjectFactory.create(active=False)
 

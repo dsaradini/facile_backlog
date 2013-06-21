@@ -28,11 +28,7 @@ from ..core.models import User
 
 
 def get_projects(user):
-    if user.is_staff:
-        qs = Project.objects.filter(active=True)
-    else:
-        qs = Project.my_projects(user)
-    return qs
+    return Project.my_projects(user)
 
 
 def get_project_or_404(user, pk):
@@ -44,12 +40,23 @@ def get_project_or_404(user, pk):
 
 class ProjectList(generic.ListView):
     template_name = "backlog/project_list.html"
+    paginate_by = 10
+
+    def dispatch(self, request, *args, **kwargs):
+        self.query = request.GET.get("q","").replace("+", " ")
+        return super(ProjectList, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        return get_projects(self.request.user)
+        qs = get_projects(self.request.user)
+        if self.query:
+            qs = qs.filter(
+                name__icontains=self.query,
+            )
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super(ProjectList, self).get_context_data(**kwargs)
+        context['query'] = self.query
         return context
 project_list = login_required(ProjectList.as_view())
 
