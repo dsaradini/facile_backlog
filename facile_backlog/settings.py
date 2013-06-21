@@ -157,6 +157,7 @@ INSTALLED_APPS = (
     'sekizai',
     'facile_backlog',
     'facile_backlog.backlog',
+    'south',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
