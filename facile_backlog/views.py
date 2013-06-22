@@ -1,5 +1,6 @@
-from django.shortcuts import redirect
+from django.http.response import Http404
 from django.core.urlresolvers import reverse
+from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
 
 from ratelimitbackend.forms import AuthenticationForm
@@ -26,3 +27,15 @@ class HomeView(TemplateView):
         return data
 
 home_view = HomeView.as_view()
+
+
+def page_404(request):
+    response = render(request, "404.html")
+    response.status_code = 404
+    return response
+
+
+def page_500(request):
+    response = render(request, "500.html")
+    response.status_code = 500
+    return response

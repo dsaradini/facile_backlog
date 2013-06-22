@@ -162,6 +162,14 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
 )
 
+if 'SENTRY_DSN' in os.environ:
+    INSTALLED_APPS += (
+        'raven.contrib.django.raven_compat',
+    )
+    RAVEN_CONFIG = {
+        'dsn': os.environ['SENTRY_DSN'],
+    }
+
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
@@ -188,20 +196,35 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'sentry': {
+            'level': 'ERROR',
+            'class':
+                'raven.contrib.django.raven_compat.handlers.SentryHandler',
+        },
     },
     'loggers': {
         'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'INFO',
+            'handlers': ['console', 'sentry'],
+            'level': 'ERROR',
             'propagate': True,
         },
-        'ratelimitbackend': {
+        'raven': {
             'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'sentry.errors': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'ratelimitbackend': {
+            'handlers': ['console', 'sentry'],
             'level': 'WARNING',
         },
         'facile_backlog': {
-            'handlers': ['console'],
+            'handlers': ['console', 'sentry'],
             'level': 'INFO',
         },
     }

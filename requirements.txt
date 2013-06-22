@@ -10,5 +10,6 @@ html5lib==0.95
 Markdown==2.2.1
 palette==0.2
 psycopg2==2.4.6
+raven==3.3.11
 requests==1.2.3
 South==0.8.1
