@@ -25,7 +25,7 @@ class ProjectTest(WebTest):
         url = reverse("project_list")
         response = self.app.get(url, user="test@epyx.ch")
         self.assertContains(response, 'My projects')
-        self.assertContains(response, '10 projects found.')
+        self.assertContains(response, 'More project available...')
 
     def test_project_create(self):
         user = factories.UserFactory.create(
@@ -148,5 +148,8 @@ class ProjectTest(WebTest):
             elm = response.pyquery("#story-{0}".format(story.pk))
             self.assertEqual(elm.find("td.story-code").text(),
                              story.code)
-            self.assertEqual(elm.find("td.story-points").text(),
-                             "{0:.0f}".format(story.points))
+            if story.points != -1:
+                self.assertEqual(elm.find("td.story-points").text(),
+                                 "{0:.0f}".format(story.points))
+            else:
+                self.assertEqual(elm.find("td.story-points").text(),"")

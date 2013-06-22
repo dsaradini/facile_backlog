@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.db import models, transaction
 from django.db.models.loading import get_model
 from django.utils.translation import ugettext_lazy as _
-
+from django.utils import timezone
 
 User = settings.AUTH_USER_MODEL
 
@@ -59,6 +59,19 @@ class AuthorizationAssociation(models.Model):
     @property
     def role(self):
         return _("Administrator") if self.is_admin else _("Team member")
+
+    def activate(self, user):
+        if not self.is_active:
+            self.is_active = True
+            self.date_joined = timezone.now()
+            self.save(update_fields=("is_active", "date_joined"))
+            create_event(
+                user, self.project,
+                "{0} joined the project as {1}".format(
+                    user.email,
+                    "administrator" if self.is_admin else "team member"
+                )
+            )
 
 
 class Project(StatsMixin, models.Model):
@@ -190,6 +203,13 @@ class Backlog(StatsMixin, ProjectSecurityMixin, models.Model):
             models.Sum('points')).get('points__sum', 0.0)
         return val if val else 0.0
 
+    @property
+    def top_stories(self):
+        return self.ordered_stories[:3]
+
+    def __unicode__(self):
+        return self.name
+
 
 class UserStory(ProjectSecurityMixin, models.Model):
     NEW = "new"
@@ -305,3 +325,26 @@ def user_notification_count(self):
         is_active=False
     ).count()
 get_model(*User.split('.', 1)).notification_count = user_notification_count
+
+
+class Event(models.Model):
+    user = models.ForeignKey(User, verbose_name=_("User"),
+                             related_name="events")
+    when = models.DateTimeField(_("When"), auto_now=True)
+    project = models.ForeignKey(Project, verbose_name=_("Project"),
+                                related_name="events")
+    story = models.ForeignKey(UserStory, verbose_name=_("Story"),
+                              blank=True, null=True, related_name="events")
+    backlog = models.ForeignKey(Backlog, verbose_name=_("Backlog"),
+                                blank=True, null=True, related_name="events")
+    text = models.TextField(_("Text"))
+
+
+def create_event(user, project, text, backlog=None, story=None ):
+    Event.objects.create(
+        user=user,
+        project=project,
+        text=text,
+        backlog=backlog,
+        story=story,
+    )

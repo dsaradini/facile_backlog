@@ -9,7 +9,7 @@ from django.utils.translation import ugettext as _
 
 from optparse import make_option
 
-from ...models import Project, Backlog, UserStory, AuthorizationAssociation
+from ...models import Project, Backlog, UserStory, create_event
 
 from ....core.models import User
 
@@ -57,8 +57,9 @@ class Command(BaseCommand):
     )
 
     def handle(self, *args, **options):
-        if len(args) > 0:
-            self.user = get_user(args[0])
+        if not args:
+            raise CommandError("Need at less first argument <user_email>")
+        self.user = get_user(args[0])
         if len(args) > 1:
             lookup_backlog_id = args[1]
         else:
@@ -146,6 +147,11 @@ class Command(BaseCommand):
             order=int(easy_story['position'])
         )
         story.save()
+        create_event(
+            self.user, project,
+            "Story imported from easy backlog id={0}".format(story_id),
+            backlog=backlog, story=story
+        )
         logger.log(logging.INFO, "Story {0} imported".format(story.code))
 
     def get_acceptances(self, story_id):

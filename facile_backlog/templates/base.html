@@ -18,16 +18,14 @@
 						<a href="{% url "my_notifications" %}" title="{% trans "Notifications" %}">
 							{% with notification_count=request.user.notification_count %}
 								{% if notification_count %}
-									<span class="notification_count">{{ notification_count }}</span>
+									<span class="notification_count"><i class="icon-bell"></i> {{ notification_count }}</span>
 								{% endif %}
 							{% endwith %}
 						</a>
 						<span class="sep"></span>
-						<a href="{% url "auth_profile" %}">{% trans "Profile" %}</a>
-						<span class="sep"></span>
 						<form id="logout_form" method="POST" action="{% url 'auth_logout' %}">
 							{% csrf_token %}
-							<i class="icon-signout"></i> <input class="logout" type="submit" value="{% trans "logout" %}">
+							<input class="logout" type="submit" value="{% trans "logout" %}">
 						</form>
 					{% if user.is_authenticated %}
 						<span class="sep"></span>
@@ -38,7 +36,7 @@
 					{% endif %}
 				</div>
 				{% if user.is_authenticated %}
-					<div class="identity"><a href="{% url "auth_profile" %}">{{ user.full_name }}</a><img class="avatar" src="{{ user.get_gravatar_url }}"></div>
+					<div class="identity"><a href="{% url "auth_profile" %}"><span>{{ user.full_name }}</span>&nbsp;&nbsp;<img class="avatar" src="{{ user.get_gravatar_url }}"></a></div>
 				{% endif %}
 
 			</div>

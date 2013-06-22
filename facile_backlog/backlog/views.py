@@ -613,8 +613,7 @@ class InvitationActivate(generic.TemplateView):
             )
         except AuthorizationAssociation.DoesNotExist:
             raise Http404()
-        auth.is_active = True
-        auth.save()
+        auth.activate(request.user)
         return super(InvitationActivate, self).dispatch(
             request, *args, **kwargs)
 

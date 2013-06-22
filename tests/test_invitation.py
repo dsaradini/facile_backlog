@@ -2,7 +2,7 @@ from django.core import mail
 from django.core.urlresolvers import reverse
 from django.utils.html import escape
 from django_webtest import WebTest
-from facile_backlog.backlog.models import AuthorizationAssociation
+from facile_backlog.backlog.models import (AuthorizationAssociation, Event)
 
 from factories import UserFactory, create_sample_project
 
@@ -48,6 +48,11 @@ class RegistrationTest(WebTest):
         url = reverse("project_list")
         response = self.app.get(url, user=user_b)
         self.assertContains(response, escape(project.name))
+        event = Event.objects.get(
+            project=project
+        )
+        self.assertEqual(event.text, "b@test.ch joined the project as "
+                                     "team member")
 
     def test_revoke_invitation(self):
         user_a = UserFactory.create(email="a@test.ch")

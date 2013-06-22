@@ -7,7 +7,7 @@
 <h2>{% trans "Invitations" %}</h2>
 {% for i in invitations %}
 	<div class="invitation">
-		<p>{% blocktrans with project=i.project.name role=i.role%}You have been invited to project <b>{{ project }}</b> as <b>{{ role }}</b>{% endblocktrans %}</p>
+		<p><i class="icon-bell-alt"></i> {% blocktrans with project=i.project.name role=i.role%}You have been invited to project <b>{{ project }}</b> as <b>{{ role }}</b>{% endblocktrans %}</p>
 		<div class="invit-actions">
 			<form method="POST" id="form_accept_{{ i.pk }}" action="{% url "invitation_accept" i.pk %}">
 				{% csrf_token %}

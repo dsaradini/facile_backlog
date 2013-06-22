@@ -77,15 +77,13 @@ p {
 	}
 	.identity {
 		float: right;
-		margin-top: 0.5em;
-		margin-right: 2px;
-		a {
-			margin: 0.5em;
-			vertical-align: super;
+		margin-top: 9px;
+		a *{
+			vertical-align: middle;
 		}
 	}
 	.buttons {
-		margin-top: 0.5em;
+		margin-top: 3px;
 		& > * {
 			display:inline-block;
 		}
@@ -277,6 +275,17 @@ form {
 		margin: 0.25em;
 		background-color: rgba(0,0,0,0.05);
 		height: 59px;
+	}
+	.top-stories {
+		float:left;
+		display: inline-block;
+		width: 200px;
+		font-size:1rem;
+		padding-left: 0.25em;
+		margin: 0.25em;
+		.story {
+			padding: 2px 0;
+		}
 	}
 }
 

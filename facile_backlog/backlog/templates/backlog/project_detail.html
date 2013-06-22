@@ -47,16 +47,27 @@
 								&nbsp;</span><a href="{% url "backlog_detail" project.pk backlog.pk %}" class="info">{% trans "Points" %} </a>
 							</div>
 							{% if backlog.stats.estimated_stories %}
-								<span class="percent bg-blue" style="width:{{ backlog.stats.percent_estimated }}%">{{ backlog.stats.estimated_stories }} <i class="icon-circle info"></i> {{ backlog.stats.estimated_points }}</span>
+								<span class="percent bg-blue" style="width:{{ backlog.stats.percent_estimated }}%">{{ backlog.stats.estimated_stories }} <i class="icon-circle info"></i> {{ backlog.stats.estimated_points }} pts</span>
 							{% else %}
 								<span class="percent" style="width:0"></span>
 							{% endif %}
 							{% if backlog.stats.completed_stories %}
-								<span class="percent bg-green" style="width:{{ backlog.stats.percent_completed }}%">{{ backlog.stats.completed_stories }} <i class="icon-circle info"></i> {{ backlog.stats.completed_points }}</span>
+								<span class="percent bg-green" style="width:{{ backlog.stats.percent_completed }}%">{{ backlog.stats.completed_stories }} <i class="icon-circle info"></i> {{ backlog.stats.completed_points }} pts</span>
 							{% else %}
 								<span class="percent" style="width:0"></span>
 							{% endif %}
 						</div>
+					</div>
+					<div class="top-stories">
+						{% for story in backlog.top_stories %}
+							<div class="story">
+								<a class="code" href="{% url "story_backlog_detail" project.pk backlog.pk story.pk %}"><i class="icon-list-alt" title="{{ story.text }}"></i> {{ story.code }}</a>
+
+							</div>
+						{% empty %}
+							{% trans "No story in this backlog" %}<br>
+							<a class="alt-button" href="{% url "story_create" project.pk backlog.pk %}">{% trans "Create a story" %}</a>
+						{% endfor %}
 					</div>
 				</li>
 			{% empty %}
