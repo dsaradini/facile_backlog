@@ -7,17 +7,17 @@
 	<div class="path">
 		<i class="icon-home"></i><span class="current">{% trans "Home" %}</span>
 	</div>
-	<h1>{% trans "My projects" %}</h1>
 
-	<div class="actions">
-		<a class="button" href="{% url "project_create" %}">
-			{% trans "Create new project" %}
-		</a>
-	</div>
 
-	{% if object_list %}
+	<div class="left">
+		<h1>{% trans "My projects" %}</h1>
 
-	<div>
+		<div class="actions">
+			<a class="button" href="{% url "project_create" %}">
+				{% trans "Create new project" %}
+			</a>
+		</div>
+		{% if object_list %}
 		<form class="search" method="get" action="{% url "project_list" %}">
 			<input type="test" name="q" placeholder="{% trans "Find a project..."%}" value="{{ query }}">
 			<button class="alt-button" type="submit"><i class="icon-search"></i></button>
@@ -52,9 +52,12 @@
 						</div>
 						<div class="story-stats percent-cell">
 							<div class="name">
-								<i class="icon-list-ul info"></i> <b>{{ object.stats.backlog_count }}</b> </span><a href="{% url "project_detail" object.pk %}" class="info">{% trans "Backlogs" %} </a>
-								&nbsp;
-								<i class="icon-user info"></i> <b>{{ object.stats.user_count }}</b> </span><a href="{% url "project_users" object.pk %}" class="info">{% trans "Team members" %} </a>
+								<p>
+									<i class="icon-list-ul info"></i> <b>{{ object.stats.backlog_count }}</b> </span><a href="{% url "project_detail" object.pk %}" class="info">{% trans "Backlogs" %} </a>
+								</p>
+								<p>
+									<i class="icon-user info"></i> <b>{{ object.stats.user_count }}</b> </span><a href="{% url "project_users" object.pk %}" class="info">{% trans "Team members" %} </a>
+								</p>
 							</div>
 						</div>
 					</div>
@@ -63,16 +66,18 @@
 			{% if is_paginated and page_obj.has_next %}
 				<li>
 					<span class="info"> <a href="?page={{ page_obj.next_page_number }}">{% trans "More project available..." %}</a> </span>
-
 				</li>
 			{% endif %}
 		</ul>
-
-	{%  else %}
+		{%  else %}
+			<ul class="project-list">
+				{% trans "No active project found" %}
+			</ul>
+		{% endif %}
 	</div>
-		<div class="project-count">
-		{% trans "No active project found" %}
-		</div>
-	{% endif %}
-
+	<div class="right">
+		<h1>{% trans "My activities" %}</h1>
+		<div class="actions"></div>
+		{% include "backlog/_events.html" with events=events gravatar=True%}
+	</div>
 {% endblock %}

@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse
 from django_webtest import WebTest
 
-from facile_backlog.backlog.models import Backlog
+from facile_backlog.backlog.models import Backlog, Event
 
 from . import factories
 
@@ -36,7 +36,14 @@ class BacklogTest(WebTest):
         response = form.submit().follow()
         self.assertContains(response, u"Backlog successfully created.")
         self.assertContains(response, u"Backlog one")
+        backlog = Backlog.objects.get()
         self.assertTrue(Backlog.objects.exists())
+        event = Event.objects.get(
+            project=project,
+            backlog=backlog
+        )
+        self.assertEqual(event.text, "created this backlog")
+        self.assertEqual(event.user, user)
 
     def test_backlog_edit(self):
         user = factories.UserFactory.create(
@@ -63,11 +70,21 @@ class BacklogTest(WebTest):
         project = Backlog.objects.get(pk=backlog.pk)
         self.assertEqual(project.name, "New name")
         self.assertEqual(project.description, "New Description")
+        event = Event.objects.get(
+            project=project,
+            backlog=backlog
+        )
+        self.assertEqual(event.text, "modified the backlog")
+        self.assertEqual(event.user, user)
 
     def test_backlog_delete(self):
         user = factories.UserFactory.create(
             email='test@epyx.ch', password='pass')
-        backlog = factories.create_sample_backlog(user)
+        backlog = factories.create_sample_backlog(
+            user, backlog_kwargs={
+                'name': "My backlog"
+            }
+        )
         url = reverse('backlog_delete', args=(backlog.project.pk, backlog.pk))
         # login redirect
         self.app.get(url, status=302)
@@ -77,6 +94,11 @@ class BacklogTest(WebTest):
         response = form.submit().follow()
         self.assertContains(response, u"Backlog successfully deleted.")
         self.assertFalse(Backlog.objects.filter(pk=backlog.pk).exists())
+        event = Event.objects.get(
+            project=backlog.project,
+        )
+        self.assertEqual(event.text, "deleted backlog My backlog")
+        self.assertEqual(event.user, user)
 
     def test_security(self):
         user_1 = factories.UserFactory.create()

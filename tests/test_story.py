@@ -3,7 +3,7 @@ import json
 from django.core.urlresolvers import reverse
 from django_webtest import WebTest
 
-from facile_backlog.backlog.models import UserStory, Backlog
+from facile_backlog.backlog.models import UserStory, Backlog, Event
 
 from . import factories
 
@@ -48,12 +48,23 @@ class StoryTest(WebTest):
         response = form.submit().follow()
         self.assertContains(response, u"Story successfully created.")
         self.assertContains(response, u"maintain my code")
+        story = UserStory.objects.get()
         self.assertTrue(UserStory.objects.exists())
+        event = Event.objects.get(
+            project=backlog.project,
+            backlog=backlog,
+            story=story
+        )
+        self.assertEqual(event.text, "created this story")
+        self.assertEqual(event.user, user)
 
     def test_story_edit(self):
         user = factories.UserFactory.create(
             email='test@epyx.ch', password='pass')
-        story = factories.create_sample_story(user)
+        story = factories.create_sample_story(user, story_kwargs={
+            'points': 10,
+            'status': 'to_do'
+        })
 
         url = reverse('story_backlog_edit', args=(
             story.project.pk, story.backlog.pk, story.pk
@@ -71,7 +82,7 @@ class StoryTest(WebTest):
             'comments': 'This is not negotiable',
             'acceptances': '- Each view, 1 test',
             'points': '20',
-            'status': 'to_do',
+            'status': 'accepted',
             'theme': 'Main theme',
             'color': '#7bd148',
         }.iteritems():
@@ -86,9 +97,19 @@ class StoryTest(WebTest):
         self.assertEqual(story.comments, "This is not negotiable")
         self.assertEqual(story.acceptances, "- Each view, 1 test")
         self.assertEqual(story.points, 20.0)
-        self.assertEqual(story.status, "to_do")
+        self.assertEqual(story.status, "accepted")
         self.assertEqual(story.theme, "Main theme")
         self.assertEqual(story.color, "#7bd148")
+        events = Event.objects.filter(
+            story=story
+        )
+        self.assertEqual(events.count(), 3)
+        # events are ordered
+        self.assertEqual(events[0].user, user)
+        texts = [e.text for e in events.all()]
+        self.assertIn("modified the story", texts)
+        self.assertIn("changed story status from 'to_do' to 'accepted'", texts)
+        self.assertIn("changed story points from '10.0' to '20.0'", texts)
 
     def test_story_delete(self):
         user = factories.UserFactory.create(
@@ -105,6 +126,15 @@ class StoryTest(WebTest):
         response = form.submit().follow()
         self.assertContains(response, u"Story successfully deleted.")
         self.assertFalse(UserStory.objects.filter(pk=story.pk).exists())
+        event = Event.objects.get(
+            project=story.project,
+            backlog=story.backlog
+        )
+        self.assertEqual(
+            event.text,
+            u"deleted story {0}, {1}".format(story.code, story.text)
+        )
+        self.assertEqual(event.user, user)
 
 
 class AjaxTest(WebTest):
@@ -127,21 +157,38 @@ class AjaxTest(WebTest):
 
         # if no write access, returns a 404
         self.app.post(url, json.dumps({'order': order}), status=404)
-        self.app.post(url, json.dumps({'order': order}),
-                      content_type="application/json",
-                      user=user)
+        self.app.post(url, json.dumps({
+            'order': order,
+            'moved_story': order[0],
+        }),
+            content_type="application/json",
+            user=user
+        )
         backlog = Backlog.objects.get(pk=backlog.pk)
         result_order = [c.pk for c in backlog.ordered_stories.all()]
         self.assertEqual(order, result_order)
+        event = Event.objects.get(
+            project=backlog.project,
+            backlog=backlog
+        )
+        self.assertEqual(
+            event.text,
+            u"re-ordered story in backlog"
+        )
+        self.assertEqual(event.user, user)
+        self.assertEqual(event.story.pk, order[0])
 
     def test_story_move(self):
         user = factories.UserFactory.create(
             email='test@epyx.ch', password='pass')
         user_2 = factories.UserFactory.create(
             email='test_2@epyx.ch', password='pass')
-        backlog = factories.create_sample_backlog(user)
+        backlog = factories.create_sample_backlog(user, backlog_kwargs={
+            'name': 'Source backlog'
+        })
         backlog_2 = factories.BacklogFactory.create(
-            project=backlog.project
+            project=backlog.project,
+            name="Target backlog",
         )
 
         story = factories.UserStoryFactory.create(
@@ -167,6 +214,16 @@ class AjaxTest(WebTest):
             'backlog_id': backlog_wrong.pk
         })
         self.app.post(url, data, status=404)
+        event = Event.objects.get(
+            project=backlog.project,
+            backlog=backlog_2
+        )
+        self.assertEqual(
+            event.text,
+            u"moved story from backlog 'Source backlog' to backlog "
+            u"'Target backlog'"
+        )
+        self.assertEqual(event.user, user)
 
     def test_story_status_change(self):
         user = factories.UserFactory.create()

@@ -51,8 +51,8 @@ class RegistrationTest(WebTest):
         event = Event.objects.get(
             project=project
         )
-        self.assertEqual(event.text, "b@test.ch joined the project as "
-                                     "team member")
+        self.assertEqual(event.text, "joined the project as team member")
+        self.assertEqual(event.user, user_b)
 
     def test_revoke_invitation(self):
         user_a = UserFactory.create(email="a@test.ch")

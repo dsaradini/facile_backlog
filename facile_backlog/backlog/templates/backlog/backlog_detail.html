@@ -79,6 +79,7 @@
 					var $this = $(this);
 					$this.sortable("disable");
 					var order = [];
+					var moved_story = ui.item.attr('data-id');
 					$('[data-id]').each(function() {
 						order.push(parseInt($(this).attr('data-id')));
 					});
@@ -86,7 +87,10 @@
 						url: '{% url "backlog_story_reorder" project.pk backlog.pk %}',
 						type: "POST",
 						dataType: "json",
-						data: JSON.stringify({order: order}),
+						data: JSON.stringify({
+							order: order,
+							moved_story: moved_story
+						}),
 						error: function( jqXHR, textStatus, errorThrown ){
 							$("#messages").empty().append(
 								$("<div>").addClass("error").text( '{% trans "Error while reordering elements."%}' )

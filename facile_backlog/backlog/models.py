@@ -67,8 +67,7 @@ class AuthorizationAssociation(models.Model):
             self.save(update_fields=("is_active", "date_joined"))
             create_event(
                 user, self.project,
-                "{0} joined the project as {1}".format(
-                    user.email,
+                "joined the project as {0}".format(
                     "administrator" if self.is_admin else "team member"
                 )
             )
@@ -203,10 +202,6 @@ class Backlog(StatsMixin, ProjectSecurityMixin, models.Model):
             models.Sum('points')).get('points__sum', 0.0)
         return val if val else 0.0
 
-    @property
-    def top_stories(self):
-        return self.ordered_stories[:3]
-
     def __unicode__(self):
         return self.name
 
@@ -317,6 +312,21 @@ class UserStory(ProjectSecurityMixin, models.Model):
         self.save(update_fields=('backlog_id',))
         backlog.save(update_fields=("last_modified",))
 
+    def property_changed(self, user, **kwargs):
+        """
+        create an event if a property in kwargs changed
+        """
+        for k, old_value in kwargs.items():
+            new_value = getattr(self, k)
+            if old_value != new_value:
+                create_event(
+                    user, self.project_id,
+                    u"changed story {0} from '{1}' to '{2}'".format(
+                        k, old_value, new_value,
+                    ),
+                    story=self,
+                )
+
 
 # Enhance User model to add notifications
 def user_notification_count(self):
@@ -334,17 +344,44 @@ class Event(models.Model):
     project = models.ForeignKey(Project, verbose_name=_("Project"),
                                 related_name="events")
     story = models.ForeignKey(UserStory, verbose_name=_("Story"),
-                              blank=True, null=True, related_name="events")
+                              blank=True, null=True, related_name="events",
+                              on_delete=models.SET_NULL)
     backlog = models.ForeignKey(Backlog, verbose_name=_("Backlog"),
-                                blank=True, null=True, related_name="events")
+                                blank=True, null=True, related_name="events",
+                                on_delete=models.SET_NULL)
     text = models.TextField(_("Text"))
+
+    def __unicode__(self):
+        return u"User ID=({0}) {1}".format(self.user_id, self.text)
+
+    class Meta:
+        ordering = ("-when",)
+
+
+def build_event_kwargs(values, **kwargs):
+    """
+    :param values: dictionary
+    :param kwargs: arguments
+    :return: values dictionary
+    Build kwargs for event creation based on either the object itself or its
+    primary key, assuming the property is PROP_id and value is an int
+    """
+    for key, obj in kwargs.items():
+        if isinstance(obj, int) or isinstance(obj, basestring):
+            values['{0}_id'.format(key)] = obj
+        else:
+            values[key] = obj
+    return values
 
 
 def create_event(user, project, text, backlog=None, story=None ):
-    Event.objects.create(
+    kwargs = {
+        'text': text
+    }
+    Event.objects.create(**build_event_kwargs(
+        kwargs,
         user=user,
         project=project,
-        text=text,
         backlog=backlog,
         story=story,
-    )
+    ))

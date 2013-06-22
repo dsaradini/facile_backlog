@@ -18,7 +18,8 @@ from django.views import generic
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect
 
-from .models import Project, Backlog, UserStory, AuthorizationAssociation
+from .models import (Project, Backlog, UserStory, AuthorizationAssociation,
+                     create_event)
 from .forms import (ProjectCreationForm, ProjectEditionForm,
                     BacklogCreationForm, BacklogEditionForm,
                     StoryEditionForm, StoryCreationForm, InviteUserForm)
@@ -57,6 +58,8 @@ class ProjectList(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super(ProjectList, self).get_context_data(**kwargs)
         context['query'] = self.query
+        context['events'] = self.request.user.events.select_related(
+            "project", "backlog", "user", "story", "story__project")[:10]
         return context
 project_list = login_required(ProjectList.as_view())
 
@@ -83,6 +86,7 @@ class ProjectDetail(ProjectMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super(ProjectDetail, self).get_context_data(**kwargs)
         context['project'] = self.project
+        context['events'] = self.project.events.select_related()[:10]
         return context
 project_detail = login_required(ProjectDetail.as_view())
 
@@ -112,6 +116,10 @@ class ProjectCreate(generic.CreateView):
             is_admin=True,
             is_active=True
         )
+        create_event(
+            self.request.user, self.object,
+            "created this project"
+        )
         messages.success(self.request,
                          _("Project successfully created."))
         return redirect(reverse("project_list"))
@@ -128,6 +136,10 @@ class ProjectEdit(ProjectMixin, generic.UpdateView):
 
     def form_valid(self, form):
         project = form.save()
+        create_event(
+            self.request.user, project,
+            "modified the project"
+        )
         messages.success(self.request,
                          _("Project successfully updated."))
         return redirect(project.get_absolute_url())
@@ -255,6 +267,11 @@ class BacklogCreate(ProjectMixin, generic.CreateView):
 
     def form_valid(self, form):
         super(BacklogCreate, self).form_valid(form)
+        create_event(
+            self.request.user, self.project,
+            "created this backlog",
+            backlog=self.object
+        )
         messages.success(self.request,
                          _("Backlog successfully created."))
         return redirect(reverse("project_detail", args=(
@@ -273,6 +290,11 @@ class BacklogEdit(BacklogMixin, generic.UpdateView):
 
     def form_valid(self, form):
         backlog = form.save()
+        create_event(
+            self.request.user, self.project,
+            "modified the backlog",
+            backlog=self.object
+        )
         messages.success(self.request,
                          _("Backlog successfully updated."))
         return redirect(backlog.get_absolute_url())
@@ -288,6 +310,10 @@ class BacklogDelete(BacklogMixin, generic.DeleteView):
 
     def delete(self, request, *args, **kwargs):
         self.backlog.delete()
+        create_event(
+            self.request.user, self.project,
+            u"deleted backlog {0}".format(self.backlog.name),
+        )
         messages.success(request,
                          _("Backlog successfully deleted."))
         return redirect(reverse('project_detail', args=(self.project.pk,)))
@@ -317,8 +343,11 @@ class StoryMixin(object):
             raise Http404('No matches found.')
         self.project = self.story.project
         self.backlog = self.story.backlog if backlog_id else None
-
+        self.pre_dispatch()
         return super(StoryMixin, self).dispatch(request, *args, **kwargs)
+
+    def pre_dispatch(self):
+        pass
 
     def get_context_data(self, **kwargs):
         context = super(StoryMixin, self).get_context_data(**kwargs)
@@ -380,6 +409,12 @@ class StoryCreate(BacklogMixin, generic.CreateView):
 
     def form_valid(self, form):
         super(StoryCreate, self).form_valid(form)
+        create_event(
+            self.request.user, self.project,
+            "created this story",
+            backlog=self.backlog,
+            story=self.object,
+        )
         messages.success(self.request,
                          _("Story successfully created."))
         if self.backlog:
@@ -396,12 +431,25 @@ story_create = login_required(StoryCreate.as_view())
 class StoryEdit(StoryMixin, generic.UpdateView):
     template_name = "backlog/story_form.html"
     form_class = StoryEditionForm
+    notify_changed = ('status', 'points')
 
     def get_object(self):
         return self.story
 
+    def pre_dispatch(self):
+        self._old_values = {}
+        for k in self.notify_changed:
+            self._old_values[k] = getattr(self.story, k)
+
     def form_valid(self, form):
         story = form.save()
+        create_event(
+            self.request.user, self.project,
+            "modified the story",
+            backlog=self.backlog,
+            story=story,
+        )
+        story.property_changed(self.request.user, **self._old_values)
         messages.success(self.request,
                          _("Story successfully updated."))
         if self.backlog:
@@ -428,6 +476,11 @@ class StoryDelete(StoryMixin, generic.DeleteView):
 
     def delete(self, request, *args, **kwargs):
         self.story.delete()
+        create_event(
+            self.request.user, self.project,
+            u"deleted story {0}, {1}".format(self.story.code, self.story.text),
+            backlog=self.backlog
+        )
         messages.success(request,
                          _("Story successfully deleted."))
         return redirect(reverse('backlog_detail', args=(self.project.pk,
@@ -448,20 +501,33 @@ def backlog_story_reorder(request, project_id, backlog_id):
         return HttpResponseNotAllowed("Use POST")
     if not request.user.is_authenticated():
         raise Http404()
-    order = json.loads(request.body).get('order', None)
+    body = json.loads(request.body)
+    order = body.get('order', None)
+    moved_story = body.get('moved_story', None)
     if not order:
         return HttpResponseBadRequest()
     project = get_project_or_404(request.user, project_id)
     backlog = Backlog.objects.get(pk=backlog_id)
+
     if backlog.project_id != project.pk:
         raise Http404('No matches found.')
 
+    touched = False
     for story in backlog.ordered_stories:
         new_index = order.index(story.pk)
         if new_index != story.order:
             story.order = new_index
             story.save(update_fields=('order',))
             story.backlog.save(update_fields=("last_modified",))
+            touched = True
+
+    if touched:
+        create_event(
+            request.user, project,
+            u"re-ordered story in backlog",
+            backlog=backlog,
+            story=moved_story,
+        )
     return HttpResponse(json.dumps({'status': 'ok'}),
                         content_type='application/json')
 
@@ -496,7 +562,17 @@ def story_move(request, project_id):
     if story.project_id != project.pk:
         raise Http404('No matches found.')
     if story.backlog_id != backlog.pk:
+        old_backlog_name = story.backlog.name
         story.move_to(backlog)
+        create_event(
+            request.user, project,
+            u"moved story from backlog '{0}' to backlog '{1}'".format(
+                old_backlog_name,
+                backlog.name,
+            ),
+            backlog=backlog,
+            story=story,
+        )
     return HttpResponse(json.dumps({'status': 'ok'}),
                         content_type='application/json')
 
@@ -520,8 +596,10 @@ def story_change_status(request, project_id):
     story = UserStory.objects.get(pk=story_id)
     if story.project_id != int(project_id):
         raise Http404('No matches found.')
+    old_status = story.status
     story.status = new_status
     story.save()
+    story.property_changed(request.user, status=old_status)
     return HttpResponse(json.dumps({
         'status': 'ok',
         'new_status': story.get_status_display(),
@@ -691,8 +769,7 @@ def invitation_accept(request, auth_id):
     if auth.user != request.user:
         raise Http404
     if not auth.is_active:
-        auth.is_active = True
-        auth.save()
+        auth.activate(request.user)
     messages.success(request, _("You are now a member of this project"))
     return redirect(reverse("project_detail", args=(auth.project_id,)))
 

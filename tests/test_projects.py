@@ -2,7 +2,7 @@ from django.core.urlresolvers import reverse
 from django_webtest import WebTest
 
 from facile_backlog.backlog.models import (Project, AuthorizationAssociation,
-                                           UserStory)
+                                           UserStory, Event)
 
 from . import factories
 
@@ -49,6 +49,11 @@ class ProjectTest(WebTest):
         project = Project.objects.get()
         self.assertTrue(project.can_read(user))
         self.assertTrue(project.can_admin(user))
+        event = Event.objects.get(
+            project=project
+        )
+        self.assertEqual(event.text, "created this project")
+        self.assertEqual(event.user, user)
 
     def test_project_edit(self):
         user = factories.UserFactory.create(
@@ -77,6 +82,11 @@ class ProjectTest(WebTest):
         self.assertEqual(project.name, "New name")
         self.assertEqual(project.description, "New Description")
         self.assertEqual(project.code, "NEWCO")
+        event = Event.objects.get(
+            project=project
+        )
+        self.assertEqual(event.text, "modified the project")
+        self.assertEqual(event.user, user)
 
     def test_project_delete(self):
         user = factories.UserFactory.create(

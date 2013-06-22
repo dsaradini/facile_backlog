@@ -35,7 +35,12 @@
 		</div>
 	</div>
 	<div class="actions">
-		<a class="button" href="{% url "story_backlog_edit" project.pk backlog.pk object.pk %}">{% trans "Edit" %}</a>
-		<a class="button" href="{% url "story_backlog_delete" project.pk backlog.pk object.pk %}">{% trans "Delete" %}</a>
+		{% if backlog %}
+			<a class="button" href="{% url "story_backlog_edit" project.pk backlog.pk object.pk %}">{% trans "Edit" %}</a>
+			<a class="button" href="{% url "story_backlog_delete" project.pk backlog.pk object.pk %}">{% trans "Delete" %}</a>
+		{% else %}
+			<a class="button" href="{% url "story_edit" project.pk object.pk %}">{% trans "Edit" %}</a>
+			<a class="button" href="{% url "story_delete" project.pk object.pk %}">{% trans "Delete" %}</a>
+		{% endif %}
 	</div>
 {% endblock %}

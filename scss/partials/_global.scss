@@ -3,6 +3,7 @@ $background-color: #EEE;
 $header-background-color: #0f787e;
 $header-background-color-end: darken($header-background-color, 5%);
 $header-text-color: #fbffdb;
+$gray-text-color: #999;
 
 $button-background-color: #ff5900;
 $button-background-color-alt: darken($button-background-color, 8%);
@@ -37,7 +38,7 @@ i, italic {
 }
 
 p {
-	margin: 0.5rem 0;
+	margin-bottom: 0.25rem;
 }
 #header {
 	@include clearfix;
@@ -240,6 +241,47 @@ form {
 	}
 }
 
+.left {
+	float:left;
+	width: 450px
+}
+
+.right {
+	margin-left: 1em;
+	float:right;
+	width: 350px
+}
+
+.events-list {
+	font-size: 0.75em;
+	line-height: 1rem;
+	border-collapse:collapse;
+	td {
+		vertical-align: top;
+		padding-bottom: 10px;
+	}
+	img {
+		margin-right: 6px;
+		width:32px;
+		height:32px;
+	}
+	.info {
+		a {
+			border-left: 2px solid $header-background-color;
+			color: $header-background-color;
+			padding-left: 6px;
+			margin-left: 4px;
+		}
+	}
+	.when{
+		float:left;
+		line-height: 2em;
+	}
+	.when {
+		color: $gray-text-color;
+	}
+}
+
 .project-list, .backlog-list {
 	li {
 		display: block;
@@ -255,7 +297,7 @@ form {
 			}
 		}
 		.info {
-			color: #999;
+			color: $gray-text-color;
 		}
 		.stats {
 			margin-left: 2rem;
@@ -279,11 +321,11 @@ form {
 	.top-stories {
 		float:left;
 		display: inline-block;
-		width: 200px;
 		font-size:1rem;
 		padding-left: 0.25em;
 		margin: 0.25em;
 		.story {
+			display: inline-block;
 			padding: 2px 0;
 		}
 	}
@@ -347,7 +389,7 @@ form {
 .description {
 	margin: 0.5em 0;
 	line-height: 1.2em;
-	color: #999;
+	color: $gray-text-color;
 }
 
 .actions {
@@ -404,7 +446,7 @@ ul.errorlist li {
 article.story {
 	display:block;
 	position: relative;
-	margin: 1.5em 0 0.5em 0;
+	margin: 0.5em 0 0.5em 0;
 	padding: 1px;
 	.handle {
 		position: absolute;
@@ -540,7 +582,7 @@ article.story {
 	background-color: rgba(255,255,255,0.5);
 	border:1px dashed rgba(0,0,0,0.2);
 	// should be the same as article ( jquery-ui-soratbale )
-	margin: 1.5em 0 0.5em 0;
+	margin: 0.5em 0 0.5em 0;
 	// do not forget dashed border
 	padding: -1px;
 }
