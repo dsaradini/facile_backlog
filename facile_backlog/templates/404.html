@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block title %}{% trans "Page not found" %}{% endblock %}
+
+{% block content %}
+	<h1>{% trans "This page does not exist" %}</h1>
+	<a href="{% url "home" %}">{% trans "Get me back to home" %}</a>
+{% endblock %}
