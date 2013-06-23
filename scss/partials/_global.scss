@@ -117,6 +117,11 @@ p {
 			color: lighten($header-text-color, 20%)
 		}
 	}
+	.notif-link {
+		&:hover .notification_count{
+			background-color: rgba(255,0,0,0.8);
+		}
+	}
 	.notification_count {
 		border: 1px solid rgba(0,0,0,0.3);
 		background-color: rgba(255,0,0,0.5);
@@ -171,6 +176,11 @@ p {
 		i {
 			padding-right: 0.25rem;
 			color: mix($header-background-color-end , white, 10%);
+		}
+		.sep {
+			padding-left: 0.25rem;
+			color: black;
+			text-shadow: 1px 1px 1px rgba(255,255,255,0.2);
 		}
 		a {
 			color: mix($header-background-color-end , white, 10%);
@@ -295,6 +305,13 @@ form {
 			.black {
 				color: $text-color;
 			}
+			a {
+				color: $header-background-color;
+				text-decoration: none;
+				&:hover {
+					color: initial;
+				}
+			}
 		}
 		.info {
 			color: $gray-text-color;
@@ -302,12 +319,8 @@ form {
 		.stats {
 			margin-left: 2rem;
 		}
-		a {
-			color: $header-background-color;
-			text-decoration: none;
-			&:hover {
-				color: initial;
-			}
+		.create {
+			font-size: 0.75rem;
 		}
 	}
 	.story-stats {
@@ -616,6 +629,7 @@ article.story {
 		padding: 1em;
 		box-shadow: 3px 3px 18px rgba(0,0,0,0.5);
 		border-radius: 0.25em;
+		color: $text-color;
 	}
 	.theme {
 		color: lighten($text-color, 30%);
@@ -823,8 +837,8 @@ input[colorpicker=true] {
 	background-color: alpha($header-background-color-end);
 
 	h1, label {
-		text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
-		color: #ff5900;
+		text-shadow: 0px 0px 12px rgba($header-text-color, 0.7);
+		color: $header-text-color;
 		font-size: 2em;
 	}
 	p {
@@ -834,12 +848,11 @@ input[colorpicker=true] {
 		color: black;
 		text-shadow: 1px 1px 1px rgba(255,255,255,0.3);
 	}
-	#content {
-		//width: auto;
-		//margin: 3em;
-	}
 	.alert {
 		span {
+			margin-top:1em;
+			width: 1em;
+			display: inline-block;
 			font-size: 3em;
 			color: rgba(0,0,0,0.3);
 			text-shadow: 1px 1px 1px rgba(255,255,255,0.1);

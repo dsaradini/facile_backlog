@@ -5,10 +5,10 @@
 
 {% block content %}
 	<div class="path">
-		<a href="{%  url "home" %}"><i class="icon-home"></i>{% trans "Home" %}</a> /
-		<a href="{%  url "project_detail" project.pk %}"> <i class="icon-book"></i> {{ project.name }}</a> /
+		<a href="{%  url "home" %}"><i class="icon-home"></i>{% trans "Home" %}</a> <i class="sep icon-angle-right"></i>
+		<a href="{%  url "project_detail" project.pk %}"> <i class="icon-book"></i> {{ project.name }}</a> <i class="sep icon-angle-right"></i>
 		{% if backlog %}
-			<a href="{%  url "backlog_detail" project.pk backlog.pk %}"> <i class="icon-list-ul"></i> {{ backlog.name }}</a> /
+			<a href="{%  url "backlog_detail" project.pk backlog.pk %}"> <i class="icon-list-ul"></i> {{ backlog.name }}</a> <i class="sep icon-angle-right"></i>
 		{% endif %}
 		<i class="icon-list-alt"></i><span class="current">{{ story.code }}</span>
 	</div>

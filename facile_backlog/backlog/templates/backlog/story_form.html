@@ -35,16 +35,20 @@
 {% endaddtoblock %}
 
 {% addtoblock "js" %}
+<script type="text/javascript" src="{% static "core/js/jquery.autocomplete.min.js" %}"></script>
+{% endaddtoblock %}
+
+{% addtoblock "js" %}
 <script type="text/javascript">
 $(function(){
+	$('[name="as_a"]').autocomplete({
+		lookup: {{ project.all_as_a|jsonify }}
+	});
+	$('[name="theme"]').autocomplete({
+		lookup: {{ backlog.all_themes|jsonify }}
+	});
 	$('[name="color"]').simpleColorPicker({
 		picker: true
-	});
-	$('[name="theme"]').select2({
-		width: "500px",
-		maximumInputLength: 255,
-		maximumSelectionSize: 1,
-		tags: {{ backlog.all_themes|jsonify }}
 	});
 	$('[name="status"]').select2({
 		width: "200px"
@@ -52,24 +56,6 @@ $(function(){
 	$('[name="points"]').select2({
 		width: "100px"
 	});
-	/*
-	$('[name="points"]').select2({
-		width: "100px",
-		maximumInputLength: 3,
-		maximumSelectionSize: 1,
-		allowClear: false,
-		multiple: false,
-		tags: ['-1', '0', '1', '2', '3', '5', '8', '13', '20', '40', '100'],
-		formatSelection:function(object, container) {
-			if (object.text == '-1') return "not set";
-			return object.text;
-		},
-		formatResult:function(object, container, query) {
-			if (object.text == '-1') return "not set";
-			return object.text;
-		}
-	});
-	*/
 })
 </script>
 {% endaddtoblock %}

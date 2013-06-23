@@ -156,6 +156,10 @@ class Project(StatsMixin, models.Model):
             'backlog_count': self.backlogs.count(),
         }
 
+    def all_as_a(self):
+        result = self.stories.values_list('as_a', flat=True).distinct()
+        return list(result)
+
 
 class ProjectSecurityMixin(object):
     def can_read(self, user):
@@ -183,6 +187,9 @@ class Backlog(StatsMixin, ProjectSecurityMixin, models.Model):
     kind = models.CharField(_("Kind"), max_length=16,
                             choices=KIND_CHOICE, default=GENERAL)
     last_modified = models.DateTimeField(_("Last modified"), auto_now=True)
+
+    class Meta:
+        ordering = ("last_modified",)
 
     @property
     def ordered_stories(self):

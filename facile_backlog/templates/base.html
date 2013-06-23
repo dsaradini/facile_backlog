@@ -15,7 +15,7 @@
 
 				<div class="buttons">
 					{% if user.is_authenticated %}
-						<a href="{% url "my_notifications" %}" title="{% trans "Notifications" %}">
+						<a class="notif-link" href="{% url "my_notifications" %}" title="{% trans "Notifications" %}">
 							{% with notification_count=request.user.notification_count %}
 								{% if notification_count %}
 									<span class="notification_count"><i class="icon-bell"></i> {{ notification_count }}</span>
@@ -38,7 +38,6 @@
 				{% if user.is_authenticated %}
 					<div class="identity"><a href="{% url "auth_profile" %}"><span>{{ user.full_name }}</span>&nbsp;&nbsp;<img class="avatar" src="{{ user.get_gravatar_url }}"></a></div>
 				{% endif %}
-
 			</div>
 		</div>
 		<div id="content" >

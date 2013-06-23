@@ -1,6 +1,7 @@
+from django.forms.fields import CharField
 from django.forms.models import ModelForm
 from django.forms import Form
-from django.forms import EmailField, BooleanField, ChoiceField
+from django.forms import EmailField, BooleanField, ChoiceField, CharField
 from django.utils.translation import ugettext as _
 
 from .models import Project, Backlog, UserStory
@@ -50,6 +51,7 @@ class BacklogCreationForm(BacklogEditionForm):
 
 class StoryEditionForm(ModelForm):
     points = ChoiceField(label=_("Points"), help_text=_("Fibonacci series"))
+    as_a = CharField(label=_("As"))
 
     def __init__(self, *args, **kwargs):
         super(StoryEditionForm, self).__init__(*args, **kwargs)
