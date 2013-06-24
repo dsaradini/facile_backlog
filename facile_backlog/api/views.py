@@ -98,7 +98,7 @@ story_list = StoryViewSet.as_view({
 
 story_detail = StoryViewSet.as_view({
     'get': 'retrieve',
-    'put': 'update',
-    'patch': 'partial_update',
-    'delete': 'destroy'
+    #'put': 'update',
+    #'patch': 'partial_update',
+    #'delete': 'destroy'
 })
