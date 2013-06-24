@@ -2,6 +2,9 @@ import os
 import random
 import re
 import string
+import json
+
+from django.test import TestCase, Client
 
 TEST_DATA = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data')
 
@@ -63,3 +66,30 @@ def line_starting(text, start):
         if l.find(start) == 0:
             return l
     return None
+
+
+class ApiClient(Client):
+    def request(self, **request):
+        response = super(ApiClient, self).request(**request)
+        if response.get("Content-Type", "").find('application/json') != -1:
+            response.json = json.loads(response.content)
+        return response
+
+
+class JsonTestCase(TestCase):
+    client_class = ApiClient
+
+    def assertJsonKeyEqual(self, response, key, reference, status_code=200):  # noqa
+        self.assertEqual(response.status_code, status_code)
+        json1 = response.json
+        if key not in json1:
+            raise AssertionError("Json content has no key '{0}'".format(key))
+        if json1[key] != reference:
+            raise AssertionError(
+                "json content ['{0}]' not equal"
+                " '{1}' != '{2}'".format(key, json1[key], reference)
+            )
+
+
+def api_token_auth(token):
+    return {'HTTP_AUTHORIZATION': 'Token {0}'.format(token)}

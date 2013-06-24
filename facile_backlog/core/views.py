@@ -18,7 +18,7 @@ from password_reset import views as password_reset
 from ratelimitbackend.views import login as do_login
 
 from .forms import (ProfileEditionForm, RegistrationForm, PasswordRecoveryForm,
-                    PasswordResetForm)
+                    PasswordResetForm, ChangeApiKeyForm)
 
 
 def login(request):
@@ -168,3 +168,30 @@ class Reset(password_reset.SaltMixin, generic.FormView):
                          _('Your password was successfully reset.'))
         return redirect(self.get_success_url())
 reset = Reset.as_view()
+
+
+class ChangeAPIKey(generic.FormView):
+    form_class = ChangeApiKeyForm
+    template_name = 'profile/api_key_form.html'
+    success_url = reverse_lazy('auth_profile')
+
+    def get_form_kwargs(self):
+        kwargs = super(ChangeAPIKey, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        data = super(ChangeAPIKey, self).get_context_data(**kwargs)
+        data['has_token'] = hasattr(self.request.user, "auth_token")
+        return data
+
+    def form_valid(self, form):
+        created = form.change_or_create()
+        if created:
+            messages.success(self.request,
+                             _('API key successfully created.'))
+        else:
+            messages.success(self.request,
+                             _('API key successfully changed.'))
+        return redirect(self.get_success_url())
+change_api_key = login_required(ChangeAPIKey.as_view())

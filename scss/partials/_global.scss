@@ -243,6 +243,19 @@ form {
 			margin: 0 0 10px 214px;
 		}
 	}
+	.read-only-field {
+		vertical-align: sub;
+		color: $gray-text-color;
+	}
+	pre {
+		font-size: 1.2em;
+		font-family: monospace;
+		display: inline-block;
+		color: $text-color;
+		background-color: white;
+		border: 1px dashed rgba(0,0,0,0.2);
+		padding: 2px;
+	}
 	.submit {
 		padding-left: 220px;
 		input {

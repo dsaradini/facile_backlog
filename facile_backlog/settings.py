@@ -158,6 +158,8 @@ INSTALLED_APPS = (
     'facile_backlog',
     'facile_backlog.backlog',
     'south',
+    'rest_framework',
+    'rest_framework.authtoken'
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -169,6 +171,18 @@ if 'SENTRY_DSN' in os.environ:
     RAVEN_CONFIG = {
         'dsn': os.environ['SENTRY_DSN'],
     }
+
+
+#Rest framework
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated'
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -200,7 +214,7 @@ LOGGING = {
         'sentry': {
             'level': 'ERROR',
             'class':
-                'raven.contrib.django.raven_compat.handlers.SentryHandler',
+            'raven.contrib.django.raven_compat.handlers.SentryHandler',
         },
     },
     'loggers': {

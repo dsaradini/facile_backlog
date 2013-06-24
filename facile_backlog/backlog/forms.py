@@ -1,7 +1,7 @@
 from django.forms.fields import CharField
 from django.forms.models import ModelForm
 from django.forms import Form
-from django.forms import EmailField, BooleanField, ChoiceField, CharField
+from django.forms import EmailField, BooleanField, ChoiceField
 from django.utils.translation import ugettext as _
 
 from .models import Project, Backlog, UserStory

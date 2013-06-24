@@ -4,10 +4,10 @@ from factory import Factory, lazy_attribute, Sequence
 
 from facile_backlog.backlog.models import (Project, UserStory, Backlog,
                                            AuthorizationAssociation)
+from facile_backlog.core.models import User
 
 from . import rand_lorem_phrase, rand_email
 
-from facile_backlog.core.models import User
 
 
 class ProjectFactory(Factory):

@@ -30,7 +30,8 @@ class EventAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
-            self.readonly_fields = [field.name for field in obj.__class__._meta.fields]
+            self.readonly_fields = [
+                field.name for field in obj.__class__._meta.fields]
             return self.readonly_fields
         return self.readonly_fields
 
@@ -47,4 +48,3 @@ admin.site.register(Backlog, BacklogAdmin)
 admin.site.register(UserStory, UserStoryAdmin)
 admin.site.register(AuthorizationAssociation, AuthorizationAssociationAdmin)
 admin.site.register(Event, EventAdmin)
-

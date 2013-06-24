@@ -25,7 +25,7 @@ class UserAdmin(UserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
     list_display = ['email', 'full_name', 'is_active', 'is_staff',
-                    'is_superuser']
+                    'is_superuser', 'auth_token']
     list_filter = ['is_staff', 'is_superuser', 'is_active']
     search_fields = ['email', 'full_name']
     ordering = ['email']

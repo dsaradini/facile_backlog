@@ -99,6 +99,8 @@ class Project(StatsMixin, models.Model):
     @classmethod
     def my_projects(cls, user):
         """ Return all project user accepted the invitation """
+        if not user.is_authenticated():
+            return Project.objects.none()
         return user.projects.filter(
             authorizationassociation__is_active=True
         )
@@ -381,7 +383,7 @@ def build_event_kwargs(values, **kwargs):
     return values
 
 
-def create_event(user, project, text, backlog=None, story=None ):
+def create_event(user, project, text, backlog=None, story=None):
     kwargs = {
         'text': text
     }

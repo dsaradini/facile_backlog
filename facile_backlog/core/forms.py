@@ -4,6 +4,8 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.validators import validate_email
 from django.utils.translation import ugettext_lazy as _
 
+from rest_framework.authtoken.models import Token
+
 from password_reset.forms import (PasswordRecoveryForm as BaseRecovery,
                                   PasswordResetForm as BaseReset)
 
@@ -97,3 +99,17 @@ class PasswordResetForm(BaseReset):
     def save(self):
         self.user.set_password(self.cleaned_data['password1'])
         self.user.save(update_fields=['password'])
+
+
+class ChangeApiKeyForm(forms.Form):
+
+    def __init__(self, user, *args, **kwargs):
+        super(ChangeApiKeyForm, self).__init__(*args, **kwargs)
+        self.user = user
+
+    def change_or_create(self):
+        token, created = Token.objects.get_or_create(user=self.user)
+        if token:
+            token.delete()
+        Token.objects.get_or_create(user=self.user)
+        return created

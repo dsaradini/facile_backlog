@@ -1,4 +1,3 @@
-from django.http.response import Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView

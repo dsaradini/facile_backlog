@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}{% trans "Change API key" %}{% endblock %}
+
+{% block content %}
+	<h1>{% trans "Change API key" %}</h1>
+	<p class="description">
+	{% if has_token %}
+		{% blocktrans %}You're about to request a new API key, your previous key will be revoked. Are you sure your want to do that? {% endblocktrans %}
+	{% else %}
+		{% blocktrans %}You're about to create an API key for your account.{% endblocktrans %}
+	{% endif %}
+	</p>
+	<form method="post" action="{% url "change_api_key" %}">
+		{% include "form.html" %}
+		<div class="submit">
+			<input class="button" type="submit" value="{% if has_token %}{% trans "Change key" %}{% else %}{% trans "Create key" %}{% endif %}">
+			<a class="alt-button" href="{% url "auth_profile" %}">{% trans "cancel" %}</a>
+		</div>
+	</form>
+{% endblock %}

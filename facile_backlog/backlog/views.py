@@ -44,7 +44,7 @@ class ProjectList(generic.ListView):
     paginate_by = 10
 
     def dispatch(self, request, *args, **kwargs):
-        self.query = request.GET.get("q","").replace("+", " ")
+        self.query = request.GET.get("q", "").replace("+", " ")
         return super(ProjectList, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):

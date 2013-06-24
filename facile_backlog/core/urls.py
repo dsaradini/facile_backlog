@@ -34,4 +34,7 @@ urlpatterns = patterns(
 
     url(r'^reset/(?P<token>[\w:-]+)/$', views.reset,
         name='password_reset_reset'),
+
+    url(r'^change_api_key/$', views.change_api_key,
+        name='change_api_key'),
 )
