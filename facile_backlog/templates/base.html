@@ -11,7 +11,12 @@
 	<body class="{% block content_class %}{% endblock %}">
 		<div id="header">
 			<div class="header-in">
-				<div class="title"><a href="{% url "home" %}"><img src="{% static "core/img/backlogman.png" %}" height=30></a></div>
+				<div class="title">
+					<a href="{% url "home" %}">
+						<img src="{% static "core/img/backlogman.png" %}" height=30>
+					</a>
+					<span class="debug">{% if debug %}I am in debug mode!{% endif %}</span>
+				</div>
 
 				<div class="buttons">
 					{% if user.is_authenticated %}

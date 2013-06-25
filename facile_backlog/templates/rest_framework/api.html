@@ -1,0 +1,6 @@
+{% extends "rest_framework/base.html" %}
+{% load static %}
+
+{% block branding %}
+	<a href="{% url "home" %}"><img src="{% static "core/img/backlogman.png" %}" style="height:30px;"></a> {% trans "Backlogman REST API" %}
+{% endblock %}
