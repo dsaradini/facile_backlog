@@ -9,7 +9,6 @@ from facile_backlog.core.models import User
 from . import rand_lorem_phrase, rand_email
 
 
-
 class ProjectFactory(Factory):
     FACTORY_FOR = Project
 

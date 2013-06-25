@@ -1,27 +1,11 @@
 {% extends "base.html" %}
-
+{% load markup %}
 {% block title %}{% trans "Profile" %}{% endblock %}
 
 {% block content %}
 	<h1>{% trans "Update your profile" %}</h1>
 
-	<form method="post" action="{% url "auth_profile" %}">
-
-
-		<div class="field">
-			<label>{% trans "Your API key:" %}</label>
-			{% if request.user.auth_token %}
-				<span class="read-only-field"><pre>{{ request.user.auth_token.key }}</pre>
-						<a class="alt-button" href="{% url "change_api_key" %}">{% trans "Change API key" %}</a>
-				</span>
-			{% else %}
-				<span class="read-only-field">
-					{% trans "You don't have any API key yet" %}
-					<a class="alt-button" href="{% url "change_api_key" %}">{% trans "Create one" %}</a>
-				</span>
-			{% endif %}
-		</div>
-
+	<form method="post" id="change_profile_form" action="{% url "auth_profile" %}">
 		<div class="field">
 			<label>{% trans "Login email" %}</label>
 			<span class="read-only-field">{{ user.email }}</span>
@@ -31,7 +15,24 @@
 			<input class="button" type="submit" value="{% trans "Update profile" %}">
 		</div>
 	</form>
-
-	<h1>{% trans "API" %}</h1>
-	<a href="{% url "api_home" %}">{% trans "API Help" %}</a>
+	<hr>
+	<div class="api">
+		<h1>{% trans "Web service" %}</h1>
+		{% if request.user.auth_token %}
+			<span>
+				{% trans "Your API key" %}
+				<pre>{{ request.user.auth_token.key }}</pre>
+				<a class="alt-button" href="{% url "change_api_key" %}">{% trans "Change API key" %}</a>
+			</span>
+		{% else %}
+			<span>
+				{% trans "You don't have any API key yet" %}
+				<a class="alt-button" href="{% url "change_api_key" %}">{% trans "Create one" %}</a>
+			</span>
+		{% endif %}
+		<h2>Documentation</h2>
+		<ul>
+			<li><a href="{% url "api_home" %}">{% trans "REST service" %}</a></li>
+		</ul>
+	</div>
 {% endblock %}

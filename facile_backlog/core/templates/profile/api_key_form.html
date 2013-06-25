@@ -11,7 +11,7 @@
 		{% blocktrans %}You're about to create an API key for your account.{% endblocktrans %}
 	{% endif %}
 	</p>
-	<form method="post" action="{% url "change_api_key" %}">
+	<form method="post" id="change_key_form" action="{% url "change_api_key" %}">
 		{% include "form.html" %}
 		<div class="submit">
 			<input class="button" type="submit" value="{% if has_token %}{% trans "Change key" %}{% else %}{% trans "Create key" %}{% endif %}">

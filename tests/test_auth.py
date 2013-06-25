@@ -4,7 +4,7 @@ from django_webtest import WebTest
 
 from facile_backlog.core.models import User
 
-from factories import UserFactory
+from . import factories
 
 from . import line_starting
 
@@ -51,7 +51,7 @@ class RegistrationTest(WebTest):
         self.assertTrue(user.is_staff)
 
     def test_reset_password(self):
-        user = UserFactory.create()
+        user = factories.UserFactory.create()
         url = reverse('password_reset_recover')
         response = self.app.get(url)
 
@@ -90,3 +90,36 @@ class RegistrationTest(WebTest):
         }.iteritems():
             form[key] = value
         form.submit().follow()
+
+    def test_profile_change(self):
+        user = factories.UserFactory.create()
+        url = reverse("auth_profile")
+        self.app.get(url, status=302)
+        response = self.app.get(url, user=user)
+        form = response.forms['change_profile_form']
+        for key, value in {
+            'full_name': "My New Name",
+        }.iteritems():
+            form[key] = value
+        form.submit().follow()
+        user = User.objects.get(email=user.email)
+        self.assertEqual(user.full_name, "My New Name")
+
+
+class TokenTest(WebTest):
+
+    def test_token_change(self):
+        user = factories.UserFactory.create()
+        url = reverse("change_api_key")
+        self.app.get(url, status=302)
+        response = self.app.get(url, user=user)
+        form = response.forms['change_key_form']
+        response = form.submit().follow()
+        self.assertContains(response, "API key successfully created.")
+        old_token = user.auth_token.key
+        response = self.app.get(url, user=user)
+        form = response.forms['change_key_form']
+        response = form.submit().follow()
+        self.assertContains(response, "API key successfully changed.")
+        user = User.objects.get(email=user.email)
+        self.assertNotEqual(user.auth_token.key, old_token)

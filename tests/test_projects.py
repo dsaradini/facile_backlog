@@ -162,4 +162,4 @@ class ProjectTest(WebTest):
                 self.assertEqual(elm.find("td.story-points").text(),
                                  "{0:.0f}".format(story.points))
             else:
-                self.assertEqual(elm.find("td.story-points").text(),"")
+                self.assertEqual(elm.find("td.story-points").text(), "")

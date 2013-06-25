@@ -1,6 +1,5 @@
-import json
-
 from django.core.urlresolvers import reverse
+
 from rest_framework.authtoken.models import Token
 
 from .factories import (UserFactory, create_sample_project,

@@ -40,6 +40,16 @@ i, italic {
 p {
 	margin-bottom: 0.25rem;
 }
+
+a {
+	color:$header-background-color;
+}
+
+hr {
+	border-top:1px solid rgba(0,0,0,0.2);
+	border-bottom:1px solid rgba(255,255,255,1);
+	box-sizing: border-box;
+}
 #header {
 	@include clearfix;
 	background-color: $header-background-color;
@@ -221,7 +231,7 @@ p {
 form {
 	.field {
 		font-size:1.25rem;
-		margin: 0.5rem;
+		margin: 0.5em 0;
 		label {
 			display: inline-block;
 			width: 200px;
@@ -257,7 +267,7 @@ form {
 		padding: 2px;
 	}
 	.submit {
-		padding-left: 220px;
+		padding-left: 212px;
 		input {
 			font-size: 1rem;
 		}
@@ -959,5 +969,25 @@ textarea[name=i_want_to] {
 	a {
 		font-size: 0.75em;
 		vertical-align: text-top;
+	}
+}
+
+.api {
+	pre {
+		font-size: 1.2em;
+		font-family: monospace;
+		display: inline-block;
+		color: $text-color;
+		background-color: white;
+		border: 1px dashed rgba(0,0,0,0.2);
+		padding: 0.25em 0.5em;
+	}
+	ul {
+		list-style: circle;
+		list-style-position: inside;
+		margin:0.5em;
+	}
+	h2, h1 {
+		margin:1em 0;
 	}
 }
