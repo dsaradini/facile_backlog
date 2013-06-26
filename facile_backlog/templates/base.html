@@ -1,19 +1,56 @@
 {% load staticfiles sekizai_tags i18n %}<!doctype html>
-<html xmlns="http://www.w3.org/1999/html">
+<html xmlns="http://www.w3.org/1999/html" lang="eng">
 	<head>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="{% static "core/css/bootstrap.min.css" %}" media="screen">
+		<!--
 		<link rel="stylesheet" href="{% static "core/css/main.css" %}">
+		-->
 		<link rel="shortcut icon" href="{% static "core/img/favicon.png" %}">
 		<meta name="apple-mobile-web-app-title" content="Facile Backlog">
 		<title>{% block title %}{% trans "Welcome" %}{% endblock %} &mdash; Backlogman</title>
 	</head>
 	<body class="{% block content_class %}{% endblock %}">
+		<div class="navbar navbar-static-top">
+		  <div class="navbar-inner">
+			<a class="brand" href="{% url "home" %}">
+				<img src="{% static "core/img/backlogman_32.png" %}" >
+				Backlogman
+			</a>
+			<ul class="nav">
+			  <li class="active"><a href="{% url "home" %}">{% trans "Projects" %}</a></li>
+			  <li><a href="{% url "api_home" %}">{% trans "API" %}</a></li>
+				{% if request.user.is_staff %}
+			  		<li><a href="{% url 'admin:index' %}">{% trans "Admin" %}</a></li>
+				{% endif %}
+			</ul>
+			<ul class="nav pull-right">
+				{% if user.is_authenticated %}
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+						<img class="avatar" src="{{ user.get_gravatar_url }}">&nbsp;{{ user.full_name }}
+						<b class="caret"></b>
+					</a>
+					<ul class="dropdown-menu">
+						<li><a href="{% url "auth_profile" %}">{% trans "Profile" %}</a></li>
+						<li>
+							<form id="logout_form" method="POST" action="{% url 'auth_logout' %}">
+								{% csrf_token %}
+								<a class="logout" type="submit" value="{% trans "logout" %}">Logout</a>
+							</form>
+						</li>
+					</ul>
+				</li>
+				{% endif %}
+			</ul>
+		  </div>
+		</div>
 		<div id="header">
 			<div class="header-in">
 				<div class="title">
 					<a href="{% url "home" %}">
-						<img src="{% static "core/img/backlogman.png" %}" height=30>
+
 					</a>
 					<span class="debug">{% if debug %}I am in debug mode!{% endif %}</span>
 				</div>
@@ -55,6 +92,8 @@
 			{% block content %}{% endblock %}
 			</div>
 		</div>
+		<script src="{% static "core/js/jquery.js" %}"></script>
+		<script src="{% static "core/js/bootstrap.min.js" %}"></script>
 		{% render_block "js" %}
 	</body>
 </html>
