@@ -28,21 +28,30 @@
 							{% endwith %}
 						</a>
 						<span class="sep"></span>
-						<form id="logout_form" method="POST" action="{% url 'auth_logout' %}">
-							{% csrf_token %}
-							<input class="logout" type="submit" value="{% trans "logout" %}">
-						</form>
-					{% if user.is_authenticated %}
-						<span class="sep"></span>
-						<a href="{% url 'admin:index' %}">{% trans "Admin" %}</a>
-					{% endif %}
+						<div class="identity">
+							<ul class="dropdown-button">
+								<li>
+									<a href=".">{{ user.full_name }} <i class="icon-chevron-down"></i> <img class="avatar" src="{{ user.get_gravatar_url }}"> </a>
+									<ul>
+										<li><a href="{% url "auth_profile" %}">{% trans "Manage profile" %}</a></li>
+										{% if user.is_staff %}
+											<a href="{% url 'admin:index' %}">{% trans "Admin site" %}</a>
+										{% endif %}
+										<hr>
+										<li>
+											<form id="logout_form" method="POST" action="{% url 'auth_logout' %}">
+												{% csrf_token %}
+												<input class="logout" type="submit" value="{% trans "logout" %}">
+											</form>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</div>
 					{% else %}
 						<a href="{% url 'auth_login' %}">{% trans "Sign in" %}</a>
 					{% endif %}
 				</div>
-				{% if user.is_authenticated %}
-					<div class="identity"><a href="{% url "auth_profile" %}"><span>{{ user.full_name }}</span>&nbsp;&nbsp;<img class="avatar" src="{{ user.get_gravatar_url }}"></a></div>
-				{% endif %}
 			</div>
 		</div>
 		<div id="content" >
@@ -55,6 +64,22 @@
 			{% block content %}{% endblock %}
 			</div>
 		</div>
+{% addtoblock "js" %}
+<script type="text/javascript" src="{% static "core/js/jquery.js" %}"></script>
+{% endaddtoblock %}
+
+{% addtoblock "js" %}
+<script type="text/javascript" src="{% static "core/js/dropit.js" %}"></script>
+{% endaddtoblock %}
+
+{% addtoblock "js" %}
+<script type="text/javascript">
+	$(function() {
+		$(".dropdown-button").dropit()
+	})
+</script>
+{% endaddtoblock %}
+
 		{% render_block "js" %}
 	</body>
 </html>

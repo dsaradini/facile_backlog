@@ -47,7 +47,7 @@ a {
 
 hr {
 	border-top:1px solid rgba(0,0,0,0.2);
-	border-bottom:1px solid rgba(255,255,255,1);
+	border-bottom:1px solid rgba(255,255,255,0.3);
 	box-sizing: border-box;
 }
 #header {
@@ -61,6 +61,7 @@ hr {
 	box-shadow: 0 1px 5px rgba(0,0,0,0.5);
 	border-top: 1px solid black;
 	border-bottom: 1px solid rgba(0,0,0,0.3);
+	overflow: visible;
 	.header-in {
 		width:900px;
 		margin: 0 auto;
@@ -90,10 +91,11 @@ hr {
 		}
 	}
 	.identity {
-		float: right;
-		margin-top: 9px;
 		a *{
 			vertical-align: middle;
+		}
+		ul.dropit-submenu {
+			right: 0;
 		}
 	}
 	.buttons {
@@ -143,6 +145,10 @@ hr {
 		padding: 0.25em 0.5em;
 		box-sizing: border-box;
 		display: inline-block;
+	}
+	ul.dropit-submenu {
+		background-color: $header-background-color-end;
+		border: 1px solid $text-color;
 	}
 }
 
@@ -694,16 +700,19 @@ article.story {
 		   -moz-box-shadow: 0px 1px 3px rgba(0,0,0,0.15);
 				box-shadow: 0px 1px 3px rgba(0,0,0,0.15);
 	}
-	ul.dropit-submenu a {
+	ul.dropit-submenu a,form {
 		display: block;
-		font-size: 14px;
 		line-height: 25px;
 		color: #7a868e;
 		padding: 0 18px;
 		white-space: nowrap;
 	}
-	ul.dropit-submenu a:hover {
-		background: #248fc1;
+	ul.dropit-submenu form input {
+		width: 100%;
+		text-align: left;
+	}
+	ul.dropit-submenu a:hover, form:hover {
+		background: rgba(255,255,255,0.3);
 		color: #fff;
 		text-decoration: none;
 	}
