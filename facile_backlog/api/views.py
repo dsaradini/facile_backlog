@@ -25,6 +25,10 @@ class HomeView(viewsets.ViewSet):
             reverse('api_backlog_detail',
                     request=request,
                     args=("project_id", "backlog_id")),
+            'projects/<project_id>/backlogs/<backlog_id>/stories':
+            reverse('api_story_list',
+                    request=request,
+                    args=("project_id", "backlog_id")),
         })
 home_view = HomeView.as_view({'get': 'list'})
 
