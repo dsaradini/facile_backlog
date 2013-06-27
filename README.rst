@@ -6,6 +6,11 @@ Backlogman
    :target: https://travis-ci.org/dsaradini/facile_backlog
 
 
+.. image:: https://coveralls.io/repos/dsaradini/facile_backlog/badge.png?branch=master
+   :alt: Coverage Status
+   :target: https://coveralls.io/r/dsaradini/facile_backlog?branch=master
+
+
 Manage your project using https://app.backlogman.com
 
 Project
