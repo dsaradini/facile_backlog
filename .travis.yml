@@ -7,9 +7,7 @@ before_install:
   - sudo apt-get install daemontools
 
 install:
-  - pip install -r requirements.txt
   - pip install -r requirements-dev.txt
-  - pip install pep8
 
 before_script:
   - pep8 --exclude=migrations facile_backlog
