@@ -20,4 +20,6 @@ gunicorn:
 coverage:
 	envdir tests/envdir coverage run --source=facile_backlog manage.py test  --noinput
 	coverage html
+
+coverageshow: coverage
 	open htmlcov/index.html

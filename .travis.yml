@@ -16,4 +16,7 @@ before_script:
   - pep8 tests
 
 script:
-  - PYTHONPATH=. make test
+  - PYTHONPATH=. make coverage
+
+after_success:
+  - coveralls
