@@ -1,15 +1,16 @@
 {% extends "base.html" %}
+{% load sekizai_tags static %}
 {% block title %}{% trans "Print stories" %}{% endblock %}
 
 {% block content %}
 	<h1>{% trans "Generate PDF for printing" %}</h1>
 	<p class="description">{% trans "Select the stories you want to wee on your PDF" %}</p>
-	<form method="post" id="delete_form" action="{% url "print_stories" project.pk %}">
+	<form method="post" id="print_pdf_form" action="{% url "print_stories" project.pk %}">
 		<table class="project-stories">
 			<thead class="headers">
 				<tr>
 					<td class="story-code" style="width:120px;">
-						<input type="checkbox" id="select-all" {% if to_print|length %}checked{% endif %}>
+						<input type="checkbox" id="select-all" checked>
 						{% trans "ID" %}
 					</td>
 					<td class="story-desc">
@@ -29,8 +30,8 @@
 			<tbody>
 				{% for story in stories %}
 					<tr id="story-{{ story.pk }}">
-						<td class="story-code" style="border-left: 3px solid {{ story.color }}">
-							<input type="checkbox" id="story-{{ story.pk }}" name="story-{{ story.pk }}">
+						<td class="story-code story" style="border-left: 3px solid {{ story.color }}">
+							<input type="checkbox" id="story-{{ story.pk }}" name="story-{{ story.pk }}" checked>
 							{{ story.code }}
 						</td>
 						<td class="story-desc">
@@ -53,5 +54,22 @@
 			<a class="alt-button" href="{% url "project_detail" project.pk %}">{% trans "Back to backlog" %}</a>
 		</div>
 	</form>
+{% addtoblock "js" %}
+<script type="text/javascript" src="{% static "core/js/jquery.js" %}"></script>
+{% endaddtoblock %}
 
+{% addtoblock "js" %}
+<script type="text/javascript">
+$(function(){
+	$("#select-all").click(function(){
+		var checked = $(this).attr("checked");
+		if (checked) {
+			$("td.story input[type=checkbox]").attr("checked", "")
+		} else {
+			$("td.story input[type=checkbox]").removeAttr("checked")
+		}
+	})
+})
+</script>
+{% endaddtoblock %}
 {% endblock %}

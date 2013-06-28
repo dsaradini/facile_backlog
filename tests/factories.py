@@ -120,9 +120,10 @@ def create_sample_backlog(user, project_kwargs={}, backlog_kwargs={}):
 
 
 def create_sample_story(user, story_kwargs={},
-                        project_kwargs={}, backlog_kwargs={}):
-    backlog = create_sample_backlog(user, project_kwargs=project_kwargs,
-                                    backlog_kwargs=backlog_kwargs)
+                        project_kwargs={}, backlog_kwargs={}, backlog=None):
+    if not backlog:
+        backlog = create_sample_backlog(user, project_kwargs=project_kwargs,
+                                        backlog_kwargs=backlog_kwargs)
     _story_kwargs = story_kwargs.copy()
     _story_kwargs['project'] = backlog.project
     _story_kwargs['backlog'] = backlog

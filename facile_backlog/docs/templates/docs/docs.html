@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load markup %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+	<div class="site-documentation markup">
+		{{ markdown|markdown }}
+	</div>
+{% endblock %}

@@ -1,6 +1,5 @@
 from rest_framework import viewsets
-from rest_framework.response import Response
-from rest_framework.reverse import reverse
+from django.shortcuts import redirect
 
 from .serializers import ProjectSerializer, BacklogSerializer, StorySerializer
 
@@ -11,25 +10,7 @@ class HomeView(viewsets.ViewSet):
     _ignore_model_permissions = True
 
     def list(self, request):
-        return Response({
-            'projects/': reverse('api_project_list', request=request),
-            'projects/<project_id>/':
-            reverse('api_project_detail',
-                    request=request,
-                    args=("project_id",)),
-            'projects/<project_id>/backlogs/':
-            reverse('api_backlog_list',
-                    request=request,
-                    args=("project_id",)),
-            'projects/<project_id>/backlogs/<backlog_id>/':
-            reverse('api_backlog_detail',
-                    request=request,
-                    args=("project_id", "backlog_id")),
-            'projects/<project_id>/backlogs/<backlog_id>/stories':
-            reverse('api_story_list',
-                    request=request,
-                    args=("project_id", "backlog_id")),
-        })
+        return redirect("/doc/api")
 home_view = HomeView.as_view({'get': 'list'})
 
 

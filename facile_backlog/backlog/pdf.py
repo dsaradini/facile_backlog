@@ -17,9 +17,9 @@ from xhtml2pdf.document import pisaStory
 
 POSITIONS = (
     (1.5, 1.5),
-    (15, 1.5),
+    (15.5, 1.5),
     (1.5, 11),
-    (15, 11)
+    (15.5, 11)
 )
 
 SIZE = (12.5, 8)
@@ -129,11 +129,13 @@ def generate_pdf(stories, file_name):
 
     # Create the PDF object, using the response object as its "file."
     c = canvas.Canvas(response, pagesize=landscape(A4))
-
+    c.setAuthor("backlogman.com")
+    c.setTitle("User story printing")
+    c.setSubject("Stories")
     i = 0
     front = True
     story_per_page = len(POSITIONS)
-    while i < max(4, len(stories)):
+    while i < len(stories) or front:
         m = divmod(i, story_per_page)[1]
         if i < len(stories):
             story = stories[i]

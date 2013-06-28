@@ -4,6 +4,7 @@ import os
 
 import requests
 
+from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.translation import ugettext as _
 
@@ -16,7 +17,7 @@ from ....core.models import User
 logger = logging.getLogger(__name__)
 
 
-AUTH_TOKEN = os.getenv("EASYBACKLOG_TOKEN", "")
+AUTH_TOKEN = settings.EASYBACKLOG_TOKEN
 
 
 def easy_request(path):

@@ -1,13 +1,10 @@
-from django.conf.urls import url, patterns, include
+from django.conf.urls import url, patterns
 
 from .views import (home_view, project_list, project_detail,
                     backlog_list, backlog_detail, story_list, story_detail)
 
 urlpatterns = patterns(
     '',
-
-    url(r'^api-auth/', include('rest_framework.urls',
-                               namespace='rest_framework')),
 
     url(r'^api-token-auth/',
         'rest_framework.authtoken.views.obtain_auth_token'),

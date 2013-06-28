@@ -5,6 +5,7 @@ import dj_database_url
 
 from django.core.urlresolvers import reverse_lazy
 
+EASYBACKLOG_TOKEN = os.getenv("EASYBACKLOG_TOKEN", "")
 
 DEBUG = (os.environ.get('DEBUG', "False").lower() not in [
     'false', 'no', 'none'])
@@ -157,6 +158,7 @@ INSTALLED_APPS = (
     'sekizai',
     'facile_backlog',
     'facile_backlog.backlog',
+    'facile_backlog.docs',
     'south',
     'rest_framework',
     'rest_framework.authtoken'

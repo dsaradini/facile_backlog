@@ -30,6 +30,8 @@ urlpatterns = patterns(
 
     url(r'^api/', include('facile_backlog.api.urls')),
 
+    url(r'^doc/', include('facile_backlog.docs.urls')),
+
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^404$', page_404),

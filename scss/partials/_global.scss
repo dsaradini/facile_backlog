@@ -33,7 +33,7 @@ b, strong {
 	font-weight: bold;
 }
 
-i, italic {
+i, italic, em {
 	font-style: italic;
 }
 
@@ -777,6 +777,10 @@ article.story {
 			&[status=completed] {
 				background-color: rgb(0,100,150);
 			}
+			&[status=in_progress] {
+				background-color: rgb(150,150,80);
+			}
+
 		}
 		.story-theme {
 			color: gray;

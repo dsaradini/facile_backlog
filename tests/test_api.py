@@ -22,8 +22,9 @@ class APITest(JsonTestCase):
 
         user = UserFactory.create(email="test@test.ch")
         auth = user_token_auth(user)
-        response = self.client.get(url, **auth)
-        self.assertContains(response, "projects/<project_id>/")
+        response = self.client.get(url, status=302, follow=True, **auth)
+        # redirect to documentation
+        self.assertContains(response, "/api/project/[project-id]/")
 
     def test_api_project_list(self):
         user = UserFactory.create(email="test@test.ch")
