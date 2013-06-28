@@ -1,13 +1,11 @@
 import json
-import logging
 import mock
-import os
 from io import BytesIO as BaseBytesIO
 from django_webtest import WebTest
 from requests import Response
 
 from facile_backlog.backlog.management.commands.easy_import import Command
-from facile_backlog.backlog.models import Backlog, Project, UserStory
+from facile_backlog.backlog.models import Project, UserStory
 
 from . import factories
 
@@ -102,7 +100,7 @@ def request_get(url, *args, **kwargs):
     elif url.endswith("/api/backlogs/357/themes"):
         return json_respnse([
             {
-                "backlog_id":33,
+                "backlog_id": 33,
                 "code": "HOP",
                 "created_at": "2012-05-24T13:13:18Z",
                 "id": 1164,
@@ -157,4 +155,3 @@ class HomeTest(WebTest):
                                      "the products work")
         self.assertTrue(story.project == project)
         self.assertEqual(story.acceptances, "- Make test working\n")
-
