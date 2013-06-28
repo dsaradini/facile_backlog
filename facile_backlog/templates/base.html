@@ -31,7 +31,7 @@
 						<div class="identity">
 							<ul class="dropdown-button">
 								<li>
-									<a href=".">{{ user.full_name }} <i class="icon-chevron-down"></i> <img class="avatar" src="{{ user.get_gravatar_url }}"> </a>
+									<a href="."> {{ user.full_name }} <img class="avatar" src="{{ user.get_gravatar_url }}"> </a>
 									<ul>
 										<li><a href="{% url "auth_profile" %}">{% trans "Manage profile" %}</a></li>
 										{% if user.is_staff %}

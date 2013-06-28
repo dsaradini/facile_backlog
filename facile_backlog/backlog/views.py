@@ -26,6 +26,7 @@ from .forms import (ProjectCreationForm, ProjectEditionForm,
 
 
 from ..core.models import User
+from .pdf import generate_pdf
 
 
 def get_projects(user):
@@ -74,7 +75,12 @@ class ProjectMixin(object):
                                           pk=kwargs['project_id'])
         if self.admin_only and not self.project.can_admin(request.user):
             raise Http404
+        self.request = request
+        self.pre_dispatch()
         return super(ProjectMixin, self).dispatch(request, *args, **kwargs)
+
+    def pre_dispatch(self):
+        pass
 
 
 class ProjectDetail(ProjectMixin, generic.DetailView):
@@ -605,6 +611,33 @@ def story_change_status(request, project_id):
         'new_status': story.get_status_display(),
         'code': story.status,
     }), content_type='application/json')
+
+
+class PrintStories(ProjectMixin, generic.TemplateView):
+    template_name = "backlog/print_stories.html"
+
+    def pre_dispatch(self):
+        backlog_id = self.request.GET.get('backlog_id', None)
+        if backlog_id:
+            backlog = get_object_or_404(Backlog, pk=backlog_id)
+            self.stories = backlog.stories
+        else:
+            self.stories = self.project.stories
+
+    def get_context_data(self, **kwargs):
+        data = super(PrintStories, self).get_context_data(**kwargs)
+        data['stories'] = self.stories.all()
+        data['project'] = self.project
+        return data
+
+    def post(self, request, *args, **kwargs):
+        ids = []
+        for k, v in request.POST.items():
+            if k.find("story-") == 0:
+                ids.append(k.split("-")[1])
+        stories = self.project.stories.filter(pk__in=ids)
+        return generate_pdf(stories, "{0}-stories".format(self.project.code))
+print_stories = login_required(PrintStories.as_view())
 
 
 class InviteUser(ProjectMixin, generic.FormView):

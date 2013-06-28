@@ -7,7 +7,7 @@ from .views import (project_list, project_detail, project_create, project_edit,
                     story_move, story_change_status, invite_user,
                     invitation_activate, project_users, auth_delete,
                     notification_view, invitation_accept, invitation_decline,
-                    project_stories)
+                    project_stories, print_stories)
 
 # projects
 urlpatterns = patterns(
@@ -106,6 +106,9 @@ urlpatterns += patterns(
         story_change_status,
         name='story_change_status'),
 
+    url(r'^projects/(?P<project_id>[\d]+)/print_stories/$',
+        print_stories,
+        name='print_stories'),
 )
 
 # utilities

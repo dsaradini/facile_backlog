@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}{% trans "Print stories" %}{% endblock %}
+
+{% block content %}
+	<h1>{% trans "Generate PDF for printing" %}</h1>
+	<p class="description">{% trans "Select the stories you want to wee on your PDF" %}</p>
+	<form method="post" id="delete_form" action="{% url "print_stories" project.pk %}">
+		<table class="project-stories">
+			<thead class="headers">
+				<tr>
+					<td class="story-code" style="width:120px;">
+						<input type="checkbox" id="select-all" {% if to_print|length %}checked{% endif %}>
+						{% trans "ID" %}
+					</td>
+					<td class="story-desc">
+						{% trans "Description" %}
+					</td>
+					<td class="story-backlog">
+						{% trans "Backlog" %}
+					</td>
+					<td class="story-status">
+						{% trans "Status" %}
+					</td>
+					<td class="story-theme">
+						{% trans "Theme" %}
+					</td>
+				</tr>
+			</thead>
+			<tbody>
+				{% for story in stories %}
+					<tr id="story-{{ story.pk }}">
+						<td class="story-code" style="border-left: 3px solid {{ story.color }}">
+							<input type="checkbox" id="story-{{ story.pk }}" name="story-{{ story.pk }}">
+							{{ story.code }}
+						</td>
+						<td class="story-desc">
+							{% include "backlog/user_story_text.html" %}
+						</td>
+						<td class="story-backlog">
+							{{story.backlog.name }}
+						</td>
+						<td class="story-status">
+							<span status="{{ story.status }}">{{ story.get_status_display }}</span>
+						</td>
+						<td class="story-theme">{{ story.theme }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% csrf_token %}
+		<div class="submit-delete actions">
+			<button class="button" type="submit">{% trans "Generate PDF" %}</button>
+			<a class="alt-button" href="{% url "project_detail" project.pk %}">{% trans "Back to backlog" %}</a>
+		</div>
+	</form>
+
+{% endblock %}

@@ -27,6 +27,7 @@
 		<a class="button" href="{% url "story_create" project.pk backlog.pk %}">
 			{% trans "Add user story" %}
 		</a>
+		<a class="alt-button" href="{% url "print_stories" project.pk %}?backlog_id={{ backlog.pk }}">{% trans "Generate PDF" %}</a>
 		</div>
 		<span class="sub-field filter" style="display:none">{% trans "Highlight theme:" %}<select id="theme-select">
 			<option value=""></option>

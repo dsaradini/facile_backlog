@@ -50,7 +50,10 @@
 			{% for story in stories %}
 				<tr id="story-{{ story.pk }}">
 					<td class="story-code" style="border-left: 3px solid {{ story.color }}">
-						<a href="{% url "story_backlog_detail" project.pk story.backlog.pk story.pk %}">{{ story.code }}</a>
+						{% if selectable %}
+							<input type="checkbox" name="story-{{ story.pk }}">
+						{% endif %}
+						<a href="{% url "story_backlog_detail" story.project_id story.backlog.pk story.pk %}">{{ story.code }}</a>
 					</td>
 					<td class="story-desc">
 						{% include "backlog/user_story_text.html" %}
@@ -72,7 +75,6 @@
 				</tr>
 			{% endfor %}
 		</tbody>
-
 	</table>
 
 {% endblock %}
