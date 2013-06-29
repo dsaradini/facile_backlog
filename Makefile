@@ -18,6 +18,7 @@ gunicorn:
 	envdir envdir gunicorn facile_backlog.wsgi -b 0.0.0.0:8000
 
 coverage:
+	rm -f .coverage
 	envdir tests/envdir coverage run --source=facile_backlog manage.py test  --noinput
 	coverage html
 

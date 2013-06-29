@@ -20,14 +20,15 @@
 
 				<div class="buttons">
 					{% if user.is_authenticated %}
-						<a class="notif-link" href="{% url "my_notifications" %}" title="{% trans "Notifications" %}">
-							{% with notification_count=request.user.notification_count %}
-								{% if notification_count %}
+						{% with notification_count=request.user.notification_count %}
+							{% if notification_count %}
+								<a class="notif-link" href="{% url "my_notifications" %}" title="{% trans "Notifications" %}">
 									<span class="notification_count"><i class="icon-bell"></i> {{ notification_count }}</span>
-								{% endif %}
-							{% endwith %}
-						</a>
-						<span class="sep"></span>
+
+								</a>
+								<span class="sep"></span>
+							{% endif %}
+						{% endwith %}
 						<div class="identity">
 							<ul class="dropdown-button">
 								<li>

@@ -8,6 +8,7 @@ before_install:
 
 install:
   - pip install -r requirements-dev.txt
+  - pip install coveralls
 
 before_script:
   - pep8 --exclude=migrations facile_backlog

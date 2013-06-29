@@ -496,7 +496,7 @@ article.story {
 	.handle {
 		position: absolute;
 		top: 1px;
-		width: 10px;
+		width: 20px;
 		bottom: 1px;
 		left: 0px;
 		background-image: url('../img/grab.png');
@@ -507,13 +507,12 @@ article.story {
 		cursor: pointer;
 	}
 	.handled {
-		padding-left:15px;
 		background-color: rgba(0,0,0,0.1);
 		border-top:1px solid rgba(0,0,0,0.2);
 		border-right:1px solid rgba(0,0,0,0.2);
 		border-bottom:1px solid rgba(0,0,0,0.2);
 		border-left:1px solid rgba(255,255,255,0.6);
-		padding: 8px 2px 8px 18px;
+		padding: 8px 2px 8px 28px;
 	}
 	.color {
 		content: "\00a0";
