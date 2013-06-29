@@ -9,33 +9,25 @@
 	<h1>{% trans "Welcome to Backlogman." %}</h1>
 	<p>
 		<i class="icon-quote-left"></i>
-		{% trans "The smartest way to manage your projects backlogs" %}
+		{% trans "A easy way to manage your projects backlogs" %}
 		<i class="icon-quote-right"></i>
 	</p>
 
-	<p class="alert">
-		<span class="icon-warning-sign"></span>
-		This application is currently in construction, there is no database backup yet.
-		<br>
-		<span class="icon-info-sign"></span>
-		REST API in read-ony mode available <a href="/doc/api">check it</a>.
-		<br>
-		<span class="icon-play-sign"></span>
-		User story PDF generation available
-	</p>
-
-		<form class="home-login" method="POST" action="{% url "auth_login" %}">
-			<h3>{% trans "Already an account?" %}</h3>
-			{% csrf_token %}
-			<input class="full" id="id_username" maxlength="254" name="username" type="text" placeholder="{% trans "username or email" %}">
-			<input id="id_password" name="password" type="password" placeholder="{% trans "Password" %}">
-			<input class="button" type="submit" value="{% trans "Login" %}">
-			<p>
-				<a href="{% url "password_reset_recover" %}">{% trans "Forgot your password?" %}</a>
-			</p>
+	<div class="home-blog">
+		{% include "blog/blog_list.html" with blog_list=blog_list %}
+	</div>
+	<form class="home-login" method="POST" action="{% url "auth_login" %}">
+		<h3>{% trans "Already an account?" %}</h3>
+		{% csrf_token %}
+		<input class="full" id="id_username" maxlength="254" name="username" type="text" placeholder="{% trans "username or email" %}">
+		<input id="id_password" name="password" type="password" placeholder="{% trans "Password" %}">
+		<input class="button" type="submit" value="{% trans "Login" %}">
+		<p>
+			<a href="{% url "password_reset_recover" %}">{% trans "Forgot your password?" %}</a>
+		</p>
 
 
-		</form>
+	</form>
 
 
 		<form class="home-login" method="POST" action="{% url "registration_register" %}">

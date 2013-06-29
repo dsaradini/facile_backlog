@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block title %}{% trans "Blog" %}{% endblock %}
+
+{% block content %}
+	<h1>Backlogman news</h1>
+	{% include "blog/blog_list.html" with blog_list=object_list%}
+{% endblock %}

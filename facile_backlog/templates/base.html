@@ -19,6 +19,9 @@
 				</div>
 
 				<div class="buttons">
+
+					<a href="{% url "blog_index" %}">{% trans "News" %}</a>
+					<span class="sep"></span>
 					{% if user.is_authenticated %}
 						{% with notification_count=request.user.notification_count %}
 							{% if notification_count %}

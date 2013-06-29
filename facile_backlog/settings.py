@@ -159,6 +159,7 @@ INSTALLED_APPS = (
     'facile_backlog',
     'facile_backlog.backlog',
     'facile_backlog.docs',
+    'facile_backlog.blog',
     'south',
     'rest_framework',
     'rest_framework.authtoken'

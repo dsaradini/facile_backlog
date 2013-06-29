@@ -39,6 +39,7 @@ i, italic, em {
 
 p {
 	margin-bottom: 0.25rem;
+	line-height: 1.5em;
 }
 
 a {
@@ -879,6 +880,10 @@ input[colorpicker=true] {
 		color: $header-text-color;
 		font-size: 2em;
 	}
+	h2 {
+		color: $header-text-color;
+		font-size: 1.5em;
+	}
 	p {
 		color: rgba(255,255,255,0.5);
 	}
@@ -886,17 +891,11 @@ input[colorpicker=true] {
 		color: black;
 		text-shadow: 1px 1px 1px rgba(255,255,255,0.3);
 	}
-	.alert {
-		span {
-			margin-top:1em;
-			width: 1em;
-			display: inline-block;
-			font-size: 3em;
-			color: rgba(0,0,0,0.3);
-			text-shadow: 1px 1px 1px rgba(255,255,255,0.1);
-		}
+	.home-blog {
 		float: left;
 		width: 500px;
+		position: relative;
+		display: block;
 	}
 }
 

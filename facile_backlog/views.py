@@ -2,6 +2,8 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
 
+from facile_backlog.blog.models import BlogPost
+
 from ratelimitbackend.forms import AuthenticationForm
 
 
@@ -23,6 +25,7 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         data = super(HomeView, self).get_context_data(**kwargs)
         data['form'] = AuthenticationForm(self.request)
+        data['blog_list'] = BlogPost.objects.all()
         return data
 
 home_view = HomeView.as_view()

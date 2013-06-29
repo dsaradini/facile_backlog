@@ -4,6 +4,9 @@ from factory import Factory, lazy_attribute, Sequence
 
 from facile_backlog.backlog.models import (Project, UserStory, Backlog,
                                            AuthorizationAssociation)
+
+from facile_backlog.blog.models import BlogPost
+
 from facile_backlog.core.models import User
 
 from . import rand_lorem_phrase, rand_email
@@ -99,6 +102,14 @@ class UserFactory(Factory):
             return User.objects.create_user(**kwargs)
         else:
             return super(UserFactory, cls)._prepare(create, **kwargs)
+
+
+class BlogPostFactory(Factory):
+    FACTORY_FOR = BlogPost
+
+    @lazy_attribute
+    def body(self):
+        return rand_lorem_phrase(10, 100)
 
 
 def create_sample_project(user, project_kwargs={}):
