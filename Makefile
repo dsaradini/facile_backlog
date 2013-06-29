@@ -19,8 +19,9 @@ gunicorn:
 
 coverage:
 	rm -f .coverage
-	envdir tests/envdir coverage run --source=facile_backlog,tests manage.py test  --noinput
-	coverage html
+	envdir tests/envdir coverage run --source=facile_backlog manage.py test  --noinput
+
 
 showcover: coverage
+	coverage html
 	open htmlcov/index.html

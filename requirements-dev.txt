@@ -1,5 +1,5 @@
 -r requirements.txt
-coverage==3.6
+coverage
 django-debug-toolbar==0.9.4
 django-debug-toolbar-template-timings==0.3
 django-discover-runner==0.3
