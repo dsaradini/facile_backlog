@@ -16,6 +16,7 @@ before_script:
 
 script:
   - PYTHONPATH=. make coverage
+  - coverage report -m
 
 after_success:
   - coveralls
