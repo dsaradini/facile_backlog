@@ -2,7 +2,7 @@ from reportlab.pdfgen import canvas
 from reportlab.platypus import Paragraph, Frame
 from reportlab.lib.units import cm
 from reportlab.lib.colors import toColor
-from reportlab.lib.pagesizes import A4, landscape
+from reportlab.lib.pagesizes import A4, LETTER, landscape
 
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
@@ -14,21 +14,63 @@ from ..core.templatetags.markup import markdown
 
 from xhtml2pdf.document import pisaStory
 
+A4_FORMAT = "a4"
+LETTER_FORMAT = "letter"
 
-POSITIONS = (
-    (1.5, 1.5),
-    (15.5, 1.5),
-    (1.5, 11),
-    (15.5, 11)
-)
+SHORT_SIDE = "short"
+LONG_SIDE = "long"
+FRONT_SIDE = "front"
+
+BACK_ORDER_CHOICE = {
+    SHORT_SIDE: (),
+    LONG_SIDE: (),
+}
+
+PAGE_SIZES_CHOICE = {
+    A4_FORMAT: landscape(A4),
+    LETTER_FORMAT: landscape(LETTER),
+}
+
+
+def get_position(print_format, side):
+    w, h = PAGE_SIZES_CHOICE[print_format]
+    x1 = 1
+    x2 = 0.5*(w/cm)+1
+    y1 = 1.5
+    y2 = 11.5
+
+    if side == FRONT_SIDE:
+        return (
+            (x1, y2),
+            (x2, y2),
+            (x1, y1),
+            (x2, y1)
+        )
+    elif side == LONG_SIDE:
+        return (
+            (x1, y1),
+            (x2, y1),
+            (x1, y2),
+            (x2, y2)
+        )
+    elif side == SHORT_SIDE:
+        return (
+            (x2, y2),
+            (x1, y2),
+            (x2, y1),
+            (x1, y1)
+        )
+    else:
+        raise ValueError("Unknown back_side value {0}".format(side))
+
 
 SIZE = (12.5, 8)
 TOP_HEIGHT = 2
 
 
-def draw_story_front(c, story, position=0):
+def draw_story_front(c, story, positions, position=0):
     c.saveState()
-    pos = POSITIONS[position]
+    pos = positions[position]
     size = SIZE
     c.translate(pos[0]*cm, pos[1]*cm)
     c.setStrokeColorRGB(0.2, 0.5, 0.3)
@@ -106,43 +148,56 @@ def draw_story_front(c, story, position=0):
     c.restoreState()
 
 
-def draw_story_back(c, story, position=0):
+def draw_story_back(c, story, positions, position=0):
     c.saveState()
-    pos = POSITIONS[position]
+    pos = positions[position]
     size = SIZE
     c.translate(pos[0]*cm, pos[1]*cm)
     c.setStrokeColorRGB(0.2, 0.3, 0.5)
     c.rect(0, 0, size[0]*cm, size[1]*cm, fill=0)
+
+    stylesheet = getSampleStyleSheet()
+    normalStyle = stylesheet['Normal']
+
+     # Code
+    p = Paragraph("<font size=15>{0}</font>".format(story.code), normalStyle)
+    p.wrap(5*cm, 2*cm)
+    p.drawOn(c, 1.1*cm, (SIZE[1]-TOP_HEIGHT+1.5)*cm)
+
+    # Draw acceptance criteria
     html = u"""
-        <div style="font-size:15px">{0}</div>
+        <div style="font-size:13px">{0}</div>
     """.format(markdown(story.acceptances))
     context = pisaStory(html)
-    f = Frame(0, 0, size[0]*cm, size[1]*cm, showBoundary=0)
+    f = Frame(0, 0, size[0]*cm, (size[1]-TOP_HEIGHT/2)*cm, showBoundary=1)
     f.addFromList(context.story, c)
     c.restoreState()
 
 
-def generate_pdf(stories, file_name):
+def generate_pdf(stories, file_name,
+                 print_side=LONG_SIDE, print_format=A4_FORMAT):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = \
         'attachment; filename="{0}"'.format(file_name)
 
     # Create the PDF object, using the response object as its "file."
-    c = canvas.Canvas(response, pagesize=landscape(A4))
+    c = canvas.Canvas(response, PAGE_SIZES_CHOICE[print_format])
     c.setAuthor("backlogman.com")
     c.setTitle("User story printing")
     c.setSubject("Stories")
     i = 0
     front = True
-    story_per_page = len(POSITIONS)
+    front_positions = get_position(print_format, FRONT_SIDE)
+    back_position = get_position(print_format, print_side)
+    story_per_page = len(front_positions)
     while i < len(stories) or front:
         m = divmod(i, story_per_page)[1]
         if i < len(stories):
             story = stories[i]
             if front:
-                draw_story_front(c, story, m)
+                draw_story_front(c, story, front_positions, m)
             else:
-                draw_story_back(c, story, m)
+                draw_story_back(c, story, back_position, m)
         i += 1
         if m == story_per_page-1:
             if front:

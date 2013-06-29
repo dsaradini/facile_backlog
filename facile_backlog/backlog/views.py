@@ -619,9 +619,10 @@ class PrintStories(ProjectMixin, generic.TemplateView):
     def pre_dispatch(self):
         backlog_id = self.request.GET.get('backlog_id', None)
         if backlog_id:
-            backlog = get_object_or_404(Backlog, pk=backlog_id)
-            self.stories = backlog.stories
+            self.backlog = get_object_or_404(Backlog, pk=backlog_id)
+            self.stories = self.backlog.stories
         else:
+            self.backlog = None
             self.stories = self.project.stories
 
     def get_context_data(self, **kwargs):
@@ -636,7 +637,11 @@ class PrintStories(ProjectMixin, generic.TemplateView):
             if k.find("story-") == 0:
                 ids.append(k.split("-")[1])
         stories = self.project.stories.filter(pk__in=ids)
-        return generate_pdf(stories, "{0}-stories".format(self.project.code))
+        print_format = request.POST.get("print-format")
+        print_side = request.POST.get("print-side")
+        name = "{0}-stories".format(self.project.code)
+        return generate_pdf(stories, name, print_side=print_side,
+                            print_format=print_format)
 print_stories = login_required(PrintStories.as_view())
 
 

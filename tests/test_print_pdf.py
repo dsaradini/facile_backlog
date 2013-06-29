@@ -22,6 +22,8 @@ class BacklogTest(WebTest):
         for k, f in form.fields.items():
             if k and "story-" in k:
                 form[k] = True
+        form['print-side'] = "long"
+        form['print-format'] = "a4"
         response = form.submit()
         self.assertEqual(response['Content-Type'], "application/pdf")
         o = StringIO.StringIO(response.content)
