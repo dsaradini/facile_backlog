@@ -47,7 +47,7 @@
 					<td class="user-name">{{ auth.user.full_name }}</td>
 					<td class="user-email">{{ auth.user.email }}</td>
 					<td class="user-invitation">{% if auth.is_active %}{% trans "Accepted" %}{% else %}{% trans "Pending" %}{% endif %}</td>
-					<td class="user-role">{% if auth.is_active %}{% trans "Administrator" %}{% else %}{% trans "User" %}{% endif %}</td>
+					<td class="user-role">{% if auth.is_admin %}{% trans "Administrator" %}{% else %}{% trans "User" %}{% endif %}</td>
 					<td class="user-actions">
 						{% if project|can_admin:request.user and auth.user_id != request.user.pk%}
 						<a title="{% trans "Delete" %}" href="{% url "auth_delete" project.pk auth.pk %}"><i class="icon-remove"></i></a>
