@@ -301,10 +301,12 @@ class UserStory(ProjectSecurityMixin, models.Model):
 
     @property
     def css_color(self):
+        if len(self.color) < 3:
+            return "rgba(255,255,255,0.5)"
         try:
             color = Color(self.color).lighter(amt=0.2)
         except ValueError:
-            color = Color("#dddddd")
+            return "transparent"
         color.a = 0.5
         return color.css
 
