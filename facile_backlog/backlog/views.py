@@ -7,10 +7,8 @@ from django.contrib.sites.models import RequestSite
 from django.core import signing
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
-from django.db import transaction
 from django.http import Http404
-from django.http.response import (HttpResponseNotAllowed,
-                                  HttpResponseBadRequest, HttpResponse)
+from django.http.response import (HttpResponseNotAllowed,HttpResponse)
 from django.shortcuts import get_object_or_404, redirect
 from django.template import loader
 from django.utils.translation import ugettext as _
