@@ -49,6 +49,11 @@ class BackMixin(object):
             self.back = None
         return super(BackMixin, self).dispatch(request, *args, **kwargs)
 
+    def get_form_kwargs(self):
+        kwargs = super(BackMixin, self).get_form_kwargs()
+        kwargs['_back'] = self.back
+        return kwargs
+
 
 class ProjectList(generic.ListView):
     template_name = "backlog/project_list.html"
@@ -316,6 +321,18 @@ class BacklogEdit(BacklogMixin, generic.UpdateView):
 
     def get_object(self):
         return self.backlog
+
+    def get_context_data(self, **kwargs):
+        context = super(BacklogEdit, self).get_context_data(**kwargs)
+        if self.back == "project" or not self.object:
+            context['cancel_url'] = reverse("project_backlogs", args=(
+                self.project.pk,
+            ))
+        else:
+            context['cancel_url'] = reverse("backlog_detail", args=(
+                self.project.pk, self.backlog.pk
+            ))
+        return context
 
     def form_valid(self, form):
         backlog = form.save()

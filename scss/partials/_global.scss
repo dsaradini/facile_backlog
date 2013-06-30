@@ -1022,6 +1022,25 @@ textarea[name=i_want_to] {
 	.backlog-list {
 		clear: both;
 		position: relative;
+		.backlog-place-holder {
+			background-color: rgba(black,0.1);
+			border-top: 1px solid rgba(black, 0.2);
+			border-left: 1px solid rgba(black, 0.2);
+			border-right: 1px solid rgba(white, 0.6);
+			border-bottom: 1px solid rgba(white, 0.8);
+
+			border-radius:5px;
+			// should be the same as article ( jquery-ui-soratbale )
+			margin: 0.5em 0 0.5em 0;
+			// do not forget dashed border
+			padding: -1px;
+			width: 300px;
+			min-height: 60px;
+			display: block;
+			float: left;
+			margin: 9px;
+			position: relative;
+		}
 		article.backlog {
 			background: mix($header-background-color, $background-color, 30%);
 			margin: 9px;
@@ -1052,12 +1071,23 @@ textarea[name=i_want_to] {
 					color: black;
 				}
 			}
+			.story-place-holder {
+				background-color: rgba(255,255,255,0.5);
+				border:1px dashed rgba(0,0,0,0.2);
+				border-radius:5px;
+				// should be the same as article ( jquery-ui-soratbale )
+				margin: 0.5em 0 0.5em 0;
+				// do not forget dashed border
+				padding: -1px;
+				margin: 5px;
+			}
 		}
 		article.small-story {
 			position: relative;
 			border-radius: 5px;
 			overflow: hidden;
 			border:1px solid rgba(0,0,0,0.2);
+			box-sizing: border-box;
 			.handle {
 				position: absolute;
 				top: 0px;
@@ -1073,6 +1103,7 @@ textarea[name=i_want_to] {
 				display: hidden;
 			}
 			.handled {
+				border-right: 3px solid transparent;
 				background-color: rgba(0,0,0,0.1);
 				padding: 0px 4px 0px 14px;
 			}
@@ -1083,7 +1114,7 @@ textarea[name=i_want_to] {
 			.story-title {
 				margin:4px 0;
 				float:left;
-				width: 200px;
+				width: 180px;
 				font-weight: bold;
 				text-align: left;
 			}

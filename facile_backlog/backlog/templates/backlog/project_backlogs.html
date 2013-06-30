@@ -27,7 +27,7 @@
 
 	<div class="backlog-list" style="width:{% widthratio backlog_list.count 1 320 %}px">
 		{% for backlog in backlog_list %}
-			<article class="backlog">
+			<article class="backlog" id="backlog-{{ backlog.pk }}" backlog-id="{{ backlog.pk }}">
 				<div class="backlog-title">
 					<a href="{% url "backlog_detail" project.pk backlog.pk %}">{{ backlog.name }}</a>
 					&nbsp;<a href="{% url "backlog_edit" project.pk backlog.pk %}?_back=project"><i class="icon-edit"></i></a>
@@ -35,9 +35,9 @@
 				</div>
 				<div class="stories" backlog-id="{{ backlog.pk }}">
 					{% for story in backlog.ordered_stories %}
-						<article class="small-story" story-id="{{ story.pk }}">
+						<article class="small-story" id="story-{{ story.pk }}" story-id="{{ story.pk }}">
 							<div class="handle"></div>
-							<div class="handled">
+							<div class="handled" style="border-color:{{ story.color }}">
 								<div class="story-title">
 									<a href="{% url "story_detail" project.pk story.pk %}">{{ story.code }}</a>
 									&nbsp;<a href="{% url "story_edit" project.pk story.pk %}?_back=project"><i class="icon-edit"></i></a>
@@ -83,71 +83,105 @@
 		// keep a clone of speakers to replace the cell
 		// if an error occurs on server
 
-		var setup = function() {
-			$('.stories').sortable({
-				connectWith: ".stories",
-				placeholder: "handle-highlight",
-				forcePlaceholderSize: true,
-				distance: 3,
-				cursor: "move",
-				handle: ".handle",
-				revert: true,
-				update: function(event, ui) {
-					$('.stories').sortable("disable");
-					var $this = $(this);
-					var story_pk = ui.item.attr("story-id");
-					var current_backlog_pk =  $this.attr("backlog-id");
-					var from_backlog = ui.sender && ui.sender.attr("backlog-id");
-					var ajax_data;
-					if ( $this.find("[story-id="+story_pk+"]").length ) {
-						var order = [];
+		$('.backlog-list').sortable({
+			placeholder: "backlog-place-holder",
+			distance: 3,
+			cursor: "move",
+			revert: 100,
+			update: function(event, ui) {
+				$('.backlog-list').sortable("disable");
+				var backlog_pk = ui.item.attr("backlog-id");
+				var order = [];
+				$('[backlog-id]').each(function() {
+					order.push(parseInt($(this).attr('backlog-id')));
+				});
+				$.ajax({
+					url: '{% url "api_move_backlog" project.pk %}',
+					type: "POST",
+					contentType:"application/json; charset=utf-8",
+					dataType: "json",
+					data: JSON.stringify({
+						moved_backlog: backlog_pk,
+						order: order
+					}),
+					error: function( jqXHR, textStatus, errorThrown ){
+						$("#messages").empty().append(
+							$("<div>").addClass("error").text( '{% trans "Server return an error."%}' )
+						);
+						$('.backlog-list').sortable( "cancel" );
+					},
+					success: function() {
 
-						$this.find('[story-id]').each(function() {
-							order.push(parseInt($(this).attr('story-id')));
-						});
-						ajax_data = {
-							source_backlog: from_backlog,
-							target_backlog: current_backlog_pk,
-							moved_story: story_pk,
-							order: order
-						};
-						// story is in the updated backlog
-						if (from_backlog) {
-							ajax_data.action = "move";
-						} else {
-							ajax_data.action = "order";
-						}
-					} else {
-						// do not care, we will receive a update for move
+					},
+					complete: function(){
+						$('.backlog-list').sortable("enable");
 					}
-					if (ajax_data) {
-						$.ajax({
-							url: '{% url "api_move_story" project.pk %}',
-							type: "POST",
-							contentType:"application/json; charset=utf-8",
-							dataType: "json",
-							data: JSON.stringify(ajax_data),
-							error: function( jqXHR, textStatus, errorThrown ){
-								$("#messages").empty().append(
-									$("<div>").addClass("error").text( '{% trans "Server return an error."%}' )
-								);
-								$('.stories').sortable( "cancel" );
-							},
-							success: function() {
-								// replace the copy to be able to re-order again
-								$stories_clone = $(".stories").clone(false);
-							},
-							complete: function(){
-								$('.stories').sortable("enable");
-							}
-						});
+				});
+			}
+		});
+
+		$('.stories').sortable({
+			connectWith: ".stories",
+			placeholder: "story-place-holder",
+			forcePlaceholderSize: true,
+			distance: 3,
+			cursor: "move",
+			handle: ".handle",
+			revert: 100,
+			update: function(event, ui) {
+				$('.stories').sortable("disable");
+				var $this = $(this);
+				var story_pk = ui.item.attr("story-id");
+				var current_backlog_pk =  $this.attr("backlog-id");
+				var from_backlog = ui.sender && ui.sender.attr("backlog-id");
+				var ajax_data;
+				if ( $this.find("[story-id="+story_pk+"]").length ) {
+					var order = [];
+
+					$this.find('[story-id]').each(function() {
+						order.push(parseInt($(this).attr('story-id')));
+					});
+					ajax_data = {
+						source_backlog: from_backlog,
+						target_backlog: current_backlog_pk,
+						moved_story: story_pk,
+						order: order
+					};
+					// story is in the updated backlog
+					if (from_backlog) {
+						ajax_data.action = "move";
 					} else {
-						$('.stories').sortable("enable");
+						ajax_data.action = "order";
 					}
+				} else {
+					// do not care, we will receive a update for move
 				}
-			});
-		};
-		setup();
+				if (ajax_data) {
+					$.ajax({
+						url: '{% url "api_move_story" project.pk %}',
+						type: "POST",
+						contentType:"application/json; charset=utf-8",
+						dataType: "json",
+						data: JSON.stringify(ajax_data),
+						error: function( jqXHR, textStatus, errorThrown ){
+							$("#messages").empty().append(
+								$("<div>").addClass("error").text( '{% trans "Server return an error."%}' )
+							);
+							$('.stories').sortable( "cancel" );
+						},
+						success: function() {
+
+						},
+						complete: function(){
+							$('.stories').sortable("enable");
+						}
+					});
+				} else {
+					$('.stories').sortable("enable");
+				}
+			}
+		});
+
 		$(".dropdown-button").dropit();
 
 		$(".handle").show(); // hidden by default, if scripting is disabled, they should not show

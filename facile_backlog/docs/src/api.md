@@ -180,6 +180,45 @@ Type: application/json
 		(optional) Ordered IDs of target_backlog story, included the moved story in case of a move. If this value
 		is omitted, the story will be moved at the end of the target_backlog
 
+<code type="block">
+{
+	"target_backlog": 123,
+	"moved_story": 567,
+	"order": [10, 50 , 66, 567, 23, 53]
+}
+</code>
+
+Response
+--------
+<code type="block">
+{
+	"ok": true
+}
+</code>
+
+`/api/project/[project-id]/_order_backlog/`
+====================================================================
+Reorder backlog in a project
+
+Allow: *POST*, *OPTIONS*
+
+Request
+-------
+
+Type: application/json
+
++ **'moved_backlog'** *(number)*
+		ID of the moved backlog
++ **'order'** *(array of number)*
+		Ordered IDs of project backlog ids
+
+<code type="block">
+{
+	"moved_backlog": 12,
+	"order": [2, 5 , 1]
+}
+</code>
+
 Response
 --------
 <code type="block">

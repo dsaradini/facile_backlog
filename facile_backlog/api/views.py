@@ -187,3 +187,27 @@ def move_story(request, project_id):
     return Response({
         'ok': True
     })
+
+
+@api_view(["POST"])
+@parser_classes((JSONParser,))
+@throttle_classes([GeneralUserThrottle])
+@transaction.commit_on_success
+def move_backlog(request, project_id):
+    project = get_object_or_404(request.user.projects, pk=project_id)
+    errors = []
+    order = get_or_errors(request.DATA, 'order', errors)
+    if errors:
+        return Response({
+            'errors': errors
+        }, status=400)
+
+    order = [int(x) for x in order]
+    for backlog in project.backlogs.all():
+        new_index = order.index(backlog.pk)
+        if new_index != backlog.order:
+            backlog.order = new_index
+            backlog.save(update_fields=('order',))
+    return Response({
+        'ok': True
+    })

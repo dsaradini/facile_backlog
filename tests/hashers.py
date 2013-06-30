@@ -1,4 +1,5 @@
 from django.contrib.auth.hashers import BasePasswordHasher
+from django.utils.datastructures import SortedDict
 
 
 class NotHashingHasher(BasePasswordHasher):
@@ -16,3 +17,10 @@ class NotHashingHasher(BasePasswordHasher):
     def verify(self, password, encoded):
         algo, decoded = encoded.split('$', 1)
         return password == decoded
+
+    def safe_summary(self, encoded):
+        return SortedDict([
+            ('algorithm', "plain"),
+            ('salt', ""),
+            ('hash', ""),
+        ])
