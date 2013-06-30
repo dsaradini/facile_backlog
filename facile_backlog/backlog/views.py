@@ -109,12 +109,14 @@ class ProjectCreate(generic.CreateView):
             description=_("This is the main backlog for the project."),
             project=self.object,
             kind=Backlog.TODO,
+            order=1,
         )
         Backlog.objects.create(
             name=_("Completed stories"),
             description=_("This is the backlog to hold completed stories."),
             project=self.object,
             kind=Backlog.COMPLETED,
+            order=10,
         )
         AuthorizationAssociation.objects.create(
             project=form.instance,
@@ -201,6 +203,17 @@ class ProjectStories(ProjectMixin, generic.TemplateView):
                 context['sort'] = self.sort
         return context
 project_stories = login_required(ProjectStories.as_view())
+
+
+class ProjectBacklogs(ProjectMixin, generic.TemplateView):
+    template_name = "backlog/project_backlogs.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectBacklogs, self).get_context_data(**kwargs)
+        context['project'] = self.project
+        context['backlog_list'] = self.project.backlogs.all()
+        return context
+project_backlogs = login_required(ProjectBacklogs.as_view())
 
 # Backlogs
 
@@ -492,95 +505,6 @@ class StoryDelete(StoryMixin, generic.DeleteView):
         return redirect(reverse('backlog_detail', args=(self.project.pk,
                                                         self.backlog.pk)))
 story_delete = login_required(StoryDelete.as_view())
-
-
-@transaction.commit_on_success
-def backlog_story_reorder(request, project_id, backlog_id):
-    """
-    view used to reorder stories in a backlog
-    post-content:
-    {
-        "order": [1,2,3,4,5]  // array of user_story pk
-    }
-    """
-    if request.method != 'POST':
-        return HttpResponseNotAllowed("Use POST")
-    if not request.user.is_authenticated():
-        raise Http404()
-    body = json.loads(request.body)
-    order = body.get('order', None)
-    moved_story = body.get('moved_story', None)
-    if not order:
-        return HttpResponseBadRequest()
-    project = get_project_or_404(request.user, project_id)
-    backlog = Backlog.objects.get(pk=backlog_id)
-
-    if backlog.project_id != project.pk:
-        raise Http404('No matches found.')
-
-    touched = False
-    for story in backlog.ordered_stories:
-        new_index = order.index(story.pk)
-        if new_index != story.order:
-            story.order = new_index
-            story.save(update_fields=('order',))
-            story.backlog.save(update_fields=("last_modified",))
-            touched = True
-
-    if touched:
-        create_event(
-            request.user, project,
-            u"re-ordered story in backlog",
-            backlog=backlog,
-            story=moved_story,
-        )
-    return HttpResponse(json.dumps({'status': 'ok'}),
-                        content_type='application/json')
-
-
-@transaction.commit_on_success
-def story_move(request, project_id):
-    """
-    view used to move a story to a backlog
-    post-content:
-    {
-        "story_id": STORY_PK_TO_MOVE
-        "backlog_id": TARGET_BACKLOG_PK
-    }
-    """
-    if request.method != 'POST':
-        return HttpResponseNotAllowed("Use POST")
-    if not request.user.is_authenticated():
-        raise Http404()
-    body = json.loads(request.body)
-    backlog_id = body.get('backlog_id', None)
-    story_id = body.get('story_id', None)
-
-    if not backlog_id or not story_id:
-        return HttpResponseBadRequest()
-    project = get_project_or_404(request.user, project_id)
-    backlog = Backlog.objects.get(pk=backlog_id)
-
-    if project.pk != backlog.project_id:
-        # verify access rights on target project
-        get_project_or_404(request.user, backlog.project_id)
-    story = UserStory.objects.get(pk=story_id)
-    if story.project_id != project.pk:
-        raise Http404('No matches found.')
-    if story.backlog_id != backlog.pk:
-        old_backlog_name = story.backlog.name
-        story.move_to(backlog)
-        create_event(
-            request.user, project,
-            u"moved story from backlog '{0}' to backlog '{1}'".format(
-                old_backlog_name,
-                backlog.name,
-            ),
-            backlog=backlog,
-            story=story,
-        )
-    return HttpResponse(json.dumps({'status': 'ok'}),
-                        content_type='application/json')
 
 
 def story_change_status(request, project_id):

@@ -20,12 +20,13 @@ Allow: *POST*
 
 Request
 -------
-<code type="block">
-{
-	'username': 'USERNAME',
-	'password': 'PASSWORD'
-}
-</code>
+
+Type: application/json
+
++ **'username'** *(string)*
+		username of the requested token
++ **'password'** *(string)*
+		user password
 
 Response
 --------
@@ -156,5 +157,33 @@ Response
 	"create_date": "2013-06-19T15:04:08.254Z",
 	"theme": "Story theme in project",
 	"status": "to_do|in_progress|accepted|rejected"
+}
+</code>
+
+`/api/project/[project-id]/_move_story/`
+====================================================================
+Move story in the same backlog or another backlog. This json RPC action can be used
+to reorder or move + reorder a backlog
+
+Allow: *POST*, *OPTIONS*
+
+Request
+-------
+
+Type: application/json
+
++ **'target_backlog'** *(number)*
+		ID of the backlog to apply the ordering or the target backlog for a move
++ **'moved_story'** *(number)*
+		ID of the moved story
++ **'order'** *(array of number)*
+		(optional) Ordered IDs of target_backlog story, included the moved story in case of a move. If this value
+		is omitted, the story will be moved at the end of the target_backlog
+
+Response
+--------
+<code type="block">
+{
+	"ok": true
 }
 </code>

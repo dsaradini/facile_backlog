@@ -9,16 +9,10 @@
 		<a href="{%  url "project_detail" project.pk %}"> <i class="icon-book"></i> {{ project.name }}</a> <i class="sep icon-angle-right"></i>
 		<i class="icon-list-alt"></i><span class="current">{{ backlog.name }}</span>
 	</div>
-	<h1>{{ backlog.name }}</h1>
+	{% include "backlog/_backlog_head.html" %}
 	<div class="description">
 		{% if backlog.description %}
 			{{ backlog.description|markdown }}
-		{% endif %}
-	</div>
-	<div class="actions">
-		{% if backlog|can_admin:request.user %}
-			<a class="alt-button" href="{% url "backlog_edit" project.pk backlog.pk %}">{% trans "Edit backlog" %}</a>
-			<a class="alt-button" href="{% url "backlog_delete" project.pk backlog.pk %}">{% trans "Delete backlog" %}</a>
 		{% endif %}
 	</div>
 	<div class="poutre">
@@ -67,7 +61,6 @@
 		// keep a clone of speakers to replace the cell
 		// if an error occurs on server
 		$(".handle").show(); // hidden by default, if scripting is disabled, they should not show
-		var $stories_clone = $(".stories").clone(false);
 		var setup = function() {
 			$('.stories').sortable({
 				placeholder: "handle-highlight",
@@ -85,10 +78,13 @@
 						order.push(parseInt($(this).attr('data-id')));
 					});
 					$.ajax({
-						url: '{% url "backlog_story_reorder" project.pk backlog.pk %}',
+						url: '{% url "api_move_story" project.pk %}',
 						type: "POST",
 						dataType: "json",
+						contentType: "application/json",
 						data: JSON.stringify({
+							action: "order",
+							target_backlog: "{{ backlog.pk }}",
 							order: order,
 							moved_story: moved_story
 						}),
@@ -96,12 +92,9 @@
 							$("#messages").empty().append(
 								$("<div>").addClass("error").text( '{% trans "Error while reordering elements."%}' )
 							);
-							$('.stories').replaceWith($stories_clone.clone());
-							setup();
+							$this.sortable("cancel");
 						},
 						success: function() {
-							// replace the copy to be able to re-order again
-							$stories_clone = $(".stories").clone(false);
 						},
 						complete: function(){
 							$this.sortable("enable");
@@ -127,12 +120,14 @@
 		$(".dropdown-button").dropit();
 		$.move_story = function(story_pk, backlog_pk) {
 			$.ajax({
-				url: '{% url "story_move" project.pk %}',
+				url: '{% url "api_move_story" project.pk %}',
 				type: "POST",
+				contentType: "application/json",
 				dataType: "json",
 				data: JSON.stringify({
-					story_id: story_pk,
-					backlog_id: backlog_pk
+					action: "move",
+					moved_story: story_pk,
+					target_backlog: backlog_pk
 				}),
 				error: function( jqXHR, textStatus, errorThrown ){
 					$("#messages").empty().append(

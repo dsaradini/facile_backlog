@@ -1,7 +1,8 @@
 from django.conf.urls import url, patterns
 
 from .views import (home_view, project_list, project_detail,
-                    backlog_list, backlog_detail, story_list, story_detail)
+                    backlog_list, backlog_detail, story_list, story_detail,
+                    move_story)
 
 urlpatterns = patterns(
     '',
@@ -31,4 +32,7 @@ urlpatterns = patterns(
         story_detail, name="api_story_detail"),
 
     url(r'^$', home_view, name="api_home"),
+
+    url(r'^projects/(?P<project_id>[\w]+)/_move_story/$',
+        move_story, name="api_move_story"),
 )

@@ -113,7 +113,7 @@ class StoryTest(WebTest):
 
     def test_story_delete(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@test.ch', password='pass')
         story = factories.create_sample_story(user)
         url = reverse('story_backlog_delete', args=(
             story.project.pk, story.backlog.pk, story.pk
@@ -142,7 +142,9 @@ class AjaxTest(WebTest):
 
     def test_story_reorder(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@test.ch', password='pass')
+        wrong_user = factories.UserFactory.create(
+            email='wrong@test.ch', password='pass')
         backlog = factories.create_sample_backlog(user)
         for i in range(1, 4):
             factories.UserStoryFactory.create(
@@ -152,18 +154,19 @@ class AjaxTest(WebTest):
 
         order = [c.pk for c in backlog.ordered_stories.all()]
         order.reverse()
-        url = reverse('backlog_story_reorder', args=(
-            backlog.project.pk, backlog.pk, ))
-
-        # if no write access, returns a 404
-        self.app.post(url, json.dumps({'order': order}), status=404)
-        self.app.post(url, json.dumps({
+        url = reverse('api_move_story', args=(
+            backlog.project.pk, ))
+        data = json.dumps({
+            'target_backlog': backlog.pk,
             'order': order,
             'moved_story': order[0],
-        }),
-            content_type="application/json",
-            user=user
-        )
+        })
+        # if no write access, returns a 404
+        self.app.post(url, data, status=401)
+        self.app.post(url, data, user=wrong_user, status=404)
+        self.app.post(url, data,
+                      content_type="application/json",
+                      user=user)
         backlog = Backlog.objects.get(pk=backlog.pk)
         result_order = [c.pk for c in backlog.ordered_stories.all()]
         self.assertEqual(order, result_order)
@@ -196,13 +199,14 @@ class AjaxTest(WebTest):
         )
 
         data = json.dumps({
-            'story_id': story.pk,
-            'backlog_id': backlog_2.pk
+            'moved_story': story.pk,
+            'target_backlog': backlog_2.pk
         })
-        url = reverse('story_move', args=(
+        url = reverse('api_move_story', args=(
             backlog.project.pk, ))
          # if no write access, returns a 404
-        self.app.post(url, data, status=404)
+        self.app.post(url, data, status=401)
+        self.app.post(url, data, user=user_2, status=404)
         self.app.post(url, data, content_type="application/json", user=user)
         backlog_ok = Backlog.objects.get(pk=backlog_2.pk)
         self.assertIn(story, set(backlog_ok.stories.all()))
@@ -210,10 +214,10 @@ class AjaxTest(WebTest):
         # not allowed to move to an "unknown" backlog
         backlog_wrong = factories.create_sample_backlog(user_2)
         data = json.dumps({
-            'story_id': story.pk,
-            'backlog_id': backlog_wrong.pk
+            'moved_story': story.pk,
+            'target_backlog': backlog_wrong.pk
         })
-        self.app.post(url, data, status=404)
+        self.app.post(url, data, content_type="application/json", status=404)
         event = Event.objects.get(
             project=backlog.project,
             backlog=backlog_2

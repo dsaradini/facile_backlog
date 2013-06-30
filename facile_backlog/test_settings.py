@@ -10,3 +10,14 @@ DATABASES = {
         'NAME': 'backlog.sqlite',
     }
 }
+
+API_THROTTLE = None
+
+# Don't bother with PBKDF2 in tests. This saves a **lot** of time.
+PASSWORD_HASHERS = [
+    'tests.hashers.NotHashingHasher',
+]
+
+LOGGING['loggers']['ratelimitbackend']['level'] = 'ERROR'
+LOGGING['loggers']['facile_backlog']['level'] = 'ERROR'
+LOGGING['loggers']['raven']['level'] = 'ERROR'

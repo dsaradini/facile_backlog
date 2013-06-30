@@ -11,10 +11,15 @@ class ProjectAdmin(admin.ModelAdmin):
 
 
 class BacklogAdmin(admin.ModelAdmin):
-    list_display = ("name", "project", "kind")
-    fields = ("name", "description", "project", "kind", "last_modified")
+    list_display = ("name", "project", "kind", "order")
+    fields = ("name", "description", "project", "kind", "last_modified",
+              "order")
     readonly_fields = ("last_modified",)
     search_fields = ("project__name",)
+
+    def queryset(self, request):
+        return super(BacklogAdmin,
+                     self).queryset(request).select_related('project')
 
 
 class UserStoryAdmin(admin.ModelAdmin):
@@ -26,7 +31,10 @@ class UserStoryAdmin(admin.ModelAdmin):
 class EventAdmin(admin.ModelAdmin):
     list_display = ("when", "text", "project", "story", "backlog")
     search_fields = ("project__name", "when", "text")
-    list_select_related = True
+
+    def queryset(self, request):
+        return super(EventAdmin, self).queryset(
+            request).select_related("project", "story", "backlog")
 
     def get_readonly_fields(self, request, obj=None):
         if obj:

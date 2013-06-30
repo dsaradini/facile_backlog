@@ -51,6 +51,13 @@ hr {
 	border-bottom:1px solid rgba(255,255,255,0.3);
 	box-sizing: border-box;
 }
+
+.upper-bar {
+	width:900px;
+	margin: 0 auto;
+	padding: 0 0.25em;
+}
+
 #header {
 	@include clearfix;
 	background-color: $header-background-color;
@@ -1003,5 +1010,99 @@ textarea[name=i_want_to] {
 	}
 	h2, h1 {
 		margin:1em 0;
+	}
+}
+
+.project-backlogs {
+	#content {
+		width: auto;
+		margin:0;
+	}
+
+	.backlog-list {
+		clear: both;
+		position: relative;
+		article.backlog {
+			background: mix($header-background-color, $background-color, 30%);
+			margin: 9px;
+			position: relative;
+			width: 300px;
+			display: block;
+			float: left;
+			border-top: 1px solid rgba(255,255,255, 0.3);
+			border-left: 1px solid rgba(255,255,255, 0.1);
+			border-right: 1px solid rgba(0,0,0, 0.1);
+			border-bottom: 1px solid rgba(0,0,0, 0.3);
+			.backlog-title {
+				font-weight: bold;
+				text-align: left;
+				margin: 0.5em;
+			}
+			.stories {
+				min-height: 60px;
+			}
+		}
+		article.small-story {
+			position: relative;
+			.handle {
+				position: absolute;
+				top: 1px;
+				width: 10px;
+				bottom: 1px;
+				left: 0px;
+				background-image: url('../img/grab.png');
+				background-color: rgba(127,127,127,0.5);
+				border-top:1px solid rgba(0,0,0,0.2);
+				border-left:1px solid rgba(0,0,0,0.2);
+				border-bottom:1px solid rgba(0,0,0,0.2);
+				cursor: pointer;
+				display: hidden;
+			}
+			.handled {
+				background-color: rgba(0,0,0,0.1);
+				border-top:1px solid rgba(0,0,0,0.2);
+				border-right:1px solid rgba(0,0,0,0.2);
+				border-bottom:1px solid rgba(0,0,0,0.2);
+				border-left:1px solid rgba(255,255,255,0.6);
+				padding: 0px 4px 0px 14px;
+			}
+			background: rgba(white,0.9);
+			margin: 5px;
+			font-size: 0.75em;
+
+			.story-title {
+				margin:4px 0;
+				float:left;
+				width: 200px;
+				font-weight: bold;
+				text-align: left;
+			}
+			.points {
+				margin: 2px 0;
+				padding: 2px 0;
+				float:right;
+				width: 30px;
+				font-weight: bold;
+				border-radius:1em;
+				background-color: rgba($header-background-color,0.5);
+				text-align: center;
+				color:white;
+			}
+			a {
+				text-decoration: none;
+				&:hover {
+					color: black;
+				}
+			}
+			.text {
+				padding: 2px 0;
+				clear:both;
+				text-align: justify;
+			}
+			.theme {
+				padding: 2px 0;
+				color: $header-background-color;
+			}
+		}
 	}
 }

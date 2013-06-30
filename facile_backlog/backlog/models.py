@@ -172,9 +172,9 @@ class ProjectSecurityMixin(object):
 
 
 class Backlog(StatsMixin, ProjectSecurityMixin, models.Model):
-    TODO = "07:todo"
-    COMPLETED = "10:completed"
-    GENERAL = "03:general"
+    TODO = "todo"
+    COMPLETED = "completed"
+    GENERAL = "general"
 
     KIND_CHOICE = (
         (TODO, _("To do")),
@@ -189,9 +189,10 @@ class Backlog(StatsMixin, ProjectSecurityMixin, models.Model):
     kind = models.CharField(_("Kind"), max_length=16,
                             choices=KIND_CHOICE, default=GENERAL)
     last_modified = models.DateTimeField(_("Last modified"), auto_now=True)
+    order = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ("kind", "last_modified",)
+        ordering = ("order",)
 
     @property
     def ordered_stories(self):

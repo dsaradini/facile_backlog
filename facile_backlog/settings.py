@@ -2,6 +2,7 @@
 import os
 import urlparse
 import dj_database_url
+import sys
 
 from django.core.urlresolvers import reverse_lazy
 
@@ -187,6 +188,9 @@ REST_FRAMEWORK = {
     )
 }
 
+API_THROTTLE = "1/s"
+
+
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
@@ -201,13 +205,14 @@ LOGGING = {
         }
     },
     'handlers': {
-        'null': {
-            'level': 'DEBUG',
-            'class': 'django.utils.log.NullHandler',
-        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
+        },
+        'null': {
+            'level': 'DEBUG',
+            'class': 'django.utils.log.NullHandler',
         },
         'mail_admins': {
             'level': 'ERROR',
@@ -242,7 +247,7 @@ LOGGING = {
         },
         'facile_backlog': {
             'handlers': ['console', 'sentry'],
-            'level': 'INFO',
+            'level': 'DEBUG',
         },
     }
 }
