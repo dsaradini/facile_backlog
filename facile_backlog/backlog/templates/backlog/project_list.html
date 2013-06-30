@@ -53,7 +53,7 @@
 						<div class="story-stats percent-cell">
 							<div class="name">
 								<p>
-									<i class="icon-list-ul info"></i> <b>{{ object.stats.backlog_count }}</b> </span><a href="{% url "project_detail" object.pk %}" class="info">{% trans "Backlogs" %} </a>
+									<i class="icon-list-ul info"></i> <b>{{ object.stats.backlog_count }}</b> </span><a href="{% url "project_backlogs" object.pk %}" class="info">{% trans "Backlogs" %} </a>
 								</p>
 								<p>
 									<i class="icon-user info"></i> <b>{{ object.stats.user_count }}</b> </span><a href="{% url "project_users" object.pk %}" class="info">{% trans "Team members" %} </a>

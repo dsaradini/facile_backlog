@@ -8,7 +8,7 @@ from django.core import signing
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.http import Http404
-from django.http.response import (HttpResponseNotAllowed,HttpResponse)
+from django.http.response import (HttpResponseNotAllowed, HttpResponse)
 from django.shortcuts import get_object_or_404, redirect
 from django.template import loader
 from django.utils.translation import ugettext as _
@@ -36,6 +36,18 @@ def get_project_or_404(user, pk):
     if not project.can_read(user):
         raise Http404()
     return project
+
+
+class BackMixin(object):
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.method == "POST":
+            self.back = request.POST.get("_back", None)
+        elif request.method == "GET":
+            self.back = request.GET.get("_back", None)
+        else:
+            self.back = None
+        return super(BackMixin, self).dispatch(request, *args, **kwargs)
 
 
 class ProjectList(generic.ListView):
@@ -216,7 +228,7 @@ project_backlogs = login_required(ProjectBacklogs.as_view())
 # Backlogs
 
 
-class BacklogMixin(object):
+class BacklogMixin(BackMixin):
     admin_only = False
     """
     Mixin to fetch a project and backlog by a view.
@@ -314,6 +326,11 @@ class BacklogEdit(BacklogMixin, generic.UpdateView):
         )
         messages.success(self.request,
                          _("Backlog successfully updated."))
+        if self.back == 'project':
+            return redirect("{0}#backlog-{1}".format(
+                reverse("project_backlogs", args=(
+                    self.project.pk,
+                )), backlog.pk))
         return redirect(backlog.get_absolute_url())
 backlog_edit = login_required(BacklogEdit.as_view())
 
@@ -337,7 +354,7 @@ class BacklogDelete(BacklogMixin, generic.DeleteView):
 backlog_delete = login_required(BacklogDelete.as_view())
 
 
-class StoryMixin(object):
+class StoryMixin(BackMixin):
     """
     Mixin to fetch a story, backlog  and project used by a view.
     """
@@ -377,6 +394,11 @@ class StoryMixin(object):
             else:
                 context['cancel_url'] = reverse("story_backlog_detail", args=(
                     self.project.pk, self.backlog.pk, self.story.pk))
+        elif self.back == "project":
+            context['cancel_url'] = "{0}#story-{1}".format(
+                reverse("project_backlogs", args=(self.project.pk,)),
+                self.story.pk
+            )
         else:
             context['cancel_url'] = reverse("story_detail", args=(
                 self.project.pk, self.story.pk))
@@ -410,11 +432,13 @@ class StoryCreate(BacklogMixin, generic.CreateView):
         kwargs['project'] = self.project
         if self.backlog:
             kwargs['backlog'] = self.backlog
+        kwargs['_back'] = self.back
         return kwargs
 
     def get_context_data(self, **kwargs):
         context = super(StoryCreate, self).get_context_data(**kwargs)
         context['project'] = self.project
+        context['_back'] = self.back
         if self.backlog:
             context['backlog'] = self.backlog
             context['cancel_url'] = reverse("backlog_detail", args=(
@@ -434,14 +458,16 @@ class StoryCreate(BacklogMixin, generic.CreateView):
         )
         messages.success(self.request,
                          _("Story successfully created."))
-        if self.backlog:
-            return redirect(reverse("backlog_detail", args=(
-                self.project.pk, self.backlog.pk,
-            )))
+        if self.back == 'backlog':
+            return redirect("{0}#story-{1}".format(reverse(
+                "backlog_detail", args=(
+                    self.project.pk, self.backlog.pk,
+                )), self.object.pk))
         else:
-            return redirect(reverse("project_detail", args=(
-                self.project.pk,
-            )))
+            return redirect(
+                "{0}#story-{1}".format(reverse("project_backlogs", args=(
+                    self.project.pk,
+                )), self.object.pk))
 story_create = login_required(StoryCreate.as_view())
 
 
@@ -480,7 +506,11 @@ class StoryEdit(StoryMixin, generic.UpdateView):
                 return redirect(reverse("story_backlog_detail", args=(
                     self.project.pk, self.backlog.pk, self.story.pk
                 )))
-
+        elif self.back == "project":
+            return redirect(
+                "{0}#story-{1}".format(reverse("project_backlogs", args=(
+                    self.project.pk,
+                )), self.object.pk))
         return redirect(story.get_absolute_url())
 story_edit = login_required(StoryEdit.as_view())
 

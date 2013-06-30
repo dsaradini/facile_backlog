@@ -9,7 +9,10 @@
 	</div>
 	<div id="links">
 		<span class="tab">
-			<a href="{% url "project_detail" project.pk %}">{% trans "Backlogs" %}</a>
+			<a href="{% url "project_detail" project.pk %}">{% trans "General" %}</a>
+		</span>
+		<span class="tab">
+			<a href="{% url "project_backlogs" project.pk %}">{% trans "Backlogs" %} </a>
 		</span>
 		<span class="tab">
 			<a href="{% url "project_users" project.pk %}">{% trans "Members" %}</a>

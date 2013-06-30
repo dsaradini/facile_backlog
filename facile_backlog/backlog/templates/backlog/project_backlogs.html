@@ -11,6 +11,9 @@
 			<i class="icon-book"></i> <span class="current">{{ project.name }}</span>
 		</div>
 		<div id="links">
+			<span class="tab">
+				<a href="{% url "project_detail" project.pk %}">{% trans "General" %} </a>
+			</span>
 			<span class="tab active">{% trans "Backlogs" %}</span>
 			<span class="tab">
 				<a href="{% url "project_users" project.pk %}">{% trans "Members" %} </a>
@@ -25,7 +28,11 @@
 	<div class="backlog-list" style="width:{% widthratio backlog_list.count 1 320 %}px">
 		{% for backlog in backlog_list %}
 			<article class="backlog">
-				<div class="backlog-title"><a href="{% url "backlog_detail" project.pk backlog.pk %}">{{ backlog.name }}</a></div>
+				<div class="backlog-title">
+					<a href="{% url "backlog_detail" project.pk backlog.pk %}">{{ backlog.name }}</a>
+					&nbsp;<a href="{% url "backlog_edit" project.pk backlog.pk %}?_back=project"><i class="icon-edit"></i></a>
+
+				</div>
 				<div class="stories" backlog-id="{{ backlog.pk }}">
 					{% for story in backlog.ordered_stories %}
 						<article class="small-story" story-id="{{ story.pk }}">
@@ -33,7 +40,7 @@
 							<div class="handled">
 								<div class="story-title">
 									<a href="{% url "story_detail" project.pk story.pk %}">{{ story.code }}</a>
-									<a href="{% url "story_edit" project.pk story.pk %}"><i class="icon-edit"></i></a>
+									&nbsp;<a href="{% url "story_edit" project.pk story.pk %}?_back=project"><i class="icon-edit"></i></a>
 								</div>
 								<div class="points">
 									{% if story.points >= 0%}
@@ -48,8 +55,8 @@
 						</article>
 					{%  endfor %}
 				</div>
-				<div class="actions">
-					<a href="." class="alt-button">{% trans "Add story" %}</a>
+				<div class="backlog-action">
+					<a href="{% url "story_create" project.pk backlog.pk %}?_back=project" class="button">{% trans "Add story" %}</a>
 				</div>
 			</article>
 		{% endfor %}

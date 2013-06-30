@@ -1033,6 +1033,7 @@ textarea[name=i_want_to] {
 			border-left: 1px solid rgba(255,255,255, 0.1);
 			border-right: 1px solid rgba(0,0,0, 0.1);
 			border-bottom: 1px solid rgba(0,0,0, 0.3);
+			border-radius: 5px;
 			.backlog-title {
 				font-weight: bold;
 				text-align: left;
@@ -1041,29 +1042,38 @@ textarea[name=i_want_to] {
 			.stories {
 				min-height: 60px;
 			}
+			.backlog-action {
+				text-align: center;
+				padding: 0.5rem 0;
+			}
+			a {
+				text-decoration: none;
+				&:hover {
+					color: black;
+				}
+			}
 		}
 		article.small-story {
 			position: relative;
+			border-radius: 5px;
+			overflow: hidden;
+			border:1px solid rgba(0,0,0,0.2);
 			.handle {
 				position: absolute;
-				top: 1px;
+				top: 0px;
 				width: 10px;
-				bottom: 1px;
+				bottom: 0px;
 				left: 0px;
+				border-top-left-radius: 3px;
+				border-bottom-left-radius: 3px;
 				background-image: url('../img/grab.png');
 				background-color: rgba(127,127,127,0.5);
-				border-top:1px solid rgba(0,0,0,0.2);
-				border-left:1px solid rgba(0,0,0,0.2);
-				border-bottom:1px solid rgba(0,0,0,0.2);
+				border-right:1px solid rgba(black, 0.1);
 				cursor: pointer;
 				display: hidden;
 			}
 			.handled {
 				background-color: rgba(0,0,0,0.1);
-				border-top:1px solid rgba(0,0,0,0.2);
-				border-right:1px solid rgba(0,0,0,0.2);
-				border-bottom:1px solid rgba(0,0,0,0.2);
-				border-left:1px solid rgba(255,255,255,0.6);
 				padding: 0px 4px 0px 14px;
 			}
 			background: rgba(white,0.9);
@@ -1087,12 +1097,6 @@ textarea[name=i_want_to] {
 				background-color: rgba($header-background-color,0.5);
 				text-align: center;
 				color:white;
-			}
-			a {
-				text-decoration: none;
-				&:hover {
-					color: black;
-				}
 			}
 			.text {
 				padding: 2px 0;
