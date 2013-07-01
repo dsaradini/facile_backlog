@@ -22,6 +22,8 @@
 
 					<a href="{% url "blog_index" %}">{% trans "News" %}</a>
 					<span class="sep"></span>
+					<a href="{% url "docs_index" %}">{% trans "Help" %}</a>
+					<span class="sep"></span>
 					{% if user.is_authenticated %}
 						{% with notification_count=request.user.notification_count %}
 							{% if notification_count %}
