@@ -123,8 +123,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 ROOT_URLCONF = 'facile_backlog.urls'
@@ -187,6 +186,10 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     )
 }
+
+if os.environ.get('HTTPS', False):
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 API_THROTTLE = "1/s"
 
