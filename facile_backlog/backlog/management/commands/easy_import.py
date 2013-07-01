@@ -1,9 +1,9 @@
 import logging
 import urlparse
-import os
 
 import requests
 
+from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.translation import ugettext as _
 
@@ -16,7 +16,7 @@ from ....core.models import User
 logger = logging.getLogger(__name__)
 
 
-AUTH_TOKEN = os.getenv("EASYBACKLOG_TOKEN", "")
+AUTH_TOKEN = settings.EASYBACKLOG_TOKEN
 
 
 def easy_request(path):
@@ -94,14 +94,16 @@ class Command(BaseCommand):
             project=project,
             name=_("Accepted stories"),
             description=_("This is the backlog for accepted stories"),
-            kind=Backlog.COMPLETED
+            kind=Backlog.COMPLETED,
+            order=10,
         )
         accepted_backlog.save()
         backlog = Backlog(
             project=project,
             name=_("Main backlog"),
             description=_("This is the main backlog for the project"),
-            kind=Backlog.TODO
+            kind=Backlog.TODO,
+            order=1,
         )
         backlog.save()
         story_status = self.get_stories_status(backlog_id)

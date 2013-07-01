@@ -1,0 +1,8 @@
+{% load static markup %}
+{% for blog in blog_list %}
+	<article class="blog-entry {% if blog.sticky %}sticky{% endif %} markdown">
+		{{ blog.body|markdown }}
+		<span class="when"><i class="icon-time"></i> {{ blog.created|date:"DATETIME_FORMAT" }} </span>
+	</article>
+
+{% endfor %}

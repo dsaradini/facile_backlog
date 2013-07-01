@@ -2,9 +2,11 @@
 import os
 import urlparse
 import dj_database_url
+import sys
 
 from django.core.urlresolvers import reverse_lazy
 
+EASYBACKLOG_TOKEN = os.getenv("EASYBACKLOG_TOKEN", "")
 
 DEBUG = (os.environ.get('DEBUG', "False").lower() not in [
     'false', 'no', 'none'])
@@ -121,8 +123,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 ROOT_URLCONF = 'facile_backlog.urls'
@@ -157,6 +158,8 @@ INSTALLED_APPS = (
     'sekizai',
     'facile_backlog',
     'facile_backlog.backlog',
+    'facile_backlog.docs',
+    'facile_backlog.blog',
     'south',
     'rest_framework',
     'rest_framework.authtoken'
@@ -184,6 +187,13 @@ REST_FRAMEWORK = {
     )
 }
 
+if os.environ.get('HTTPS', False):
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+API_THROTTLE = "1/s"
+
+
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
@@ -198,13 +208,14 @@ LOGGING = {
         }
     },
     'handlers': {
-        'null': {
-            'level': 'DEBUG',
-            'class': 'django.utils.log.NullHandler',
-        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
+        },
+        'null': {
+            'level': 'DEBUG',
+            'class': 'django.utils.log.NullHandler',
         },
         'mail_admins': {
             'level': 'ERROR',
@@ -239,7 +250,7 @@ LOGGING = {
         },
         'facile_backlog': {
             'handlers': ['console', 'sentry'],
-            'level': 'INFO',
+            'level': 'DEBUG',
         },
     }
 }

@@ -189,14 +189,15 @@ class Backlog(StatsMixin, ProjectSecurityMixin, models.Model):
     kind = models.CharField(_("Kind"), max_length=16,
                             choices=KIND_CHOICE, default=GENERAL)
     last_modified = models.DateTimeField(_("Last modified"), auto_now=True)
+    order = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ("last_modified",)
+        ordering = ("order",)
 
     @property
     def ordered_stories(self):
-        return self.stories.order_by('order').select_related(
-            'user_story__project')
+        return self.stories.order_by('order').prefetch_related(
+            "project").select_related('user_story__project')
 
     def get_absolute_url(self):
         return reverse("backlog_detail", args=(self.project.pk, self.pk))
@@ -300,10 +301,12 @@ class UserStory(ProjectSecurityMixin, models.Model):
 
     @property
     def css_color(self):
+        if len(self.color) < 3:
+            return "rgba(255,255,255,0.5)"
         try:
             color = Color(self.color).lighter(amt=0.2)
         except ValueError:
-            color = Color("#dddddd")
+            return "transparent"
         color.a = 0.5
         return color.css
 

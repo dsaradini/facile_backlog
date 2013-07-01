@@ -16,6 +16,7 @@ from django.views import generic
 from le_social.registration import views as registration
 from password_reset import views as password_reset
 from ratelimitbackend.views import login as do_login
+from raven import Client
 
 from .forms import (ProfileEditionForm, RegistrationForm, PasswordRecoveryForm,
                     PasswordResetForm, ChangeApiKeyForm)
@@ -110,6 +111,10 @@ class Activate(registration.Activate):
         user = get_user_model().objects.get(pk=self.activation_key)
         user.is_active = True
         user.save(update_fields=['is_active'])
+        client = Client()
+        client.captureMessage("New user activated", extra={
+            'email': user.email
+        })
         user.backend = 'ratelimitbackend.backends.RateLimitModelBackend'
         auth_login(self.request, user)
 activate = Activate.as_view()

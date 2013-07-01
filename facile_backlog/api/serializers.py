@@ -49,13 +49,17 @@ class ProjectSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField('_url')
     users = MemberSerializer(many=True, allow_add_remove=False)
     backlogs = BacklogSerializer(many=True)
+    story_count = serializers.SerializerMethodField('_story_count')
 
     class Meta:
         model = Project
         fields = ('id', 'url', 'name', 'code', 'description', 'users',
-                  'backlogs')
+                  'story_count', 'backlogs')
         depth = 1
 
     def _url(self, obj):
         return reverse("api_project_detail", args=[obj.pk],
                        request=self.context['request'])
+
+    def _story_count(self, obj):
+        return obj.stories.count()

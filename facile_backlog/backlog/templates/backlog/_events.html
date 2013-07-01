@@ -7,7 +7,13 @@
 					<b>{{ event.user.full_name }}</b> {{ event.text }}
 					{% if event.project %}<a href="{% url "project_detail" event.project_id %}"><i class="icon-book"></i> {{ event.project.name }}</a> {% endif %}
 					{% if event.backlog %}<a href="{% url "backlog_detail" event.project_id event.backlog_id %}"><i class="icon-list-ul"></i> {{ event.backlog.name }}</a> {% endif %}
-					{% if event.story %}<a href="{% url "story_backlog_detail" event.project_id event.backlog_id event.story_id %}"><i class="icon-list-alt"></i> {{ event.story.code }}</a> {% endif %}
+					{% if event.story %}
+						{% if event.backlog_id %}
+							<a href="{% url "story_backlog_detail" event.project_id event.backlog_id event.story_id %}"><i class="icon-list-alt"></i> {{ event.story.code }}</a>
+						{% else %}
+							<a href="{% url "story_detail" event.project_id event.story_id %}"><i class="icon-list-alt"></i> {{ event.story.code }}</a>
+						{% endif %}
+					{% endif %}
 				</div>
 				<span class="when"><i class="icon-time"></i> {{ event.when|date:"DATETIME_FORMAT" }}</span>
 			</td>

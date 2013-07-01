@@ -1,7 +1,8 @@
+import json
 from django.core.urlresolvers import reverse
 from django_webtest import WebTest
 
-from facile_backlog.backlog.models import Backlog, Event
+from facile_backlog.backlog.models import Backlog, Event, Project
 
 from . import factories
 
@@ -131,3 +132,35 @@ class BacklogTest(WebTest):
 
         project.remove_user(user_1)
         self.app.get(url, user=user_1, status=404)
+
+
+class AjaxTest(WebTest):
+    csrf_checks = False
+
+    def test_backlog_reorder(self):
+        user = factories.UserFactory.create(
+            email='test@test.ch', password='pass')
+        wrong_user = factories.UserFactory.create(
+            email='wrong@test.ch', password='pass')
+        project = factories.create_sample_project(user)
+        for i in range(1, 4):
+            factories.BacklogFactory.create(
+                project=project,
+                order=i,
+            )
+
+        order = [c.pk for c in project.backlogs.all()]
+        order.reverse()
+        url = reverse('api_move_backlog', args=(project.pk,))
+        data = json.dumps({
+            'order': order,
+        })
+        # if no write access, returns a 404
+        self.app.post(url, data, status=401)
+        self.app.post(url, data, user=wrong_user, status=404)
+        self.app.post(url, data,
+                      content_type="application/json",
+                      user=user)
+        project = Project.objects.get(pk=project.pk)
+        result_order = [c.pk for c in project.backlogs.all()]
+        self.assertEqual(order, result_order)

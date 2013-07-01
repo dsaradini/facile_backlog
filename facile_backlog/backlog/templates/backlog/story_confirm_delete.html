@@ -7,12 +7,19 @@
 		{% trans "Are you sure you want to delete this user story?" %}
 	</div>
 	<h2>{{ story.text }}</h2>
-	<form method="post" id="delete_form" action="{% url "story_backlog_delete" project.pk backlog.pk story.pk %}">
+	{% if backlog %}
+		{% url "story_backlog_delete" project.pk backlog.pk object.pk as target_url%}
+		{% url "story_backlog_detail" project.pk backlog.pk object.pk as cancel_url%}
+	{% else %}
+		{% url "story_delete" project.pk object.pk as target_url%}
+		{% url "story_detail" project.pk object.pk as cancel_url%}
+	{% endif %}
+	<form method="post" id="delete_form" action="{{ target_url }}">
 		{% csrf_token %}
 		{{ form }}
 		<div class="submit-delete actions">
 			<button class="button" type="submit">{% trans "Delete this user story" %}</button>
-			<a class="alt-button" href="{% url "story_backlog_detail" project.pk backlog.pk object.pk %}">{% trans "Cancel" %}</a>
+			<a class="alt-button" href="{{ cancel_url }}">{% trans "Cancel" %}</a>
 		</div>
 	</form>
 {% endblock %}

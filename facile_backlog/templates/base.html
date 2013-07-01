@@ -56,33 +56,48 @@
 				</div>
 
 				<div class="buttons">
+
+					<a href="{% url "blog_index" %}">{% trans "News" %}</a>
+					<span class="sep"></span>
+					<a href="{% url "docs_index" %}">{% trans "Help" %}</a>
+					<span class="sep"></span>
 					{% if user.is_authenticated %}
-						<a class="notif-link" href="{% url "my_notifications" %}" title="{% trans "Notifications" %}">
-							{% with notification_count=request.user.notification_count %}
-								{% if notification_count %}
+						{% with notification_count=request.user.notification_count %}
+							{% if notification_count %}
+								<a class="notif-link" href="{% url "my_notifications" %}" title="{% trans "Notifications" %}">
 									<span class="notification_count"><i class="icon-bell"></i> {{ notification_count }}</span>
-								{% endif %}
-							{% endwith %}
-						</a>
-						<span class="sep"></span>
-						<form id="logout_form" method="POST" action="{% url 'auth_logout' %}">
-							{% csrf_token %}
-							<input class="logout" type="submit" value="{% trans "logout" %}">
-						</form>
-					{% if user.is_authenticated %}
-						<span class="sep"></span>
-						<a href="{% url 'admin:index' %}">{% trans "Admin" %}</a>
-					{% endif %}
+
+								</a>
+								<span class="sep"></span>
+							{% endif %}
+						{% endwith %}
+						<div class="identity">
+							<ul class="dropdown-button">
+								<li>
+									<a href="."> {{ user.full_name }} <img class="avatar" src="{{ user.get_gravatar_url }}"> </a>
+									<ul>
+										<li><a href="{% url "auth_profile" %}">{% trans "Manage profile" %}</a></li>
+										{% if user.is_staff %}
+											<a href="{% url 'admin:index' %}">{% trans "Admin site" %}</a>
+										{% endif %}
+										<hr>
+										<li>
+											<form id="logout_form" method="POST" action="{% url 'auth_logout' %}">
+												{% csrf_token %}
+												<input class="logout" type="submit" value="{% trans "logout" %}">
+											</form>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</div>
 					{% else %}
 						<a href="{% url 'auth_login' %}">{% trans "Sign in" %}</a>
 					{% endif %}
 				</div>
-				{% if user.is_authenticated %}
-					<div class="identity"><a href="{% url "auth_profile" %}"><span>{{ user.full_name }}</span>&nbsp;&nbsp;<img class="avatar" src="{{ user.get_gravatar_url }}"></a></div>
-				{% endif %}
 			</div>
 		</div>
-		<div id="content" >
+		<div id="content" class="upper-bar">
 			<div id="messages">
 				{% for m in messages %}
 					<div class="{{ m.tags }}">{{ m|safe }}</div>

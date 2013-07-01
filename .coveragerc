@@ -1,0 +1,3 @@
+[run]
+source = facile_backlog
+omit = *migrations*,*wsgi*

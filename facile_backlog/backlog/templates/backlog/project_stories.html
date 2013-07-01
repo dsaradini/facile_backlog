@@ -9,7 +9,10 @@
 	</div>
 	<div id="links">
 		<span class="tab">
-			<a href="{% url "project_detail" project.pk %}">{% trans "Backlogs" %}</a>
+			<a href="{% url "project_detail" project.pk %}">{% trans "General" %}</a>
+		</span>
+		<span class="tab">
+			<a href="{% url "project_backlogs" project.pk %}">{% trans "Backlogs" %} </a>
 		</span>
 		<span class="tab">
 			<a href="{% url "project_users" project.pk %}">{% trans "Members" %}</a>
@@ -50,7 +53,10 @@
 			{% for story in stories %}
 				<tr id="story-{{ story.pk }}">
 					<td class="story-code" style="border-left: 3px solid {{ story.color }}">
-						<a href="{% url "story_backlog_detail" project.pk story.backlog.pk story.pk %}">{{ story.code }}</a>
+						{% if selectable %}
+							<input type="checkbox" name="story-{{ story.pk }}">
+						{% endif %}
+						<a href="{% url "story_backlog_detail" story.project_id story.backlog.pk story.pk %}">{{ story.code }}</a>
 					</td>
 					<td class="story-desc">
 						{% include "backlog/user_story_text.html" %}
@@ -72,7 +78,6 @@
 				</tr>
 			{% endfor %}
 		</tbody>
-
 	</table>
 
 {% endblock %}

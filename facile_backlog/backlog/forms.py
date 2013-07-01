@@ -1,10 +1,20 @@
 from django.forms.fields import CharField
 from django.forms.models import ModelForm
-from django.forms import Form
+from django.forms import Form, HiddenInput
 from django.forms import EmailField, BooleanField, ChoiceField
 from django.utils.translation import ugettext as _
 
 from .models import Project, Backlog, UserStory
+
+
+class BackMixin(object):
+    _back = CharField(widget=HiddenInput(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        back_value = kwargs.pop("_back", None)
+        super(BackMixin, self).__init__(*args, **kwargs)
+        self.fields["_back"] = self._back
+        self.fields["_back"].initial = back_value
 
 
 class ProjectEditionForm(ModelForm):
@@ -27,7 +37,7 @@ class ProjectCreationForm(ProjectEditionForm):
         return project
 
 
-class BacklogEditionForm(ModelForm):
+class BacklogEditionForm(BackMixin, ModelForm):
     class Meta:
         model = Backlog
         fields = ["name", "description"]
@@ -49,7 +59,7 @@ class BacklogCreationForm(BacklogEditionForm):
         return backlog
 
 
-class StoryEditionForm(ModelForm):
+class StoryEditionForm(BackMixin, ModelForm):
     points = ChoiceField(label=_("Points"), help_text=_("Fibonacci series"))
     as_a = CharField(label=_("As"))
 
