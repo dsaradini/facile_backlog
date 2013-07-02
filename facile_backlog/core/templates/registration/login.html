@@ -6,7 +6,7 @@
 
 {% block content %}
 	<div class="login-zone">
-	<h1>{% trans "Login" %}</h1>
+	<h1>{% trans "Backlogman sign in" %}</h1>
 
 	{% if next %}
 		<p>{% trans "You must be logged in to see this page." %}</p>
@@ -19,10 +19,10 @@
 		{% endif %}
 		{{ form.non_field_errors }}
 		<input class="full" id="id_username" maxlength="254" name="username" type="text" placeholder="{% trans "username or email" %}">
-		<input id="id_password" name="password" type="password" placeholder="{% trans "Password" %}">
-		<input class="button" type="submit" value="{% trans "Login" %}">
+		<input class="full" id="id_password" name="password" type="password" placeholder="{% trans "Password" %}">
+		<input class="btn btn-primary pull-right" type="submit" value="{% trans "Login" %}">
 		<p>
-			<a href="{% url "password_reset_recover" %}">{% trans "Forgot your password?" %}</a>
+			<a class="btn btn-link" href="{% url "password_reset_recover" %}">{% trans "Forgot your password?" %}</a>
 		</p>
 		<p>
 			<span class="full">{% trans "New to backlogman?" %}</span>

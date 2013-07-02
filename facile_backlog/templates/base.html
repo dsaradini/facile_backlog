@@ -4,108 +4,51 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="{% static "core/css/bootstrap.min.css" %}" media="screen">
-		<!--
 		<link rel="stylesheet" href="{% static "core/css/main.css" %}">
-		-->
 		<link rel="shortcut icon" href="{% static "core/img/favicon.png" %}">
 		<meta name="apple-mobile-web-app-title" content="Facile Backlog">
 		<title>{% block title %}{% trans "Welcome" %}{% endblock %} &mdash; Backlogman</title>
 	</head>
 	<body class="{% block content_class %}{% endblock %}">
-		<div class="navbar navbar-static-top">
-		  <div class="navbar-inner">
-			<a class="brand" href="{% url "home" %}">
-				<img src="{% static "core/img/backlogman_32.png" %}" >
-				Backlogman
-			</a>
-			<ul class="nav">
-			  <li class="active"><a href="{% url "home" %}">{% trans "Projects" %}</a></li>
-			  <li><a href="{% url "api_home" %}">{% trans "API" %}</a></li>
-				{% if request.user.is_staff %}
-			  		<li><a href="{% url 'admin:index' %}">{% trans "Admin" %}</a></li>
-				{% endif %}
-			</ul>
+		<div class="navbar navbar-inverse navbar-static-top">
+		  	<div class="navbar-inner">
+				<a class="brand" href="{% url "home" %}"
+						style="background: url({% static "core/img/backlogman_32.png" %}) no-repeat 8px center; padding-left:48px;">
+					Backlogman
+				</a>
+				<ul class="nav">
+			  		{% block navbar %}{% endblock %}
+				</ul>
 			<ul class="nav pull-right">
 				{% if user.is_authenticated %}
 				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-						<img class="avatar" src="{{ user.get_gravatar_url }}">&nbsp;{{ user.full_name }}
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown"
+							style="background: url({{ user.get_gravatar_url }}) no-repeat left center ; padding-left:34px;">
+						{{ user.full_name }}
 						<b class="caret"></b>
 					</a>
 					<ul class="dropdown-menu">
 						<li><a href="{% url "auth_profile" %}">{% trans "Profile" %}</a></li>
-						<li>
-							<form id="logout_form" method="POST" action="{% url 'auth_logout' %}">
+						<li><a href="#" onClick="document.getElementById('logout_form').submit()">{% trans "Sign out" %}</a>
+							<form style="display:none;" id="logout_form" method="POST" action="{% url 'auth_logout' %}">
 								{% csrf_token %}
-								<a class="logout" type="submit" value="{% trans "logout" %}">Logout</a>
 							</form>
 						</li>
 					</ul>
 				</li>
+				{% else %}
+					<li><a href="{% url "auth_login" %}">{% trans "Sign in" %}</a></li>
 				{% endif %}
 			</ul>
 		  </div>
 		</div>
-		<div id="header">
-			<div class="header-in">
-				<div class="title">
-					<a href="{% url "home" %}">
-
-					</a>
-					<span class="debug">{% if debug %}I am in debug mode!{% endif %}</span>
-				</div>
-
-				<div class="buttons">
-
-					<a href="{% url "blog_index" %}">{% trans "News" %}</a>
-					<span class="sep"></span>
-					<a href="{% url "docs_index" %}">{% trans "Help" %}</a>
-					<span class="sep"></span>
-					{% if user.is_authenticated %}
-						{% with notification_count=request.user.notification_count %}
-							{% if notification_count %}
-								<a class="notif-link" href="{% url "my_notifications" %}" title="{% trans "Notifications" %}">
-									<span class="notification_count"><i class="icon-bell"></i> {{ notification_count }}</span>
-
-								</a>
-								<span class="sep"></span>
-							{% endif %}
-						{% endwith %}
-						<div class="identity">
-							<ul class="dropdown-button">
-								<li>
-									<a href="."> {{ user.full_name }} <img class="avatar" src="{{ user.get_gravatar_url }}"> </a>
-									<ul>
-										<li><a href="{% url "auth_profile" %}">{% trans "Manage profile" %}</a></li>
-										{% if user.is_staff %}
-											<a href="{% url 'admin:index' %}">{% trans "Admin site" %}</a>
-										{% endif %}
-										<hr>
-										<li>
-											<form id="logout_form" method="POST" action="{% url 'auth_logout' %}">
-												{% csrf_token %}
-												<input class="logout" type="submit" value="{% trans "logout" %}">
-											</form>
-										</li>
-									</ul>
-								</li>
-							</ul>
-						</div>
-					{% else %}
-						<a href="{% url 'auth_login' %}">{% trans "Sign in" %}</a>
-					{% endif %}
-				</div>
-			</div>
-		</div>
-		<div id="content" class="upper-bar">
+		<div class="container">
 			<div id="messages">
 				{% for m in messages %}
 					<div class="{{ m.tags }}">{{ m|safe }}</div>
 				{% endfor %}
 			</div>
-			<div class="content">
 			{% block content %}{% endblock %}
-			</div>
 		</div>
 		<script src="{% static "core/js/jquery.js" %}"></script>
 		<script src="{% static "core/js/bootstrap.min.js" %}"></script>

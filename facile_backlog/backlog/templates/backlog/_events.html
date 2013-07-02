@@ -9,7 +9,7 @@
 					{% if event.backlog %}<a href="{% url "backlog_detail" event.project_id event.backlog_id %}"><i class="icon-list-ul"></i> {{ event.backlog.name }}</a> {% endif %}
 					{% if event.story %}
 						{% if event.backlog_id %}
-							<a href="{% url "story_backlog_detail" event.project_id event.backlog_id event.story_id %}"><i class="icon-list-alt"></i> {{ event.story.code }}</a>
+							<a class="btn-mini btn-link" href="{% url "story_backlog_detail" event.project_id event.backlog_id event.story_id %}"><i class="icon-list-alt"></i> {{ event.story.code }}</a>
 						{% else %}
 							<a href="{% url "story_detail" event.project_id event.story_id %}"><i class="icon-list-alt"></i> {{ event.story.code }}</a>
 						{% endif %}

@@ -1,10 +1,12 @@
-{% extends "base.html" %}
+{% extends "project_base.html" %}
 
 {% load static sekizai_tags jsonify %}
 
 {% block title %}{% if object %}{% trans "Edit story" %}{% else %}{% trans "Add a new story" %}{% endif %}{% endblock %}
 
 {% block content %}
+<div class="row-fluid">
+	<div class="span6 offset3 base-form">
 	{% if not object %}<h1>{% trans "Add a new story" %}</h1>{% endif %}
 	{% if object %}
 		{% if backlog %}
@@ -22,11 +24,13 @@
 			<input type="hidden" name="direct" value="true">
 		{% endif %}
         {% include "form.html" %}
-        <div class="submit actions">
-			<input class="button" type="submit" value="{% if object %}{% trans "Save changes" %}{% else %}{% trans "Create story" %}{% endif %}">
-			<a class="alt-button" href="{{ cancel_url }}">{% trans "Cancel" %}</a>
+        <div class="submit">
+			<input class="btn btn-success" type="submit" value="{% if object %}{% trans "Save changes" %}{% else %}{% trans "Create story" %}{% endif %}">
+			<a class="btn btn-link" href="{{ cancel_url }}">{% trans "Cancel" %}</a>
 		</div>
 	</form>
+	</div>
+</div>
 {% addtoblock "js" %}
 <script type="text/javascript" src="{% static "core/js/jquery.js" %}"></script>
 {% endaddtoblock %}

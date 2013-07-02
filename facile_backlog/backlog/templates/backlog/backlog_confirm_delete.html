@@ -1,18 +1,20 @@
-{% extends "base.html" %}
+{% extends "project_base.html" %}
 {% block title %}{% trans "Delete backlog" %}{% endblock %}
 
 {% block content %}
+<div class="row-fluid">
 	<h1>{% trans "Delete backlog" %}</h1>
 	<div class="delete_message">
-		{% trans "Are you sure you want to delete this backlog?" %}
+		{% trans "Are you sure you want to delete this backlog and all its stories?" %}
 	</div>
-	<h2>{{ project.name }}</h2>
+	<h2>{{ backlog.name }}</h2>
 	<form method="post" id="delete_form" action="{% url "backlog_delete" project.pk backlog.pk %}">
 		{% csrf_token %}
 		{{ form }}
 		<div class="submit-delete actions">
-			<button class="button" type="submit">{% trans "Delete this backlog" %}</button>
+			<button class="btn btn-danger" type="submit">{% trans "Delete this backlog" %}</button>
 			<a href="{% url "project_detail" project.pk %}">{% trans "Cancel" %}</a>
 		</div>
 	</form>
+</div>
 {% endblock %}

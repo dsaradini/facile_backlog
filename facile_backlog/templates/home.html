@@ -4,6 +4,15 @@
 
 {% block content_class %}home-background{% endblock %}
 
+{% block navbar %}
+	<li class="active"><a href="{% url "home" %}">{% trans "Welcome" %}</a></li>
+	<li><a href="{% url "docs_index" %}">{% trans "Documentation" %}</a></li>
+	{% if request.user.is_staff %}
+		<li><a href="{% url 'admin:index' %}">{% trans "Admin" %}</a></li>
+	{% endif %}
+	<li><a href="{% url "blog_index" %}">{% trans "News" %}</a></li>
+{% endblock %}
+
 
 {% block content %}
 	<h1>{% trans "Welcome to Backlogman." %}</h1>
@@ -42,11 +51,11 @@
 		<h3>{% trans "Already an account?" %}</h3>
 		{% csrf_token %}
 		<input class="full" id="id_username" maxlength="254" name="username" type="text" placeholder="{% trans "username or email" %}">
-		<input id="id_password" name="password" type="password" placeholder="{% trans "Password" %}">
-		<input class="button" type="submit" value="{% trans "Login" %}">
-		<p>
-			<a href="{% url "password_reset_recover" %}">{% trans "Forgot your password?" %}</a>
-		</p>
+		<input class="full" id="id_password" name="password" type="password" placeholder="{% trans "Password" %}">
+		<input class="btn btn-primary pull-right" type="submit" value="{% trans "Login" %}">
+
+			<a class="btn btn-link" href="{% url "password_reset_recover" %}">{% trans "Forgot your password?" %}</a>
+
 
 
 	</form>
@@ -57,8 +66,8 @@
 			{% csrf_token %}
 			<input class="full" id="id_full_name" name="full_name" type="text" placeholder="{% trans "Full name" %}">
 			<input class="full" id="id_email" maxlength="254" name="email" type="text" placeholder="{% trans "Email" %}">
-			<input id="register_id_password" name="password" type="password" placeholder="{% trans "Password" %}">
-			<input class="button" type="submit" value="{% trans "Register" %}">
+			<input id="register_id_password" class="full" name="password" type="password" placeholder="{% trans "Password" %}">
+			<input class="btn btn-primary pull-right" type="submit" value="{% trans "Register" %}">
 		</form>
 
 {% endblock %}

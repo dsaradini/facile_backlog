@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block navbar %}
+	<li class="active"><a href="{% url "home" %}">{% trans "Projects" %}</a></li>
+	<li><a href="{% url "docs_index" %}">{% trans "Documentation" %}</a></li>
+	{% if request.user.is_staff %}
+		<li><a href="{% url 'admin:index' %}">{% trans "Admin" %}</a></li>
+	{% endif %}
+	<li><a href="{% url "blog_index" %}">{% trans "News" %}</a></li>
+{% endblock %}

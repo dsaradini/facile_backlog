@@ -1,17 +1,18 @@
-{% extends "base.html" %}
+{% extends "project_base.html" %}
 {% load staticfiles sekizai_tags markup %}
 
 {% block title %}{% trans "User Story" %} &mdash; {{ story.code }}{% endblock %}
 
 {% block content %}
-	<div class="path">
-		<a href="{%  url "home" %}"><i class="icon-home"></i>{% trans "Home" %}</a> <i class="sep icon-angle-right"></i>
-		<a href="{%  url "project_detail" project.pk %}"> <i class="icon-book"></i> {{ project.name }}</a> <i class="sep icon-angle-right"></i>
+	<ul class="breadcrumb">
+		<li><a href="{% url "project_list" %}"> {% trans "Projects" %}</a><span class="divider">/</span></li>
+		<li><i class="icon-book"></i> <a href="{% url "project_detail" project.pk %}"> {% trans "Projects" %}</a><span class="divider">/</span></li>
 		{% if backlog %}
-			<a href="{%  url "backlog_detail" project.pk backlog.pk %}"> <i class="icon-list-ul"></i> {{ backlog.name }}</a> <i class="sep icon-angle-right"></i>
+			<li><i class="icon-list-ul"></i> <a href="{% url "backlog_detail" project.pk backlog.pk %}">  {{ backlog.name }}</a><span class="divider">/</span></li>
 		{% endif %}
-		<i class="icon-list-alt"></i><span class="current">{{ story.code }}</span>
-	</div>
+		<li class="active"><i class="icon-list-ul"></i> {{ story.code }}<span class="divider"></span></li>
+	</ul>
+
 	<div class="story-detail">
 
 		<div class="points">
@@ -25,22 +26,22 @@
 			{% include "backlog/user_story_text.html" with story=story %}
 		</div>
 		<div class="theme"><i class="icon-tag"></i>{{ story.theme }}</div>
-		<h2 class="poutre">Acceptance criteria</h2>
+		<h2>Acceptance criteria</h2>
 		<div class="acceptance-criteria markdown">
 			{{ story.acceptances|markdown }}
 		</div>
-		<h2 class="poutre">Comments</h2>
+		<h2>Comments</h2>
 		<div class="comments markdown">
 			{{ story.comments|markdown }}
 		</div>
 	</div>
 	<div class="actions">
 		{% if backlog %}
-			<a class="button" href="{% url "story_backlog_edit" project.pk backlog.pk object.pk %}">{% trans "Edit" %}</a>
-			<a class="button" href="{% url "story_backlog_delete" project.pk backlog.pk object.pk %}">{% trans "Delete" %}</a>
+			<a class="btn btn-primary" href="{% url "story_backlog_edit" project.pk backlog.pk object.pk %}">{% trans "Edit" %}</a>
+			<a class="btn btn-danger" href="{% url "story_backlog_delete" project.pk backlog.pk object.pk %}">{% trans "Delete" %}</a>
 		{% else %}
-			<a class="button" href="{% url "story_edit" project.pk object.pk %}">{% trans "Edit" %}</a>
-			<a class="button" href="{% url "story_delete" project.pk object.pk %}">{% trans "Delete" %}</a>
+			<a class="btn btn-primary" href="{% url "story_edit" project.pk object.pk %}">{% trans "Edit" %}</a>
+			<a class="btn btn-danger" href="{% url "story_delete" project.pk object.pk %}">{% trans "Delete" %}</a>
 		{% endif %}
 	</div>
 {% endblock %}

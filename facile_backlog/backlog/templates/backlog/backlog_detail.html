@@ -1,38 +1,33 @@
-{% extends "base.html" %}
+{% extends "project_base.html" %}
 {% load staticfiles sekizai_tags markup acl %}
 
 {% block title %}{% trans "Backlog" %} &mdash; {{ backlog.name }}{% endblock %}
 
 {% block content %}
-	<div class="path">
-		<a href="{%  url "home" %}"><i class="icon-home"></i>{% trans "Home" %}</a> <i class="sep icon-angle-right"></i>
-		<a href="{%  url "project_detail" project.pk %}"> <i class="icon-book"></i> {{ project.name }}</a> <i class="sep icon-angle-right"></i>
-		<i class="icon-list-alt"></i><span class="current">{{ backlog.name }}</span>
-	</div>
 	{% include "backlog/_backlog_head.html" %}
 	<div class="description">
 		{% if backlog.description %}
 			{{ backlog.description|markdown }}
 		{% endif %}
 	</div>
-	<div class="poutre">
-		<h2>{%  trans "User stories" %}</h2>
-		<div class="actions">
-		<a class="button" href="{% url "story_create" project.pk backlog.pk %}">
-			{% trans "Add user story" %}
-		</a>
-		<a class="alt-button" href="{% url "print_stories" project.pk %}?backlog_id={{ backlog.pk }}">{% trans "Generate PDF" %}</a>
-		</div>
-		<span class="sub-field filter" style="display:none">{% trans "Highlight theme:" %}<select id="theme-select">
-			<option value=""></option>
-			{% for theme in backlog.all_themes %}
-				<option value="{{ theme }}">{{ theme }}</option>
-			{% endfor %}
-		</select></span>
+
+	<h2>{%  trans "User stories" %}</h2>
+	<div class="actions">
+	<a class="btn btn-primary" href="{% url "story_create" project.pk backlog.pk %}">
+		{% trans "Add user story" %}
+	</a>
+	<a class="btn btn-link" href="{% url "print_stories" project.pk %}?backlog_id={{ backlog.pk }}">{% trans "Generate PDF" %}</a>
 	</div>
+	<h4 class="inline-title">{% trans "Highlight theme" %}</h4>&nbsp;
+	<select class="select-mini" id="theme-select">
+		<option value=""></option>
+		{% for theme in backlog.all_themes %}
+			<option value="{{ theme }}">{{ theme }}</option>
+		{% endfor %}
+	</select>
 	<div class="stories">
 		{% for story in stories %}
-			{% include "backlog/story_cell.html" %}
+			{% include "backlog/_story_cell.html" %}
 		{% empty %}
 			{% trans "No stories" %}
 		{% endfor %}
@@ -117,7 +112,6 @@
 			}
 		});
 
-		$(".dropdown-button").dropit();
 		$.move_story = function(story_pk, backlog_pk) {
 			$.ajax({
 				url: '{% url "api_move_story" project.pk %}',
@@ -140,7 +134,6 @@
 			});
 		}
 
-		$(".status-button").dropit();
 		$.change_story_status = function(story_pk, status) {
 			$.ajax({
 				url: '{% url "story_change_status" project.pk %}',
@@ -157,7 +150,7 @@
 				},
 				success: function(data) {
 					$("[data-id="+story_pk+"] .current-status").text(data.new_status);
-					$("[data-id="+story_pk+"] .status").attr('status', data.code);
+					$("[data-id="+story_pk+"] [status]").attr('status', data.code);
 				}
 			});
 		}

@@ -6,13 +6,10 @@
 	<h1>{% trans "Update your profile" %}</h1>
 
 	<form method="post" id="change_profile_form" action="{% url "auth_profile" %}">
-		<div class="field">
-			<label>{% trans "Login email" %}</label>
-			<span class="read-only-field">{{ user.email }}</span>
-		</div>
 		{% include "form.html" %}
 		<div class="submit">
-			<input class="button" type="submit" value="{% trans "Update profile" %}">
+			<input class="btn btn-primary" type="submit" value="{% trans "Update profile" %}">
+			<a href="{% url "home" %}">Cancel</a>
 		</div>
 	</form>
 	<hr>
@@ -30,7 +27,7 @@
 				<a class="alt-button" href="{% url "change_api_key" %}">{% trans "Create one" %}</a>
 			</span>
 		{% endif %}
-		<h2>Documentation</h2>
+		<h2>{% trans  "Documentation" %}</h2>
 		<ul>
 			<li><a href="{% url "api_home" %}">{% trans "REST service" %}</a></li>
 		</ul>

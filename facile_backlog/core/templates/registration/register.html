@@ -8,12 +8,12 @@
 	<p>{% trans "To create your account, simply fill in the form below. You will receive an email asking you to click on an activation link." %}</p>
 
 	{% url "auth_login" as login_url %}
-	<p>{% blocktrans %}If you already have an account, try <a class="alt-button" href="{{ login_url }}">logging in</a> instead.{% endblocktrans %}</p>
+	<p>{% blocktrans %}If you already have an account, try <a href="{{ login_url }}">logging in</a> instead.{% endblocktrans %}</p>
 
 	<form method="post" id="register_form" action="{% url "registration_register" %}">
 		{% include "form.html" %}
 		<div class="submit">
-			<input class="button" type="submit" value="{% trans "Register" %}">
+			<input class="btn btn-primary" type="submit" value="{% trans "Register" %}">
 		</div>
 	</form>
 {% endblock %}

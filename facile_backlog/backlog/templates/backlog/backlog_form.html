@@ -1,16 +1,28 @@
-{% extends "base.html" %}
+{% extends "project_base.html" %}
 
 {% block title %}{% if object %}{% trans "Edit backlog" %}{% else %}{% trans "Add a new backlog" %}{% endif %}{% endblock %}
 
 {% block content %}
+
+	<ul class="breadcrumb">
+		<li><a href="{% url "project_list" %}"> {% trans "Projects" %}</a><span class="divider">/</span></li>
+		<li> <i class="icon-book"></i><a href="{% url "project_detail" project.pk %}">{{ project.name }}</a><span class="divider">/</span></li>
+		<li class="active">{% if object %}{% trans "Edit backlog" %}{% else %}{% trans "Create backlog" %}{% endif %}<span class="divider"></span>
+		</li>
+	</ul>
+
+<div class="row-fluid">
+	<div class="span4 offset4 base-form">
 	{% if not object %}<h1>{% trans "Add a new backlog" %}</h1>{% endif %}
     <form method="post" id="edit_backlog_form" action="{% if object %}{% url "backlog_edit" project.pk object.pk %}{% else %}{% url "backlog_create" project.pk %}{% endif %}">
 
         {% csrf_token %}
         {% include "form.html" %}
-        <div class="submit actions">
-			<input class="button" type="submit" value="{% if object %}{% trans "Save changes" %}{% else %}{% trans "Create backlog" %}{% endif %}">
-			<a class="alt-button" href="{{ cancel_url }}">{% trans "Cancel" %}</a>
+        <div class="submit">
+			<input class="btn btn-success" type="submit" value="{% if object %}{% trans "Save changes" %}{% else %}{% trans "Create backlog" %}{% endif %}">
+			<a class="btn btn-link" href="{{ cancel_url }}">{% trans "Cancel" %}</a>
 		</div>
 	</form>
+	</div>
+</div>
 {% endblock %}

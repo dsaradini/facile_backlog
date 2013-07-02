@@ -8,14 +8,12 @@
 		}
 	}
 	code {
-		font-family: monospace;
 		background-color: white;
 		white-space: pre;
-		font-size: 1em;
-		line-height: 1em;
 		&[type=block] {
 			display: block;
 			padding-bottom:1rem;
+			border-left:10px solid #ddd;
 		}
 		&[type=method] {
 			padding:0 0.25em;
@@ -28,10 +26,11 @@
 	h1 {
 		padding: 0.5em 0;
 		code {
-			color: $button-background-color-alt;
 			padding: 0.25rem;
-			background-color: #ddd;
+			background-color: black;
+			color: white;
 			display: block;
+			font-size: 1.5rem;
 			&:before {
 				font-family: fontawesome;
 				content: "\f061";
@@ -42,7 +41,6 @@
 		}
 	}
 	em {
-		color: $button-background-color;
 		font-style: normal;
 	}
 	p {

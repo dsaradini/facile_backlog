@@ -1,29 +1,19 @@
-{% extends "base.html" %}
+{% extends "project_base.html" %}
 {% load static sekizai_tags %}
 {% block title %}{% trans "Project" %} &mdash; {{ project.name }} &mdash; {% trans "backlogs" %}{% endblock %}
 
 {% block content_class %}project-backlogs{% endblock %}
 
 {% block content %}
-	<div class="upper-bar">
-		<div class="path">
-			<a href="{%  url "home" %}"><i class="icon-home"></i>{% trans "Home" %}</a> <i class="sep icon-angle-right"></i>
-			<i class="icon-book"></i> <span class="current">{{ project.name }}</span>
-		</div>
-		<div id="links">
-			<span class="tab">
-				<a href="{% url "project_detail" project.pk %}">{% trans "General" %} </a>
-			</span>
-			<span class="tab active">{% trans "Backlogs" %}</span>
-			<span class="tab">
-				<a href="{% url "project_users" project.pk %}">{% trans "Members" %} </a>
-			</span>
-			<span class="tab">
-				<a href="{% url "project_stories" project.pk %}">{% trans "Stories" %}</a>
-			</span>
-		</div>
-		{% include "backlog/_project_head.html" %}
-	</div>
+
+	{% include "backlog/_project_head.html" %}
+
+	<ul class="nav nav-tabs">
+		<li><a href="{% url "project_detail" project.pk %}">{% trans "General" %}</a></li>
+		<li class="active"><a href="{% url "project_backlogs" project.pk %}">{% trans "Backlogs" %} </a></li>
+		<li><a href="{% url "project_users" project.pk %}">{% trans "Members" %} </a>
+		<li><a href="{% url "project_stories" project.pk %}">{% trans "Stories" %}</a></li>
+	</ul>
 
 	<div class="backlog-list" style="width:{% widthratio backlog_list.count 1 320 %}px">
 		{% for backlog in backlog_list %}
@@ -56,7 +46,7 @@
 					{%  endfor %}
 				</div>
 				<div class="backlog-action">
-					<a href="{% url "story_create" project.pk backlog.pk %}?_back=project" class="button">{% trans "Add story" %}</a>
+					<a href="{% url "story_create" project.pk backlog.pk %}?_back=project" class="btn btn-primary btn-small">{% trans "Add story" %}</a>
 				</div>
 			</article>
 		{% endfor %}

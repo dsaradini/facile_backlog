@@ -1,6 +1,10 @@
 {% csrf_token %}
 {% if form.errors and not form.non_field_errors %}
-	<p class="errorlist">{% trans "Please correct the errors below and submit the form again." %}</p>
+	<div class="alert alert-error errorlist">
+		<button type="button" class="close" data-dismiss="alert">&times;</button>
+		<h4>{% trans "Form error" %}</h4>
+		{% trans "Please correct the errors below and submit the form again." %}
+	</div>
 {% endif %}
 {{ form.non_field_errors }}
 {% for field in form %}
@@ -8,7 +12,7 @@
 		{{ field }}
 	{% else %}
 		<div class="field">
-			<label>{{ field.label }}:</label>
+			<label>{{ field.label }}</label>
 			{{ field }}
 			{% if field.help_text %}<p class="helptext">{{ field.help_text|safe }}</p>{% endif %}
 			{{ field.errors }}

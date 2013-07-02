@@ -1,31 +1,37 @@
-{% extends "base.html" %}
+{% extends "project_base.html" %}
 {% load staticfiles sekizai_tags %}
 
 {% block title %}{% trans "Project List" %}{% endblock %}
 
 {% block content %}
-	<div class="path">
-		<i class="icon-home"></i><span class="current">{% trans "Home" %}</span>
-	</div>
+<ul class="breadcrumb">
+	<li class="active"><i class="icon-home"></i>{% trans "Projects" %}<span class="divider">/</span></li>
+</ul>
 
-
-	<div class="left">
+<div class="row-fluid">
+	<div class="span6">
 		<h1>{% trans "My projects" %}</h1>
 
-		<div class="actions">
-			<a class="button" href="{% url "project_create" %}">
-				{% trans "Create new project" %}
-			</a>
-		</div>
-		{% if object_list %}
-		<form class="search" method="get" action="{% url "project_list" %}">
-			<input type="test" name="q" placeholder="{% trans "Find a project..."%}" value="{{ query }}">
-			<button class="alt-button" type="submit"><i class="icon-search"></i></button>
-			{% if query %}
-					<a class="alt-button" href=".">{% trans "Reset filter" %}</a>
-			{% endif %}
-		</form>
 
+
+		<div>
+			<form method="get" action="{% url "project_list" %}">
+				<div class="input-append">
+					<input class="span6" type="test" name="q" placeholder="{% trans "Find a project..."%}" value="{{ query }}">
+					<button class="btn" type="submit"><i class="icon-search"></i></button>
+					{% if query %}
+					<a class="btn" href="."><i class="icon-remove"></i></a>
+					{% endif %}
+					<a class="btn btn-primary" href="{% url "project_create" %}">
+						{% trans "Create project" %}
+					</a>
+				</div>
+			</form>
+		</div>
+
+
+
+		{% if object_list%}
 		<ul class="project-list">
 			{% for object in object_list %}
 				<li>
@@ -70,14 +76,15 @@
 			{% endif %}
 		</ul>
 		{%  else %}
-			<ul class="project-list">
-				{% trans "No active project found" %}
-			</ul>
+		<ul class="project-list">
+			{% trans "No active project found" %}
+		</ul>
 		{% endif %}
 	</div>
-	<div class="right">
+	<div class="span6">
 		<h1>{% trans "My activities" %}</h1>
 		<div class="actions"></div>
 		{% include "backlog/_events.html" with events=events gravatar=True%}
 	</div>
+<div>
 {% endblock %}
