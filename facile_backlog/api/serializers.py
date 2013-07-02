@@ -18,10 +18,9 @@ class StorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserStory
-        fields = ('id', 'code', 'url', 'as_a', 'i_want_to', 'so_i_can',
-                  'color', 'comments',
-                  'acceptances', 'points', 'create_date', 'theme',
-                  'status')
+        fields = ('id', 'url', 'code', 'create_date', 'as_a', 'i_want_to',
+                  'so_i_can', 'color', 'comments', 'acceptances', 'points',
+                  'theme', 'status', )
 
     def _url(self, obj):
         return reverse("api_story_detail",

@@ -123,7 +123,7 @@ Response
 ==========================================================
 **All *ordered* stories in a backlog**
 
-Allow: *GET*, *HEAD*, *OPTIONS*
+Allow: *GET*, *POST*, *HEAD*, *OPTIONS*
 
 Response
 --------
@@ -138,7 +138,7 @@ Response
 ====================================================================
 **Details on a given story**
 
-Allow: *GET*, *HEAD*, *OPTIONS*
+Allow: *GET*, *PATCH*, *DELETE*, *HEAD*, *OPTIONS*
 
 Response
 --------

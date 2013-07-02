@@ -212,6 +212,12 @@ class Backlog(StatsMixin, ProjectSecurityMixin, models.Model):
             models.Sum('points')).get('points__sum', 0.0)
         return val if val else 0.0
 
+    @property
+    def end_position(self):
+        if not hasattr(self, "_end_pos"):
+            self._end_pos = self.stories.count()
+        return self._end_pos
+
     def __unicode__(self):
         return self.name
 

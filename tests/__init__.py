@@ -4,7 +4,11 @@ import re
 import string
 import json
 
+from rest_framework.authtoken.models import Token
+
+from django.test.client import FakePayload, urlparse, force_str
 from django.test import TestCase, Client
+
 
 TEST_DATA = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data')
 
@@ -68,11 +72,48 @@ def line_starting(text, start):
     return None
 
 
+def user_token_auth(user):
+    token, create = Token.objects.get_or_create(user=user)
+    return api_token_auth(token)
+
+
 class ApiClient(Client):
     def request(self, **request):
+        user = request.pop("user", None)
+        if user:
+            request.update(user_token_auth(user))
         response = super(ApiClient, self).request(**request)
-        if response.get("Content-Type", "").find('application/json') != -1:
+        if response.content and \
+           response.get("Content-Type", "").find('application/json') != -1:
             response.json = json.loads(response.content)
+        else:
+            response.json = None
+        status = request.get("status", 200)
+        check_status = not response.status_code in (301, 302, 303, 307)
+        if check_status and status != response.status_code:
+            raise ValueError("Response return {0} not {1}".format(
+                response.status_code, status))
+        return response
+
+    def patch(self, path, data={}, content_type='application/json',
+              follow=False, **extra):
+        """
+        Requests a response from the server using PATH.
+        """
+        post_data = self._encode_data(data, content_type)
+        parsed = urlparse(path)
+        r = {
+            'CONTENT_LENGTH': len(post_data),
+            'CONTENT_TYPE':   content_type,
+            'PATH_INFO':      self._get_path(parsed),
+            'QUERY_STRING':   force_str(parsed[4]),
+            'REQUEST_METHOD': str('PATCH'),
+            'wsgi.input':     FakePayload(post_data),
+        }
+        r.update(extra)
+        response = self.request(**r)
+        if follow:
+            response = self._handle_redirects(response, **extra)
         return response
 
 

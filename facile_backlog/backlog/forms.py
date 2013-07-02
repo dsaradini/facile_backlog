@@ -96,7 +96,7 @@ class StoryCreationForm(StoryEditionForm):
         story = super(StoryCreationForm, self).save(commit=False)
         story.project = self.project
         story.backlog = self.backlog
-        story.order = 0  # Put it on the top of the backlog
+        story.order = self.backlog.end_position
         if commit:
             story.save()
         return story

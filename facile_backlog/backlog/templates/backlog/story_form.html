@@ -48,17 +48,19 @@
 {% endaddtoblock %}
 
 {% addtoblock "js" %}
-<script type="text/javascript" src="{% static "core/js/jquery.autocomplete.min.js" %}"></script>
+<script type="text/javascript" src="{% static "core/js/bootstrap.min.js" %}"></script>
 {% endaddtoblock %}
 
 {% addtoblock "js" %}
 <script type="text/javascript">
 $(function(){
-	$('[name="as_a"]').autocomplete({
-		lookup: {{ project.all_as_a|jsonify }}
+	$('[name="as_a"]').attr("autocomplete", "off");
+	$('[name="as_a"]').typeahead({
+		source: {{ project.all_as_a|jsonify }}
 	});
-	$('[name="theme"]').autocomplete({
-		lookup: {{ backlog.all_themes|jsonify }}
+	$('[name="theme"]').attr("autocomplete", "off");
+	$('[name="theme"]').typeahead({
+		source: {{ backlog.all_themes|jsonify }}
 	});
 	$('[name="color"]').simpleColorPicker({
 		picker: true

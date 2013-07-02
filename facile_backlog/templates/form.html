@@ -11,11 +11,15 @@
 	{% if field.is_hidden %}
 		{{ field }}
 	{% else %}
-		<div class="field">
-			<label>{{ field.label }}</label>
+		<div class="control-group field {% if field.errors %}error{% endif %}">
+			<label class="control-label"><strong>{{ field.label }}</strong></label>
 			{{ field }}
-			{% if field.help_text %}<p class="helptext">{{ field.help_text|safe }}</p>{% endif %}
-			{{ field.errors }}
+			{% if field.help_text %}<span class="muted">{{ field.help_text|safe }}</span>{% endif %}
+			{% if field.errors %}
+				{% for error in field.errors %}
+					<span class="help-inline">{{ error|escape }}</span>
+				{% endfor %}
+			{% endif %}
 		</div>
 	{% endif %}
 {% endfor %}

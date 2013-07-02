@@ -9,7 +9,7 @@
 	</ul>
 
 <div class="row-fluid">
-	<div class="span4 offset4 base-form">
+	<div class="span6 offset3 base-form">
 		{% if not object %}<h1>{% trans "Add a new project" %}</h1>{% endif %}
 		<form method="post" id="edit_project_form" action="{% if object %}{% url "project_edit" object.pk %}{% else %}{% url "project_create" %}{% endif %}">
 

@@ -6,9 +6,11 @@ from rest_framework.decorators import (api_view, throttle_classes,
 from rest_framework.parsers import JSONParser
 from rest_framework.throttling import UserRateThrottle
 
-from django.db import transaction
-from django.shortcuts import redirect
 from django.conf import settings
+from django.db import transaction
+from django.http import Http404
+from django.shortcuts import redirect
+
 
 from .serializers import ProjectSerializer, BacklogSerializer, StorySerializer
 
@@ -70,6 +72,10 @@ class BacklogViewSet(viewsets.ModelViewSet):
             self.queryset = Backlog.objects.none()
         return super(BacklogViewSet, self).initial(request, *args, **kwargs)
 
+    def check_permissions(self, request):
+        super(BacklogViewSet, self).check_permissions(request)
+        if not self.project:
+            raise Http404
 backlog_list = BacklogViewSet.as_view({
     'get': 'list'
 })
@@ -100,6 +106,18 @@ class StoryViewSet(viewsets.ModelViewSet):
             self.queryset = UserStory.objects.none()
         return super(StoryViewSet, self).initial(request, *args, **kwargs)
 
+    def check_permissions(self, request):
+        super(StoryViewSet, self).check_permissions(request)
+        if not self.project or not self.backlog:
+            raise Http404
+
+    def pre_save(self, obj):
+        obj.project = self.project
+        obj.backlog = self.backlog
+        obj.order = self.backlog.end_position
+        super(StoryViewSet, self).pre_save(obj)
+
+
 story_list = StoryViewSet.as_view({
     'get': 'list',
     'post': 'create'
@@ -107,9 +125,8 @@ story_list = StoryViewSet.as_view({
 
 story_detail = StoryViewSet.as_view({
     'get': 'retrieve',
-    #'put': 'update',
-    #'patch': 'partial_update',
-    #'delete': 'destroy'
+    'patch': 'partial_update',
+    'delete': 'destroy'
 })
 
 

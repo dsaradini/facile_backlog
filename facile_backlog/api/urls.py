@@ -25,7 +25,7 @@ urlpatterns = patterns(
 
     url(r'^projects/(?P<project_id>[\w]+)/backlogs/'
         r'(?P<backlog_id>[\w]+)/stories/$',
-        story_list, name="api_story_list"),
+        story_list, name="api_stories"),
 
     url(r'^projects/(?P<project_id>[\w]+)/backlogs/(?P<backlog_id>[\w]+)/'
         r'stories/(?P<story_id>[\w]+)/$',
