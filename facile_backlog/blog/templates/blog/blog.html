@@ -1,7 +1,15 @@
 {% extends "base.html" %}
 
 {% block title %}{% trans "Blog" %}{% endblock %}
-
+{% block navbar %}
+	{% if request.user.is_authenticated %}
+		<li><a href="{% url "project_list" %}">{% trans "Projects" %}</a></li>
+	{% else %}
+		<li><a href="{% url "home" %}">{% trans "Home" %}</a></li>
+	{% endif %}
+	<li><a href="{% url "docs_index" %}">{% trans "Documentation" %}</a></li>
+	<li class="active"><a href="{% url "blog_index" %}">{% trans "News" %}</a></li>
+{% endblock %}
 
 {% block content %}
 	<h1>Backlogman news</h1>
