@@ -8,6 +8,9 @@ $gray-text-color: #999;
 $button-background-color: #ff5900;
 $button-background-color-alt: darken($button-background-color, 8%);
 
+$box-background-color: #f5f5f5;
+$box-border-color: #e3e3e3;
+
 html, body {
 	//background: $background-color;
 }
@@ -23,15 +26,15 @@ html, body {
 	padding: 0 0.25em;
 }
 
-.left {
-	float:left;
-	width: 450px
-}
 
-.right {
-	margin-left: 1em;
-	float:right;
-	width: 350px
+.notification_count {
+	border: 1px solid rgba(0,0,0,0.3);
+	background-color: mix(red, $header-background-color, 50%);
+	border-radius: 2em;
+	padding: 0 0.5em;
+	box-sizing: border-box;
+	display: inline-block;
+	color: #ddd;
 }
 
 .base-form {
@@ -109,7 +112,7 @@ html, body {
 		display: inline-block;
 		width: 300px;
 		margin: 0.25em;
-		background-color: rgba(0,0,0,0.05);
+		background-color: #f5f5f5;
 		height: 62px;
 	}
 	.top-stories {
@@ -125,52 +128,6 @@ html, body {
 	}
 }
 
-
-.button {
-	font-size: 1em;
-	line-height: 1em;
-	font-weight: normal;
-	display: inline-block !important;
-	white-space: nowrap;
-	text-decoration: none;
-	text-shadow: 1px 1px 0 rgba(0,0,0,.2);
-	cursor: pointer;
-	border: 1px solid rgba(0,0,0,0.2);
-	background-color: $button-background-color;
-	background-image: -webkit-linear-gradient(top, $button-background-color 50%, $button-background-color-alt 55%);
-	background-image:    -moz-linear-gradient(top, $button-background-color 50%, $button-background-color-alt 55%);
-	background-image:     -ms-linear-gradient(top, $button-background-color 50%, $button-background-color-alt 55%);
-	background-image:      -o-linear-gradient(top, $button-background-color 50%, $button-background-color-alt 55%);
-	background-image:         linear-gradient(top, $button-background-color 50%, $button-background-color-alt 55%);
-
-	color: $header-text-color;
-	padding: 0.5rem 0.5rem;
-	box-shadow: 0 0 1px 1px rgba(255,255,255,.4) inset, 0 1px 0 rgba(0,0,0,.2);
-	border-radius:0.25rem;
-	&:hover {
-		background-color: lighten( $button-background-color, 10%);
-		background-image: none;
-		color: lighten($header-text-color, 20%);
-	}
-	&:before {
-		padding-right:0.2rem;
-	}
-}
-
-.alt-button {
-	cursor: pointer;
-	border: none;
-	background: none;
-	font-size: 1em;
-	font-family: inherit;
-	padding: 0 0.25em;
-	color: $button-background-color;
-	font-weight: bold;
-	text-decoration: none;
-	&:hover {
-		text-decoration: underline;
-	}
-}
 
 .project-count {
 	padding: 0.5rem;
@@ -401,13 +358,6 @@ article.story {
 	}
 }
 
-.poutre {
-	border-bottom: 1px solid #bbbbbb;
-	box-shadow: 0 1px 1px white;
-	padding: 0.5em 0.25em;
-}
-
-
 .project-users, .project-stories {
 	thead {
 		th {
@@ -458,36 +408,6 @@ article.story {
 }
 
 
-#links {
-	background-color: $header-background-color-end;
-
-	border-top: 1px solid rgba(255,255,255,0.2);
-	border-bottom: 1px solid rgba(0,0,0,0.5);
-
-	padding: 1em 0.5em 0em 0.5em;
-	a {
-		padding: 0.25em 0.5em;
-		display:inline-block;
-	}
-	.tab {
-		padding: 0.1em 0.5em 7px 0.5em;
-		margin: 0 0.5em;
-		background-color: lighten($header-background-color-end, 1%);
-		box-shadow: 0 0 1px 1px rgba(255,255,255,.1) inset, 0 1px 2px rgba(0,0,0,.5);
-		border: 1px solid rgba(0,0,0,.2);
-		&.active {
-			padding: 0.1em 1em 7px 1em;
-			background-color: $background-color;
-			border-top: 1px solid rgba(0,0,0,0.5);
-			border-bottom: 0 solid transparent;
-			border-left: 0 solid transparent;
-			border-right: 0 solid transparent;
-			box-shadow: none;
-			font-weight: bold;
-		}
-	}
-}
-
 .home-login {
 	width: 300px;
 	float:right;
@@ -510,9 +430,6 @@ input[colorpicker=true] {
 }
 
 .login-background, .home-background {
-	//background-image: url("../img/background.jpg");
-	//background-color: mix($header-background-color-end,black, 50%);
-
 
 	.home-blog {
 		float: left;
@@ -531,10 +448,11 @@ input[colorpicker=true] {
 		padding: 0.5em;
 	}
 	.invit-actions {
-		background-color: rgba(0,0,0,0.1);
+		background-color: $box-background-color;
 		padding: 0.5em;
 		form {
 			display: inline-block;
+			margin:0;
 		}
 	}
 }
@@ -551,7 +469,7 @@ textarea[name=i_want_to] {
 
 .percent-cell {
 	font-size: 1rem;
-	border: 1px solid rgba(0,0,0, 0.3);
+	border: 1px solid $box-border-color;
 	box-sizing: border-box;
 	.name {
 		display:block;
@@ -641,11 +559,8 @@ textarea[name=i_want_to] {
 			padding:1px;
 		}
 		.backlog-place-holder {
-			background-color: rgba(black,0.1);
-			border-top: 1px solid rgba(black, 0.2);
-			border-left: 1px solid rgba(black, 0.2);
-			border-right: 1px solid rgba(white, 0.6);
-			border-bottom: 1px solid rgba(white, 0.8);
+			background-color:  #eee;
+			border: 1px dashed rgba(black, 0.2);
 
 			border-radius:5px;
 			// should be the same as article ( jquery-ui-soratbale )
@@ -660,16 +575,16 @@ textarea[name=i_want_to] {
 			position: relative;
 		}
 		article.backlog {
-			background: #ddd;
+			background: #e3e3e3;
 			margin: 9px;
 			position: relative;
 			width: 300px;
 			display: block;
 			float: left;
-			border-top: 1px solid rgba(255,255,255, 0.3);
-			border-left: 1px solid rgba(255,255,255, 0.1);
-			border-right: 1px solid rgba(0,0,0, 0.1);
-			border-bottom: 1px solid rgba(0,0,0, 0.3);
+			//border-top: 1px solid rgba(255,255,255, 0.3);
+			//border-left: 1px solid rgba(255,255,255, 0.1);
+			//border-right: 1px solid rgba(0,0,0, 0.1);
+			border: 1px solid rgba(0,0,0, 0.2);
 			border-radius: 5px;
 			.backlog-title {
 				font-weight: bold;
@@ -753,7 +668,7 @@ textarea[name=i_want_to] {
 			}
 			.theme {
 				padding: 2px 0;
-				color: $header-background-color;
+				color: gray;
 			}
 		}
 	}

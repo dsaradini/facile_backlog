@@ -3,6 +3,7 @@
 {% block title %}{% trans "Password recovery" %}{% endblock %}
 
 {% block content %}
+<div class="row-fluid">
 	<h1>{% trans "Password recovery" %}</h1>
 
 	<p>{% trans "If you have forgotten your password, simply enter your email address in the field below to recover it." %}</p>
@@ -10,8 +11,9 @@
 	<form method="post" id="reset_form" action="{% url "password_reset_recover" %}">
 		{% include "form.html" %}
 		<div class="submit">
-			<input class="button" type="submit" value="{% trans "Recover my password" %}">
-			<a class="alt-button" href="{% url "auth_login" %}">{% trans "Back to login" %}</a>
+			<input class="btn btn-primary" type="submit" value="{% trans "Recover my password" %}">
+			<a class="btn btn-link" href="{% url "auth_login" %}">{% trans "Back to login" %}</a>
 		</div>
 	</form>
+</div>
 {% endblock %}

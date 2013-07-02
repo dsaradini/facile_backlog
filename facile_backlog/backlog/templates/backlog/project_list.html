@@ -10,25 +10,25 @@
 
 <div class="row-fluid">
 	<div class="span6">
-		<h1>{% trans "My projects" %}</h1>
+		<h2>{% trans "My projects" %}</h2>
 
 
-
-		<div>
-			<form method="get" action="{% url "project_list" %}">
+		<form method="get" action="{% url "project_list" %}">
+			<div class="controls controls-row">
 				<div class="input-append">
-					<input class="span6" type="test" name="q" placeholder="{% trans "Find a project..."%}" value="{{ query }}">
+					<a class="btn btn-primary" href="{% url "project_create" %}">
+					{% trans "Create project" %}
+				</a>
+				</div>
+				<div class="input-append">
+					<input class="span8" type="test" name="q" placeholder="{% trans "Find a project..."%}" value="{{ query }}">
 					<button class="btn" type="submit"><i class="icon-search"></i></button>
 					{% if query %}
-					<a class="btn" href="."><i class="icon-remove"></i></a>
+						<a class="btn" href="."><i class="icon-remove"></i></a>
 					{% endif %}
-					<a class="btn btn-primary" href="{% url "project_create" %}">
-						{% trans "Create project" %}
-					</a>
 				</div>
-			</form>
-		</div>
-
+			</div>
+		</form>
 
 
 		{% if object_list%}
@@ -82,7 +82,7 @@
 		{% endif %}
 	</div>
 	<div class="span6">
-		<h1>{% trans "My activities" %}</h1>
+		<h2>{% trans "My activities" %}</h2>
 		<div class="actions"></div>
 		{% include "backlog/_events.html" with events=events gravatar=True%}
 	</div>

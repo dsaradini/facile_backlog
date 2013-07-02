@@ -547,8 +547,12 @@ class StoryDelete(StoryMixin, generic.DeleteView):
         )
         messages.success(request,
                          _("Story successfully deleted."))
-        return redirect(reverse('backlog_detail', args=(self.project.pk,
-                                                        self.backlog.pk)))
+        if self.backlog:
+            return redirect(reverse('backlog_detail', args=(self.project.pk,
+                                                            self.backlog.pk)))
+        else:
+            return redirect(reverse('project_backlogs',
+                                    args=(self.project.pk,)))
 story_delete = login_required(StoryDelete.as_view())
 
 
