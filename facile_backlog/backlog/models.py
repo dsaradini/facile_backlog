@@ -163,7 +163,8 @@ class Project(StatsMixin, models.Model):
         return list(result)
 
     def all_themes(self):
-        result = self.stories.values_list('theme', flat=True).distinct()
+        result = [x for x in self.stories.values_list(
+            'theme', flat=True).distinct() if x]
         return list(result)
 
     def all_status(self):
@@ -210,7 +211,8 @@ class Backlog(StatsMixin, ProjectSecurityMixin, models.Model):
         return reverse("backlog_detail", args=(self.project.pk, self.pk))
 
     def all_themes(self):
-        result = self.stories.values_list('theme', flat=True).distinct()
+        result = [x for x in self.stories.values_list(
+            'theme', flat=True).distinct() if x]
         return list(result)
 
     @property

@@ -73,16 +73,11 @@ Response
 		}
 	],
 	"story_count": 10,
-	"backlogs": [
-		{
-			"id": BACKLOG_ID,
-			"url": "https://app.backlogman.com/api/projects/PROJECT_ID/backlogs/BACKLOG_ID/",
-			"name": "BACKLOG_NAME",
-			"description": "BACKLOG_DESCRIPTION",
-			"story_count": 0
-		},
+	"available_themes": [
+		"theme one",
+		"theme two",
 		...list...
-	]
+	],
 }
 </code>
 
@@ -115,7 +110,12 @@ Response
 	"url": "https://app.backlogman.com/api/projects/P_ID/backlogs/B_ID/",
 	"name": "BACKLOG_NAME",
 	"description": "BACKLOG_DESCRIPTION",
-	"story_count": 0
+	"story_count": 0,
+	"available_themes": [
+		"theme one",
+		"theme two",
+		...list...
+	]
 }
 </code>
 
@@ -138,7 +138,7 @@ Response
 ====================================================================
 **Details on a given story**
 
-Allow: *GET*, *PATCH*, *DELETE*, *HEAD*, *OPTIONS*
+Allow: *GET*, *PUT*, *PATCH*, *DELETE*, *HEAD*, *OPTIONS*
 
 Response
 --------
@@ -156,7 +156,8 @@ Response
 	"points": STORY_POINTS,
 	"create_date": "2013-06-19T15:04:08.254Z",
 	"theme": "Story theme in project",
-	"status": "to_do|in_progress|accepted|rejected"
+	"status": "to_do|in_progress|accepted|rejected",
+	"backlog_id": 54
 }
 </code>
 

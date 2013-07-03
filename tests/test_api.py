@@ -149,11 +149,19 @@ class APITest_Story(JsonTestCase):
             'as_a': 'api user',
             'i_want_to': 'be able to post user story',
             'so_i_can': 'create user story using API',
+            'theme': 'api',
+            'backlog_id': 102,
         }
         self.client.put(url, data=data, status=401)
         self.client.put(url, data=data, status=404, user=wrong_user)
-        self.client.put(url, data=json.dumps(data), user=user, status=405,
-                        content_type="application/json")
+        response = self.client.put(url, data=json.dumps(data), user=user,
+                                   status=200, content_type="application/json")
+        self.assertEqual(response.json['as_a'], 'api user')
+        story = UserStory.objects.get()
+        self.assertEqual(story.as_a, 'api user')
+        self.assertEqual(story.i_want_to, 'be able to post user story')
+        self.assertEqual(story.so_i_can, 'create user story using API')
+        self.assertEqual(story.theme, 'api')
 
     def test_story_patch(self):
         user = UserFactory.create(email="test@test.ch")
