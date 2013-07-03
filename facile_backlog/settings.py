@@ -162,7 +162,8 @@ INSTALLED_APPS = (
     'facile_backlog.blog',
     'south',
     'rest_framework',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'django.contrib.humanize',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

@@ -1,3 +1,4 @@
+{% load humanize %}
 <table class="events-list">
 	{% for event in events %}
 		<tr>
@@ -15,7 +16,7 @@
 						{% endif %}
 					{% endif %}
 				</div>
-				<span class="when"><i class="icon-time"></i> {{ event.when|date:"DATETIME_FORMAT" }}</span>
+				<span class="when"><i class="icon-time"></i> {{ event.when|naturaltime }}</span>
 			</td>
 		</tr>
 	{% endfor %}

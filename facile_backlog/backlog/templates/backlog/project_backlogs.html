@@ -26,8 +26,8 @@
 				<div class="stories" backlog-id="{{ backlog.pk }}">
 					{% for story in backlog.ordered_stories %}
 						<article class="small-story" id="story-{{ story.pk }}" story-id="{{ story.pk }}">
-							<div class="handle"></div>
-							<div class="handled" style="border-color:{{ story.color }}">
+							<div class="handle" style="background-color:{{ story.color }}"></div>
+							<div class="handled">
 								<div class="story-title">
 									<a href="{% url "story_detail" project.pk story.pk %}">{{ story.code }}</a>
 									&nbsp;<a href="{% url "story_edit" project.pk story.pk %}?_back=project"><i class="icon-edit"></i></a>
@@ -61,10 +61,6 @@
 
 {% addtoblock "js" %}
 <script type="text/javascript" src="{% static "core/js/jquery-ui.custom.min.js" %}"></script>
-{% endaddtoblock %}
-
-{% addtoblock "js" %}
-<script type="text/javascript" src="{% static "core/js/dropit.js" %}"></script>
 {% endaddtoblock %}
 
 {% addtoblock "js" %}
@@ -116,7 +112,6 @@
 			forcePlaceholderSize: true,
 			distance: 3,
 			cursor: "move",
-			handle: ".handle",
 			revert: 100,
 			update: function(event, ui) {
 				$('.stories').sortable("disable");
@@ -171,10 +166,6 @@
 				}
 			}
 		});
-
-		$(".dropdown-button").dropit();
-
-		$(".handle").show(); // hidden by default, if scripting is disabled, they should not show
 	});
 </script>
 {% endaddtoblock %}

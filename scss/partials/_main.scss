@@ -50,6 +50,22 @@ html, body {
 		}
 	}
 }
+
+.boxed {
+	border:1px solid $box-border-color;
+	background-color: $box-background-color;
+	padding: 8px 14px 8px 14px;
+	margin-bottom: 20px;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+
+input[type="search"] {
+	-webkit-search-decoration: true;
+}
+
 .events-list {
 	font-size: 0.75rem;
 	line-height: 1rem;
@@ -92,7 +108,6 @@ html, body {
 	clear: both;
 	li {
 		display: block;
-		font-size: 1.5em;
 		min-height: 100px;
 		overflow: hidden;
 		margin-bottom:1em;
@@ -118,7 +133,7 @@ html, body {
 		display: inline-block;
 		margin: 0.25em;
 		background-color: #f5f5f5;
-		height: 62px;
+		font-size: 1em;
 	}
 	.top-stories {
 		float:left;
@@ -492,6 +507,9 @@ textarea[name=i_want_to] {
 		overflow-x: visible;
 		white-space: nowrap;
 	}
+	p {
+		margin:0px;
+	}
 }
 
 .legend {
@@ -622,20 +640,16 @@ textarea[name=i_want_to] {
 			box-sizing: border-box;
 			.handle {
 				position: absolute;
-				top: 0px;
+				top: 2px;
 				width: 10px;
-				bottom: 0px;
-				left: 0px;
-				border-top-left-radius: 3px;
-				border-bottom-left-radius: 3px;
-				background-image: url('../img/grab.png');
-				background-color: rgba(#eee,0.5);
-				border-right:1px solid rgba(black, 0.1);
-				cursor: pointer;
+				bottom: 2px;
+				left: 2px;
+				border-top-left-radius: 4px;
+				border-bottom-left-radius: 4px;
+				background-color: transparent;
 				display: hidden;
 			}
 			.handled {
-				border-right: 3px solid transparent;
 				padding: 0px 4px 0px 14px;
 			}
 			background-color: rgba(white,0.8);

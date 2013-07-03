@@ -35,6 +35,7 @@ class StatsMixin(object):
                 result['completed_points'] = sum(completed)
             else:
                 result['total_stories'] = 0
+                result['total_points'] = 0
                 result['percent_estimated'] = 0
                 result['percent_completed'] = 0
 
@@ -169,6 +170,10 @@ class Project(StatsMixin, models.Model):
 
     def all_status(self):
         return UserStory.STATUS_CHOICE
+
+    def last_activity(self):
+        when = self.events.values_list("when", flat=True).all()[:1]
+        return when[0] if when else "not found"
 
 
 class ProjectSecurityMixin(object):
