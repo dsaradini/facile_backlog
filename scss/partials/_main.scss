@@ -38,7 +38,13 @@ html, body {
 }
 
 .base-form {
-	input, textarea {
+	input[name], textarea {
+		display: block;
+		width: 100%;
+		min-height: 30px;
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
 		&[name] {
 			width: 100%;
 		}
@@ -110,7 +116,6 @@ html, body {
 	.story-stats {
 		float:left;
 		display: inline-block;
-		width: 300px;
 		margin: 0.25em;
 		background-color: #f5f5f5;
 		height: 62px;
@@ -409,20 +414,14 @@ article.story {
 
 
 .home-login {
-	width: 300px;
-	float:right;
-	clear: right;
-	background-color: rgba($header-background-color,0.1);
-	border: 1px solid rgba(0,0,0,0.3);
+	background-color: $box-background-color;
+	border: 1px solid $box-border-color;
 	box-shadow: 3px 3px 6px rgba(0,0,0,0.2);
 	border-radius: 0.25rem;
-	padding: 1em;
 	margin: 1em;
+	padding: 1em;
 	input.full {
 		width: 286px;
-	}
-	btn {
-		float: right;
 	}
 }
 input[colorpicker=true] {

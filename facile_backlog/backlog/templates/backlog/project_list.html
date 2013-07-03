@@ -8,29 +8,25 @@
 	<li class="active"><i class="icon-home"></i>{% trans "Projects" %}<span class="divider">/</span></li>
 </ul>
 
-<div class="row-fluid">
+<div class="row">
 	<div class="span6">
-		<h2>{% trans "My projects" %}</h2>
-
-
-		<form method="get" action="{% url "project_list" %}">
-			<div class="controls controls-row">
-				<div class="input-append">
-					<a class="btn btn-primary" href="{% url "project_create" %}">
+		<div class="row-fluid">
+			<form  method="get" action="{% url "project_list" %}">
+				<div class="span10 input-append input-prepend">
+					<input class="span8" type="text" name="q" placeholder="{% trans "Find a project..."%}" value="{{ query }}">
+					{% if query %}
+						<a class="btn add-on" href="."><i class="icon-remove"></i></a>
+					{% endif %}
+					<button class="btn" type="submit"><i class="icon-search"></i></button>
+				</div>
+			</form>
+			<div style="text-align:center">
+				<a class="btn btn-primary" href="{% url "project_create" %}">
 					{% trans "Create project" %}
 				</a>
-				</div>
-				<div class="input-append">
-					<input class="span8" type="test" name="q" placeholder="{% trans "Find a project..."%}" value="{{ query }}">
-					<button class="btn" type="submit"><i class="icon-search"></i></button>
-					{% if query %}
-						<a class="btn" href="."><i class="icon-remove"></i></a>
-					{% endif %}
-				</div>
 			</div>
-		</form>
-
-
+		</div>
+		<hr>
 		{% if object_list%}
 		<ul class="project-list">
 			{% for object in object_list %}
@@ -76,13 +72,17 @@
 			{% endif %}
 		</ul>
 		{%  else %}
-		<ul class="project-list">
-			{% trans "No active project found" %}
-		</ul>
+		<div class="alert alert-info">
+			{% if not query %}
+				{% trans "You have no active project found" %}
+			{% else %}
+				{% trans "No project found" %}
+			{% endif %}
+		</div>
 		{% endif %}
 	</div>
 	<div class="span6">
-		<h2>{% trans "My activities" %}</h2>
+		<h3>{% trans "My activities" %}</h3>
 		<div class="actions"></div>
 		{% include "backlog/_events.html" with events=events gravatar=True%}
 	</div>

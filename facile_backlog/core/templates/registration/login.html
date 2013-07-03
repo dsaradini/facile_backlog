@@ -5,30 +5,20 @@
 {% block content_class %}login-background{% endblock %}
 
 {% block content %}
-	<div class="login-zone">
-	<h1>{% trans "Backlogman sign in" %}</h1>
+	<h1>{% trans "Backlogman sign-in" %}</h1>
 
 	{% if next %}
-		<p>{% trans "You must be logged in to see this page." %}</p>
+		<p class="alert">{% trans "You must be logged in to see this page." %}</p>
 	{% endif %}
-
-	<form class="home-login" id="login_form" method="POST" action="{% url "auth_login" %}">
-		{% csrf_token %}
-		{% if form.errors and not form.non_field_errors %}
-			<p class="errorlist">{% trans "Please correct the errors below and submit the form again." %}</p>
-		{% endif %}
-		{{ form.non_field_errors }}
-		<input class="full" id="id_username" maxlength="254" name="username" type="text" placeholder="{% trans "username or email" %}">
-		<input class="full" id="id_password" name="password" type="password" placeholder="{% trans "Password" %}">
-		<input class="btn btn-primary pull-right" type="submit" value="{% trans "Login" %}">
-		<p>
-			<a class="btn btn-link" href="{% url "password_reset_recover" %}">{% trans "Forgot your password?" %}</a>
-		</p>
-		<p>
-			<span class="full">{% trans "New to backlogman?" %}</span>
-			<a href="{% url "registration_register" %}">{% trans "Register now?" %}</a>
-		</p>
-	</form>
-
+	<div class="span6 offset3 base-form">
+		<form class="home-login" id="login_form" method="POST" action="{% url "auth_login" %}">
+			{% csrf_token %}
+			{% include "form.html" %}
+			<button class="btn btn-primary pull-right" type="submit">{% trans "Login" %}</button>
+			<div>
+				<button class="btn btn-link" href="{% url "password_reset_recover" %}">{% trans "Forgot your password?" %}</button>
+				<button class="btn btn-link" href="{% url "registration_register" %}">{% trans "Register now?" %}</button>
+			</div>
+		</form>
 	</div>
 {% endblock %}

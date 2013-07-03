@@ -7,14 +7,15 @@
 
 
 {% block content %}
+<div class="row">
 	<h1>{% trans "Welcome to Backlogman." %}</h1>
-	<p style="font-size:1.3em;">
+	<p class="span12" style="font-size:1.3em;">
 		<i class="icon-quote-left"></i>
 		{% trans "A easy way to manage your SCRUM projects backlogs" %}
 		<i class="icon-quote-right"></i>
 	</p>
 
-	<div class="home-blog">
+	<div class="span6" class="home-blog">
 		<h2>What is backlogman</h2>
 		<p>
 			Backlogman is targeted to help managing your SCRUM backlogs.
@@ -39,27 +40,32 @@
 			 then, let's the journey begin, <a href="{% url "registration_register" %}">register</a> to backlogman...
 		</p>
 	</div>
-	<form class="home-login" method="POST" action="{% url "auth_login" %}">
-		<h3>{% trans "Already an account?" %}</h3>
-		{% csrf_token %}
-		<input class="full" id="id_username" maxlength="254" name="username" type="text" placeholder="{% trans "username or email" %}">
-		<input class="full" id="id_password" name="password" type="password" placeholder="{% trans "Password" %}">
-		<input class="btn btn-primary pull-right" type="submit" value="{% trans "Login" %}">
+	<div class="span6">
+		<div class="row-fluid">
+			<form class="home-login" method="POST" action="{% url "auth_login" %}">
+				<h3>{% trans "Already an account?" %}</h3>
+				{% csrf_token %}
+				<input class="span" id="id_username" maxlength="254" name="username" type="text" placeholder="{% trans "username or email" %}">
+				<input class="span" id="id_password" name="password" type="password" placeholder="{% trans "Password" %}">
+				<div>
+					<button class="btn btn-primary pull-right" type="submit">{% trans "Login" %}</button>
+					<button class="btn btn-link" href="{% url "password_reset_recover" %}">{% trans "Forgot your password?" %}</button>
+				</div>
+			</form>
 
-			<a class="btn btn-link" href="{% url "password_reset_recover" %}">{% trans "Forgot your password?" %}</a>
 
-
-
-	</form>
-
-
-		<form class="home-login" method="POST" action="{% url "registration_register" %}">
-			<h3>{% trans "New to backlogman?" %}</h3> <p>{% trans "Register now." %}</p>
-			{% csrf_token %}
-			<input class="full" id="id_full_name" name="full_name" type="text" placeholder="{% trans "Full name" %}">
-			<input class="full" id="id_email" maxlength="254" name="email" type="text" placeholder="{% trans "Email" %}">
-			<input id="register_id_password" class="full" name="password" type="password" placeholder="{% trans "Password" %}">
-			<input class="btn btn-primary pull-right" type="submit" value="{% trans "Register" %}">
-		</form>
-
+			<form class="home-login" method="POST" action="{% url "registration_register" %}">
+				<h3>{% trans "New to backlogman?" %}</h3> <p>{% trans "Register now." %}</p>
+				{% csrf_token %}
+				<input class="span" id="id_full_name" name="full_name" type="text" placeholder="{% trans "Full name" %}">
+				<input class="span" id="id_email" maxlength="254" name="email" type="text" placeholder="{% trans "Email" %}">
+				<input class="span" id="register_id_password" class="full" name="password" type="password" placeholder="{% trans "Password" %}">
+				<div>
+					&nbsp;
+					<button class="center btn btn-primary pull-right" type="submit">{% trans "Register" %}</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
 {% endblock %}
