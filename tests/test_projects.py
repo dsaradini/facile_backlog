@@ -1,3 +1,4 @@
+import urllib
 from django.core.urlresolvers import reverse
 from django_webtest import WebTest
 
@@ -149,7 +150,7 @@ class ProjectTest(WebTest):
         project = factories.create_sample_project(user_1)
         for i in range(0, 12):
             factories.UserStoryFactory.create(
-                project=project
+                project=project,
             )
         url = reverse('project_stories', args=(project.pk,))
         self.app.get(url, user=user_2, status=404)
@@ -163,3 +164,24 @@ class ProjectTest(WebTest):
                                  "{0:.0f}".format(story.points))
             else:
                 self.assertEqual(elm.find("td.story-points").text(), "")
+
+    def test_project_stories_filter(self):
+        user = factories.UserFactory.create()
+        project = factories.create_sample_project(user)
+        for i in range(0, 12):
+            factories.UserStoryFactory.create(
+                project=project,
+                as_a="a User {0}".format(i),
+                status="to_do" if divmod(i, 2)[1] == 0 else "completed",
+            )
+        url = "{0}?{1}".format(
+            reverse('project_stories', args=(project.pk,)),
+            urllib.urlencode({
+                'q': 'User',
+                's': '-theme',
+                'st': 'to_do'
+            }),
+        )
+        response = self.app.get(url, user=user)
+        elms = response.pyquery("tbody tr")
+        self.assertEqual(elms.length, 6)

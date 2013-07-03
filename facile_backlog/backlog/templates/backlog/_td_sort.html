@@ -1,11 +1,11 @@
 {% if sort == key %}
 	{% if sort_sign == '+' %}
-		<a class="active" href="{{ base_url }}?s=-{{ key }}">
+		<a class="active" href="{{ base_url }}?s=-{{ key }}&{{ current_query }}">
 			{% trans title %}
 		</a>
 		<i class="icon-caret-down"></i>
 	{% elif sort_sign == '-' %}
-		<a class="active" href="{{ base_url }}?s={{ key }}">
+		<a class="active" href="{{ base_url }}?s={{ key }}&{{ current_query }}">
 			{% trans title %}
 		</a>
 		<i class="icon-caret-up"></i>
@@ -13,7 +13,7 @@
 		{% trans title %}
 	{% endif %}
 {% else %}
-	<a href="{{ base_url }}?s={{ key }}">
+	<a href="{{ base_url }}?s={{ key }}&{{ current_query }}">
 		{% trans title %}
 	</a>
 {% endif %}

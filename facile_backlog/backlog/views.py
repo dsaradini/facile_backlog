@@ -1,4 +1,5 @@
 import json
+import urllib
 
 from django.conf import settings
 from django.contrib import messages
@@ -7,6 +8,7 @@ from django.contrib.sites.models import RequestSite
 from django.core import signing
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.http import Http404
 from django.http.response import (HttpResponseNotAllowed, HttpResponse)
 from django.shortcuts import get_object_or_404, redirect
@@ -194,21 +196,43 @@ class ProjectUsers(ProjectMixin, generic.TemplateView):
 project_users = login_required(ProjectUsers.as_view())
 
 
-class ProjectStories(ProjectMixin, generic.TemplateView):
+class ProjectStories(ProjectMixin, generic.ListView):
     template_name = "backlog/project_stories.html"
+    paginate_by = 30
 
     def dispatch(self, request, *args, **kwargs):
         self.sort = request.GET.get('s', "")
+        self.query = {
+            'q': request.GET.get('q', ""),
+            't': request.GET.get('t', ""),
+            'st': request.GET.get('st', "")
+        }
         return super(ProjectStories, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        stories_qs = self.project.stories.select_related("backlog", "project")
+        if self.sort:
+            stories_qs = stories_qs.extra(order_by=["{0}".format(self.sort)])
+        if self.query['t']:
+            stories_qs = stories_qs.filter(
+                theme__icontains=self.query['t']
+            )
+        if self.query['st']:
+            stories_qs = stories_qs.filter(
+                status=self.query['st']
+            )
+        if self.query['q']:
+            stories_qs = stories_qs.filter(
+                Q(as_a__icontains=self.query['q']) |
+                Q(i_want_to__icontains=self.query['q']) |
+                Q(so_i_can__icontains=self.query['q']) |
+                Q(number__icontains=self.query['q'])
+            )
+        return stories_qs
 
     def get_context_data(self, **kwargs):
         context = super(ProjectStories, self).get_context_data(**kwargs)
         context['project'] = self.project
-        stories_qs = self.project.stories.select_related("backlog")
-        if self.sort:
-            stories_qs = stories_qs.extra(order_by=["{0}".format(self.sort)])
-
-        context['stories'] = stories_qs
         if self.sort:
             if self.sort[0] == '-':
                 context['sort_sign'] = "-"
@@ -216,6 +240,12 @@ class ProjectStories(ProjectMixin, generic.TemplateView):
             else:
                 context['sort_sign'] = "+"
                 context['sort'] = self.sort
+        context['query'] = self.query
+        context['current_query'] = urllib.urlencode(self.query)
+        if self.sort:
+            context['current_sort'] = urllib.urlencode({
+                's': self.sort[1:] if self.sort[0] == '-' else self.sort
+            })
         return context
 project_stories = login_required(ProjectStories.as_view())
 

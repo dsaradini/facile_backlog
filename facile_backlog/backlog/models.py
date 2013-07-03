@@ -162,6 +162,13 @@ class Project(StatsMixin, models.Model):
         result = self.stories.values_list('as_a', flat=True).distinct()
         return list(result)
 
+    def all_themes(self):
+        result = self.stories.values_list('theme', flat=True).distinct()
+        return list(result)
+
+    def all_status(self):
+        return UserStory.STATUS_CHOICE
+
 
 class ProjectSecurityMixin(object):
     def can_read(self, user):
