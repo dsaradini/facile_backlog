@@ -24,7 +24,7 @@ class ProjectTest(WebTest):
 
         url = reverse("project_list")
         response = self.app.get(url, user="test@epyx.ch")
-        self.assertContains(response, 'My projects')
+        self.assertNotContains(response, 'no active project')
         self.assertContains(response, 'More project available...')
 
     def test_project_create(self):

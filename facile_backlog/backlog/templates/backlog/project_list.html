@@ -67,7 +67,7 @@
 			{% endfor %}
 			{% if is_paginated and page_obj.has_next %}
 				<li>
-					<span class="info"> <a href="?page={{ page_obj.next_page_number }}">{% trans "More project available..." %}</a> </span>
+					<div class="alert alert-info text-center"> <a href="?page={{ page_obj.next_page_number }}&q={{ query }}">{% trans "More project available..." %}</a> </div>
 				</li>
 			{% endif %}
 		</ul>

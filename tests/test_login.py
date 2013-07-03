@@ -36,4 +36,4 @@ class LoginTest(WebTest):
             email='test@epyx.ch', password='pass')
         url = reverse('auth_login')
         response = self.app.get(url, user=user).follow()
-        self.assertContains(response, 'My projects')
+        self.assertContains(response, 'no active project')
