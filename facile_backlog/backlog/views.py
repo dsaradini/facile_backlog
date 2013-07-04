@@ -462,7 +462,7 @@ class StoryCreate(BacklogMixin, generic.CreateView):
         context['project'] = self.project
         context['_back'] = self.back
         context['cancel_url'] = reverse("project_backlogs", args=(
-                self.project.pk,))
+            self.project.pk,))
         return context
 
     def form_valid(self, form):
