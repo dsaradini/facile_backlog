@@ -13,26 +13,35 @@
 		<li class="active"><i class="icon-list-ul"></i> {{ story.code }}<span class="divider"></span></li>
 	</ul>
 
-	<div class="story-detail">
-
-		<div class="points">
-			{% if story.points >= 0 %}
-				<span>{{ story.points|floatformat:"0" }}</span>
-			{% else %}
-				&nbsp;&nbsp;
-			{% endif %}
-		</div>
-		<div style="border-left:10px solid {{ story.color }};" class="description">
+	<div class="story-detail row-fluid">
+		<div style="border-left:10px solid {{ story.color }};" class="description span10">
 			{% include "backlog/user_story_text.html" with story=story %}
 		</div>
-		<div class="theme"><i class="icon-tag"></i>{{ story.theme }}</div>
-		<h2>Acceptance criteria</h2>
-		<div class="acceptance-criteria markdown">
-			{{ story.acceptances|markdown }}
+		<div class="span2">
+			<div class="points">
+				{% if story.points >= 0 %}
+					<span>{{ story.points|floatformat:"0" }}</span>
+				{% else %}
+					&nbsp;&nbsp;
+				{% endif %}
+			</div>
 		</div>
-		<h2>Comments</h2>
-		<div class="comments markdown">
-			{{ story.comments|markdown }}
+		{% if story.theme %}
+		<div class="span12 muted">
+			<h4><i class="icon-tag"></i> {{ story.theme }}</h4>
+		</div>
+		{% endif %}
+		<div class="span12">
+			<h3>{% trans "Acceptance criteri" %}a</h3>
+			<div class="acceptance-criteria markdown">
+				{{ story.acceptances|markdown }}
+			</div>
+		</div>
+		<div class="span12">
+			<h3>{% trans "Comments" %}</h3>
+			<div class="comments markdown">
+				{{ story.comments|markdown }}
+			</div>
 		</div>
 	</div>
 	<div class="actions">

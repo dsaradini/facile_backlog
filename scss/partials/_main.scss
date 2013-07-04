@@ -353,19 +353,16 @@ article.story {
 
 .story-detail {
 	.points {
-		display: table-cell;
-		float: right;
 		width: 60px;
 		height: 60px;
-		line-height: 56px;
+		line-height: 60px;
 		text-align: center;
 		vertical-align: middle;
 		font-size: 2em;
-		margin: 0 0.5em;
-		background-color: $text-color;
-		color: $background-color;
+		margin: 0.5em 0.5em;
+		background-color: #333;
+		color: #eee;
 		padding: 0;
-		box-shadow: 3px 3px 18px rgba(0,0,0,0.5);
 		border-radius: 2rem;
 	}
 	.no-points {
@@ -374,13 +371,9 @@ article.story {
 	.description {
 		font-size: 1.5em;
 		line-height: 1.5em;
-		display: block;
-		width: 700px;
-		background: white;
 		padding: 1em;
 		border: 2px solid gray;
 		background-color: #eee;
-		border-radius: 0.25em;
 		color: $text-color;
 	}
 	.theme {

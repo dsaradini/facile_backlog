@@ -14,7 +14,7 @@
 		<li><a href="{% url "project_users" project.pk %}">{% trans "Members" %} </a>
 		<li><a href="{% url "project_stories" project.pk %}">{% trans "Stories" %}</a></li>
 	</ul>
-	<form class="form-inline">
+	<form class="form-inline boxed">
 		<label>{% trans "Highlight theme" %}</label>&nbsp;
 		<select class="select-mini" id="theme-select">
 			<option value="">{% trans "No filter" %}</option>
@@ -23,6 +23,7 @@
 			{% endfor %}
 		</select>
 		<a href=".">{% trans "Refresh" %}</a>
+		<a class="btn btn-primary btn-small pull-right" href="{% url "backlog_create" project.pk %}">{% trans "Create backlog" %}</a>
 	</form>
 	<div class="backlog-lanes" style="width:{% widthratio backlog_list.count 1 320 %}px">
 		{% for backlog in backlog_list %}
