@@ -2,6 +2,7 @@ from django.forms.fields import CharField
 from django.forms.models import ModelForm
 from django.forms import Form, HiddenInput
 from django.forms import EmailField, BooleanField, ChoiceField
+from django.forms.widgets import TextInput
 from django.utils.translation import ugettext as _
 
 from .models import Project, Backlog, UserStory
@@ -61,10 +62,10 @@ class BacklogCreationForm(BacklogEditionForm):
 
 class StoryEditionForm(BackMixin, ModelForm):
     points = ChoiceField(label=_("Points"), help_text=_("Fibonacci series"))
-    as_a = CharField(label=_("As"))
 
     def __init__(self, *args, **kwargs):
         super(StoryEditionForm, self).__init__(*args, **kwargs)
+        self.fields['as_a'].widget = TextInput()
         self.fields['as_a'].widget.attrs['autofocus'] = ''
         self.fields['color'].widget.attrs['colorpicker'] = 'true'
 
@@ -77,6 +78,7 @@ class StoryEditionForm(BackMixin, ModelForm):
             "- user story readable by human")
         self.fields['acceptances'].help_text = _(
             "Use markdown list format: line with '-' in front")
+
         self.fields['points'].choices = UserStory.FIBONACCI_CHOICE
 
     class Meta:

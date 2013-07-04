@@ -1,10 +1,14 @@
 # Django settings for facile_backlog project.
+# coding=utf-8
+
 import os
 import urlparse
 import dj_database_url
 import sys
 
 from django.core.urlresolvers import reverse_lazy
+
+SECRET_KEY = os.environ['SECRET_KEY']
 
 EASYBACKLOG_TOKEN = os.getenv("EASYBACKLOG_TOKEN", "")
 
@@ -20,10 +24,7 @@ TEMPLATE_DEBUG = DEBUG
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 
-TEMPLATE_DEBUG = DEBUG
-
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
 )
 
 MANAGERS = ADMINS
@@ -102,7 +103,15 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
-SECRET_KEY = os.environ['SECRET_KEY']
+
+LANGUAGES = (
+    ('fr', u'Français'),
+    ('en', u'English'),
+)
+
+LOCALE_PATHS = (
+    os.path.join(HERE, 'locale'),
+)
 
 if DEBUG:
     TEMPLATE_LOADERS = (
@@ -118,8 +127,10 @@ else:
     )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # cache middleware must come here
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',

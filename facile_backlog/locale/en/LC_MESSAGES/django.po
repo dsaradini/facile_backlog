@@ -1,0 +1,1187 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-07-04 23:38+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: settings.py:112
+msgid "Français"
+msgstr ""
+
+#: settings.py:113
+msgid "English"
+msgstr ""
+
+#: backlog/forms.py:63 backlog/models.py:275
+#: backlog/templates/backlog/project_detail.html:46
+#: backlog/templates/backlog/project_list.html:46
+msgid "Points"
+msgstr ""
+
+#: backlog/forms.py:63
+msgid "Fibonacci series"
+msgstr ""
+
+#: backlog/forms.py:64 backlog/models.py:269 backlog/models.py:315
+#: backlog/templates/backlog/user_story_text.html:1
+msgid "As"
+msgstr ""
+
+#: backlog/forms.py:71
+msgid "a user"
+msgstr ""
+
+#: backlog/forms.py:73
+msgid "be able to input text here"
+msgstr ""
+
+#: backlog/forms.py:75
+msgid "write user stories"
+msgstr ""
+
+#: backlog/forms.py:77
+msgid "- user story readable by human"
+msgstr ""
+
+#: backlog/forms.py:79
+msgid "Use markdown list format: line with '-' in front"
+msgstr ""
+
+#: backlog/forms.py:106 core/forms.py:53 core/models.py:39
+msgid "Email address"
+msgstr ""
+
+#: backlog/forms.py:107 backlog/models.py:62
+#: backlog/templates/backlog/project_users.html:46
+msgid "Administrator"
+msgstr ""
+
+#: backlog/models.py:62
+msgid "Team member"
+msgstr ""
+
+#: backlog/models.py:78 backlog/models.py:200
+msgid "Name"
+msgstr ""
+
+#: backlog/models.py:79 backlog/models.py:201
+#: backlog/templates/backlog/print_stories.html:29
+#: backlog/templates/backlog/project_stories.html:49
+msgid "Description"
+msgstr ""
+
+#: backlog/models.py:80 core/models.py:43
+msgid "Active"
+msgstr ""
+
+#: backlog/models.py:81
+msgid "Code"
+msgstr ""
+
+#: backlog/models.py:82
+msgid "Prefix for all stories (maximum 5 characters)"
+msgstr ""
+
+#: backlog/models.py:86
+msgid "Authorization"
+msgstr ""
+
+#: backlog/models.py:193 backlog/models.py:246
+msgid "To do"
+msgstr ""
+
+#: backlog/models.py:194 backlog/models.py:250
+msgid "Completed"
+msgstr ""
+
+#: backlog/models.py:195 backlog/templates/backlog/project_backlogs.html:12
+#: backlog/templates/backlog/project_detail.html:10
+#: backlog/templates/backlog/project_stories.html:10
+#: backlog/templates/backlog/project_users.html:10
+msgid "General"
+msgstr ""
+
+#: backlog/models.py:198 backlog/models.py:266 backlog/models.py:373
+#: backlog/templates/backlog/project_backlogs.html:3
+#: backlog/templates/backlog/project_detail.html:4
+#: backlog/templates/backlog/project_stories.html:4
+#: backlog/templates/backlog/project_users.html:4
+msgid "Project"
+msgstr ""
+
+#: backlog/models.py:202
+msgid "Kind"
+msgstr ""
+
+#: backlog/models.py:204
+msgid "Last modified"
+msgstr ""
+
+#: backlog/models.py:245
+msgid "New"
+msgstr ""
+
+#: backlog/models.py:247
+msgid "In progress"
+msgstr ""
+
+#: backlog/models.py:248 backlog/templates/backlog/project_users.html:45
+msgid "Accepted"
+msgstr ""
+
+#: backlog/models.py:249
+msgid "Rejected"
+msgstr ""
+
+#: backlog/models.py:254
+msgid "Not set"
+msgstr ""
+
+#: backlog/models.py:270 backlog/models.py:316
+#: backlog/templates/backlog/user_story_text.html:1
+msgid "I want to"
+msgstr ""
+
+#: backlog/models.py:271 backlog/models.py:317
+#: backlog/templates/backlog/user_story_text.html:1
+msgid "so I can"
+msgstr ""
+
+#: backlog/models.py:272
+msgid "Color"
+msgstr ""
+
+#: backlog/models.py:273 backlog/templates/backlog/story_detail.html:41
+msgid "Comments"
+msgstr ""
+
+#: backlog/models.py:274
+msgid "acceptances"
+msgstr ""
+
+#: backlog/models.py:276
+msgid "Created at"
+msgstr ""
+
+#: backlog/models.py:278 backlog/templates/backlog/print_stories.html:38
+msgid "Theme"
+msgstr ""
+
+#: backlog/models.py:280 backlog/models.py:378
+#: backlog/templates/backlog/print_stories.html:32
+#: backlog/templates/backlog/project_backlogs.html:38
+msgid "Backlog"
+msgstr ""
+
+#: backlog/models.py:283 backlog/templates/backlog/print_stories.html:35
+#: backlog/templates/backlog/project_stories.html:28
+msgid "Status"
+msgstr ""
+
+#: backlog/models.py:370 backlog/templates/backlog/project_users.html:46
+msgid "User"
+msgstr ""
+
+#: backlog/models.py:372
+msgid "When"
+msgstr ""
+
+#: backlog/models.py:375 backlog/templates/backlog/project_backlogs.html:58
+msgid "Story"
+msgstr ""
+
+#: backlog/models.py:381
+msgid "Text"
+msgstr ""
+
+#: backlog/pdf.py:105
+msgid "n/a"
+msgstr ""
+
+#: backlog/views.py:125 backlog/management/commands/easy_import.py:103
+msgid "Main backlog"
+msgstr ""
+
+#: backlog/views.py:126
+msgid "This is the main backlog for the project."
+msgstr ""
+
+#: backlog/views.py:132
+msgid "Completed stories"
+msgstr ""
+
+#: backlog/views.py:133
+msgid "This is the backlog to hold completed stories."
+msgstr ""
+
+#: backlog/views.py:149
+msgid "Project successfully created."
+msgstr ""
+
+#: backlog/views.py:169
+msgid "Project successfully updated."
+msgstr ""
+
+#: backlog/views.py:184
+msgid "Project successfully deleted."
+msgstr ""
+
+#: backlog/views.py:323
+msgid "Backlog successfully created."
+msgstr ""
+
+#: backlog/views.py:358
+msgid "Backlog successfully updated."
+msgstr ""
+
+#: backlog/views.py:382
+msgid "Backlog successfully deleted."
+msgstr ""
+
+#: backlog/views.py:477
+msgid "Story successfully created."
+msgstr ""
+
+#: backlog/views.py:508
+msgid "Story successfully updated."
+msgstr ""
+
+#: backlog/views.py:532
+msgid "Story successfully deleted."
+msgstr ""
+
+#: backlog/views.py:658
+msgid "Invitation has been sent to {0}."
+msgstr ""
+
+#: backlog/views.py:736
+msgid "User {0} has been revoked."
+msgstr ""
+
+#: backlog/views.py:763
+msgid "You are now a member of this project"
+msgstr ""
+
+#: backlog/views.py:776
+msgid "Invitation has been declined"
+msgstr ""
+
+#: backlog/management/commands/easy_import.py:95
+msgid "Accepted stories"
+msgstr ""
+
+#: backlog/management/commands/easy_import.py:96
+msgid "This is the backlog for accepted stories"
+msgstr ""
+
+#: backlog/management/commands/easy_import.py:104
+msgid "This is the main backlog for the project"
+msgstr ""
+
+#: backlog/templates/backlog/_backlog_head.html:4
+#: backlog/templates/backlog/_backlog_head.html:5
+#: backlog/templates/backlog/_project_head.html:4
+#: backlog/templates/backlog/backlog_form.html:8
+#: backlog/templates/backlog/project_form.html:7
+#: backlog/templates/backlog/project_list.html:8
+#: backlog/templates/backlog/project_list.html:14
+#: backlog/templates/backlog/story_detail.html:8
+#: backlog/templates/backlog/story_detail.html:9
+#: blog/templates/blog/blog.html:6 docs/templates/docs/docs.html:8
+#: templates/base.html:22
+msgid "Projects"
+msgstr ""
+
+#: backlog/templates/backlog/_backlog_head.html:12
+#: backlog/templates/backlog/_project_head.html:12
+#: backlog/templates/backlog/project_backlogs.html:39
+#: backlog/templates/backlog/project_backlogs.html:60
+#: backlog/templates/backlog/story_detail.html:48
+msgid "Edit"
+msgstr ""
+
+#: backlog/templates/backlog/_backlog_head.html:13
+#: backlog/templates/backlog/_project_head.html:15
+#: backlog/templates/backlog/project_backlogs.html:40
+#: backlog/templates/backlog/project_backlogs.html:61
+#: backlog/templates/backlog/project_users.html:49
+#: backlog/templates/backlog/story_detail.html:49
+msgid "Delete"
+msgstr ""
+
+#: backlog/templates/backlog/backlog_confirm_delete.html:2
+#: backlog/templates/backlog/backlog_confirm_delete.html:6
+msgid "Delete backlog"
+msgstr ""
+
+#: backlog/templates/backlog/backlog_confirm_delete.html:8
+msgid "Are you sure you want to delete this backlog and all its stories?"
+msgstr ""
+
+#: backlog/templates/backlog/backlog_confirm_delete.html:15
+msgid "Delete this backlog"
+msgstr ""
+
+#: backlog/templates/backlog/backlog_confirm_delete.html:16
+#: backlog/templates/backlog/backlog_form.html:23
+#: backlog/templates/backlog/project_confirm_delete.html:16
+#: backlog/templates/backlog/project_form.html:20
+#: backlog/templates/backlog/story_confirm_delete.html:18
+#: backlog/templates/backlog/story_form.html:25
+#: backlog/templates/users/auth_confirm_delete.html:20
+#: backlog/templates/users/invite_user.html:14
+msgid "Cancel"
+msgstr ""
+
+#: backlog/templates/backlog/backlog_form.html:3
+#: backlog/templates/backlog/backlog_form.html:10
+msgid "Edit backlog"
+msgstr ""
+
+#: backlog/templates/backlog/backlog_form.html:3
+#: backlog/templates/backlog/backlog_form.html:16
+msgid "Add a new backlog"
+msgstr ""
+
+#: backlog/templates/backlog/backlog_form.html:10
+#: backlog/templates/backlog/backlog_form.html:22
+#: backlog/templates/backlog/project_backlogs.html:26
+#: backlog/templates/backlog/project_detail.html:29
+msgid "Create backlog"
+msgstr ""
+
+#: backlog/templates/backlog/backlog_form.html:22
+#: backlog/templates/backlog/project_form.html:19
+#: backlog/templates/backlog/story_form.html:24
+msgid "Save changes"
+msgstr ""
+
+#: backlog/templates/backlog/print_stories.html:3
+msgid "Print stories"
+msgstr ""
+
+#: backlog/templates/backlog/print_stories.html:6
+msgid "Generate PDF for printing"
+msgstr ""
+
+#: backlog/templates/backlog/print_stories.html:7
+msgid "Select the stories you want to see on your PDF"
+msgstr ""
+
+#: backlog/templates/backlog/print_stories.html:10
+msgid "Paper format"
+msgstr ""
+
+#: backlog/templates/backlog/print_stories.html:12
+msgid "A4"
+msgstr ""
+
+#: backlog/templates/backlog/print_stories.html:13
+msgid "Letter"
+msgstr ""
+
+#: backlog/templates/backlog/print_stories.html:15
+msgid "Double side printing type"
+msgstr ""
+
+#: backlog/templates/backlog/print_stories.html:17
+msgid "Long side printing"
+msgstr ""
+
+#: backlog/templates/backlog/print_stories.html:18
+msgid "Short side printing"
+msgstr ""
+
+#: backlog/templates/backlog/print_stories.html:26
+msgid "ID"
+msgstr ""
+
+#: backlog/templates/backlog/print_stories.html:65
+#: backlog/templates/backlog/project_stories.html:18
+msgid "Generate PDF"
+msgstr ""
+
+#: backlog/templates/backlog/print_stories.html:66
+msgid "Back to backlog"
+msgstr ""
+
+#: backlog/templates/backlog/project_backlogs.html:3
+msgid "backlogs"
+msgstr ""
+
+#: backlog/templates/backlog/project_backlogs.html:13
+#: backlog/templates/backlog/project_detail.html:11
+#: backlog/templates/backlog/project_detail.html:25
+#: backlog/templates/backlog/project_list.html:62
+#: backlog/templates/backlog/project_stories.html:11
+#: backlog/templates/backlog/project_users.html:11
+msgid "Backlogs"
+msgstr ""
+
+#: backlog/templates/backlog/project_backlogs.html:14
+#: backlog/templates/backlog/project_detail.html:12
+#: backlog/templates/backlog/project_stories.html:12
+#: backlog/templates/backlog/project_users.html:12
+msgid "Members"
+msgstr ""
+
+#: backlog/templates/backlog/project_backlogs.html:15
+#: backlog/templates/backlog/project_detail.html:13
+#: backlog/templates/backlog/project_detail.html:43
+#: backlog/templates/backlog/project_list.html:44
+#: backlog/templates/backlog/project_stories.html:13
+#: backlog/templates/backlog/project_stories.html:16
+#: backlog/templates/backlog/project_users.html:13
+msgid "Stories"
+msgstr ""
+
+#: backlog/templates/backlog/project_backlogs.html:18
+msgid "Highlight theme"
+msgstr ""
+
+#: backlog/templates/backlog/project_backlogs.html:20
+msgid "No filter"
+msgstr ""
+
+#: backlog/templates/backlog/project_backlogs.html:25
+msgid "Refresh"
+msgstr ""
+
+#: backlog/templates/backlog/project_backlogs.html:59
+msgid "Details"
+msgstr ""
+
+#: backlog/templates/backlog/project_backlogs.html:82
+msgid "Add story"
+msgstr ""
+
+#: backlog/templates/backlog/project_backlogs.html:128
+#: backlog/templates/backlog/project_backlogs.html:186
+msgid "Server return an error."
+msgstr ""
+
+#: backlog/templates/backlog/project_confirm_delete.html:2
+#: backlog/templates/backlog/project_confirm_delete.html:6
+#: backlog/templates/users/auth_confirm_delete.html:2
+msgid "Delete project"
+msgstr ""
+
+#: backlog/templates/backlog/project_confirm_delete.html:8
+msgid ""
+"Are you sure you want to delete this project with all its backlogs and "
+"stories?"
+msgstr ""
+
+#: backlog/templates/backlog/project_confirm_delete.html:15
+msgid "Delete this project"
+msgstr ""
+
+#: backlog/templates/backlog/project_detail.html:60
+#: backlog/templates/backlog/story_form.html:24
+msgid "Create story"
+msgstr ""
+
+#: backlog/templates/backlog/project_detail.html:63
+msgid "No backlog"
+msgstr ""
+
+#: backlog/templates/backlog/project_detail.html:68
+msgid "Last activities"
+msgstr ""
+
+#: backlog/templates/backlog/project_form.html:3
+msgid "Edit project"
+msgstr ""
+
+#: backlog/templates/backlog/project_form.html:3
+#: backlog/templates/backlog/project_form.html:13
+msgid "Add a new project"
+msgstr ""
+
+#: backlog/templates/backlog/project_form.html:8
+#: backlog/templates/backlog/project_form.html:19
+msgid "Create project"
+msgstr ""
+
+#: backlog/templates/backlog/project_list.html:4
+msgid "Project List"
+msgstr ""
+
+#: backlog/templates/backlog/project_list.html:17
+msgid "New project"
+msgstr ""
+
+#: backlog/templates/backlog/project_list.html:23
+msgid "Find a project..."
+msgstr ""
+
+#: backlog/templates/backlog/project_list.html:25
+msgid "See all projects"
+msgstr ""
+
+#: backlog/templates/backlog/project_list.html:65
+msgid "Team members"
+msgstr ""
+
+#: backlog/templates/backlog/project_list.html:69
+msgid "Last update"
+msgstr ""
+
+#: backlog/templates/backlog/project_list.html:74
+msgid "More project available..."
+msgstr ""
+
+#: backlog/templates/backlog/project_list.html:81
+msgid "You have no active project found"
+msgstr ""
+
+#: backlog/templates/backlog/project_list.html:83
+msgid "No project found"
+msgstr ""
+
+#: backlog/templates/backlog/project_list.html:90
+msgid "Recent activities"
+msgstr ""
+
+#: backlog/templates/backlog/project_stories.html:21
+msgid ""
+"Here is the list of all stories in this project. Those stories are not "
+"sorted, to have a sorted \"view\" of project sotries, use backlogs."
+msgstr ""
+
+#: backlog/templates/backlog/project_stories.html:30
+msgid "Any"
+msgstr ""
+
+#: backlog/templates/backlog/project_stories.html:38
+msgid "apply filters"
+msgstr ""
+
+#: backlog/templates/backlog/project_stories.html:39
+msgid "reset"
+msgstr ""
+
+#: backlog/templates/backlog/project_stories.html:94
+msgid "No story matching criterias"
+msgstr ""
+
+#: backlog/templates/backlog/project_users.html:16
+msgid "Users"
+msgstr ""
+
+#: backlog/templates/backlog/project_users.html:19
+msgid "Here is the list of all users participating to this project."
+msgstr ""
+
+#: backlog/templates/backlog/project_users.html:24
+#: backlog/templates/users/invite_user.html:3
+#: backlog/templates/users/invite_user.html:6
+msgid "Invite user"
+msgstr ""
+
+#: backlog/templates/backlog/project_users.html:32
+msgid "User name"
+msgstr ""
+
+#: backlog/templates/backlog/project_users.html:33
+msgid "email"
+msgstr ""
+
+#: backlog/templates/backlog/project_users.html:34
+msgid "Invitation"
+msgstr ""
+
+#: backlog/templates/backlog/project_users.html:35
+msgid "Role"
+msgstr ""
+
+#: backlog/templates/backlog/project_users.html:45
+msgid "Pending"
+msgstr ""
+
+#: backlog/templates/backlog/story_confirm_delete.html:2
+msgid "Delete user story"
+msgstr ""
+
+#: backlog/templates/backlog/story_confirm_delete.html:6
+msgid "Delete story"
+msgstr ""
+
+#: backlog/templates/backlog/story_confirm_delete.html:8
+msgid "Are you sure you want to delete this user story?"
+msgstr ""
+
+#: backlog/templates/backlog/story_confirm_delete.html:17
+msgid "Delete this user story"
+msgstr ""
+
+#: backlog/templates/backlog/story_detail.html:4
+msgid "User Story"
+msgstr ""
+
+#: backlog/templates/backlog/story_detail.html:35
+msgid "Acceptance criteri"
+msgstr ""
+
+#: backlog/templates/backlog/story_form.html:5
+msgid "Edit story"
+msgstr ""
+
+#: backlog/templates/backlog/story_form.html:5
+#: backlog/templates/backlog/story_form.html:10
+msgid "Add a new story"
+msgstr ""
+
+#: backlog/templates/users/auth_confirm_delete.html:5
+#: backlog/templates/users/auth_confirm_delete.html:19
+msgid "Revoke user"
+msgstr ""
+
+#: backlog/templates/users/auth_confirm_delete.html:7
+msgid "You cannot revoke yourself from the project"
+msgstr ""
+
+#: backlog/templates/users/auth_confirm_delete.html:8
+msgid "Back"
+msgstr ""
+
+#: backlog/templates/users/auth_confirm_delete.html:12
+#, python-format
+msgid ""
+"Are you sure you want to revoke '%(user)s' from the project '%(project)s'?"
+msgstr ""
+
+#: backlog/templates/users/invitation_completed.html:2
+#: backlog/templates/users/invitation_completed.html:5
+msgid "Invitation accepted"
+msgstr ""
+
+#: backlog/templates/users/invitation_completed.html:6
+#, python-format
+msgid ""
+"Invitation to project '%(project)s' has been accepted. You can access it "
+"using the url below.\" "
+msgstr ""
+
+#: backlog/templates/users/invitation_completed.html:7
+msgid "Project:"
+msgstr ""
+
+#: backlog/templates/users/invitation_email.txt:1
+#: backlog/templates/users/revoke_email.txt:1
+#: core/templates/password_reset/recovery_email.txt:1
+#: core/templates/registration/activation_email.txt:1
+#, python-format
+msgid "Dear %(name)s,"
+msgstr ""
+
+#: backlog/templates/users/invitation_email.txt:3
+#, python-format
+msgid ""
+"You have been invited to join the project '%(project)s', to accept the "
+"invitation, please navigate the URL below:"
+msgstr ""
+
+#: backlog/templates/users/invitation_email_subject.txt:1
+#, python-format
+msgid "You have been invited to project %(project)s on %(domain)s"
+msgstr ""
+
+#: backlog/templates/users/invite_user.html:8
+msgid "Enter user email yout want to invite."
+msgstr ""
+
+#: backlog/templates/users/invite_user.html:13
+msgid "Invite"
+msgstr ""
+
+#: backlog/templates/users/notifications.html:3 templates/base.html:35
+msgid "Notifications"
+msgstr ""
+
+#: backlog/templates/users/notifications.html:7
+msgid "Invitations"
+msgstr ""
+
+#: backlog/templates/users/notifications.html:10
+#, python-format
+msgid "You have been invited to project <b>%(project)s</b> as <b>%(role)s</b>"
+msgstr ""
+
+#: backlog/templates/users/notifications.html:14
+msgid "Accept invitation"
+msgstr ""
+
+#: backlog/templates/users/notifications.html:18
+msgid "I'm not interested!"
+msgstr ""
+
+#: backlog/templates/users/notifications.html:23
+msgid "You don't have any invitation pending"
+msgstr ""
+
+#: backlog/templates/users/revoke_email.txt:3
+#, python-format
+msgid "You have been revoked from the project %(project)s"
+msgstr ""
+
+#: backlog/templates/users/revoke_email_subject.txt:1
+#, python-format
+msgid "You have been revoked from project %(project)s on %(domain)s"
+msgstr ""
+
+#: blog/templates/blog/blog.html:3
+msgid "Blog"
+msgstr ""
+
+#: blog/templates/blog/blog.html:8 docs/templates/docs/docs.html:10
+#: templates/base.html:24 templates/home.html:3
+msgid "Home"
+msgstr ""
+
+#: blog/templates/blog/blog.html:10 docs/templates/docs/docs.html:12
+#: templates/base.html:26
+msgid "Documentation"
+msgstr ""
+
+#: blog/templates/blog/blog.html:11 docs/templates/docs/docs.html:13
+#: templates/base.html:27
+msgid "News"
+msgstr ""
+
+#: core/admin.py:18
+msgid "Addition"
+msgstr ""
+
+#: core/admin.py:19
+msgid "Change"
+msgstr ""
+
+#: core/admin.py:20
+msgid "Deletion"
+msgstr ""
+
+#: core/admin.py:34
+msgid "Permissions"
+msgstr ""
+
+#: core/admin.py:36
+msgid "Important dates"
+msgstr ""
+
+#: core/admin.py:56
+msgid "Password changed successfully."
+msgstr ""
+
+#: core/admin.py:66
+#, python-format
+msgid "Change password: %s"
+msgstr ""
+
+#: core/forms.py:32 core/forms.py:54 templates/home.html:49
+#: templates/home.html.py:62
+msgid "Password"
+msgstr ""
+
+#: core/forms.py:33
+msgid ""
+"Raw passwords are not stored, so there is no way to see this user's "
+"password, but you can change the password using <a href=\"password/\">this "
+"form</a>."
+msgstr ""
+
+#: core/forms.py:52 core/models.py:41 templates/home.html:60
+msgid "Full name"
+msgstr ""
+
+#: core/forms.py:66
+msgid "This email address is already registered."
+msgstr ""
+
+#: core/forms.py:93
+msgid "Sorry, this user isn't registered."
+msgstr ""
+
+#: core/models.py:18
+msgid "The email must be set."
+msgstr ""
+
+#: core/models.py:42
+msgid "Staff status"
+msgstr ""
+
+#: core/models.py:44
+msgid "Superuser status"
+msgstr ""
+
+#: core/models.py:45
+msgid "Date joined"
+msgstr ""
+
+#: core/views.py:58
+msgid "Your profile was successfully updated."
+msgstr ""
+
+#: core/views.py:173
+msgid "Your password was successfully reset."
+msgstr ""
+
+#: core/views.py:197
+msgid "API key successfully created."
+msgstr ""
+
+#: core/views.py:200
+msgid "API key successfully changed."
+msgstr ""
+
+#: core/templates/password_reset/recovery_done.html:3
+#: core/templates/password_reset/recovery_done.html:6
+msgid "New password set"
+msgstr ""
+
+#: core/templates/password_reset/recovery_done.html:8
+#, python-format
+msgid ""
+"Your password has successfully been reset. You can use it right now on the "
+"<a href=\"%(login_url)s\">login page</a>."
+msgstr ""
+
+#: core/templates/password_reset/recovery_email.txt:3
+#, python-format
+msgid ""
+"You -- or someone pretending to be you -- has requested a password reset on "
+"%(domain)s."
+msgstr ""
+
+#: core/templates/password_reset/recovery_email.txt:5
+msgid "You can set your new password by following this link:"
+msgstr ""
+
+#: core/templates/password_reset/recovery_email.txt:9
+msgid ""
+"If you don't want to reset your password, simply ignore this email and it "
+"will stay unchanged."
+msgstr ""
+
+#: core/templates/password_reset/recovery_email_subject.txt:1
+#, python-format
+msgid "Password recovery on %(domain)s"
+msgstr ""
+
+#: core/templates/password_reset/recovery_form.html:3
+#: core/templates/password_reset/recovery_form.html:7
+msgid "Password recovery"
+msgstr ""
+
+#: core/templates/password_reset/recovery_form.html:9
+msgid ""
+"If you have forgotten your password, simply enter your email address in the "
+"field below to recover it."
+msgstr ""
+
+#: core/templates/password_reset/recovery_form.html:14
+msgid "Recover my password"
+msgstr ""
+
+#: core/templates/password_reset/recovery_form.html:15
+msgid "Back to login"
+msgstr ""
+
+#: core/templates/password_reset/reset.html:3
+#: core/templates/password_reset/reset.html:10
+msgid "Password reset"
+msgstr ""
+
+#: core/templates/password_reset/reset.html:7
+msgid "Invalid link"
+msgstr ""
+
+#: core/templates/password_reset/reset.html:8
+#, python-format
+msgid ""
+"Sorry, this password reset link is invalid. You can still <a href="
+"\"%(recovery_url)s\">request a new one</a>."
+msgstr ""
+
+#: core/templates/password_reset/reset.html:11
+#, python-format
+msgid ""
+"Welcome, <strong>%(username)s</strong>. Please choose your new password."
+msgstr ""
+
+#: core/templates/password_reset/reset.html:15
+msgid "Set new password"
+msgstr ""
+
+#: core/templates/password_reset/reset_sent.html:3
+#: core/templates/password_reset/reset_sent.html:10
+msgid "Password recovery sent"
+msgstr ""
+
+#: core/templates/password_reset/reset_sent.html:7
+msgid "Invalid URL"
+msgstr ""
+
+#: core/templates/password_reset/reset_sent.html:8
+msgid ""
+"This URL is invalid. If you copy-pasted it by hand there probably was a "
+"mistake in the process. If you keep seeing this page please contact support."
+msgstr ""
+
+#: core/templates/password_reset/reset_sent.html:11
+#, python-format
+msgid ""
+"An email was sent to <strong>%(email)s</strong> %(ago)s ago. Use the link in "
+"it to set a new password."
+msgstr ""
+
+#: core/templates/profile/api_key_form.html:3
+#: core/templates/profile/api_key_form.html:6
+#: core/templates/profile/user_form.html:25
+msgid "Change API key"
+msgstr ""
+
+#: core/templates/profile/api_key_form.html:9
+msgid ""
+"You're about to request a new API key, your previous key will be revoked. "
+"Are you sure your want to do that? "
+msgstr ""
+
+#: core/templates/profile/api_key_form.html:11
+msgid "You're about to create an API key for your account."
+msgstr ""
+
+#: core/templates/profile/api_key_form.html:17
+msgid "Change key"
+msgstr ""
+
+#: core/templates/profile/api_key_form.html:17
+msgid "Create key"
+msgstr ""
+
+#: core/templates/profile/api_key_form.html:18
+msgid "cancel"
+msgstr ""
+
+#: core/templates/profile/user_form.html:3 templates/base.html:48
+msgid "Profile"
+msgstr ""
+
+#: core/templates/profile/user_form.html:8
+msgid "Update your profile"
+msgstr ""
+
+#: core/templates/profile/user_form.html:13
+msgid "Update profile"
+msgstr ""
+
+#: core/templates/profile/user_form.html:20
+msgid "API key"
+msgstr ""
+
+#: core/templates/profile/user_form.html:23
+msgid "Your API key"
+msgstr ""
+
+#: core/templates/profile/user_form.html:29
+msgid "You don't have any API key yet"
+msgstr ""
+
+#: core/templates/profile/user_form.html:30
+msgid "Create one"
+msgstr ""
+
+#: core/templates/registration/activate.html:3
+#: core/templates/registration/activate.html:6
+msgid "Account activation"
+msgstr ""
+
+#: core/templates/registration/activate.html:7
+#, python-format
+msgid ""
+"There was a problem activating your account. Please double-check your "
+"activation link. If you have already clicked on the activation link before, "
+"your account is probably alread active. You may then try to <a href="
+"\"%(login_url)s\">login</a>."
+msgstr ""
+
+#: core/templates/registration/activate.html:8
+msgid ""
+"If you keep having issues, please reply to your activation email explaining "
+"what's wrong."
+msgstr ""
+
+#: core/templates/registration/activation_complete.html:3
+#: core/templates/registration/activation_complete.html:6
+msgid "Account activated"
+msgstr ""
+
+#: core/templates/registration/activation_complete.html:7
+msgid "Your account was successfully activated."
+msgstr ""
+
+#: core/templates/registration/activation_email.txt:3
+msgid "To complete your registration, please navigate the URL below:"
+msgstr ""
+
+#: core/templates/registration/activation_email_subject.txt:1
+#, python-format
+msgid "Activate your account on %(domain)s"
+msgstr ""
+
+#: core/templates/registration/logged_out.html:3
+#: core/templates/registration/logged_out.html:6
+msgid "Logged out"
+msgstr ""
+
+#: core/templates/registration/logged_out.html:8
+msgid "You have been successfully logged out."
+msgstr ""
+
+#: core/templates/registration/logged_out.html:9
+msgid "Back to the homepage"
+msgstr ""
+
+#: core/templates/registration/login.html:3
+#: core/templates/registration/login.html:17 templates/home.html:51
+msgid "Login"
+msgstr ""
+
+#: core/templates/registration/login.html:8
+msgid "Backlogman sign-in"
+msgstr ""
+
+#: core/templates/registration/login.html:11
+msgid "You must be logged in to see this page."
+msgstr ""
+
+#: core/templates/registration/login.html:19 templates/home.html:52
+msgid "Forgot your password?"
+msgstr ""
+
+#: core/templates/registration/login.html:20
+msgid "Register now?"
+msgstr ""
+
+#: core/templates/registration/register.html:3
+#: core/templates/registration/register.html:6
+#: core/templates/registration/register.html:16 templates/home.html:65
+msgid "Register"
+msgstr ""
+
+#: core/templates/registration/register.html:8
+msgid ""
+"To create your account, simply fill in the form below. You will receive an "
+"email asking you to click on an activation link."
+msgstr ""
+
+#: core/templates/registration/register.html:11
+#, python-format
+msgid ""
+"If you already have an account, try <a href=\"%(login_url)s\">logging in</a> "
+"instead."
+msgstr ""
+
+#: core/templates/registration/registration_complete.html:3
+#: core/templates/registration/registration_complete.html:6
+msgid "Registration completed"
+msgstr ""
+
+#: core/templates/registration/registration_complete.html:8
+msgid ""
+"You are now registered. In order to verify your email address, we just sent "
+"you an email. Please check your mailbox and click on the activation link."
+msgstr ""
+
+#: templates/404.html:3
+msgid "Page not found"
+msgstr ""
+
+#: templates/404.html:6
+msgid "This page does not exist"
+msgstr ""
+
+#: templates/404.html:7
+msgid "Get me back to home"
+msgstr ""
+
+#: templates/500.html:3
+msgid "Server error"
+msgstr ""
+
+#: templates/500.html:6
+msgid "Server returns an error"
+msgstr ""
+
+#: templates/500.html:7
+msgid "Don't worry, we are currently tracking this error."
+msgstr ""
+
+#: templates/base.html:10
+msgid "Welcome"
+msgstr ""
+
+#: templates/base.html:50
+msgid "Admin"
+msgstr ""
+
+#: templates/base.html:53
+msgid "Sign out"
+msgstr ""
+
+#: templates/base.html:61
+msgid "Sign in"
+msgstr ""
+
+#: templates/form.html:5
+msgid "Form error"
+msgstr ""
+
+#: templates/form.html:6
+msgid "Please correct the errors below and submit the form again."
+msgstr ""
+
+#: templates/home.html:11
+msgid "Welcome to Backlogman."
+msgstr ""
+
+#: templates/home.html:14
+msgid "A easy way to manage your SCRUM projects backlogs"
+msgstr ""
+
+#: templates/home.html:46
+msgid "Already an account?"
+msgstr ""
+
+#: templates/home.html:48
+msgid "username or email"
+msgstr ""
+
+#: templates/home.html:58
+msgid "New to backlogman?"
+msgstr ""
+
+#: templates/home.html:58
+msgid "Register now."
+msgstr ""
+
+#: templates/home.html:61
+msgid "Email"
+msgstr ""
+
+#: templates/rest_framework/api.html:5
+msgid "Backlogman REST API"
+msgstr ""
