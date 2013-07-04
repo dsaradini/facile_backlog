@@ -11,10 +11,6 @@ $button-background-color-alt: darken($button-background-color, 8%);
 $box-background-color: #f5f5f5;
 $box-border-color: #e3e3e3;
 
-html, body {
-	//background: $background-color;
-}
-
 .select-mini {
   	font-size: 1em;
 	height: 1.5em;
@@ -232,115 +228,6 @@ ul.errorlist li {
 	color: lighten($text-color, 30%)
 }
 
-article.story {
-	display:block;
-	position: relative;
-	margin: 0.5em 0 0.5em 0;
-	padding: 1px;
-	min-height: 90px;
-	.handle {
-		position: absolute;
-		top: 1px;
-		width: 20px;
-		bottom: 1px;
-		left: 0px;
-		background-image: url('../img/grab.png');
-		background-color: rgba(127,127,127,0.5);
-		border-top:1px solid rgba(0,0,0,0.2);
-		border-left:1px solid rgba(0,0,0,0.2);
-		border-bottom:1px solid rgba(0,0,0,0.2);
-		cursor: pointer;
-	}
-	.handled {
-		background-color: rgba(0,0,0,0.1);
-		border-top:1px solid rgba(0,0,0,0.2);
-		border-right:1px solid rgba(0,0,0,0.2);
-		border-bottom:1px solid rgba(0,0,0,0.2);
-		border-left:1px solid rgba(255,255,255,0.6);
-		padding: 8px 2px 8px 28px;
-		height: 100%;
-	}
-	.color {
-		content: "\00a0";
-		width: 1em;
-		float: left;
-		font-size: 1.25rem;
-		line-height: 1.25rem;
-		border: 1px solid rgba(0,0,0,0.2);
-		margin: 0.5em 0.25em 0 0;
-	}
-	.code {
-		display: inline-block;
-		width: 160px;
-		float: left;
-		font-size: 1.25rem;
-		a {
-			color: $header-background-color;
-			font-weight: bold;
-			text-decoration: none;
-			&:hover {
-				color: $text-color;
-			}
-		}
-		margin: 0.5em 0;
-	}
-	.text {
-		display: inline-block;
-		margin: 0.5em 0;
-		min-height: 2em;
-		line-height: 1.25em;
-	}
-	.points {
-		display: inline-block;
-		width: 40px;
-		height: 40px;
-		line-height: 36px;
-		text-align: center;
-		vertical-align: middle;
-		border-radius:2rem;
-		float: right;
-		margin: 0.25em;
-		font-size: 1.5rem;
-		background-color: $text-color;
-		color: $background-color;
-		width: 40px;
-	}
-	.theme {
-		float: left;
-		display: block;
-		color: lighten($text-color, 30%);
-		padding: 0.25rem;
-		i {
-			padding-right: 0.25rem;
-		}
-	}
-	.actions-button {
-		float: right;
-		display: block;
-		box-sizing: border-box;
-	}
-	.no-points {
-		background-color: mix($text-color, $background-color, 50%);
-	}
-	.status {
-		width: 152px;
-		padding-left: 1em;
-		margin-left:0;
-		i {
-			padding-left: 1em;
-			float:right;
-		}
-	}
-	[status=in_progress] {
-		color: mix( blue, $background-color, 50%);
-	}
-	[status=accepted] {
-		color: mix( green, $background-color, 50%);
-	}
-	[status=rejected] {
-		color: mix( red, $background-color, 50%);
-	}
-}
 
 .handle-highlight {
 	background-color: rgba(255,255,255,0.5);
@@ -403,8 +290,8 @@ article.story {
 		[status] {
 			font-size: 0.75em;
 			white-space: nowrap;
-			padding: 0.25em 0.5em;
-			background-color: gray;
+			//padding: 0.25em 0.5em;
+			//background-color: gray;
 			color: white;
 			&[status=accepted] {
 				background-color: rgb(0,180,50);
@@ -509,7 +396,7 @@ textarea[name=i_want_to] {
 		height: 1rem;
 		min-height: 1rem;
 		background-color: #eee;
-		border: 1px solid rgba(0,0,0,0.2);
+		border: 1px solid rgba(0,0,0,0.1);
 		box-sizing: border-box;
 		overflow-x: visible;
 		white-space: nowrap;
@@ -644,7 +531,7 @@ textarea[name=i_want_to] {
 			.handle {
 				position: absolute;
 				top: 2px;
-				width: 10px;
+				width: 8px;
 				bottom: 2px;
 				left: 2px;
 				border-top-left-radius: 4px;

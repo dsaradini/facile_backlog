@@ -26,7 +26,7 @@
 		<form class="form-inline" action="{% url "project_stories" project.pk %}" method="get">
 			<input type="text" placeholder="find story..." name="q" value="{{ query.q }}">
 			<label for="status-select">{% trans "Status" %}</label>
-			<select name="st" class="select-mini" id="status-select">
+			<select name="st" id="status-select">
 				<option value="">{% trans "Any" %}</option>
 				{% for status, text in project.all_status %}
 					<option value="{{ status }}" {% if query.st == status %}selected{% endif %}>{{ text }}</option>
@@ -36,7 +36,7 @@
 				   data-provide="typeahead" data-source='{{ project.all_themes|jsonify }}'>
 			<input name="s" type="hidden" value="{% if sort_sign == '-' %}-{% endif %}{{ sort }}">
 			<button type="submit" class="btn btn-small">{% trans "apply filters" %}</button>
-			<a class="btn btn-small btn-link" href=".">{% trans "reset" %}</a>
+			<a class="btn btn-link" href=".">{% trans "reset" %}</a>
 		</form>
 	</div>
 
@@ -84,7 +84,7 @@
 						<a href="{% url "project_backlogs" project.pk %}">{{story.backlog.name }}</a>
 					</td>
 					<td class="story-status">
-						<span status="{{ story.status }}">{{ story.get_status_display }}</span>
+						<span class="label" status="{{ story.status }}">{{ story.get_status_display }}</span>
 					</td>
 					<td class="story-theme">{{ story.theme }}</td>
 				</tr>

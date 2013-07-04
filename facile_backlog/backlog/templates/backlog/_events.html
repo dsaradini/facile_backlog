@@ -15,11 +15,7 @@
 					{% if event.project %}<a href="{% url "project_detail" event.project_id %}"><i class="icon-book"></i> {{ event.project.name }}</a> {% endif %}
 					{% if event.backlog %}<a href="{% url "project_backlogs" event.project_id %}"><i class="icon-list-ul"></i> {{ event.backlog.name }}</a> {% endif %}
 					{% if event.story %}
-						{% if event.backlog_id %}
-							<a class="btn-mini btn-link" href="{% url "project_backlogs" event.project_id  %}"><i class="icon-list-alt"></i> {{ event.story.code }}</a>
-						{% else %}
-							<a href="{% url "story_detail" event.project_id event.story_id %}"><i class="icon-list-alt"></i> {{ event.story.code }}</a>
-						{% endif %}
+						<a href="{% url "story_detail" event.project_id event.story_id %}"><i class="icon-list-alt"></i> {{ event.story.code }}</a>
 					{% endif %}
 				</div>
 				<span class="when"><i class="icon-time"></i> {{ event.when|naturaltime }}</span>

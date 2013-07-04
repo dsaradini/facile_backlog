@@ -51,7 +51,7 @@ Response
 ]
 </code>
 
-`/api/project/[project-id]/`
+`/api/projects/[project-id]/`
 ============================
 **Details for a given project**
 
@@ -81,7 +81,7 @@ Response
 }
 </code>
 
-`/api/project/[project-id]/backlogs/`
+`/api/projects/[project-id]/backlogs/`
 ====================================
 **All backlogs in a project**
 
@@ -96,7 +96,7 @@ Response
 ]
 </code>
 
-`/api/project/[project-id]/backlogs/[backlog-id]`
+`/api/projects/[project-id]/backlogs/[backlog-id]`
 ==================================================
 **Detail on a given project**
 
@@ -119,7 +119,7 @@ Response
 }
 </code>
 
-`/api/project/[project-id]/backlogs/[backlog-id]/stories/`
+`/api/projects/[project-id]/backlogs/[backlog-id]/stories/`
 ==========================================================
 **All *ordered* stories in a backlog**
 
@@ -134,7 +134,7 @@ Response
 ]
 </code>
 
-`/api/project/[project-id]/backlogs/[backlog-id]/stories/[story-id]/`
+`/api/projects/[project-id]/backlogs/[backlog-id]/stories/[story-id]/`
 ====================================================================
 **Details on a given story**
 
@@ -161,7 +161,7 @@ Response
 }
 </code>
 
-`/api/project/[project-id]/_move_story/`
+`/api/projects/[project-id]/_move_story/`
 ====================================================================
 Move story in the same backlog or another backlog. This json RPC action can be used
 to reorder or move + reorder a backlog
@@ -197,7 +197,7 @@ Response
 }
 </code>
 
-`/api/project/[project-id]/_order_backlog/`
+`/api/projects/[project-id]/_order_backlog/`
 ====================================================================
 Reorder backlog in a project
 

@@ -16,7 +16,7 @@
 	</ul>
 	<form class="form-inline boxed">
 		<label>{% trans "Highlight theme" %}</label>&nbsp;
-		<select class="select-mini" id="theme-select">
+		<select class="select" id="theme-select">
 			<option value="">{% trans "No filter" %}</option>
 			{% for theme in project.all_themes %}
 				<option value="{{ theme }}">{{ theme }}</option>
@@ -71,7 +71,9 @@
 									{% endif %}
 								</div>
 								<div class="text">{% include "backlog/user_story_text.html" %}</div>
-								<div class="theme">{{ story.theme }}</div>
+								{% if story.theme %}
+									<div class="theme"><i class="icon-tag"></i> {{ story.theme }}</div>
+								{% endif %}
 							</div>
 						</article>
 					{%  endfor %}
