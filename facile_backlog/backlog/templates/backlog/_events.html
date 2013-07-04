@@ -1,5 +1,11 @@
 {% load humanize %}
 <table class="events-list">
+	<thead>
+		<tr>
+			<th class="user_image_cell"></th>
+		</tr>
+	</thead>
+	<tbody>
 	{% for event in events %}
 		<tr>
 			<td><img src="{{ event.user.get_gravatar_url }}"></td>
@@ -20,5 +26,6 @@
 			</td>
 		</tr>
 	{% endfor %}
+	</tbody>
 </table>
 

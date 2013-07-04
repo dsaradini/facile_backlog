@@ -62,8 +62,26 @@ html, body {
 	border-radius: 4px;
 }
 
-input[type="search"] {
-	-webkit-search-decoration: true;
+.user_image_cell {
+	width: 36px;
+	min-width: 36px;
+	max-width: 36px;
+}
+
+.padding-reset {
+	padding: 0px;
+}
+
+.dropdown-title {
+	padding:2px 20px 2px 20px;
+	border-bottom: 1px solid $box-border-color;
+}
+
+.filter-highlighted {
+	box-shadow: 0px 0px 10px green;
+}
+.filter-opacified {
+	opacity: 0.3;
 }
 
 .events-list {
@@ -106,6 +124,7 @@ input[type="search"] {
 
 .project-list, .backlog-list {
 	clear: both;
+
 	li {
 		display: block;
 		min-height: 100px;
@@ -128,6 +147,7 @@ input[type="search"] {
 			font-size: 0.75rem;
 		}
 	}
+
 	.story-stats {
 		float:left;
 		display: inline-block;
@@ -301,12 +321,6 @@ article.story {
 	}
 	.no-points {
 		background-color: mix($text-color, $background-color, 50%);
-	}
-	&.highlighted {
-		box-shadow: 0px 0px 10px green;
-	}
-	&.opacified {
-		opacity: 0.3;
 	}
 	.status {
 		width: 152px;
@@ -563,7 +577,7 @@ textarea[name=i_want_to] {
 		margin:0;
 	}
 
-	.backlog-list {
+	.backlog-lanes {
 		clear: both;
 		position: relative;
 		.backlog-handle {
@@ -598,9 +612,6 @@ textarea[name=i_want_to] {
 			width: 300px;
 			display: block;
 			float: left;
-			//border-top: 1px solid rgba(255,255,255, 0.3);
-			//border-left: 1px solid rgba(255,255,255, 0.1);
-			//border-right: 1px solid rgba(0,0,0, 0.1);
 			border: 1px solid rgba(0,0,0, 0.2);
 			border-radius: 5px;
 			.backlog-title {
@@ -635,7 +646,6 @@ textarea[name=i_want_to] {
 		article.small-story {
 			position: relative;
 			border-radius: 5px;
-			overflow: hidden;
 			border:1px solid rgba(black,0.2);
 			box-sizing: border-box;
 			.handle {
@@ -650,7 +660,7 @@ textarea[name=i_want_to] {
 				display: hidden;
 			}
 			.handled {
-				padding: 0px 4px 0px 14px;
+				padding: 0px 6px 0px 14px;
 			}
 			background-color: rgba(white,0.8);
 			margin: 5px;

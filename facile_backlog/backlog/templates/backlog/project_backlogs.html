@@ -14,23 +14,53 @@
 		<li><a href="{% url "project_users" project.pk %}">{% trans "Members" %} </a>
 		<li><a href="{% url "project_stories" project.pk %}">{% trans "Stories" %}</a></li>
 	</ul>
-
-	<div class="backlog-list" style="width:{% widthratio backlog_list.count 1 320 %}px">
+	<form class="form-inline">
+		<label>{% trans "Highlight theme" %}</label>&nbsp;
+		<select class="select-mini" id="theme-select">
+			<option value="">{% trans "No filter" %}</option>
+			{% for theme in project.all_themes %}
+				<option value="{{ theme }}">{{ theme }}</option>
+			{% endfor %}
+		</select>
+		<a href=".">{% trans "Refresh" %}</a>
+	</form>
+	<div class="backlog-lanes" style="width:{% widthratio backlog_list.count 1 320 %}px">
 		{% for backlog in backlog_list %}
 			<article class="backlog" id="backlog-{{ backlog.pk }}" backlog-id="{{ backlog.pk }}">
 				<div class="backlog-title">
-					<a href="{% url "backlog_detail" project.pk backlog.pk %}">{{ backlog.name }}</a>
-					&nbsp;<a href="{% url "backlog_edit" project.pk backlog.pk %}?_back=project"><i class="icon-edit"></i></a>
-
+					<div class="btn-group">
+						<a class="btn btn-link dropdown-toggle padding-reset" href="#" data-toggle="dropdown">
+							{{ backlog.name }}
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu">
+							<li class="dropdown-title">{% trans "Backlog" %}</li>
+							<li><a href="{% url "backlog_detail" project.pk backlog.pk %}">{% trans "Details" %}</a></li>
+							<li><a href="{% url "backlog_edit" project.pk backlog.pk %}?_back=project">{% trans "Edit" %}</a></li>
+						</ul>
+					</div>
+					<span class="muted small">({{ backlog.stats.total_stories }})</span>
+					<a class="close pull-right close-lane" href="#">&times;</a>
 				</div>
 				<div class="stories" backlog-id="{{ backlog.pk }}">
 					{% for story in backlog.ordered_stories %}
-						<article class="small-story" id="story-{{ story.pk }}" story-id="{{ story.pk }}">
+						<article theme-id="{{ story.theme }}" class="small-story" id="story-{{ story.pk }}" story-id="{{ story.pk }}">
 							<div class="handle" style="background-color:{{ story.color }}"></div>
 							<div class="handled">
 								<div class="story-title">
-									<a href="{% url "story_detail" project.pk story.pk %}">{{ story.code }}</a>
-									&nbsp;<a href="{% url "story_edit" project.pk story.pk %}?_back=project"><i class="icon-edit"></i></a>
+									<div class="btn-group">
+										<a class="btn btn-link dropdown-toggle padding-reset" href="#" data-toggle="dropdown">
+											{{ story.code }}
+											<span class="caret"></span>
+										</a>
+										<ul class="dropdown-menu">
+											<li class="dropdown-title">{% trans "Story" %}</li>
+											<li><a href="{% url "story_detail" project.pk story.pk %}">{% trans "Details" %}</a></li>
+											<li><a href="{% url "story_edit" project.pk story.pk %}?_back=project">{% trans "Edit" %}</a></li>
+											<li><a href="{% url "story_delete" project.pk story.pk %}?_back=project">{% trans "Delete" %}</a></li>
+
+										</ul>
+									</div>
 								</div>
 								<div class="points">
 									{% if story.points >= 0%}
@@ -69,7 +99,7 @@
 		// keep a clone of speakers to replace the cell
 		// if an error occurs on server
 
-		$('.backlog-list').sortable({
+		$('.backlog-lanes').sortable({
 			placeholder: "backlog-place-holder",
 			distance: 3,
 			cursor: "move",
@@ -166,6 +196,20 @@
 				}
 			}
 		});
+
+		$(".filter").show(); // hidden by default, if scripting is disabled, they should not show
+		$("#theme-select").change(function() {
+			var theme_id = $(this).val();
+			$(".filter-highlighted").removeClass("filter-highlighted");
+			$(".filter-opacified").removeClass("filter-opacified");
+			if (theme_id) {
+				$("article[theme-id]").addClass("filter-opacified");
+				$("article[theme-id='"+theme_id+"']").addClass("filter-highlighted").removeClass("filter-opacified")
+			}
+		});
+		$(".close-lane").click(function() {
+			$(this).parents("article.backlog").fadeOut()
+		})
 	});
 </script>
 {% endaddtoblock %}
