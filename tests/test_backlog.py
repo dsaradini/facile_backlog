@@ -107,7 +107,7 @@ class BacklogTest(WebTest):
 
         backlog = factories.create_sample_backlog(user_1)
         project = backlog.project
-        url = reverse('backlog_detail', args=(project.pk, backlog.pk))
+        url = reverse('backlog_edit', args=(project.pk, backlog.pk))
         self.app.get(url, user=user_1)
         self.app.get(url, user=user_2, status=404)
 

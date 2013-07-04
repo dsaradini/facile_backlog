@@ -34,16 +34,16 @@
 			{% for backlog in project.backlogs.all %}
 				<li>
 					<div class="title">
-						<a href="{% url 'backlog_detail' project.pk backlog.pk %}"><i class="icon-list-ul black"></i> {{ backlog.name }}</a>
+						<a href="{% url "project_backlogs" project.pk %}"> <i class="icon-list-ul black"></i> {{ backlog.name }}</a>
 					</div>
 					<div class="stats">
 						<div class="story-stats percent-cell">
 							<div class="name">
 								<i class="icon-list-alt info"></i> <b>{{ backlog.stats.total_stories }}</b>
-								&nbsp;</span><a href="{% url "backlog_detail" project.pk backlog.pk %}" class="info">{% trans "Stories" %} </a>
+								&nbsp;</span><a href="{% url "project_backlogs" project.pk %}" class="info">{% trans "Stories" %} </a>
 								&nbsp;
 								<i class="icon-circle info"></i> <b>{{ backlog.stats.total_points }}</b>
-								&nbsp;</span><a href="{% url "backlog_detail" project.pk backlog.pk %}" class="info">{% trans "Points" %} </a>
+								&nbsp;</span><a href="{% url "project_backlogs" project.pk %}" class="info">{% trans "Points" %} </a>
 							</div>
 							{% if backlog.stats.estimated_stories %}
 								<span class="percent bg-blue" style="width:{{ backlog.stats.percent_estimated }}%">{{ backlog.stats.estimated_stories }} <i class="icon-circle info"></i> {{ backlog.stats.estimated_points }} pts</span>
@@ -65,7 +65,7 @@
 		</ul>
 	</div>
 	<div class="span6">
-		<h2>{% trans "Activities" %}</h2>
+		<h2>{% trans "Last activities" %}</h2>
 		<div class="actions"></div>
 		{% include "backlog/_events.html" with events=events %}
 	</div>

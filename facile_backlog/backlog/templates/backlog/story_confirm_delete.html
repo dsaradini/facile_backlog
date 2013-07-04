@@ -8,13 +8,8 @@
 		{% trans "Are you sure you want to delete this user story?" %}
 	</div>
 	<h2>{{ story.text }}</h2>
-	{% if backlog %}
-		{% url "story_backlog_delete" project.pk backlog.pk object.pk as target_url%}
-		{% url "story_backlog_detail" project.pk backlog.pk object.pk as cancel_url%}
-	{% else %}
-		{% url "story_delete" project.pk object.pk as target_url%}
-		{% url "story_detail" project.pk object.pk as cancel_url%}
-	{% endif %}
+	{% url "story_delete" project.pk object.pk as target_url%}
+	{% url "story_detail" project.pk object.pk as cancel_url%}
 	<form method="post" id="delete_form" action="{{ target_url }}">
 		{% csrf_token %}
 		{{ form }}

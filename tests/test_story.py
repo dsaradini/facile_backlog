@@ -15,7 +15,7 @@ class StoryTest(WebTest):
         backlog = factories.create_sample_backlog(user)
         story = factories.UserStoryFactory.create(backlog=backlog)
 
-        url = reverse("backlog_detail", args=(backlog.project.pk, backlog.pk))
+        url = reverse("project_backlogs", args=(backlog.project.pk, ))
         self.app.get(url, status=302)
         response = self.app.get(url, user=user)
         self.assertContains(response, story.as_a)
@@ -66,8 +66,8 @@ class StoryTest(WebTest):
             'status': 'to_do'
         })
 
-        url = reverse('story_backlog_edit', args=(
-            story.project.pk, story.backlog.pk, story.pk
+        url = reverse('story_edit', args=(
+            story.project.pk, story.pk
         ))
         # login redirect
         self.app.get(url, status=302)
@@ -115,8 +115,8 @@ class StoryTest(WebTest):
         user = factories.UserFactory.create(
             email='test@test.ch', password='pass')
         story = factories.create_sample_story(user)
-        url = reverse('story_backlog_delete', args=(
-            story.project.pk, story.backlog.pk, story.pk
+        url = reverse('story_delete', args=(
+            story.project.pk, story.pk
         ))
         # login redirect
         self.app.get(url, status=302)
@@ -128,7 +128,6 @@ class StoryTest(WebTest):
         self.assertFalse(UserStory.objects.filter(pk=story.pk).exists())
         event = Event.objects.get(
             project=story.project,
-            backlog=story.backlog
         )
         self.assertEqual(
             event.text,

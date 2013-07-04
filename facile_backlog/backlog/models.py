@@ -212,9 +212,6 @@ class Backlog(StatsMixin, ProjectSecurityMixin, models.Model):
         return self.stories.order_by('order').prefetch_related(
             "project").select_related('user_story__project')
 
-    def get_absolute_url(self):
-        return reverse("backlog_detail", args=(self.project.pk, self.pk))
-
     def all_themes(self):
         result = [x for x in self.stories.values_list(
             'theme', flat=True).distinct() if x]

@@ -296,23 +296,6 @@ class BacklogMixin(BackMixin):
         return context
 
 
-class BacklogDetail(BacklogMixin, generic.DetailView):
-    template_name = "backlog/backlog_detail.html"
-
-    def get_object(self):
-        return self.backlog
-
-    def get_context_data(self, **kwargs):
-        context = super(BacklogDetail, self).get_context_data(**kwargs)
-        context['target_backlogs'] = self.project.backlogs.exclude(
-            pk=self.backlog.pk).all()
-        context['stories'] = self.backlog.ordered_stories.select_related(
-            "backlog", "project").all()
-        return context
-
-backlog_detail = login_required(BacklogDetail.as_view())
-
-
 class BacklogCreate(ProjectMixin, generic.CreateView):
     admin_only = True
     template_name = "backlog/backlog_form.html"
@@ -330,7 +313,7 @@ class BacklogCreate(ProjectMixin, generic.CreateView):
         return context
 
     def form_valid(self, form):
-        super(BacklogCreate, self).form_valid(form)
+        self.object = form.save()
         create_event(
             self.request.user, self.project,
             "created this backlog",
@@ -338,7 +321,7 @@ class BacklogCreate(ProjectMixin, generic.CreateView):
         )
         messages.success(self.request,
                          _("Backlog successfully created."))
-        return redirect(reverse("project_detail", args=(
+        return redirect(reverse("project_backlogs", args=(
             self.project.pk,
         )))
 backlog_create = login_required(BacklogCreate.as_view())
@@ -359,8 +342,8 @@ class BacklogEdit(BacklogMixin, generic.UpdateView):
                 self.project.pk,
             ))
         else:
-            context['cancel_url'] = reverse("backlog_detail", args=(
-                self.project.pk, self.backlog.pk
+            context['cancel_url'] = reverse("project_detail", args=(
+                self.project.pk,
             ))
         return context
 
@@ -378,7 +361,7 @@ class BacklogEdit(BacklogMixin, generic.UpdateView):
                 reverse("project_backlogs", args=(
                     self.project.pk,
                 )), backlog.pk))
-        return redirect(backlog.get_absolute_url())
+        return redirect(reverse("project_backlogs", args=(self.project.pk,)))
 backlog_edit = login_required(BacklogEdit.as_view())
 
 
@@ -397,7 +380,7 @@ class BacklogDelete(BacklogMixin, generic.DeleteView):
         )
         messages.success(request,
                          _("Backlog successfully deleted."))
-        return redirect(reverse('project_detail', args=(self.project.pk,)))
+        return redirect(reverse('project_backlogs', args=(self.project.pk,)))
 backlog_delete = login_required(BacklogDelete.as_view())
 
 
@@ -433,15 +416,7 @@ class StoryMixin(BackMixin):
     def get_context_data(self, **kwargs):
         context = super(StoryMixin, self).get_context_data(**kwargs)
         context['project'] = self.project
-        if self.backlog:
-            context['backlog'] = self.backlog
-            if self.direct:
-                context['cancel_url'] = reverse("backlog_detail", args=(
-                    self.project.pk, self.backlog.pk))
-            else:
-                context['cancel_url'] = reverse("story_backlog_detail", args=(
-                    self.project.pk, self.backlog.pk, self.story.pk))
-        elif self.back == "project":
+        if self.back == "project":
             context['cancel_url'] = "{0}#story-{1}".format(
                 reverse("project_backlogs", args=(self.project.pk,)),
                 self.story.pk
@@ -486,12 +461,7 @@ class StoryCreate(BacklogMixin, generic.CreateView):
         context = super(StoryCreate, self).get_context_data(**kwargs)
         context['project'] = self.project
         context['_back'] = self.back
-        if self.backlog:
-            context['backlog'] = self.backlog
-            context['cancel_url'] = reverse("backlog_detail", args=(
-                self.project.pk, self.backlog.pk))
-        else:
-            context['cancel_url'] = reverse("project_detail", args=(
+        context['cancel_url'] = reverse("project_backlogs", args=(
                 self.project.pk,))
         return context
 
@@ -505,16 +475,10 @@ class StoryCreate(BacklogMixin, generic.CreateView):
         )
         messages.success(self.request,
                          _("Story successfully created."))
-        if self.back == 'backlog':
-            return redirect("{0}#story-{1}".format(reverse(
-                "backlog_detail", args=(
-                    self.project.pk, self.backlog.pk,
-                )), self.object.pk))
-        else:
-            return redirect(
-                "{0}#story-{1}".format(reverse("project_backlogs", args=(
-                    self.project.pk,
-                )), self.object.pk))
+        return redirect(
+            "{0}#story-{1}".format(reverse("project_backlogs", args=(
+                self.project.pk,
+            )), self.object.pk))
 story_create = login_required(StoryCreate.as_view())
 
 
@@ -542,18 +506,7 @@ class StoryEdit(StoryMixin, generic.UpdateView):
         story.property_changed(self.request.user, **self._old_values)
         messages.success(self.request,
                          _("Story successfully updated."))
-        if self.backlog:
-            base_url = reverse(
-                'backlog_detail',
-                args=(self.project.pk, self.backlog.pk)
-            )
-            if self.direct:
-                return redirect("{0}#story-{1}".format(base_url, story.pk))
-            else:
-                return redirect(reverse("story_backlog_detail", args=(
-                    self.project.pk, self.backlog.pk, self.story.pk
-                )))
-        elif self.back == "project":
+        if self.back == "project":
             return redirect(
                 "{0}#story-{1}".format(reverse("project_backlogs", args=(
                     self.project.pk,
@@ -577,12 +530,8 @@ class StoryDelete(StoryMixin, generic.DeleteView):
         )
         messages.success(request,
                          _("Story successfully deleted."))
-        if self.backlog:
-            return redirect(reverse('backlog_detail', args=(self.project.pk,
-                                                            self.backlog.pk)))
-        else:
-            return redirect(reverse('project_backlogs',
-                                    args=(self.project.pk,)))
+        return redirect(reverse('project_backlogs',
+                                args=(self.project.pk,)))
 story_delete = login_required(StoryDelete.as_view())
 
 

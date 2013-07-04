@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 
 from .views import (project_list, project_detail, project_create, project_edit,
-                    project_delete, backlog_detail, backlog_create,
+                    project_delete, backlog_create,
                     backlog_delete, backlog_edit, story_edit, story_create,
                     story_detail, story_delete, story_change_status,
                     invite_user,
@@ -40,10 +40,6 @@ urlpatterns = patterns(
 urlpatterns += patterns(
     '',
 
-    url(r'^projects/(?P<project_id>[\d]+)/backlogs/(?P<backlog_id>[\d]+)/$',
-        backlog_detail,
-        name='backlog_detail'),
-
     url(r'^projects/(?P<project_id>[\d]+)/backlogs/(?P<backlog_id>[\d]+)/'
         r'edit/$',
         backlog_edit,
@@ -66,30 +62,15 @@ urlpatterns += patterns(
         story_detail,
         name='story_detail'),
 
-    url(r'^projects/(?P<project_id>[\d]+)/backlogs/(?P<backlog_id>[\d]+)/'
-        r'stories/(?P<story_id>[\d]+)/$',
-        story_detail,
-        name='story_backlog_detail'),
-
     url(r'^projects/(?P<project_id>[\d]+)/stories/(?P<story_id>[\d]+)/'
         r'edit/$',
         story_edit,
         name='story_edit'),
 
-    url(r'^projects/(?P<project_id>[\d]+)/backlogs/(?P<backlog_id>[\d]+)/'
-        r'stories/(?P<story_id>[\d]+)/edit/$',
-        story_edit,
-        name='story_backlog_edit'),
-
     url(r'^projects/(?P<project_id>[\d]+)/stories/(?P<story_id>[\d]+)/'
         r'delete/$',
         story_delete,
         name='story_delete'),
-
-    url(r'^projects/(?P<project_id>[\d]+)/backlogs/(?P<backlog_id>[\d]+)/'
-        r'stories/(?P<story_id>[\d]+)/delete/$',
-        story_delete,
-        name='story_backlog_delete'),
 
     url(r'^projects/(?P<project_id>[\d]+)/backlogs/(?P<backlog_id>[\d]+)/'
         r'stories/new$',

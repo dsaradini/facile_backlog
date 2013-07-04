@@ -8,7 +8,7 @@
 		<li><a href="{% url "project_list" %}"> {% trans "Projects" %}</a><span class="divider">/</span></li>
 		<li><i class="icon-book"></i> <a href="{% url "project_detail" project.pk %}"> {% trans "Projects" %}</a><span class="divider">/</span></li>
 		{% if backlog %}
-			<li><i class="icon-list-ul"></i> <a href="{% url "backlog_detail" project.pk backlog.pk %}">  {{ backlog.name }}</a><span class="divider">/</span></li>
+			<li><i class="icon-list-ul"></i> <a href="{% url "project_backlogs" project.pk %}">  {{ backlog.name }}</a><span class="divider">/</span></li>
 		{% endif %}
 		<li class="active"><i class="icon-list-ul"></i> {{ story.code }}<span class="divider"></span></li>
 	</ul>
@@ -45,12 +45,7 @@
 		</div>
 	</div>
 	<div class="actions">
-		{% if backlog %}
-			<a class="btn btn-primary" href="{% url "story_backlog_edit" project.pk backlog.pk object.pk %}">{% trans "Edit" %}</a>
-			<a class="btn btn-danger" href="{% url "story_backlog_delete" project.pk backlog.pk object.pk %}">{% trans "Delete" %}</a>
-		{% else %}
-			<a class="btn btn-primary" href="{% url "story_edit" project.pk object.pk %}">{% trans "Edit" %}</a>
-			<a class="btn btn-danger" href="{% url "story_delete" project.pk object.pk %}">{% trans "Delete" %}</a>
-		{% endif %}
+		<a class="btn btn-primary" href="{% url "story_edit" project.pk object.pk %}">{% trans "Edit" %}</a>
+		<a class="btn btn-danger" href="{% url "story_delete" project.pk object.pk %}">{% trans "Delete" %}</a>
 	</div>
 {% endblock %}

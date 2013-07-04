@@ -36,8 +36,8 @@
 						</a>
 						<ul class="dropdown-menu">
 							<li class="dropdown-title">{% trans "Backlog" %}</li>
-							<li><a href="{% url "backlog_detail" project.pk backlog.pk %}">{% trans "Details" %}</a></li>
 							<li><a href="{% url "backlog_edit" project.pk backlog.pk %}?_back=project">{% trans "Edit" %}</a></li>
+							<li><a href="{% url "backlog_delete" project.pk backlog.pk %}?_back=project">{% trans "Delete" %}</a></li>
 						</ul>
 					</div>
 					<span class="muted small">({{ backlog.stats.total_stories }})</span>

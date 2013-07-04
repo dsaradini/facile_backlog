@@ -68,7 +68,7 @@
 						{% if selectable %}
 							<input type="checkbox" name="story-{{ story.pk }}">
 						{% endif %}
-						<a href="{% url "story_backlog_detail" story.project_id story.backlog.pk story.pk %}">{{ story.code }}</a>
+						<a href="{% url "story_detail" story.project_id story.pk %}">{{ story.code }}</a>
 					</td>
 					<td class="story-desc">
 						{% include "backlog/user_story_text.html" %}
@@ -81,7 +81,7 @@
 						{% endif %}
 					</td>
 					<td class="story-backlog">
-						<a href="{% url "backlog_detail" project.pk story.backlog.pk %}">{{story.backlog.name }}</a>
+						<a href="{% url "project_backlogs" project.pk %}">{{story.backlog.name }}</a>
 					</td>
 					<td class="story-status">
 						<span status="{{ story.status }}">{{ story.get_status_display }}</span>

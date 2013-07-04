@@ -9,11 +9,7 @@
 	<div class="span6 offset3 base-form">
 	{% if not object %}<h1>{% trans "Add a new story" %}</h1>{% endif %}
 	{% if object %}
-		{% if backlog %}
-			{% url "story_backlog_edit" project.pk backlog.pk object.pk as target_url%}
-		{% else %}
-			{% url "story_edit" project.pk object.pk as target_url%}
-		{% endif %}
+		{% url "story_edit" project.pk object.pk as target_url%}
 	{% else %}
 		{% url "story_create" project.pk backlog.pk as target_url%}
 	{% endif %}

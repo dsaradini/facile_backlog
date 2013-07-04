@@ -5,7 +5,7 @@
 
 {% block content %}
 <ul class="breadcrumb">
-	<li class="active"><i class="icon-home"></i>{% trans "Projects" %}<span class="divider">/</span></li>
+	<li class="active">{% trans "Projects" %}<span class="divider">/</span></li>
 </ul>
 
 <div class="row">
@@ -87,7 +87,7 @@
 		</div>
 	</div>
 	<div class="span6">
-		<h3>{% trans "My activities" %}</h3>
+		<h3>{% trans "Recent activities" %}</h3>
 		<div class="actions"></div>
 		{% include "backlog/_events.html" with events=events gravatar=True%}
 	</div>
