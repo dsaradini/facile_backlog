@@ -5,7 +5,7 @@
 
 {% block content %}
 	<ul class="breadcrumb">
-		<li><a href="{% url "project_list" %}"> {% trans "Projects" %}</a><span class="divider">/</span></li>
+		<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a><span class="divider">/</span></li>
 		<li><i class="icon-book"></i> <a href="{% url "project_detail" project.pk %}"> {% trans "Projects" %}</a><span class="divider">/</span></li>
 		{% if backlog %}
 			<li><i class="icon-list-ul"></i> <a href="{% url "project_backlogs" project.pk %}">  {{ backlog.name }}</a><span class="divider">/</span></li>

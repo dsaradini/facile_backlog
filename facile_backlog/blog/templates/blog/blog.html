@@ -3,7 +3,7 @@
 {% block title %}{% trans "Blog" %}{% endblock %}
 {% block navbar %}
 	{% if request.user.is_authenticated %}
-		<li><a href="{% url "project_list" %}">{% trans "Projects" %}</a></li>
+		<li><a href="{% url "dashboard" %}">{% trans "Dashboard" %}</a></li>
 	{% else %}
 		<li><a href="{% url "home" %}">{% trans "Home" %}</a></li>
 	{% endif %}

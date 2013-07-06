@@ -1,4 +1,5 @@
 import re
+import datetime
 
 from palette import Color
 
@@ -11,6 +12,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
 User = settings.AUTH_USER_MODEL
+
+
+LONG_AGO = timezone.make_aware(datetime.datetime(2012, 7, 2),
+                               timezone.get_current_timezone())
 
 
 EMPTY = ""
@@ -240,9 +245,21 @@ class Project(StatsMixin, AclMixin, models.Model):
         """ Return all project user accepted the invitation """
         if not user.is_authenticated():
             return Project.objects.none()
+
         return user.projects.filter(
             authorizations__is_active=True
         ).filter(active=True)
+
+    @classmethod
+    def my_recent_projects(cls, user):
+        """ Return all project user accepted the invitation """
+        if not user.is_authenticated():
+            return Project.objects.none()
+
+        projects = cls.my_projects(user)
+
+        return sorted(list(projects), key=lambda p: p.last_activity(),
+                      reverse=True)
 
     def authorizations(self):
         return AuthorizationAssociation.objects.filter(
@@ -292,7 +309,7 @@ class Project(StatsMixin, AclMixin, models.Model):
 
     def last_activity(self):
         when = self.events.values_list("when", flat=True).all()[:1]
-        return when[0] if when else "not found"
+        return when[0] if when else LONG_AGO
 
 
 class ProjectSecurityMixin(object):

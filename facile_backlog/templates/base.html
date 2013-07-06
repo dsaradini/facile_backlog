@@ -19,7 +19,7 @@
 				<ul class="nav">
 					{% block navbar %}
 						{% if request.user.is_authenticated %}
-							<li class="active"><a href="{% url "dashboard" %}">{% trans "Projects" %}</a></li>
+							<li class="active"><a href="{% url "dashboard" %}">{% trans "Dashboard" %}</a></li>
 						{% else %}
 							<li class="active"><a href="{% url "home" %}">{% trans "Home" %}</a></li>
 						{% endif %}

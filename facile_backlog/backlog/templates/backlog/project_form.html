@@ -4,7 +4,7 @@
 
 {% block content %}
 	<ul class="breadcrumb">
-		<li><a href="{% url "project_list" %}"> {% trans "Projects" %}</a><span class="divider">/</span></li>
+		<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a><span class="divider">/</span></li>
 		<li class="active"><i>{% trans "Create project" %}</i><span class="divider"></span></li>
 	</ul>
 
@@ -16,7 +16,7 @@
 			{% include "form.html" %}
 			<div class="submit">
 				<input class="btn btn-success" type="submit" value="{% if object %}{% trans "Save changes" %}{% else %}{% trans "Create project" %}{% endif %}">
-				<a class="btn btn-link" href="{% if object %}{% url "project_detail" object.pk %}{% else %}{% url "project_list" %}{% endif %}">{% trans "Cancel" %}</a>
+				<a class="btn btn-link" href="{% if object %}{% url "project_detail" object.pk %}{% else %}{% url "dashboard" %}{% endif %}">{% trans "Cancel" %}</a>
 			</div>
 		</form>
 	</div>

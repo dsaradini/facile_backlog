@@ -31,7 +31,7 @@ from .pdf import generate_pdf
 
 
 def get_projects(user):
-    return Project.my_projects(user)
+    return Project.my_recent_projects(user)
 
 
 def get_organizations(user):
@@ -180,31 +180,6 @@ org_users = login_required(OrgUsers.as_view())
 #################
 # Organizations #
 #################
-
-
-class ProjectList(generic.ListView):
-    template_name = "backlog/project_list.html"
-    paginate_by = 10
-
-    def dispatch(self, request, *args, **kwargs):
-        self.query = request.GET.get("q", "").replace("+", " ")
-        return super(ProjectList, self).dispatch(request, *args, **kwargs)
-
-    def get_queryset(self):
-        qs = get_projects(self.request.user)
-        if self.query:
-            qs = qs.filter(
-                name__icontains=self.query,
-            )
-        return qs
-
-    def get_context_data(self, **kwargs):
-        context = super(ProjectList, self).get_context_data(**kwargs)
-        context['query'] = self.query
-        context['events'] = self.request.user.events.select_related(
-            "project", "backlog", "user", "story", "story__project")[:10]
-        return context
-project_list = login_required(ProjectList.as_view())
 
 
 class ProjectMixin(object):
