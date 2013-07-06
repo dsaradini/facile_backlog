@@ -26,11 +26,12 @@
 							<a href="{% url 'org_detail' org.pk %}"> {{ org.name }}</a>
 							{% if org|can_admin:request.user %}
 								<small>[
-									<a href="{% url 'org_edit' org.pk %}">{% trans "edit" %}</a>
+									<a class="muted" href="{% url 'org_edit' org.pk %}">{% trans "edit" %}</a>
 									|
-									<a href="{% url 'org_delete' org.pk %}">{% trans "delete" %}</a>
+									<a class="muted" href="{% url 'org_delete' org.pk %}">{% trans "delete" %}</a>
+									|
+									<a class="muted" href="{% url "project_create" %}?org={{ org.pk }}">{% trans "new organization project" %}</a>
 								]</small>
-								<a class="btn btn-small btn-link" href="{% url "project_create" %}?org={{ org.pk }}">{% trans "New organization project" %}</a>
 							{% endif %}
 						</h4>
 					</div>
@@ -49,11 +50,7 @@
 			</div>
 		{%  else %}
 			<div class="alert alert-info">
-				{% if not query %}
-					{% trans "You have no active organization" %}
-				{% else %}
-					{% trans "No organization found" %}
-				{% endif %}
+				{% trans "You have no active organization" %}
 			</div>
 		{% endif %}
 		</div>
@@ -73,9 +70,9 @@
 						<a href="{% url 'project_detail' object.pk %}"> {{ object.name }}</a>
 						{% if object|can_admin:request.user %}
 							<small>[
-								<a href="{% url 'project_edit' object.pk %}">{% trans "edit" %}</a>
+								<a class="muted" href="{% url 'project_edit' object.pk %}">{% trans "edit" %}</a>
 								|
-								<a href="{% url 'project_delete' object.pk %}">{% trans "delete" %}</a>
+								<a class="muted" href="{% url 'project_delete' object.pk %}">{% trans "delete" %}</a>
 							]</small>
 						{% endif %}
 					</h4>
@@ -84,11 +81,6 @@
 					<div class="span12 muted small"><i class="icon-time"></i> {% trans "Last update" %}  {{ object.last_activity|naturaltime }}</i></div>
 				</div>
 				{% endfor %}
-				{% if is_paginated and page_obj.has_next %}
-					<li>
-						<div class="alert alert-info text-center"> <a href="?page={{ page_obj.next_page_number }}&q={{ query }}">{% trans "More project available..." %}</a> </div>
-					</li>
-				{% endif %}
 			</div>
 		{%  else %}
 			<div class="alert alert-info">

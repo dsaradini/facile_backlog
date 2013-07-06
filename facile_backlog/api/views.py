@@ -171,8 +171,8 @@ def move_story(request, project_id):
     if story.backlog_id != backlog.pk:
         old_backlog_name = story.backlog.name
         create_event(
-            request.user, project,
-            u"moved story from backlog '{0}' to backlog '{1}'".format(
+            request.user, project=project,
+            text=u"moved story from backlog '{0}' to backlog '{1}'".format(
                 old_backlog_name,
                 backlog.name,
             ),
@@ -197,8 +197,8 @@ def move_story(request, project_id):
     if touched:
         backlog.save(update_fields=("last_modified",))
         create_event(
-            request.user, project,
-            u"re-ordered story in backlog",
+            request.user, project=project,
+            text=u"re-ordered story in backlog",
             backlog=backlog,
             story=story,
         )

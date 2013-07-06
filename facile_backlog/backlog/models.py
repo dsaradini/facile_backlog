@@ -147,7 +147,7 @@ class Organization(AclMixin, models.Model):
     name = models.CharField(_("Name"), max_length=128)
     description = models.TextField(_("Description"), blank=True)
     email = models.CharField(
-        _("Email"), max_length=128, blank=True,validators=[EmailValidator()],
+        _("Email"), max_length=128, blank=True, validators=[EmailValidator()],
         help_text=u"Organization email is used to display gravatar image if"
                   u" any."
     )
@@ -184,6 +184,29 @@ class Organization(AclMixin, models.Model):
     def ordered_projects(self):
         return self.projects.all()
 
+    def my_projects(self, user):
+        return user.projects.filter(
+            org=self
+        )
+
+    def add_user(self, user, is_active=True, is_admin=False):
+        try:
+            auth = AuthorizationAssociation.objects.get(
+                user=user, org=self)
+            auth.is_admin = is_admin
+            auth.is_active = is_active
+            auth.save()
+        except AuthorizationAssociation.DoesNotExist:
+            AuthorizationAssociation.objects.create(
+                user=user, org=self, is_admin=is_admin,
+                is_active=is_active,
+            )
+
+    def remove_user(self, user):
+        AuthorizationAssociation.objects.filter(
+            user=user, org=self
+        ).delete()
+
 
 class Project(StatsMixin, AclMixin, models.Model):
     authorization_association_field = "project"
@@ -219,7 +242,7 @@ class Project(StatsMixin, AclMixin, models.Model):
             return Project.objects.none()
         return user.projects.filter(
             authorizations__is_active=True
-        )
+        ).filter(active=True)
 
     def authorizations(self):
         return AuthorizationAssociation.objects.filter(

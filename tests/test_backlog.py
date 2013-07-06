@@ -17,12 +17,12 @@ class BacklogTest(WebTest):
         response = self.app.get(url, user=user)
         self.assertContains(response, backlog.name)
 
-    def test_backlog_create(self):
+    def test_project_backlog_create(self):
         user = factories.UserFactory.create(
             email='test@epyx.ch', password='pass')
         project = factories.create_sample_project(user)
 
-        url = reverse('backlog_create', args=(project.pk,))
+        url = reverse('project_backlog_create', args=(project.pk,))
         # login redirect
         self.app.get(url, status=302)
         response = self.app.get(url, user=user)

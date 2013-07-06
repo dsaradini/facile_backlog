@@ -168,6 +168,20 @@ class OrgDelete(OrgMixin, generic.DeleteView):
 org_delete = login_required(OrgDelete.as_view())
 
 
+class OrgUsers(OrgMixin, generic.TemplateView):
+    template_name = "backlog/org_users.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(OrgUsers, self).get_context_data(**kwargs)
+        context['organization'] = self.organization
+        return context
+org_users = login_required(OrgUsers.as_view())
+
+#################
+# Organizations #
+#################
+
+
 class ProjectList(generic.ListView):
     template_name = "backlog/project_list.html"
     paginate_by = 10
@@ -454,7 +468,7 @@ class BacklogCreate(ProjectMixin, generic.CreateView):
         return redirect(reverse("project_backlogs", args=(
             self.project.pk,
         )))
-backlog_create = login_required(BacklogCreate.as_view())
+project_backlog_create = login_required(BacklogCreate.as_view())
 
 
 class BacklogEdit(BacklogMixin, generic.UpdateView):
@@ -728,7 +742,7 @@ class PrintStories(ProjectMixin, generic.TemplateView):
 print_stories = login_required(PrintStories.as_view())
 
 
-class InviteUser(ProjectMixin, generic.FormView):
+class ProjectInviteUser(ProjectMixin, generic.FormView):
     admin_only = True
     salt = 'facile_user_invitation'
     template_name = "users/invite_user.html"
@@ -737,7 +751,7 @@ class InviteUser(ProjectMixin, generic.FormView):
     form_class = InviteUserForm
 
     def get_context_data(self, **kwargs):
-        data = super(InviteUser, self).get_context_data(**kwargs)
+        data = super(ProjectInviteUser, self).get_context_data(**kwargs)
         data['project'] = self.project
         return data
 
@@ -760,7 +774,7 @@ class InviteUser(ProjectMixin, generic.FormView):
                   [user.email])
 
     def form_valid(self, form):
-        super(InviteUser, self).form_valid(form)
+        super(ProjectInviteUser, self).form_valid(form)
         email = form.cleaned_data['email']
         admin = form.cleaned_data['admin']
         try:
@@ -792,7 +806,7 @@ class InviteUser(ProjectMixin, generic.FormView):
     def get_success_url(self):
         return reverse("project_users", args=(self.project.pk,))
 
-invite_user = login_required(InviteUser.as_view())
+project_invite_user = login_required(ProjectInviteUser.as_view())
 
 
 class InvitationActivate(generic.TemplateView):
@@ -800,7 +814,7 @@ class InvitationActivate(generic.TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         token = kwargs['token']
-        project_pk = signing.loads(token, salt=InviteUser.salt,
+        project_pk = signing.loads(token, salt=ProjectInviteUser.salt,
                                    max_age=60*60*24*7)
         if project_pk != int(kwargs['project_id']):
             raise Http404()
@@ -906,3 +920,8 @@ def invitation_decline(request, auth_id):
         auth.delete()
     messages.info(request, _("Invitation has been declined"))
     return redirect(reverse("my_notifications"))
+
+
+@login_required
+def EMPTY_VIEW(request, *args, **kwargs):
+    return HttpResponse("EMPTY VIEW")

@@ -23,7 +23,7 @@
 			{% endfor %}
 		</select>
 		<a href=".">{% trans "Refresh" %}</a>
-		<a class="btn btn-primary btn-small pull-right" href="{% url "backlog_create" project.pk %}">{% trans "Create backlog" %}</a>
+		<a class="btn btn-primary btn-small pull-right" href="{% url "project_backlog_create" project.pk %}">{% trans "Create backlog" %}</a>
 	</form>
 	<div class="backlog-lanes" style="width:{% widthratio backlog_list.count 1 320 %}px">
 		{% for backlog in backlog_list %}

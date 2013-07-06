@@ -1,14 +1,15 @@
 from django.conf.urls import patterns, url
 
 from .views import (project_list, project_detail, project_create, project_edit,
-                    project_delete, backlog_create,
+                    project_delete, project_backlog_create,
                     backlog_delete, backlog_edit, story_edit, story_create,
                     story_detail, story_delete, story_change_status,
-                    invite_user, dashboard,
+                    project_invite_user, dashboard,
                     invitation_activate, project_users, auth_delete,
                     notification_view, invitation_accept, invitation_decline,
                     project_stories, print_stories, project_backlogs,
-                    org_create, org_edit, org_detail, org_delete)
+                    org_create, org_edit, org_detail, org_delete, org_users,
+                    EMPTY_VIEW)
 
 # root
 urlpatterns = patterns(
@@ -31,6 +32,19 @@ urlpatterns += patterns(
 
     url(r'^orgs/(?P<org_id>[\d]+)/delete/$', org_delete,
         name='org_delete'),
+
+    url(r'^orgs/(?P<org_id>[\d]+)/users/$', org_users,
+        name='org_users'),
+
+    url(r'^orgs/(?P<org_id>[\d]+)/stories/$', EMPTY_VIEW,
+        name='org_stories'),
+
+    url(r'^orgs/(?P<org_id>[\d]+)/backlogs/$', EMPTY_VIEW,
+        name='org_backlogs'),
+
+    url(r'^orgs/(?P<org_id>[\d]+)/invite_user/$',
+        EMPTY_VIEW,
+        name='org_invite_user'),
 )
 
 # projects
@@ -60,6 +74,26 @@ urlpatterns += patterns(
 
     url(r'^projects/(?P<project_id>[\d]+)/stories/$', project_stories,
         name='project_stories'),
+
+    url(r'^projects/(?P<project_id>[\d]+)/invite_user/$',
+        project_invite_user,
+        name='project_invite_user'),
+
+    url(r'^projects/(?P<project_id>[\d]+)/invitation/(?P<token>[\w:-]+)/$',
+        invitation_activate,
+        name='invitation_activate'),
+
+    url(r'^projects/(?P<project_id>[\d]+)/revoke/(?P<auth_id>[\d]+)/$',
+        auth_delete,
+        name='auth_delete'),
+
+    url(r'^projects_invitation_accept/(?P<auth_id>[\d]+)/$',
+        invitation_accept,
+        name='invitation_accept'),
+
+    url(r'^projects_invitation_decline/(?P<auth_id>[\d]+)/$',
+        invitation_decline,
+        name='invitation_decline'),
 )
 
 # backlogs
@@ -77,8 +111,8 @@ urlpatterns += patterns(
         name='backlog_delete'),
 
     url(r'^projects/(?P<project_id>[\d]+)/backlogs/new/$',
-        backlog_create,
-        name='backlog_create'),
+        project_backlog_create,
+        name='project_backlog_create'),
 )
 
 # user stories
@@ -115,25 +149,6 @@ urlpatterns += patterns(
 # utilities
 urlpatterns += patterns(
     '',
-    url(r'^projects/(?P<project_id>[\d]+)/invite_user/$',
-        invite_user,
-        name='invite_user'),
-
-    url(r'^projects/(?P<project_id>[\d]+)/invitation/(?P<token>[\w:-]+)/$',
-        invitation_activate,
-        name='invitation_activate'),
-
-    url(r'^projects/(?P<project_id>[\d]+)/revoke/(?P<auth_id>[\d]+)/$',
-        auth_delete,
-        name='auth_delete'),
-
-    url(r'^projects_invitation_accept/(?P<auth_id>[\d]+)/$',
-        invitation_accept,
-        name='invitation_accept'),
-
-    url(r'^projects_invitation_decline/(?P<auth_id>[\d]+)/$',
-        invitation_decline,
-        name='invitation_decline'),
 
     url(r'^my_notifications/$',
         notification_view,

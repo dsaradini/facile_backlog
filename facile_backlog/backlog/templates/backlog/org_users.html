@@ -1,26 +1,26 @@
 {% extends "project_base.html" %}
 {% load staticfiles sekizai_tags markup acl %}
 
-{% block title %}{% trans "Project" %} &mdash; {{ project.name }}{% endblock %}
+{% block title %}{% trans "Project" %} &mdash; {{ organization.name }}{% endblock %}
 {% block content %}
 
-	{% include "backlog/_project_head.html" %}
+	{% include "backlog/_org_head.html" %}
 
 	<ul class="nav nav-tabs">
-		<li><a href="{% url "project_detail" project.pk %}">{% trans "General" %}</a></li>
-		<li><a href="{% url "project_backlogs" project.pk %}">{% trans "Backlogs" %} </a></li>
-		<li class="active"><a href="{% url "project_users" project.pk %}">{% trans "Members" %} </a>
-		<li><a href="{% url "project_stories" project.pk %}">{% trans "Stories" %}</a></li>
+		<li><a href="{% url "org_detail" organization.pk %}">{% trans "General" %}</a></li>
+		<li><a href="{% url "org_backlogs" organization.pk %}">{% trans "Backlogs" %} </a></li>
+		<li class="active"><a href="{% url "org_users" organization.pk %}">{% trans "Members" %} </a>
+		<li><a href="{% url "org_stories" organization.pk %}">{% trans "Stories" %}</a></li>
 	</ul>
 
 	<h2>{% trans "Users" %}</h2>
 
 	<div class="description">
-		<p>{% blocktrans %}Here is the list of all users participating to this project.{% endblocktrans %}</p>
+		<p>{% blocktrans %}Here is the list of all organization's users.{% endblocktrans %}</p>
 	</div>
 	<div class="actions">
-		{% if project|can_admin:request.user %}
-			<a class="btn btn-primary" href="{% url "project_invite_user" project.pk %}">
+		{% if organization|can_admin:request.user %}
+			<a class="btn btn-primary" href="{% url "org_invite_user" organization.pk %}">
 				{% trans "Invite user" %}
 			</a>
 		{% endif %}
@@ -37,7 +37,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{% for auth in project.authorizations.all %}
+			{% for auth in organization.authorizations.all %}
 				<tr id="auth-{{ auth.pk }}">
 					<td class="user-image"><img src="{{ auth.user.get_gravatar_url }}"></td>
 					<td class="user-name">{{ auth.user.full_name }}</td>
@@ -45,8 +45,8 @@
 					<td class="user-invitation">{% if auth.is_active %}{% trans "Accepted" %}{% else %}{% trans "Pending" %}{% endif %}</td>
 					<td class="user-role">{% if auth.is_admin %}{% trans "Administrator" %}{% else %}{% trans "User" %}{% endif %}</td>
 					<td class="user-actions">
-						{% if project|can_admin:request.user and auth.user_id != request.user.pk%}
-						<a title="{% trans "Delete" %}" href="{% url "auth_delete" project.pk auth.pk %}"><i class="icon-remove"></i></a>
+						{% if organization|can_admin:request.user and auth.user_id != request.user.pk%}
+						<a title="{% trans "Delete" %}" href="{% url "auth_delete" organization.pk auth.pk %}"><i class="icon-remove"></i></a>
 						{% endif %}
 					</td>
 				</tr>

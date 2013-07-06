@@ -7,7 +7,7 @@
 
 	<p>{% trans "Enter user email yout want to invite." %}</p>
 
-	<form method="post" id="register_form" action="{% url "invite_user" project.pk %}">
+	<form method="post" id="register_form" action="{% url "project_invite_user" project.pk %}">
 		{% include "form.html" %}
 		<div class="submit">
 			<input class="btn btn-primary" type="submit" value="{% trans "Invite" %}">

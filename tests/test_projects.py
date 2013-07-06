@@ -19,14 +19,24 @@ class ProjectTest(WebTest):
     def test_project_list(self):
         user = factories.UserFactory.create(
             email='test@epyx.ch', password='pass')
-        for i in range(0, 20):
-            factories.create_sample_project(user)
-        factories.ProjectFactory.create(active=False)
+        user_no = factories.UserFactory.create()
+        factories.create_sample_project(user, project_kwargs={
+            'active': False,
+            'name': u'WRONG NAME 1',
+        })
+        factories.create_sample_project(user_no, project_kwargs={
+            'active': True,
+            'name': u'WRONG NAME 2',
+        })
+        factories.create_sample_project(user, project_kwargs={
+            'active': True,
+            'name': u'Good name',
+        })
 
-        url = reverse("project_list")
+        url = reverse("dashboard")
         response = self.app.get(url, user="test@epyx.ch")
-        self.assertNotContains(response, 'no active project')
-        self.assertContains(response, 'More project available...')
+        self.assertNotContains(response, 'WRONG NAME')
+        self.assertContains(response, 'Good name')
 
     def test_project_create(self):
         user = factories.UserFactory.create(

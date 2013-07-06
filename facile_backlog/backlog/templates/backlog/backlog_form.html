@@ -5,7 +5,7 @@
 {% block content %}
 
 	<ul class="breadcrumb">
-		<li><a href="{% url "project_list" %}"> {% trans "Projects" %}</a><span class="divider">/</span></li>
+		<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a><span class="divider">/</span></li>
 		<li> <i class="icon-book"></i><a href="{% url "project_detail" project.pk %}">{{ project.name }}</a><span class="divider">/</span></li>
 		<li class="active">{% if object %}{% trans "Edit backlog" %}{% else %}{% trans "Create backlog" %}{% endif %}<span class="divider"></span>
 		</li>
@@ -14,7 +14,7 @@
 <div class="row-fluid">
 	<div class="span6 offset3 base-form">
 	{% if not object %}<h1>{% trans "Add a new backlog" %}</h1>{% endif %}
-    <form method="post" id="edit_backlog_form" action="{% if object %}{% url "backlog_edit" project.pk object.pk %}{% else %}{% url "backlog_create" project.pk %}{% endif %}">
+    <form method="post" id="edit_backlog_form" action="{% if object %}{% url "backlog_edit" project.pk object.pk %}{% else %}{% url "project_backlog_create" project.pk %}{% endif %}">
 
         {% csrf_token %}
         {% include "form.html" %}

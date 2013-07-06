@@ -17,7 +17,7 @@ class RegistrationTest(WebTest):
         project = create_sample_project(user_a, project_kwargs={
             'name': u"My first project",
         })
-        url = reverse('invite_user', args=(project.pk,))
+        url = reverse('project_invite_user', args=(project.pk,))
         # require login
         self.app.get(url, status=302)
         # not part of the project yet
@@ -45,7 +45,7 @@ class RegistrationTest(WebTest):
             u"Invitation to project '{0}' has been".format(project.name)
         )
 
-        url = reverse("project_list")
+        url = reverse("dashboard")
         response = self.app.get(url, user=user_b)
         self.assertContains(response, escape(project.name))
         event = Event.objects.get(
@@ -61,7 +61,7 @@ class RegistrationTest(WebTest):
             'name': u"My first project",
         })
         project.add_user(user_b)
-        url = reverse("project_list")
+        url = reverse("dashboard")
         response = self.app.get(url, user=user_b)
         self.assertContains(response, u"My first project")
 
@@ -79,7 +79,7 @@ class RegistrationTest(WebTest):
             response,
             'User {0} has been revoked.'.format(user_b.email),
         )
-        url = reverse("project_list")
+        url = reverse("dashboard")
         response = self.app.get(url, user=user_b)
         self.assertNotContains(response, u"My first project")
 

@@ -3,13 +3,37 @@ import random
 from factory import Factory, lazy_attribute, Sequence
 
 from facile_backlog.backlog.models import (Project, UserStory, Backlog,
-                                           AuthorizationAssociation)
+                                           AuthorizationAssociation,
+                                           Organization)
 
 from facile_backlog.blog.models import BlogPost
 
 from facile_backlog.core.models import User
 
 from . import rand_lorem_phrase, rand_email
+
+
+class OrganizationFactory(Factory):
+    FACTORY_FOR = Organization
+
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        result = super(OrganizationFactory, cls)._prepare(create, **kwargs)
+        if 'owner' in kwargs:
+            AuthorizationAssociation.objects.create(
+                is_admin=True,
+                org=result,
+                user=kwargs['owner']
+            )
+        return result
+
+    @lazy_attribute
+    def name(self):
+        return rand_lorem_phrase(3, 15)
+
+    @lazy_attribute
+    def description(self):
+        return rand_lorem_phrase(10, 100)
 
 
 class ProjectFactory(Factory):
@@ -110,6 +134,17 @@ class BlogPostFactory(Factory):
     @lazy_attribute
     def body(self):
         return rand_lorem_phrase(10, 100)
+
+
+def create_sample_organization(user, org_kwargs={}):
+    org = OrganizationFactory.create(**org_kwargs)
+    AuthorizationAssociation.objects.create(
+        is_admin=True,
+        is_active=True,
+        org=org,
+        user=user
+    )
+    return org
 
 
 def create_sample_project(user, project_kwargs={}):

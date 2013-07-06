@@ -151,7 +151,7 @@ class Command(BaseCommand):
         story.save()
         create_event(
             self.user, project=project,
-            "imported story from easy backlog id={0}".format(story_id),
+            text=u"imported story from easy backlog id={0}".format(story_id),
             backlog=backlog, story=story
         )
         logger.log(logging.INFO, "Story {0} imported".format(story.code))

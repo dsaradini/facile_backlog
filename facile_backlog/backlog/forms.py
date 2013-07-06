@@ -1,7 +1,6 @@
-from django.core.exceptions import ValidationError
 from django.forms.fields import CharField
 from django.forms.models import ModelForm
-from django.forms import Form, HiddenInput, ModelChoiceField
+from django.forms import Form, HiddenInput
 from django.forms import EmailField, BooleanField, ChoiceField
 from django.forms.widgets import TextInput
 from django.utils.translation import ugettext as _
