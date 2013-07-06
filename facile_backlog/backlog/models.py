@@ -4,12 +4,29 @@ from palette import Color
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.core.validators import EmailValidator, URLValidator
 from django.db import models, transaction
 from django.db.models.loading import get_model
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
 User = settings.AUTH_USER_MODEL
+
+
+EMPTY = ""
+TODO = "to_do"
+ACCEPTED = "accepted"
+IN_PROGRESS = "in_progress"
+REJECTED = "rejected"
+COMPLETED = "completed"
+
+STATUS_CHOICE = (
+    (TODO, _("To do")),
+    (IN_PROGRESS, _("In progress")),
+    (ACCEPTED, _("Accepted")),
+    (REJECTED, _("Rejected")),
+    (COMPLETED, _("Completed")),
+)
 
 
 class StatsMixin(object):
@@ -48,14 +65,29 @@ class StatsMixin(object):
 
 
 class AuthorizationAssociation(models.Model):
-    project = models.ForeignKey('Project')
+    org = models.ForeignKey('Organization', null=True, blank=True,
+                            related_name="authorizations")
+    project = models.ForeignKey('Project', null=True, blank=True,
+                                related_name="authorizations")
     user = models.ForeignKey(User)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return u"{0} - {1}".format(self.project.name, self.user.email)
+        if self.project_id:
+            return u"Project - {0}[{1}] - {2}".format(self.project.name,
+                                                      self.project_id,
+                                                      self.user.email)
+        elif self.org_id:
+            return u"Org - {0}[{1}] - {2}".format(self.org.name,
+                                                  self.org_id,
+                                                  self.user.email)
+        else:
+            return u"UNKNOWN - {1}".format(self.user.email)
+
+    class Meta:
+        unique_together = (("user", "project"), ("user", "org"))
 
     @property
     def role(self):
@@ -67,20 +99,103 @@ class AuthorizationAssociation(models.Model):
             self.date_joined = timezone.now()
             self.save(update_fields=("is_active", "date_joined"))
             create_event(
-                user, self.project,
-                "joined the project as {0}".format(
+                user, project=self.project,
+                text="joined the project as {0}".format(
                     "administrator" if self.is_admin else "team member"
                 )
             )
 
 
-class Project(StatsMixin, models.Model):
+class OrgSecurityMixin(object):
+    def can_read(self, user):
+        return user.is_staff or self.organization.can_read(user)
+
+    def can_admin(self, user):
+        return user.is_staff or self.organization.can_admin(user)
+
+
+class AclMixin(object):
+    authorization_association_field = None
+
+    def get_acl(self):
+        if not hasattr(self, '__acl__'):
+            self.__acl__ = {
+                'read': [],
+                'admin': []
+            }
+            kwargs = dict()
+            kwargs['is_active'] = True
+            kwargs[self.authorization_association_field] = self
+            for auth in AuthorizationAssociation.objects.filter(
+                    **kwargs
+            ).prefetch_related():
+                self.__acl__['read'].append(auth.user.email)
+                if auth.is_admin:
+                    self.__acl__['admin'].append(auth.user.email)
+        return self.__acl__
+
+    def can_read(self, user):
+        return user.is_staff or (user.email in self.get_acl()['read'])
+
+    def can_admin(self, user):
+        return user.is_staff or (user.email in self.get_acl()['admin'])
+
+
+class Organization(AclMixin, models.Model):
+    authorization_association_field = "org"
+
     name = models.CharField(_("Name"), max_length=128)
-    description = models.TextField(_("Description"))
+    description = models.TextField(_("Description"), blank=True)
+    email = models.CharField(
+        _("Email"), max_length=128, blank=True,validators=[EmailValidator()],
+        help_text=u"Organization email is used to display gravatar image if"
+                  u" any."
+    )
+    web_site = models.CharField(_("Web site"), max_length=256, blank=True,
+                                validators=[URLValidator])
+
+    users = models.ManyToManyField(
+        User,
+        verbose_name=_('Authorization'),
+        related_name='organizations',
+        through='AuthorizationAssociation'
+    )
+
+    class Meta:
+        ordering = ("name",)
+
+    def __unicode__(self):
+        return self.name
+
+    @classmethod
+    def my_organizations(cls, user):
+        """ Return all organization user has rights """
+        if not user.is_authenticated():
+            return Organization.objects.none()
+        return user.organizations.filter(
+            authorizations__is_active=True
+        )
+
+    def last_activity(self):
+        when = self.events.values_list("when", flat=True).all()[:1]
+        return when[0] if when else "not found"
+
+    @property
+    def ordered_projects(self):
+        return self.projects.all()
+
+
+class Project(StatsMixin, AclMixin, models.Model):
+    authorization_association_field = "project"
+
+    name = models.CharField(_("Name"), max_length=128)
+    description = models.TextField(_("Description"), blank=True)
     active = models.BooleanField(_("Active"), default=False)
     code = models.CharField(_("Code"), max_length=5, help_text=_(
         "Prefix for all stories (maximum 5 characters)"))
     story_counter = models.IntegerField(default=0, blank=True, null=True)
+    org = models.ForeignKey(Organization, verbose_name=_("Organization"),
+                            null=True, blank=True, related_name="projects")
     users = models.ManyToManyField(
         User,
         verbose_name=_('Authorization'),
@@ -103,7 +218,7 @@ class Project(StatsMixin, models.Model):
         if not user.is_authenticated():
             return Project.objects.none()
         return user.projects.filter(
-            authorizationassociation__is_active=True
+            authorizations__is_active=True
         )
 
     def authorizations(self):
@@ -133,25 +248,6 @@ class Project(StatsMixin, models.Model):
         if not self.code:
             self.code = re.sub('[\W]*', '', self.name)[:5].upper()
         return super(Project, self).save(*args, **kwargs)
-
-    def get_acl(self):
-        if not hasattr(self, '__acl__'):
-            self.__acl__ = {
-                'read': [],
-                'admin': []
-            }
-            for auth in AuthorizationAssociation.objects.filter(
-                    project=self, is_active=True).prefetch_related():
-                self.__acl__['read'].append(auth.user.email)
-                if auth.is_admin:
-                    self.__acl__['admin'].append(auth.user.email)
-        return self.__acl__
-
-    def can_read(self, user):
-        return user.is_staff or (user.email in self.get_acl()['read'])
-
-    def can_admin(self, user):
-        return user.is_staff or (user.email in self.get_acl()['admin'])
 
     def get_stats(self):
         return {
@@ -197,12 +293,18 @@ class Backlog(StatsMixin, ProjectSecurityMixin, models.Model):
 
     project = models.ForeignKey(Project, verbose_name=_("Project"),
                                 related_name='backlogs', null=True)
+    org = models.ForeignKey(Organization, verbose_name=_("Organization"),
+                            related_name='backlogs', null=True, blank=True)
     name = models.CharField(_("Name"), max_length=256)
-    description = models.TextField(_("Description"))
+    description = models.TextField(_("Description"), blank=True)
     kind = models.CharField(_("Kind"), max_length=16,
                             choices=KIND_CHOICE, default=GENERAL)
     last_modified = models.DateTimeField(_("Last modified"), auto_now=True)
     order = models.PositiveIntegerField(default=0)
+    is_archive = models.BooleanField(_("Archived"), default=False)
+    auto_status = models.CharField(_("Auto status"), max_length=20, blank=True,
+                                   choices=STATUS_CHOICE, default="")
+    is_main = models.BooleanField(_("Main"), default=False)
 
     class Meta:
         ordering = ("order",)
@@ -234,7 +336,6 @@ class Backlog(StatsMixin, ProjectSecurityMixin, models.Model):
 
 
 class UserStory(ProjectSecurityMixin, models.Model):
-    NEW = "new"
     TODO = "to_do"
     ACCEPTED = "accepted"
     IN_PROGRESS = "in_progress"
@@ -242,7 +343,6 @@ class UserStory(ProjectSecurityMixin, models.Model):
     COMPLETED = "completed"
 
     STATUS_CHOICE = (
-        (NEW, _("New")),
         (TODO, _("To do")),
         (IN_PROGRESS, _("In progress")),
         (ACCEPTED, _("Accepted")),
@@ -349,8 +449,8 @@ class UserStory(ProjectSecurityMixin, models.Model):
             new_value = getattr(self, k)
             if old_value != new_value:
                 create_event(
-                    user, self.project_id,
-                    u"changed story {0} from '{1}' to '{2}'".format(
+                    user, project=self.project_id,
+                    text=u"changed story {0} from '{1}' to '{2}'".format(
                         k, old_value, new_value,
                     ),
                     story=self,
@@ -371,13 +471,19 @@ class Event(models.Model):
                              related_name="events")
     when = models.DateTimeField(_("When"), auto_now=True)
     project = models.ForeignKey(Project, verbose_name=_("Project"),
-                                related_name="events")
+                                related_name="events", null=True,
+                                on_delete=models.SET_NULL)
     story = models.ForeignKey(UserStory, verbose_name=_("Story"),
                               blank=True, null=True, related_name="events",
                               on_delete=models.SET_NULL)
     backlog = models.ForeignKey(Backlog, verbose_name=_("Backlog"),
                                 blank=True, null=True, related_name="events",
                                 on_delete=models.SET_NULL)
+    organization = models.ForeignKey(Organization,
+                                     verbose_name=_("Organization"),
+                                     blank=True, null=True,
+                                     related_name="events",
+                                     on_delete=models.SET_NULL)
     text = models.TextField(_("Text"))
 
     def __unicode__(self):
@@ -403,7 +509,8 @@ def build_event_kwargs(values, **kwargs):
     return values
 
 
-def create_event(user, project, text, backlog=None, story=None):
+def create_event(user, text, project=None, backlog=None, story=None,
+                 organization=None):
     kwargs = {
         'text': text
     }
@@ -413,4 +520,5 @@ def create_event(user, project, text, backlog=None, story=None):
         project=project,
         backlog=backlog,
         story=story,
+        organization=organization,
     ))

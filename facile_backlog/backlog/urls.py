@@ -4,15 +4,41 @@ from .views import (project_list, project_detail, project_create, project_edit,
                     project_delete, backlog_create,
                     backlog_delete, backlog_edit, story_edit, story_create,
                     story_detail, story_delete, story_change_status,
-                    invite_user,
+                    invite_user, dashboard,
                     invitation_activate, project_users, auth_delete,
                     notification_view, invitation_accept, invitation_decline,
-                    project_stories, print_stories, project_backlogs)
+                    project_stories, print_stories, project_backlogs,
+                    org_create, org_edit, org_detail, org_delete)
 
-# projects
+# root
 urlpatterns = patterns(
     '',
-    url(r'^projects/$', project_list, name='project_list'),
+    url(r'^dashboard/$', dashboard, name='dashboard'),
+)
+
+# organizations
+urlpatterns += patterns(
+    '',
+
+    url(r'^orgs/new/$', org_create,
+        name='org_create'),
+
+    url(r'^orgs/(?P<org_id>[\d]+)/edit/$', org_edit,
+        name='org_edit'),
+
+    url(r'^orgs/(?P<org_id>[\d]+)/$', org_detail,
+        name='org_detail'),
+
+    url(r'^orgs/(?P<org_id>[\d]+)/delete/$', org_delete,
+        name='org_delete'),
+)
+
+# projects
+urlpatterns += patterns(
+    '',
+
+    url(r'^projects/$', project_list,
+        name='project_list'),
 
     url(r'^projects/new/$', project_create,
         name='project_create'),

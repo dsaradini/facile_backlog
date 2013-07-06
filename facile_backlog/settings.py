@@ -37,7 +37,7 @@ AUTH_USER_MODEL = 'core.User'
 
 LOGIN_URL = reverse_lazy('auth_login')
 
-LOGIN_REDIRECT_URL = reverse_lazy('project_list')
+LOGIN_REDIRECT_URL = reverse_lazy('dashboard')
 
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
@@ -135,6 +135,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
 )
 
 ROOT_URLCONF = 'facile_backlog.urls'

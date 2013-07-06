@@ -12,7 +12,7 @@
 		{{ field }}
 	{% else %}
 		<div class="control-group field {% if field.errors %}error{% endif %}">
-			<label class="control-label"><strong>{{ field.label }}</strong></label>
+			<label class="control-label"><h4>{{ field.label }} {% if field.field.required %}<small class="muted">({% trans "required" %})</small>{% endif %}</h4></label>
 			{{ field }}
 			{% if field.help_text %}<span class="muted">{{ field.help_text|safe }}</span>{% endif %}
 			{% if field.errors %}

@@ -1,0 +1,15 @@
+{% extends "project_base.html" %}
+{% load staticfiles sekizai_tags markup acl %}
+
+{% block title %}{% trans "Project" %} &mdash; {{ project.name }}{% endblock %}
+{% block content %}
+
+	{% include "backlog/_org_head.html" %}
+
+	<div class="description span12">
+		{% if organization.description %}
+			{{ organization.description|markdown }}
+		{% endif %}
+	</div>
+
+{% endblock %}

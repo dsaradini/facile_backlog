@@ -9,7 +9,7 @@ from ratelimitbackend.forms import AuthenticationForm
 
 def root_view(request):
     if request.user.is_authenticated():
-        return redirect(reverse('project_list'))
+        return redirect(reverse('dashboard'))
     return redirect("home")
 
 
@@ -18,7 +18,7 @@ class HomeView(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated():
-            return redirect(reverse('project_list'))
+            return redirect(reverse('dashboard'))
         request.session.set_test_cookie()
         return super(HomeView, self).dispatch(request, *args, **kwargs)
 

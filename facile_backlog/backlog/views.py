@@ -19,10 +19,11 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect
 
 from .models import (Project, Backlog, UserStory, AuthorizationAssociation,
-                     create_event)
+                     create_event, Organization)
 from .forms import (ProjectCreationForm, ProjectEditionForm,
                     BacklogCreationForm, BacklogEditionForm,
-                    StoryEditionForm, StoryCreationForm, InviteUserForm)
+                    StoryEditionForm, StoryCreationForm, InviteUserForm,
+                    OrgCreationForm, OrgEditionForm)
 
 
 from ..core.models import User
@@ -33,11 +34,30 @@ def get_projects(user):
     return Project.my_projects(user)
 
 
-def get_project_or_404(user, pk):
-    project = get_object_or_404(Project, pk=pk)
-    if not project.can_read(user):
+def get_organizations(user):
+    return Organization.my_organizations(user)
+
+
+def get_my_object_or_404(klass, user, pk):
+    obj = get_object_or_404(klass, pk=pk)
+    if not hasattr(obj, "can_read") or not obj.can_read(user):
         raise Http404()
-    return project
+    return obj
+
+
+class Dashboard(generic.TemplateView):
+    template_name = "backlog/dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(Dashboard, self).get_context_data(**kwargs)
+        context['events'] = self.request.user.events.select_related(
+            "project", "backlog", "user", "story", "story__project",
+            "organization")[:10]
+
+        context['projects'] = get_projects(self.request.user)
+        context['organizations'] = get_organizations(self.request.user)
+        return context
+dashboard = login_required(Dashboard.as_view())
 
 
 class BackMixin(object):
@@ -55,6 +75,97 @@ class BackMixin(object):
         kwargs = super(BackMixin, self).get_form_kwargs()
         kwargs['_back'] = self.back
         return kwargs
+
+
+class OrgCreate(generic.CreateView):
+    template_name = "backlog/org_form.html"
+    model = Organization
+    form_class = OrgCreationForm
+
+    def form_valid(self, form):
+        self.object = form.save()
+        AuthorizationAssociation.objects.create(
+            org=form.instance,
+            user=self.request.user,
+            is_admin=True,
+            is_active=True
+        )
+        create_event(
+            self.request.user, organization=self.object,
+            text="created this organization"
+        )
+        messages.success(self.request,
+                         _("Organization successfully created."))
+        return redirect(reverse("dashboard"))
+org_create = login_required(OrgCreate.as_view())
+
+
+class OrgMixin(object):
+    admin_only = False
+    """
+    Mixin to fetch a organization by a view.
+    """
+    def dispatch(self, request, *args, **kwargs):
+        self.organization = get_my_object_or_404(Organization,
+                                                 request.user,
+                                                 pk=kwargs['org_id'])
+        if self.admin_only and not self.organization.can_admin(request.user):
+            raise Http404
+        self.request = request
+        self.pre_dispatch()
+        return super(OrgMixin, self).dispatch(request, *args, **kwargs)
+
+    def pre_dispatch(self):
+        pass
+
+
+class OrgDetail(OrgMixin, generic.DetailView):
+    template_name = "backlog/org_detail.html"
+
+    def get_object(self):
+        return self.organization
+
+    def get_context_data(self, **kwargs):
+        context = super(OrgDetail, self).get_context_data(**kwargs)
+        context['organization'] = self.organization
+        context['events'] = self.organization.events.select_related()[:10]
+        return context
+org_detail = login_required(OrgDetail.as_view())
+
+
+class OrgEdit(OrgMixin, generic.UpdateView):
+    admin_only = True
+    template_name = "backlog/org_form.html"
+    form_class = OrgEditionForm
+
+    def get_object(self):
+        return self.organization
+
+    def form_valid(self, form):
+        org = form.save()
+        create_event(
+            self.request.user, organization=org,
+            text="modified the organization"
+        )
+        messages.success(self.request,
+                         _("Organization successfully updated."))
+        return redirect(reverse("dashboard"))
+org_edit = login_required(OrgEdit.as_view())
+
+
+class OrgDelete(OrgMixin, generic.DeleteView):
+    admin_only = True
+    template_name = "backlog/org_confirm_delete.html"
+
+    def get_object(self):
+        return self.organization
+
+    def delete(self, request, *args, **kwargs):
+        self.organization.delete()
+        messages.success(request,
+                         _("Organization successfully deleted."))
+        return redirect(reverse('dashboard'))
+org_delete = login_required(OrgDelete.as_view())
 
 
 class ProjectList(generic.ListView):
@@ -88,8 +199,8 @@ class ProjectMixin(object):
     Mixin to fetch a project by a view.
     """
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_project_or_404(request.user,
-                                          pk=kwargs['project_id'])
+        self.project = get_my_object_or_404(Project, request.user,
+                                            pk=kwargs['project_id'])
         if self.admin_only and not self.project.can_admin(request.user):
             raise Http404
         self.request = request
@@ -119,6 +230,23 @@ class ProjectCreate(generic.CreateView):
     model = Project
     form_class = ProjectCreationForm
 
+    def dispatch(self, request, *args, **kwargs):
+        org_id = request.GET.get("org", None)
+        if org_id:
+            self.org = Organization.my_organizations(self.request.user).get(
+                pk=org_id
+            )
+        else:
+            self.org = None
+        self.request = request
+        return super(ProjectCreate, self).dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super(ProjectCreate, self).get_form_kwargs()
+        kwargs['org'] = self.org
+        kwargs['request'] = self.request
+        return kwargs
+
     def form_valid(self, form):
         super(ProjectCreate, self).form_valid(form)
         Backlog.objects.create(
@@ -126,6 +254,7 @@ class ProjectCreate(generic.CreateView):
             description=_("This is the main backlog for the project."),
             project=self.object,
             kind=Backlog.TODO,
+            is_main=True,
             order=1,
         )
         Backlog.objects.create(
@@ -142,12 +271,13 @@ class ProjectCreate(generic.CreateView):
             is_active=True
         )
         create_event(
-            self.request.user, self.object,
-            "created this project"
+            self.request.user, project=self.object,
+            organization=self.object.org,
+            text="created this project"
         )
         messages.success(self.request,
                          _("Project successfully created."))
-        return redirect(reverse("project_list"))
+        return redirect(reverse("dashboard"))
 project_create = login_required(ProjectCreate.as_view())
 
 
@@ -162,12 +292,12 @@ class ProjectEdit(ProjectMixin, generic.UpdateView):
     def form_valid(self, form):
         project = form.save()
         create_event(
-            self.request.user, project,
-            "modified the project"
+            self.request.user, project=project,
+            text="modified the project"
         )
         messages.success(self.request,
                          _("Project successfully updated."))
-        return redirect(project.get_absolute_url())
+        return redirect(reverse("dashboard"))
 project_edit = login_required(ProjectEdit.as_view())
 
 
@@ -182,7 +312,7 @@ class ProjectDelete(ProjectMixin, generic.DeleteView):
         self.project.delete()
         messages.success(request,
                          _("Project successfully deleted."))
-        return redirect(reverse('project_list'))
+        return redirect(reverse('dashboard'))
 project_delete = login_required(ProjectDelete.as_view())
 
 
@@ -270,7 +400,7 @@ class BacklogMixin(BackMixin):
     """
     def dispatch(self, request, *args, **kwargs):
         project_id = kwargs['project_id']
-        self.project = get_project_or_404(request.user, project_id)
+        self.project = get_my_object_or_404(Project, request.user, project_id)
         try:
             self.backlog = Backlog.objects.select_related().get(
                 pk=kwargs['backlog_id'])
@@ -315,8 +445,8 @@ class BacklogCreate(ProjectMixin, generic.CreateView):
     def form_valid(self, form):
         self.object = form.save()
         create_event(
-            self.request.user, self.project,
-            "created this backlog",
+            self.request.user, project=self.project,
+            text="created this backlog",
             backlog=self.object
         )
         messages.success(self.request,
@@ -350,8 +480,8 @@ class BacklogEdit(BacklogMixin, generic.UpdateView):
     def form_valid(self, form):
         backlog = form.save()
         create_event(
-            self.request.user, self.project,
-            "modified the backlog",
+            self.request.user, project=self.project,
+            text="modified the backlog",
             backlog=self.object
         )
         messages.success(self.request,
@@ -375,8 +505,8 @@ class BacklogDelete(BacklogMixin, generic.DeleteView):
     def delete(self, request, *args, **kwargs):
         self.backlog.delete()
         create_event(
-            self.request.user, self.project,
-            u"deleted backlog {0}".format(self.backlog.name),
+            self.request.user, project=self.project,
+            text=u"deleted backlog {0}".format(self.backlog.name),
         )
         messages.success(request,
                          _("Backlog successfully deleted."))
@@ -395,7 +525,7 @@ class StoryMixin(BackMixin):
             self.direct = request.GET.get('direct', False)
         elif request.method == "POST":
             self.direct = request.POST.get('direct', False)
-        self.project = get_project_or_404(request.user, project_id)
+        self.project = get_my_object_or_404(Project, request.user, project_id)
         try:
             self.story = UserStory.objects.select_related().get(
                 pk=kwargs['story_id'])
@@ -468,8 +598,8 @@ class StoryCreate(BacklogMixin, generic.CreateView):
     def form_valid(self, form):
         super(StoryCreate, self).form_valid(form)
         create_event(
-            self.request.user, self.project,
-            "created this story",
+            self.request.user, project=self.project,
+            text="created this story",
             backlog=self.backlog,
             story=self.object,
         )
@@ -498,8 +628,8 @@ class StoryEdit(StoryMixin, generic.UpdateView):
     def form_valid(self, form):
         story = form.save()
         create_event(
-            self.request.user, self.project,
-            "modified the story",
+            self.request.user, project=self.project,
+            text="modified the story",
             backlog=self.backlog,
             story=story,
         )
@@ -524,8 +654,9 @@ class StoryDelete(StoryMixin, generic.DeleteView):
     def delete(self, request, *args, **kwargs):
         self.story.delete()
         create_event(
-            self.request.user, self.project,
-            u"deleted story {0}, {1}".format(self.story.code, self.story.text),
+            self.request.user, project=self.project,
+            text=u"deleted story {0}, {1}".format(self.story.code,
+                                                  self.story.text),
             backlog=self.backlog
         )
         messages.success(request,

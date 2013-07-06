@@ -4,10 +4,11 @@
 {% block content %}
 <div class="row-fluid">
 	<h1>{% trans "Delete backlog" %}</h1>
+	<h2><i class="icon-list-ul muted"></i> {{ backlog.name }}</h2>
 	<div class="alert alert-danger">
 		{% trans "Are you sure you want to delete this backlog and all its stories?" %}
+		<h4>{% trans "This operation cannot be undone" %}</h4>
 	</div>
-	<h2>{{ backlog.name }}</h2>
 	<form method="post" id="delete_form" action="{% url "backlog_delete" project.pk backlog.pk %}">
 		{% csrf_token %}
 		{{ form }}

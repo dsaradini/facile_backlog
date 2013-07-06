@@ -1,0 +1,110 @@
+{% extends "project_base.html" %}
+{% load staticfiles sekizai_tags humanize acl %}
+
+{% block title %}{% trans "Dashboard" %}{% endblock %}
+
+{% block content %}
+<ul class="breadcrumb">
+	<li class="active">{% trans "Dashboard" %}<span class="divider">/</span></li>
+</ul>
+
+<div class="row">
+	<div class="span8">
+		<div class="row-fluid">
+			<h2>{% trans "Organizations" %}
+			<a class="btn btn-primary btn-small" href="{% url "org_create" %}">
+				{% trans "Create organization" %}
+			</a>
+			</h2>
+		{% if organizations %}
+			<div class="span12">
+				{% for org in organizations %}
+				<div>
+					<div>
+						<h4 class="inline-title">
+							<i class="icon-building"></i>
+							<a href="{% url 'org_detail' org.pk %}"> {{ org.name }}</a>
+							{% if org|can_admin:request.user %}
+								<small>[
+									<a href="{% url 'org_edit' org.pk %}">{% trans "edit" %}</a>
+									|
+									<a href="{% url 'org_delete' org.pk %}">{% trans "delete" %}</a>
+								]</small>
+								<a class="btn btn-small btn-link" href="{% url "project_create" %}?org={{ org.pk }}">{% trans "New organization project" %}</a>
+							{% endif %}
+						</h4>
+					</div>
+
+					<div class="margin-left">
+						{% for project in org.ordered_projects %}
+							<h5><i class="icon-book"></i> <a href="{% url "project_backlogs" project.pk %}">{{ project.name }}</a></h5>
+						{% empty %}
+							<div class="text-warning">
+								{% trans "You have no active project in this organization" %}
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		{%  else %}
+			<div class="alert alert-info">
+				{% if not query %}
+					{% trans "You have no active organization" %}
+				{% else %}
+					{% trans "No organization found" %}
+				{% endif %}
+			</div>
+		{% endif %}
+		</div>
+
+		<div class="row-fluid">
+		<h2>{% trans "Projects" %}
+		<a class="btn btn-primary btn-small" href="{% url "project_create" %}">
+			{% trans "New project" %}
+		</a>
+		</h2>
+		{% if projects %}
+			<div class="span12">
+				{% for object in projects %}
+				<div>
+					<h4 class="inline-title">
+						<i class="icon-book"></i>
+						<a href="{% url 'project_detail' object.pk %}"> {{ object.name }}</a>
+						{% if object|can_admin:request.user %}
+							<small>[
+								<a href="{% url 'project_edit' object.pk %}">{% trans "edit" %}</a>
+								|
+								<a href="{% url 'project_delete' object.pk %}">{% trans "delete" %}</a>
+							]</small>
+						{% endif %}
+					</h4>
+				</div>
+				<div class="margin-left">
+					<div class="span12 muted small"><i class="icon-time"></i> {% trans "Last update" %}  {{ object.last_activity|naturaltime }}</i></div>
+				</div>
+				{% endfor %}
+				{% if is_paginated and page_obj.has_next %}
+					<li>
+						<div class="alert alert-info text-center"> <a href="?page={{ page_obj.next_page_number }}&q={{ query }}">{% trans "More project available..." %}</a> </div>
+					</li>
+				{% endif %}
+			</div>
+		{%  else %}
+			<div class="alert alert-info">
+				{% if not query %}
+					{% trans "You have no active project" %}
+				{% else %}
+					{% trans "No project found" %}
+				{% endif %}
+			</div>
+		{% endif %}
+		</div>
+	</div>
+	<div class="span4">
+		<h3>{% trans "Recent activities" %}</h3>
+		<div class="actions"></div>
+		{% include "backlog/_events.html" with events=events gravatar=True%}
+	</div>
+<div>
+{% endblock %}

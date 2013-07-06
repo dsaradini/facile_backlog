@@ -12,8 +12,15 @@
 			<td>
 				<div class="info">
 					<b>{{ event.user.full_name }}</b> {{ event.text }}
-					{% if event.project %}<a href="{% url "project_detail" event.project_id %}"><i class="icon-book"></i> {{ event.project.name }}</a> {% endif %}
-					{% if event.backlog %}<a href="{% url "project_backlogs" event.project_id %}"><i class="icon-list-ul"></i> {{ event.backlog.name }}</a> {% endif %}
+					{% if event.organization %}
+						<a href="{% url "org_detail" event.organization_id %}"><i class="icon-building"></i> {{ event.organization.name }}</a>
+					{% endif %}
+					{% if event.project %}
+						<a href="{% url "project_detail" event.project_id %}"><i class="icon-book"></i> {{ event.project.name }}</a>
+					{% endif %}
+					{% if event.backlog %}
+						<a href="{% url "project_backlogs" event.project_id %}"><i class="icon-list-ul"></i> {{ event.backlog.name }}</a>
+					{% endif %}
 					{% if event.story %}
 						<a href="{% url "story_detail" event.project_id event.story_id %}"><i class="icon-list-alt"></i> {{ event.story.code }}</a>
 					{% endif %}

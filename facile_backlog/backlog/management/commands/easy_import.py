@@ -150,7 +150,7 @@ class Command(BaseCommand):
         )
         story.save()
         create_event(
-            self.user, project,
+            self.user, project=project,
             "imported story from easy backlog id={0}".format(story_id),
             backlog=backlog, story=story
         )

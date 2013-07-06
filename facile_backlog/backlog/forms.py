@@ -1,11 +1,12 @@
+from django.core.exceptions import ValidationError
 from django.forms.fields import CharField
 from django.forms.models import ModelForm
-from django.forms import Form, HiddenInput
+from django.forms import Form, HiddenInput, ModelChoiceField
 from django.forms import EmailField, BooleanField, ChoiceField
 from django.forms.widgets import TextInput
 from django.utils.translation import ugettext as _
 
-from .models import Project, Backlog, UserStory
+from .models import Project, Backlog, UserStory, Organization
 
 
 class BackMixin(object):
@@ -16,6 +17,21 @@ class BackMixin(object):
         super(BackMixin, self).__init__(*args, **kwargs)
         self.fields["_back"] = self._back
         self.fields["_back"].initial = back_value
+
+
+class OrgEditionForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(OrgEditionForm, self).__init__(*args, **kwargs)
+        self.fields['name'].widget.attrs['autofocus'] = ''
+
+    class Meta:
+        model = Organization
+        fields = ["name", "email", "web_site", "description"]
+
+
+class OrgCreationForm(OrgEditionForm):
+    pass
 
 
 class ProjectEditionForm(ModelForm):
@@ -30,9 +46,22 @@ class ProjectEditionForm(ModelForm):
 
 
 class ProjectCreationForm(ProjectEditionForm):
+
+    class Meta(ProjectEditionForm.Meta):
+        fields = ProjectEditionForm.Meta.fields + ["org"]
+
+    def __init__(self, request, org, *args, **kwargs):
+        super(ProjectCreationForm, self).__init__(*args, **kwargs)
+        self.fields['org'].query_set = \
+            Organization.my_organizations(request.user)
+        self.fields['org'].widget.attrs['readonly'] = True
+        self.fields['org'].initial = org
+        self.request = request
+
     def save(self, commit=True):
         project = super(ProjectCreationForm, self).save(commit=False)
         project.active = True
+
         if commit:
             project.save()
         return project

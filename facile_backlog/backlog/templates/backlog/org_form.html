@@ -1,0 +1,24 @@
+{% extends "project_base.html" %}
+
+{% block title %}{% if object %}{% trans "Edit organization" %}{% else %}{% trans "Create organization" %}{% endif %}{% endblock %}
+
+{% block content %}
+	<ul class="breadcrumb">
+		<li><a href="{% url "project_list" %}"> {% trans "Projects" %}</a><span class="divider">/</span></li>
+		<li class="active"><i>{% trans "Create organization" %}</i><span class="divider"></span></li>
+	</ul>
+
+<div class="row-fluid">
+	<div class="span6 offset3 base-form">
+		{% if not object %}<h1>{% trans "Create organization" %}</h1>{% endif %}
+		<form method="post" id="edit_org_form" action="{% if object %}{% url "org_edit" object.pk %}{% else %}{% url "org_create" %}{% endif %}">
+
+			{% include "form.html" %}
+			<div class="submit">
+				<input class="btn btn-success" type="submit" value="{% if object %}{% trans "Save changes" %}{% else %}{% trans "Create organization" %}{% endif %}">
+				<a class="btn btn-link" href="{% if object %}{% url "org_detail" object.pk %}{% else %}{% url "project_list" %}{% endif %}">{% trans "Cancel" %}</a>
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock %}

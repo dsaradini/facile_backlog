@@ -1,25 +1,36 @@
 from django.contrib import admin
 
 from .models import (Project, Backlog, UserStory, AuthorizationAssociation,
-                     Event)
+                     Event, Organization)
+
+
+class OrganizationAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+    search_fields = ("name",)
 
 
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ("name", "active", "code")
     readonly_fields = ("story_counter", "get_acl", )
     search_fields = ("name", "code")
+    raw_id_fields = ("org",)
+
+    def queryset(self, request):
+        return super(ProjectAdmin,
+                     self).queryset(request).select_related('org')
 
 
 class BacklogAdmin(admin.ModelAdmin):
-    list_display = ("name", "project", "kind", "order")
-    fields = ("name", "description", "project", "kind", "last_modified",
-              "order")
+    list_display = ("name", "project", "kind", "is_archive")
+    fields = ("name", "description", "org", "project", "kind", "last_modified",
+              "order", "is_archive", "auto_status",)
     readonly_fields = ("last_modified",)
     search_fields = ("project__name",)
+    raw_id_fields = ("project", "org")
 
     def queryset(self, request):
         return super(BacklogAdmin,
-                     self).queryset(request).select_related('project')
+                     self).queryset(request).select_related('project', 'org')
 
 
 class UserStoryAdmin(admin.ModelAdmin):
@@ -46,6 +57,7 @@ class EventAdmin(admin.ModelAdmin):
 
 class AuthorizationAssociationAdmin(admin.ModelAdmin):
     readonly_fields = ("date_joined",)
+    raw_id_fields = ("org", "project", "user")
 
     def queryset(self, request):
         qs = super(AuthorizationAssociationAdmin, self).queryset(request)
@@ -56,3 +68,4 @@ admin.site.register(Backlog, BacklogAdmin)
 admin.site.register(UserStory, UserStoryAdmin)
 admin.site.register(AuthorizationAssociation, AuthorizationAssociationAdmin)
 admin.site.register(Event, EventAdmin)
+admin.site.register(Organization, OrganizationAdmin)
