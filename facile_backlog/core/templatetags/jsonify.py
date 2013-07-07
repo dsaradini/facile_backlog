@@ -8,4 +8,4 @@ register = Library()
 
 @register.filter(is_safe=False)
 def jsonify(obj):
-    return mark_safe(json.dumps(obj))
+    return mark_safe(json.dumps(obj).replace("'", "\\'"))

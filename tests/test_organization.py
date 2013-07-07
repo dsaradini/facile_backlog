@@ -25,6 +25,20 @@ class OrganizationTest(WebTest):
         self.assertNotContains(response, 'WRONG NAME')
         self.assertContains(response, 'Good name')
 
+    def test_org_detail(self):
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        user_2 = factories.UserFactory.create()
+        org = factories.create_sample_organization(user, org_kwargs={
+            'name': u'Good name',
+        })
+        url = reverse('org_detail', args=(org.pk, ))
+        # login redirect
+        self.app.get(url, status=302)
+        self.app.get(url, user=user_2, status=404)
+        response = self.app.get(url, user=user)
+        self.assertContains(response, 'Good name')
+
     def test_org_create(self):
         user = factories.UserFactory.create(
             email='test@epyx.ch', password='pass')

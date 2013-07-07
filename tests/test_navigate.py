@@ -35,6 +35,8 @@ class HomeTest(WebTest):
             return
         try:
             response = self.app.get(href, user=user, auto_follow=True)
+            if response.content.find("!!!TEST-WARNING!!!") != -1:
+                print "Warning, view not implemented {0}".format(href)
         finally:
             self.visited.append(href)
         anchors = response.pyquery("a")

@@ -34,30 +34,8 @@
 			{% for backlog in organization.backlogs.all %}
 				<li>
 					<div class="title">
-						<a href="{% url "project_backlogs" project.pk %}"> <i class="icon-list-ul black"></i> {{ backlog.name }}</a>
+						<i class="icon-list-ul black"></i> {{ backlog.name }}
 					</div>
-					<div class="stats">
-						<div class="story-stats percent-cell">
-							<div class="name">
-								<i class="icon-list-alt info"></i> <b>{{ backlog.stats.total_stories }}</b>
-								&nbsp;</span><a href="{% url "project_backlogs" project.pk %}" class="info">{% trans "Stories" %} </a>
-								&nbsp;
-								<i class="icon-circle info"></i> <b>{{ backlog.stats.total_points }}</b>
-								&nbsp;</span><a href="{% url "project_backlogs" project.pk %}" class="info">{% trans "Points" %} </a>
-							</div>
-							{% if backlog.stats.estimated_stories %}
-								<span class="percent bg-blue" style="width:{{ backlog.stats.percent_estimated }}%">{{ backlog.stats.estimated_stories }} <i class="icon-circle info"></i> {{ backlog.stats.estimated_points }} pts</span>
-							{% else %}
-								<span class="percent" style="width:0"></span>
-							{% endif %}
-							{% if backlog.stats.completed_stories %}
-								<span class="percent bg-green" style="width:{{ backlog.stats.percent_completed }}%">{{ backlog.stats.completed_stories }} <i class="icon-circle info"></i> {{ backlog.stats.completed_points }} pts</span>
-							{% else %}
-								<span class="percent" style="width:0"></span>
-							{% endif %}
-						</div>
-					</div>
-					<a class="btn btn-link btn-mini create" href="{% url "story_create" project.pk backlog.pk %}">{% trans "Create story" %}</a>
 				</li>
 			{% empty %}
 				<div class="text-warning">

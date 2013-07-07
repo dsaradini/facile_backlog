@@ -36,6 +36,56 @@ Response
 }
 </code>
 
+
+`/api/organizations/`
+================
+**List all organizations the logged-in user is member of**
+
+Allow: *GET*, *HEAD*, *OPTIONS*
+
+Response
+--------
+<code type="block">
+[
+	...list of organization json element...
+	...see /api/organization/[org-id]/
+]
+</code>
+
+
+`/api/organization/[org-id]/`
+============================
+**Details for a given organization**
+
+Allow: *GET*, *HEAD*, *OPTIONS*
+
+Response
+--------
+<code type="block">
+{
+	"id": ORG_ID,
+	"url": "https://app.backlogman.com/api/organization/ORG_ID/",
+	"name": "organization name",
+	"email": "organization email",
+	"web_site": "organization website URL"
+	"description": "organization description",
+	"users": [
+		{
+			"full_name": "John Doe",
+			"email": "jdoe@backlogman.com"
+		}
+	],
+	"projects": [
+		{
+			"id": "project id",
+			"name" "project name"
+		}
+		...list...
+	],
+}
+</code>
+
+
 `/api/projects/`
 ================
 **List all projects the logged-in user is member of**
@@ -161,10 +211,13 @@ Response
 }
 </code>
 
-`/api/projects/[project-id]/_move_story/`
+`/api/_move_story/`
 ====================================================================
 Move story in the same backlog or another backlog. This json RPC action can be used
-to reorder or move + reorder a backlog
+to reorder or move + reorder a backlog.
+
+Target backlog can be a project or organization backlog. To perform such operation, the user must have admin access to both backlog (project or organization authorization) if not,
+a 404 is returned.
 
 Allow: *POST*, *OPTIONS*
 
@@ -212,6 +265,38 @@ Type: application/json
 		ID of the moved backlog
 + **'order'** *(array of number)*
 		Ordered IDs of project backlog ids
+
+<code type="block">
+{
+	"moved_backlog": 12,
+	"order": [2, 5 , 1]
+}
+</code>
+
+Response
+--------
+<code type="block">
+{
+	"ok": true
+}
+</code>
+
+
+`/api/organization/[org-id]/_order_backlog/`
+==========================================
+Reorder backlog in an organization
+
+Allow: *POST*, *OPTIONS*
+
+Request
+-------
+
+Type: application/json
+
++ **'moved_backlog'** *(number)*
+		ID of the moved backlog
++ **'order'** *(array of number)*
+		Ordered IDs of organization backlog ids
 
 <code type="block">
 {

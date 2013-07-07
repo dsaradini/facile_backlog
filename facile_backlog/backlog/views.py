@@ -1,4 +1,3 @@
-import json
 import urllib
 
 from django.conf import settings
@@ -10,7 +9,7 @@ from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import Http404
-from django.http.response import (HttpResponseNotAllowed, HttpResponse)
+from django.http.response import (HttpResponse, HttpResponseForbidden)
 from django.shortcuts import get_object_or_404, redirect
 from django.template import loader
 from django.utils.translation import ugettext as _
@@ -177,9 +176,195 @@ class OrgUsers(OrgMixin, generic.TemplateView):
         return context
 org_users = login_required(OrgUsers.as_view())
 
-#################
-# Organizations #
-#################
+
+class OrgBacklogMixin(BackMixin):
+    admin_only = False
+    """
+    Mixin to fetch a organization and backlog by a view.
+    """
+    def dispatch(self, request, *args, **kwargs):
+        org_id = kwargs['org_id']
+        self.organization = get_my_object_or_404(Organization,
+                                                 request.user, org_id)
+        try:
+            self.backlog = Backlog.objects.select_related().get(
+                pk=kwargs['backlog_id'])
+        except Backlog.DoesNotExist:
+            raise Http404('Not found.')
+        if self.backlog.org_id != self.organization.pk:
+            raise Http404('No matches found.')
+        if self.admin_only and not self.organization.can_admin(request.user):
+            return HttpResponseForbidden()
+        self.request = request
+        render = self.pre_dispatch(request, **kwargs)
+        if render:
+            return render
+        return super(OrgBacklogMixin, self).dispatch(request, *args, **kwargs)
+
+    def pre_dispatch(self, request, **kwargs):
+        pass
+
+    def get_context_data(self, **kwargs):
+        context = super(OrgBacklogMixin, self).get_context_data(**kwargs)
+        context['organization'] = self.organization
+        context['backlog'] = self.backlog
+        return context
+
+
+class OrgBacklogCreate(OrgMixin, generic.CreateView):
+    admin_only = True
+    template_name = "backlog/backlog_form.html"
+    model = Backlog
+    form_class = BacklogCreationForm
+
+    def get_form_kwargs(self):
+        kwargs = super(OrgBacklogCreate, self).get_form_kwargs()
+        kwargs['holder'] = self.organization
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super(OrgBacklogCreate, self).get_context_data(**kwargs)
+        context['organization'] = self.organization
+        return context
+
+    def form_valid(self, form):
+        self.object = form.save()
+        create_event(
+            self.request.user, organization=self.organization,
+            text="created this backlog",
+            backlog=self.object
+        )
+        messages.success(self.request,
+                         _("Backlog successfully created."))
+        return redirect(reverse("org_sprint_planning", args=(
+            self.organization.pk,
+        )))
+org_backlog_create = login_required(OrgBacklogCreate.as_view())
+
+
+class OrgBacklogEdit(OrgBacklogMixin, generic.UpdateView):
+    admin_only = True
+    template_name = "backlog/backlog_form.html"
+    form_class = BacklogEditionForm
+
+    def get_object(self):
+        return self.backlog
+
+    def form_valid(self, form):
+        backlog = form.save()
+        create_event(
+            self.request.user, organization=self.organization,
+            text="modified the backlog",
+            backlog=self.object
+        )
+        messages.success(self.request,
+                         _("Backlog successfully updated."))
+        if backlog.project_id:
+            return redirect(reverse("project_backlogs",
+                                    args=(backlog.project_id,)))
+        elif backlog.org_id:
+            return redirect(reverse("org_detail",
+                                    args=(backlog.org_id,)))
+        return redirect(reverse("home"))
+org_backlog_edit = login_required(OrgBacklogEdit.as_view())
+
+
+class OrgBacklogs(OrgMixin, generic.TemplateView):
+    template_name = "backlog/org_sprint_planning.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(OrgBacklogs, self).get_context_data(**kwargs)
+        context['organization'] = self.organization
+        context['backlog_list'] = self.organization.backlogs.all()
+        return context
+org_backlogs = login_required(OrgBacklogs.as_view())
+
+
+class OrgBacklogDelete(OrgBacklogMixin, generic.DeleteView):
+    admin_only = True
+    template_name = "backlog/backlog_confirm_delete.html"
+
+    def pre_dispatch(self, request, **kwargs):
+        if self.backlog.stories.exists():
+            messages.error(request,
+                           _("Backlog is not empty, unable to delete."))
+            return redirect(reverse('org_sprint_planning',
+                                    args=(self.backlog.org_id,)))
+
+    def get_object(self):
+        return self.backlog
+
+    def delete(self, request, *args, **kwargs):
+        self.backlog.delete()
+        create_event(
+            self.request.user, organization=self.organization,
+            text=u"deleted backlog {0}".format(self.backlog.name),
+        )
+        messages.success(request,
+                         _("Backlog successfully deleted."))
+        return redirect(reverse('org_sprint_planning',
+                                args=(self.organization.pk,)))
+org_backlog_delete = login_required(OrgBacklogDelete.as_view())
+
+
+class OrgStories(OrgMixin, generic.ListView):
+    template_name = "backlog/org_stories.html"
+    paginate_by = 30
+
+    def dispatch(self, request, *args, **kwargs):
+        self.sort = request.GET.get('s', "")
+        self.query = {
+            'q': request.GET.get('q', ""),
+            't': request.GET.get('t', ""),
+            'st': request.GET.get('st', "")
+        }
+        return super(OrgStories, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        stories_qs = self.organization.stories.select_related(
+            "backlog", "project")
+        if self.sort:
+            stories_qs = stories_qs.extra(order_by=["{0}".format(self.sort)])
+        if self.query['t']:
+            stories_qs = stories_qs.filter(
+                theme__icontains=self.query['t']
+            )
+        if self.query['st']:
+            stories_qs = stories_qs.filter(
+                status=self.query['st']
+            )
+        if self.query['q']:
+            stories_qs = stories_qs.filter(
+                Q(as_a__icontains=self.query['q']) |
+                Q(i_want_to__icontains=self.query['q']) |
+                Q(so_i_can__icontains=self.query['q']) |
+                Q(number__icontains=self.query['q'])
+            )
+        return stories_qs
+
+    def get_context_data(self, **kwargs):
+        context = super(OrgStories, self).get_context_data(**kwargs)
+        context['organization'] = self.organization
+        if self.sort:
+            if self.sort[0] == '-':
+                context['sort_sign'] = "-"
+                context['sort'] = self.sort[1:]
+            else:
+                context['sort_sign'] = "+"
+                context['sort'] = self.sort
+        context['query'] = self.query
+        context['current_query'] = self.query
+        if self.sort:
+            context['current_sort'] = urllib.urlencode({
+                's': self.sort[1:] if self.sort[0] == '-' else self.sort
+            })
+        return context
+org_stories = login_required(OrgStories.as_view())
+
+
+#############
+# Projects #
+###########
 
 
 class ProjectMixin(object):
@@ -398,7 +583,7 @@ class ProjectBacklogMixin(BackMixin):
         if self.backlog.project.pk != self.project.pk:
             raise Http404('No matches found.')
         if self.admin_only and not self.project.can_admin(request.user):
-            return HttpResponseNotAllowed()
+            return HttpResponseForbidden()
         self.request = request
         render = self.pre_dispatch(request, **kwargs)
         if render:
@@ -416,19 +601,19 @@ class ProjectBacklogMixin(BackMixin):
         return context
 
 
-class BacklogCreate(ProjectMixin, generic.CreateView):
+class ProjectBacklogCreate(ProjectMixin, generic.CreateView):
     admin_only = True
     template_name = "backlog/backlog_form.html"
     model = Backlog
     form_class = BacklogCreationForm
 
     def get_form_kwargs(self):
-        kwargs = super(BacklogCreate, self).get_form_kwargs()
-        kwargs['project'] = self.project
+        kwargs = super(ProjectBacklogCreate, self).get_form_kwargs()
+        kwargs['holder'] = self.project
         return kwargs
 
     def get_context_data(self, **kwargs):
-        context = super(BacklogCreate, self).get_context_data(**kwargs)
+        context = super(ProjectBacklogCreate, self).get_context_data(**kwargs)
         context['project'] = self.project
         return context
 
@@ -444,7 +629,7 @@ class BacklogCreate(ProjectMixin, generic.CreateView):
         return redirect(reverse("project_backlogs", args=(
             self.project.pk,
         )))
-project_backlog_create = login_required(BacklogCreate.as_view())
+project_backlog_create = login_required(ProjectBacklogCreate.as_view())
 
 
 class ProjectBacklogEdit(ProjectBacklogMixin, generic.UpdateView):
@@ -654,36 +839,6 @@ class StoryDelete(StoryMixin, generic.DeleteView):
         return redirect(reverse('project_backlogs',
                                 args=(self.project.pk,)))
 story_delete = login_required(StoryDelete.as_view())
-
-
-def story_change_status(request, project_id):
-    """
-    view used to move a story to a backlog
-    post-content:
-    {
-        "story_id": STORY_PK_TO_MOVE
-        "backlog_id": TARGET_BACKLOG_PK
-    }
-    """
-    if request.method != 'POST':
-        return HttpResponseNotAllowed("Use POST")
-    if not request.user.is_authenticated():
-        raise Http404()
-    body = json.loads(request.body)
-    new_status = body.get('new_status', None)
-    story_id = body.get('story_id', None)
-    story = UserStory.objects.get(pk=story_id)
-    if story.project_id != int(project_id):
-        raise Http404('No matches found.')
-    old_status = story.status
-    story.status = new_status
-    story.save()
-    story.property_changed(request.user, status=old_status)
-    return HttpResponse(json.dumps({
-        'status': 'ok',
-        'new_status': story.get_status_display(),
-        'code': story.status,
-    }), content_type='application/json')
 
 
 class PrintStories(ProjectMixin, generic.TemplateView):
@@ -900,4 +1055,4 @@ def invitation_decline(request, auth_id):
 
 @login_required
 def EMPTY_VIEW(request, *args, **kwargs):
-    return HttpResponse("EMPTY VIEW")
+    return HttpResponse("EMPTY VIEW !!!TEST-WARNING!!!")

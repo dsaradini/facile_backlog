@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
-from ..backlog.models import (Project, Backlog, UserStory)
+from ..backlog.models import (Project, Backlog, UserStory, Organization)
 from ..core.models import User
 
 
@@ -9,6 +9,12 @@ class MemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('full_name', 'email',)
+
+
+class InnerProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project
+        fields = ('id', 'name',)
 
 
 class StorySerializer(serializers.ModelSerializer):
@@ -50,7 +56,7 @@ class BacklogSerializer(serializers.ModelSerializer):
         return obj.stories.count()
 
     def themes(self, obj):
-        return obj.all_themes()
+        return obj.all_themes
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -72,4 +78,19 @@ class ProjectSerializer(serializers.ModelSerializer):
         return obj.stories.count()
 
     def themes(self, obj):
-        return obj.all_themes()
+        return obj.all_themes
+
+
+class OrgSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField('_url')
+    users = MemberSerializer(many=True, allow_add_remove=False)
+    projects = InnerProjectSerializer(many=True, allow_add_remove=False)
+
+    class Meta:
+        model = Organization
+        fields = ('id', 'url', 'name', 'email', 'web_site', 'description',
+                  'users', 'projects')
+
+    def _url(self, obj):
+        return reverse("api_org_detail", args=[obj.pk],
+                       request=self.context['request'])

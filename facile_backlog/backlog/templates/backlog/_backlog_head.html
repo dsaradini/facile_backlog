@@ -2,7 +2,7 @@
 
 <ul class="breadcrumb">
 	<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a><span class="divider">/</span></li>
-	{% if project %}
+		{% if project %}
 			<li> <i class="icon-book"></i><a href="{% url "project_backlogs" project.pk %}">{{ project.name }}</a><span class="divider">/</span></li>
 		{% elif organization %}
 			<li> <i class="icon-building"></i><a href="{% url "org_sprint_planning" organization.pk %}">{{ organization.name }}</a><span class="divider">/</span></li>

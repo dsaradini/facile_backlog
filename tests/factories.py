@@ -68,7 +68,7 @@ class UserStoryFactory(Factory):
 
     @classmethod
     def _prepare(cls, create, **kwargs):
-        if 'backlog' in kwargs:
+        if 'backlog' in kwargs and 'project' not in kwargs:
             kwargs['project'] = kwargs['backlog'].project
         result = super(UserStoryFactory, cls)._prepare(create, **kwargs)
         return result
@@ -96,10 +96,6 @@ class UserStoryFactory(Factory):
 
 class BacklogFactory(Factory):
     FACTORY_FOR = Backlog
-
-    @lazy_attribute
-    def project(self):
-        return ProjectFactory.create()
 
     @lazy_attribute
     def name(self):
@@ -158,19 +154,40 @@ def create_sample_project(user, project_kwargs={}):
     return project
 
 
-def create_sample_backlog(user, project_kwargs={}, backlog_kwargs={}):
+def create_project_sample_backlog(user, project_kwargs={}, backlog_kwargs={}):
     project = create_sample_project(user, project_kwargs)
     _backlog_kwargs = backlog_kwargs.copy()
     _backlog_kwargs['project'] = project
     return BacklogFactory.create(**_backlog_kwargs)
 
 
-def create_sample_story(user, story_kwargs={},
-                        project_kwargs={}, backlog_kwargs={}, backlog=None):
+def create_org_sample_backlog(user, org_kwargs={}, backlog_kwargs={}):
+    org = create_sample_organization(user, org_kwargs)
+    _backlog_kwargs = backlog_kwargs.copy()
+    _backlog_kwargs['org'] = org
+    return BacklogFactory.create(**_backlog_kwargs)
+
+
+def create_sample_story(user, story_kwargs={}, project_kwargs={},
+                        backlog_kwargs={}, backlog=None):
     if not backlog:
-        backlog = create_sample_backlog(user, project_kwargs=project_kwargs,
-                                        backlog_kwargs=backlog_kwargs)
+        backlog = create_project_sample_backlog(user,
+                                                project_kwargs=project_kwargs,
+                                                backlog_kwargs=backlog_kwargs)
     _story_kwargs = story_kwargs.copy()
     _story_kwargs['project'] = backlog.project
+    _story_kwargs['backlog'] = backlog
+    return UserStoryFactory.create(**_story_kwargs)
+
+
+def create_org_sample_story(user, org=None, story_kwargs={}, org_kwargs={},
+                            backlog_kwargs={}, backlog=None):
+    if not backlog:
+        backlog = create_org_sample_backlog(user,
+                                            org_kwargs=org_kwargs,
+                                            backlog_kwargs=backlog_kwargs)
+    project = ProjectFactory.create(org=backlog.org)
+    _story_kwargs = story_kwargs.copy()
+    _story_kwargs['project'] = project
     _story_kwargs['backlog'] = backlog
     return UserStoryFactory.create(**_story_kwargs)

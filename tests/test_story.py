@@ -12,7 +12,7 @@ class StoryTest(WebTest):
     def test_stories_list(self):
         user = factories.UserFactory.create(
             email='test@epyx.ch', password='pass')
-        backlog = factories.create_sample_backlog(user)
+        backlog = factories.create_project_sample_backlog(user)
         story = factories.UserStoryFactory.create(backlog=backlog)
 
         url = reverse("project_backlogs", args=(backlog.project.pk, ))
@@ -24,7 +24,7 @@ class StoryTest(WebTest):
     def test_story_create(self):
         user = factories.UserFactory.create(
             email='test@epyx.ch', password='pass')
-        backlog = factories.create_sample_backlog(user)
+        backlog = factories.create_project_sample_backlog(user)
 
         url = reverse('story_create', args=(backlog.project.pk, backlog.pk))
         # login redirect
@@ -139,12 +139,12 @@ class StoryTest(WebTest):
 class AjaxTest(WebTest):
     csrf_checks = False
 
-    def test_story_reorder(self):
+    def test_project_story_reorder(self):
         user = factories.UserFactory.create(
             email='test@test.ch', password='pass')
         wrong_user = factories.UserFactory.create(
             email='wrong@test.ch', password='pass')
-        backlog = factories.create_sample_backlog(user)
+        backlog = factories.create_project_sample_backlog(user)
         for i in range(1, 4):
             factories.UserStoryFactory.create(
                 backlog=backlog,
@@ -153,8 +153,7 @@ class AjaxTest(WebTest):
 
         order = [c.pk for c in backlog.ordered_stories.all()]
         order.reverse()
-        url = reverse('api_move_story', args=(
-            backlog.project.pk, ))
+        url = reverse('api_move_story')
         data = json.dumps({
             'target_backlog': backlog.pk,
             'order': order,
@@ -162,7 +161,8 @@ class AjaxTest(WebTest):
         })
         # if no write access, returns a 404
         self.app.post(url, data, status=401)
-        self.app.post(url, data, user=wrong_user, status=404)
+        self.app.post(url, data, user=wrong_user,
+                      content_type="application/json", status=404)
         self.app.post(url, data,
                       content_type="application/json",
                       user=user)
@@ -170,24 +170,67 @@ class AjaxTest(WebTest):
         result_order = [c.pk for c in backlog.ordered_stories.all()]
         self.assertEqual(order, result_order)
         event = Event.objects.get(
-            project=backlog.project,
             backlog=backlog
         )
         self.assertEqual(
-            event.text,
-            u"re-ordered story in backlog"
+            event.text.find(u"re-ordered story in backlog"), 0
         )
         self.assertEqual(event.user, user)
         self.assertEqual(event.story.pk, order[0])
 
-    def test_story_move(self):
+    def test_org_story_reorder(self):
+        user = factories.UserFactory.create(
+            email='test@test.ch', password='pass')
+        wrong_user = factories.UserFactory.create(
+            email='wrong@test.ch', password='pass')
+        backlog = factories.create_org_sample_backlog(user)
+        project = factories.create_sample_project(user, project_kwargs={
+            'org': backlog.org
+        })
+        for i in range(1, 4):
+            factories.UserStoryFactory.create(
+                backlog=backlog,
+                project=project,
+                order=i,
+            )
+
+        order = [c.pk for c in backlog.ordered_stories.all()]
+        order.reverse()
+        url = reverse('api_move_story')
+        data = json.dumps({
+            'target_backlog': backlog.pk,
+            'order': order,
+            'moved_story': order[0],
+        })
+        # if no write access, returns a 404
+        self.app.post(url, data, status=401)
+        self.app.post(url, data, user=wrong_user,
+                      content_type="application/json", status=404)
+        self.app.post(url, data,
+                      content_type="application/json",
+                      user=user)
+        backlog = Backlog.objects.get(pk=backlog.pk)
+        result_order = [c.pk for c in backlog.ordered_stories.all()]
+        self.assertEqual(order, result_order)
+        event = Event.objects.get(
+            backlog=backlog
+        )
+        self.assertEqual(
+            event.text.find(u"re-ordered story in backlog"), 0
+        )
+        self.assertEqual(event.user, user)
+        self.assertEqual(event.story.pk, order[0])
+
+    def test_project_story_move(self):
         user = factories.UserFactory.create(
             email='test@epyx.ch', password='pass')
         user_2 = factories.UserFactory.create(
             email='test_2@epyx.ch', password='pass')
-        backlog = factories.create_sample_backlog(user, backlog_kwargs={
-            'name': 'Source backlog'
-        })
+        backlog = factories.create_project_sample_backlog(
+            user, backlog_kwargs={
+                'name': 'Source backlog'
+            }
+        )
         backlog_2 = factories.BacklogFactory.create(
             project=backlog.project,
             name="Target backlog",
@@ -201,48 +244,74 @@ class AjaxTest(WebTest):
             'moved_story': story.pk,
             'target_backlog': backlog_2.pk
         })
-        url = reverse('api_move_story', args=(
-            backlog.project.pk, ))
+        url = reverse('api_move_story')
          # if no write access, returns a 404
         self.app.post(url, data, status=401)
-        self.app.post(url, data, user=user_2, status=404)
+        self.app.post(url, data, user=user_2, content_type="application/json",
+                      status=404)
         self.app.post(url, data, content_type="application/json", user=user)
         backlog_ok = Backlog.objects.get(pk=backlog_2.pk)
         self.assertIn(story, set(backlog_ok.stories.all()))
 
         # not allowed to move to an "unknown" backlog
-        backlog_wrong = factories.create_sample_backlog(user_2)
+        backlog_wrong = factories.create_project_sample_backlog(user_2)
         data = json.dumps({
             'moved_story': story.pk,
             'target_backlog': backlog_wrong.pk
         })
         self.app.post(url, data, content_type="application/json", status=404)
         event = Event.objects.get(
-            project=backlog.project,
             backlog=backlog_2
         )
         self.assertEqual(
-            event.text,
-            u"moved story from backlog 'Source backlog' to backlog "
-            u"'Target backlog'"
+            event.text.find(u"moved story from backlog"), 0
         )
         self.assertEqual(event.user, user)
 
-    def test_story_status_change(self):
-        user = factories.UserFactory.create()
-        story = factories.create_sample_story(user, story_kwargs={
-            'status': UserStory.IN_PROGRESS
+    def test_org_story_move(self):
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        user_2 = factories.UserFactory.create(
+            email='test_2@epyx.ch', password='pass')
+        backlog = factories.create_org_sample_backlog(user, backlog_kwargs={
+            'name': 'Source backlog',
         })
-        url = reverse('story_change_status', args=(
-            story.project.pk, ))
+        backlog_2 = factories.BacklogFactory.create(
+            org=backlog.org,
+            name="Target backlog",
+        )
+        project = factories.create_sample_project(user, project_kwargs={
+            'org': backlog.org
+        })
+        story = factories.UserStoryFactory.create(
+            backlog=backlog,
+            project=project,
+        )
 
         data = json.dumps({
-            'story_id': story.pk,
-            'new_status': UserStory.ACCEPTED
+            'moved_story': story.pk,
+            'target_backlog': backlog_2.pk
         })
+        url = reverse('api_move_story')
          # if no write access, returns a 404
-        self.app.post(url, data, status=404)
+        self.app.post(url, data, status=401)
+        self.app.post(url, data, content_type="application/json", user=user_2,
+                      status=404)
         self.app.post(url, data, content_type="application/json", user=user)
+        backlog_ok = Backlog.objects.get(pk=backlog_2.pk)
+        self.assertIn(story, set(backlog_ok.stories.all()))
 
-        story = UserStory.objects.get(pk=story.pk)
-        self.assertEqual(story.status, UserStory.ACCEPTED)
+        # not allowed to move to an "unknown" backlog
+        backlog_wrong = factories.create_org_sample_backlog(user_2)
+        data = json.dumps({
+            'moved_story': story.pk,
+            'target_backlog': backlog_wrong.pk
+        })
+        self.app.post(url, data, content_type="application/json", status=404)
+        event = Event.objects.get(
+            backlog=backlog_2
+        )
+        self.assertEqual(
+            event.text.find(u"moved story from backlog"), 0
+        )
+        self.assertEqual(event.user, user)

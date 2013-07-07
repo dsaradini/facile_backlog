@@ -2,7 +2,7 @@
 {% load static sekizai_tags %}
 {% block title %}{% trans "Organization" %} &mdash; {{ organization.name }} &mdash; {% trans "Sprint planning" %}{% endblock %}
 
-{% block content_class %}organization-split-planning{% endblock %}
+{% block content_class %}org-backlogs{% endblock %}
 
 {% block content %}
 
@@ -14,6 +14,17 @@
 		<li><a href="{% url "org_users" organization.pk %}">{% trans "Members" %} </a>
 		<li><a href="{% url "org_stories" organization.pk %}">{% trans "Stories" %}</a></li>
 	</ul>
+	<form class="form-inline boxed">
+		<label>{% trans "Highlight theme" %}</label>&nbsp;
+		<select class="select" id="theme-select">
+			<option value="">{% trans "No filter" %}</option>
+			{% for theme in project.all_themes %}
+				<option value="{{ theme }}">{{ theme }}</option>
+			{% endfor %}
+		</select>
+		<a href=".">{% trans "Refresh" %}</a>
+		<a class="btn btn-primary btn-small pull-right" href="{% url "org_backlog_create" organization.pk %}">{% trans "Create backlog" %}</a>
+	</form>
 
 	<div class="backlog-lanes" style="width:{% widthratio backlog_list.count 1 320 %}px">
 		{% for backlog in backlog_list %}
@@ -26,7 +37,7 @@
 						</a>
 						<ul class="dropdown-menu">
 							<li class="dropdown-title">{% trans "Backlog" %}</li>
-							<li><a href="{% url "org_print_stories" organization.pk %}?backlog_id={{ backlog.pk }}">{% trans "Print stories" %}</a></li>
+							<li>{% trans "Print stories" %}</li>
 							<li class="divider"></li>
 							<li><a href="{% url "org_backlog_edit" organization.pk backlog.pk %}">{% trans "Edit" %}</a></li>
 							<li><a href="{% url "org_backlog_delete" organization.pk backlog.pk %}">{% trans "Delete" %}</a></li>
@@ -104,7 +115,7 @@
 					order.push(parseInt($(this).attr('backlog-id')));
 				});
 				$.ajax({
-					url: '{% url "api_move_backlog" project.pk %}',
+					url: '{% url "api_org_move_backlog" organization.pk %}',
 					type: "POST",
 					contentType:"application/json; charset=utf-8",
 					dataType: "json",
@@ -165,7 +176,7 @@
 				}
 				if (ajax_data) {
 					$.ajax({
-						url: '{% url "api_move_story" project.pk %}',
+						url: '{% url "api_move_story" %}',
 						type: "POST",
 						contentType:"application/json; charset=utf-8",
 						dataType: "json",

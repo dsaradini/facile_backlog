@@ -11,7 +11,7 @@ class BacklogTest(WebTest):
     def test_backlog_list(self):
         user = factories.UserFactory.create(
             email='test@epyx.ch', password='pass')
-        backlog = factories.create_sample_backlog(user)
+        backlog = factories.create_project_sample_backlog(user)
         for i in range(0, 10):
             factories.create_sample_story(user, backlog=backlog)
         # special printing of -1 points

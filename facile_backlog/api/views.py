@@ -12,9 +12,11 @@ from django.http import Http404
 from django.shortcuts import redirect
 
 
-from .serializers import ProjectSerializer, BacklogSerializer, StorySerializer
+from .serializers import (ProjectSerializer, BacklogSerializer,
+                          StorySerializer, OrgSerializer)
 
-from ..backlog.models import Project, Backlog, UserStory, create_event
+from ..backlog.models import (Project, Backlog, UserStory, Organization,
+                              create_event)
 
 
 def get_or_errors(dic, value, errors=[]):
@@ -50,6 +52,24 @@ project_list = ProjectViewSet.as_view({
 })
 
 project_detail = ProjectViewSet.as_view({
+    'get': 'retrieve'
+})
+
+
+class OrgViewSet(viewsets.ModelViewSet):
+    pk_url_kwarg = "org_id"
+    serializer_class = OrgSerializer
+    model = Organization
+
+    def initial(self, request, *args, **kwargs):
+        self.queryset = Organization.my_organizations(request.user)
+        return super(OrgViewSet, self).initial(request, *args, **kwargs)
+
+org_list = OrgViewSet.as_view({
+    'get': 'list',
+})
+
+org_detail = OrgViewSet.as_view({
     'get': 'retrieve'
 })
 
@@ -135,12 +155,12 @@ story_detail = StoryViewSet.as_view({
 @parser_classes((JSONParser,))
 @throttle_classes([GeneralUserThrottle])
 @transaction.commit_on_success
-def move_story(request, project_id):
+def move_story(request):
     """
     {
         "target_backlog": ID of the backlog where to put the story,
         "moved_story": story id being moved,
-        "order": [id, id, id ...] story IDs of in the target_backog
+        "order": [id, id, id ...] story IDs of in the target_backlog
     }
     :param request:
     :param project_id:
@@ -149,7 +169,6 @@ def move_story(request, project_id):
         'ok': True
     }
     """
-    project = get_object_or_404(request.user.projects, pk=project_id)
     errors = []
     backlog_id = get_or_errors(request.DATA, 'target_backlog', errors)
     story_id = get_or_errors(request.DATA, 'moved_story', errors)
@@ -162,20 +181,31 @@ def move_story(request, project_id):
     order = [int(x) for x in order]
     backlog = Backlog.objects.get(pk=backlog_id)
 
-    if project.pk != backlog.project_id:
-        # verify access rights on target project
-        get_object_or_404(request.user.projects, pk=backlog.project_id)
+    if not backlog.can_admin(request.user):
+        # verify access rights on target backlog
+        raise Http404
 
-    story = project.stories.get(pk=story_id)
+    story = UserStory.objects.get(pk=story_id)
+    if not story.project.can_admin(request.user):
+        # verify access rights on story project
+        raise Http404
+
     # handle move story
+    old_backlog = story.backlog
+    if story.backlog.project_id != backlog.project_id:
+        text = u"moved story from backlog '{0}' to backlog '{1}'".format(
+            old_backlog.full_name,
+            backlog.full_name,
+        ),
+    else:
+        text = u"moved story from backlog '{0}' to backlog '{1}'".format(
+            old_backlog.name,
+            backlog.full_name,
+        )
     if story.backlog_id != backlog.pk:
-        old_backlog_name = story.backlog.name
         create_event(
-            request.user, project=project,
-            text=u"moved story from backlog '{0}' to backlog '{1}'".format(
-                old_backlog_name,
-                backlog.name,
-            ),
+            request.user,
+            text=text,
             backlog=backlog,
             story=story,
         )
@@ -197,11 +227,35 @@ def move_story(request, project_id):
     if touched:
         backlog.save(update_fields=("last_modified",))
         create_event(
-            request.user, project=project,
-            text=u"re-ordered story in backlog",
+            request.user,
+            text=u"re-ordered story in backlog {0}".format(backlog.full_name),
             backlog=backlog,
             story=story,
         )
+    return Response({
+        'ok': True
+    })
+
+
+def _move_backlog(request, qs, object_id):
+    obj = get_object_or_404(qs, pk=object_id)
+    errors = []
+    order = get_or_errors(request.DATA, 'order', errors)
+    if errors:
+        return Response({
+            'errors': errors
+        }, status=400)
+
+    order = [int(x) for x in order]
+    for backlog in obj.backlogs.all():
+        new_index = order.index(backlog.pk)
+        touched = False
+        if new_index != backlog.order:
+            backlog.order = new_index
+            backlog.save(update_fields=('order',))
+            touched = True
+        if touched:
+            obj.save()  # last modified is modified
     return Response({
         'ok': True
     })
@@ -211,21 +265,13 @@ def move_story(request, project_id):
 @parser_classes((JSONParser,))
 @throttle_classes([GeneralUserThrottle])
 @transaction.commit_on_success
-def move_backlog(request, project_id):
-    project = get_object_or_404(request.user.projects, pk=project_id)
-    errors = []
-    order = get_or_errors(request.DATA, 'order', errors)
-    if errors:
-        return Response({
-            'errors': errors
-        }, status=400)
+def project_move_backlog(request, project_id):
+    return _move_backlog(request, request.user.projects, project_id)
 
-    order = [int(x) for x in order]
-    for backlog in project.backlogs.all():
-        new_index = order.index(backlog.pk)
-        if new_index != backlog.order:
-            backlog.order = new_index
-            backlog.save(update_fields=('order',))
-    return Response({
-        'ok': True
-    })
+
+@api_view(["POST"])
+@parser_classes((JSONParser,))
+@throttle_classes([GeneralUserThrottle])
+@transaction.commit_on_success
+def org_move_backlog(request, org_id):
+    return _move_backlog(request, request.user.organizations, org_id)

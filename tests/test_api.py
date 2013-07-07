@@ -2,7 +2,7 @@ import json
 from django.core.urlresolvers import reverse
 
 from .factories import (UserFactory, create_sample_project,
-                        create_sample_backlog, create_sample_story)
+                        create_project_sample_backlog, create_sample_story)
 
 from facile_backlog.backlog.models import UserStory
 
@@ -50,7 +50,7 @@ class APITestRead(JsonTestCase):
 
     def test_api_backlog_list(self):
         user = UserFactory.create(email="test@test.ch")
-        backlog = create_sample_backlog(user, backlog_kwargs={
+        backlog = create_project_sample_backlog(user, backlog_kwargs={
             'name': "My backlog",
             'description': "My description"
         })
@@ -65,7 +65,7 @@ class APITestRead(JsonTestCase):
 
     def test_api_backlog_detail(self):
         user = UserFactory.create(email="test@test.ch")
-        backlog = create_sample_backlog(user, backlog_kwargs={
+        backlog = create_project_sample_backlog(user, backlog_kwargs={
             'name': "My backlog",
         })
         url = reverse("api_backlog_detail", args=(
@@ -118,7 +118,7 @@ class APITest_Story(JsonTestCase):
     def test_story_post(self):
         user = UserFactory.create(email="test@test.ch")
         wrong_user = UserFactory.create()
-        backlog = create_sample_backlog(user)
+        backlog = create_project_sample_backlog(user)
         url = reverse("api_stories", args=(
             backlog.project_id, backlog.pk, ))
         data = {

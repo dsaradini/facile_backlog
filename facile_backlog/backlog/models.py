@@ -69,6 +69,17 @@ class StatsMixin(object):
         return {}
 
 
+class WithThemeMixin(object):
+
+    @property
+    def all_themes(self):
+        if not hasattr(self, "_all_themes"):
+            result = [x for x in self.stories.values_list(
+                      'theme', flat=True).distinct() if x]
+            self._all_themes = list(result)
+        return self._all_themes
+
+
 class AuthorizationAssociation(models.Model):
     org = models.ForeignKey('Organization', null=True, blank=True,
                             related_name="authorizations")
@@ -111,14 +122,6 @@ class AuthorizationAssociation(models.Model):
             )
 
 
-class OrgSecurityMixin(object):
-    def can_read(self, user):
-        return user.is_staff or self.organization.can_read(user)
-
-    def can_admin(self, user):
-        return user.is_staff or self.organization.can_admin(user)
-
-
 class AclMixin(object):
     authorization_association_field = None
 
@@ -146,7 +149,7 @@ class AclMixin(object):
         return user.is_staff or (user.email in self.get_acl()['admin'])
 
 
-class Organization(AclMixin, models.Model):
+class Organization(AclMixin, WithThemeMixin, models.Model):
     authorization_association_field = "org"
 
     name = models.CharField(_("Name"), max_length=128)
@@ -189,10 +192,19 @@ class Organization(AclMixin, models.Model):
     def ordered_projects(self):
         return self.projects.order_by("name")
 
+    @property
+    def stories(self):
+        return UserStory.objects.filter(
+            project__in=self.projects.values_list('pk', flat=True)
+        )
+
     def my_projects(self, user):
         return user.projects.filter(
             org=self
         )
+
+    def all_status(self):
+        return UserStory.STATUS_CHOICE
 
     def add_user(self, user, is_active=True, is_admin=False):
         try:
@@ -213,7 +225,7 @@ class Organization(AclMixin, models.Model):
         ).delete()
 
 
-class Project(StatsMixin, AclMixin, models.Model):
+class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
     authorization_association_field = "project"
 
     name = models.CharField(_("Name"), max_length=128)
@@ -298,11 +310,6 @@ class Project(StatsMixin, AclMixin, models.Model):
         result = self.stories.values_list('as_a', flat=True).distinct()
         return list(result)
 
-    def all_themes(self):
-        result = [x for x in self.stories.values_list(
-            'theme', flat=True).distinct() if x]
-        return list(result)
-
     def all_status(self):
         return UserStory.STATUS_CHOICE
 
@@ -311,15 +318,7 @@ class Project(StatsMixin, AclMixin, models.Model):
         return when[0] if when else LONG_AGO
 
 
-class ProjectSecurityMixin(object):
-    def can_read(self, user):
-        return user.is_staff or self.project.can_read(user)
-
-    def can_admin(self, user):
-        return user.is_staff or self.project.can_admin(user)
-
-
-class Backlog(StatsMixin, ProjectSecurityMixin, models.Model):
+class Backlog(StatsMixin, WithThemeMixin, models.Model):
     TODO = "todo"
     COMPLETED = "completed"
     GENERAL = "general"
@@ -353,11 +352,6 @@ class Backlog(StatsMixin, ProjectSecurityMixin, models.Model):
         return self.stories.order_by('order').prefetch_related(
             "project").select_related('user_story__project')
 
-    def all_themes(self):
-        result = [x for x in self.stories.values_list(
-            'theme', flat=True).distinct() if x]
-        return list(result)
-
     @property
     def total_points(self):
         val = self.stories.filter(points__gte=0).aggregate(
@@ -373,8 +367,46 @@ class Backlog(StatsMixin, ProjectSecurityMixin, models.Model):
     def __unicode__(self):
         return self.name
 
+    def can_read(self, user):
+        if self.project_id:
+            return user.is_staff or self.project.can_read(user)
+        elif self.org_id:
+            return user.is_staff or self.org.can_read(user)
+        else:
+            return False
 
-class UserStory(ProjectSecurityMixin, models.Model):
+    def can_admin(self, user):
+        if self.project_id:
+            return user.is_staff or self.project.can_admin(user)
+        elif self.org_id:
+            return user.is_staff or self.org.can_admin(user)
+        else:
+            return False
+
+    def set_holder(self, holder):
+        if isinstance(holder, Organization):
+            self.org = holder
+            self.project = None
+        elif isinstance(holder, Project):
+            self.org = None
+            self.project = holder
+        else:
+            raise ValueError("holder must be an Organization "
+                             "or Project instance")
+
+    @property
+    def full_name(self):
+        if self.org_id:
+            return u"'{0}' of organization '{1}'".format(
+                self.name, self.org.name)
+        elif self.project_id:
+            return u"'{0}' of project '{1}'".format(
+                self.name, self.project.name)
+        else:
+            return self.name
+
+
+class UserStory(models.Model):
     TODO = "to_do"
     ACCEPTED = "accepted"
     IN_PROGRESS = "in_progress"
@@ -494,6 +526,22 @@ class UserStory(ProjectSecurityMixin, models.Model):
                     ),
                     story=self,
                 )
+
+    def can_read(self, user):
+        if self.backlog_id:
+            return user.is_staff or self.backlog.can_read(user)
+        elif self.project_id:
+            return user.is_staff or self.project.can_read(user)
+        else:
+            return False
+
+    def can_admin(self, user):
+        if self.backlog_id:
+            return user.is_staff or self.backlog.can_admin(user)
+        elif self.project_id:
+            return user.is_staff or self.project.can_admin(user)
+        else:
+            return False
 
 
 # Enhance User model to add notifications

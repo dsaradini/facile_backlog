@@ -1,0 +1,133 @@
+{% extends "project_base.html" %}
+{% load staticfiles sekizai_tags markup acl jsonify %}
+
+{% block title %}{% trans "Organization" %} &mdash; {{ organization.name }}{% endblock %}
+{% block content %}
+
+	{% include "backlog/_org_head.html" %}
+
+	<ul class="nav nav-tabs">
+		<li><a href="{% url "org_detail" organization.pk %}">{% trans "General" %}</a></li>
+		<li><a href="{% url "org_sprint_planning" organization.pk %}">{% trans "Sprint planning" %} </a></li>
+		<li><a href="{% url "org_users" organization.pk %}">{% trans "Members" %} </a>
+		<li class="active"><a href="{% url "org_stories" organization.pk %}">{% trans "Stories" %}</a></li>
+	</ul>
+
+	<h2 class="inline-title">{% trans "Stories" %}</h2>
+	<h2 class="inline-title muted"> ({{ page_obj.paginator.count }})</h2>
+
+	<div class="description">
+		<p>{% blocktrans %}Here is the list of all stories in this organization. Those stories are not sorted, to have a sorted "view" of project stories, use backlogs.{% endblocktrans %}</p>
+	</div>
+
+	{% url "org_stories" organization.pk as base_url %}
+	<div class="">
+		<form class="form-inline" action="{% url "org_stories" organization.pk %}" method="get">
+			<input type="text" placeholder="find story..." name="q" value="{{ query.q }}">
+			<label for="status-select">{% trans "Status" %}</label>
+			<select name="st" id="status-select">
+				<option value="">{% trans "Any" %}</option>
+				{% for status, text in organization.all_status %}
+					<option value="{{ status }}" {% if query.st == status %}selected{% endif %}>{{ text }}</option>
+				{% endfor %}
+			</select>
+			<input autocomplete="off" type="text" placeholder="find theme..." name="t" value="{{ query.t }}">
+			<input name="s" type="hidden" value="{% if sort_sign == '-' %}-{% endif %}{{ sort }}">
+			<button type="submit" class="btn btn-small">{% trans "apply filters" %}</button>
+			<a class="btn btn-link" href=".">{% trans "reset" %}</a>
+		</form>
+	</div>
+
+	<table class="table table-striped project-stories">
+		<thead class="headers">
+			<tr>
+				<th class="story-code">
+					{% include "backlog/_td_sort.html" with key="number" title="ID" %}
+				</th>
+				<th class="story-desc">{% trans "Description" %}</th>
+				<th class="story-points">
+					{% include "backlog/_td_sort.html" with key="points" title="Points" %}
+				</th>
+				<th class="story-project">
+					{% include "backlog/_td_sort.html" with key="project__name" title="Project" %}
+				</th>
+				<th class="story-backlog">
+					{% include "backlog/_td_sort.html" with key="backlog__name" title="Backlog" %}
+				</th>
+				<th class="story-status">
+					{% include "backlog/_td_sort.html" with key="status" title="Status" %}
+				</th>
+				<th class="story-theme">
+					{% include "backlog/_td_sort.html" with key="theme" title="Theme" %}
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for story in object_list %}
+				<tr id="story-{{ story.pk }}">
+					<td class="story-code" style="border-left: 5px solid {{ story.color }}; margin-left:-5px;">
+						{% if selectable %}
+							<input type="checkbox" name="story-{{ story.pk }}">
+						{% endif %}
+						<a href="{% url "story_detail" story.project_id story.pk %}">{{ story.code }}</a>
+					</td>
+					<td class="story-desc">
+						{% include "backlog/user_story_text.html" %}
+					</td>
+					<td class="story-points">
+						{% if story.points >= 0 %}
+							{{ story.points|floatformat:"0" }}
+						{% else %}
+							&nbsp;
+						{% endif %}
+					</td>
+					<td class="story-project">
+						<a href="{% url "project_detail" story.project_id %}">{{story.project.name }}</a>
+					</td>
+					<td class="story-backlog">
+						{% if story.backlog.project_id %}
+							<a href="{% url "project_backlogs" story.backlog.project_id %}">{{story.backlog.name }}</a>
+						{% elif story.backlog.org_id %}
+							<a href="{% url "org_sprint_planning" story.backlog.org_id %}">{{story.backlog.name }}</a>
+						{% endif %}
+					</td>
+					<td class="story-status">
+						<span class="label" status="{{ story.status }}">{{ story.get_status_display }}</span>
+					</td>
+					<td class="story-theme">{{ story.theme }}</td>
+				</tr>
+			{% empty %}
+				<tr>
+					<td colspan="10">
+						<div class="alert alert-info">{% trans "No story matching criterias" %}</div>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% if is_paginated %}
+	<div>
+		<div class="pagination pagination-centered">
+		  	<ul>
+				<li class="{% if not page_obj.has_previous %}disabled{% endif %}"><a href="?page=1&{{ current_sort }}&{{ current.query }}"><i class="icon-double-angle-left"></i></a>
+				<li class="{% if not page_obj.has_previous %}disabled{% endif %}"><a href="?page=1&{{ current_sort }}&{{ current.query }}"><i class="icon-angle-left"></i></a>
+				{% for p in page_obj.paginator.page_range %}
+					<li class="{% if page_obj.number == p %}active{% endif %}"><a href="?page={{ p }}&{{ current_sort }}&{{ current.query }}">{{ p }}</a>
+				{% endfor %}
+				<li class="{% if not page_obj.has_next %}disabled{% endif %}"><a href="?page={{ page_obj.number|add:1 }}&{{ current_sort }}&{{ current.query }}"><i class="icon-angle-right"></i></a>
+				<li class="{% if not page_obj.has_next %}disabled{% endif %}"><a href="?page=last&{{ current_sort }}&{{ current.query }}"><i class="icon-double-angle-right"></i></a>
+		  	</ul>
+		</div>
+	</div>
+	{% endif %}
+{% addtoblock "js" %}
+<script type="text/javascript">
+	$(function() {
+		$('input[name="t"]').typeahead({
+             items:4,
+             source: {{ organization.all_themes|jsonify }}
+          });
+	})
+</script>
+{% endaddtoblock %}
+{% endblock %}

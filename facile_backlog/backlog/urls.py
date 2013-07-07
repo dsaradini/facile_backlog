@@ -4,13 +4,14 @@ from .views import (project_detail, project_create, project_edit,
                     project_delete, project_backlog_create,
                     project_backlog_delete, project_backlog_edit, story_edit,
                     story_create,
-                    story_detail, story_delete, story_change_status,
+                    story_detail, story_delete,
                     project_invite_user, dashboard,
                     invitation_activate, project_users, auth_delete,
                     notification_view, invitation_accept, invitation_decline,
                     project_stories, print_stories, project_backlogs,
                     org_create, org_edit, org_detail, org_delete, org_users,
-                    EMPTY_VIEW)
+                    org_backlog_edit, org_backlog_create, org_backlogs,
+                    org_backlog_delete, org_stories, EMPTY_VIEW)
 
 # root
 urlpatterns = patterns(
@@ -37,15 +38,29 @@ urlpatterns += patterns(
     url(r'^orgs/(?P<org_id>[\d]+)/users/$', org_users,
         name='org_users'),
 
-    url(r'^orgs/(?P<org_id>[\d]+)/stories/$', EMPTY_VIEW,
+    url(r'^orgs/(?P<org_id>[\d]+)/stories/$', org_stories,
         name='org_stories'),
 
-    url(r'^orgs/(?P<org_id>[\d]+)/backlogs/$', EMPTY_VIEW,
+    url(r'^orgs/(?P<org_id>[\d]+)/backlogs/$', org_backlogs,
         name='org_sprint_planning'),
 
     url(r'^orgs/(?P<org_id>[\d]+)/invite_user/$',
         EMPTY_VIEW,
         name='org_invite_user'),
+
+    url(r'^orgs/(?P<org_id>[\d]+)/backlogs/(?P<backlog_id>[\d]+)/'
+        r'edit/$',
+        org_backlog_edit,
+        name='org_backlog_edit'),
+
+    url(r'^orgs/(?P<org_id>[\d]+)/backlogs/(?P<backlog_id>[\d]+)/'
+        r'delete/$',
+        org_backlog_delete,
+        name='org_backlog_delete'),
+
+    url(r'^orgs/(?P<org_id>[\d]+)/backlogs/new/$',
+        org_backlog_create,
+        name='org_backlog_create'),
 )
 
 # projects
@@ -130,10 +145,6 @@ urlpatterns += patterns(
         r'stories/new$',
         story_create,
         name='story_create'),
-
-    url(r'^projects/(?P<project_id>[\d]+)/_change_story_status/$',
-        story_change_status,
-        name='story_change_status'),
 
     url(r'^projects/(?P<project_id>[\d]+)/print_stories/$',
         print_stories,

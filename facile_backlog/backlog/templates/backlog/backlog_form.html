@@ -37,7 +37,6 @@
 
     <form method="post" id="edit_backlog_form" action="{{ action_url }}">
 
-        {% csrf_token %}
         {% include "form.html" %}
         <div class="submit">
 			<input class="btn btn-success" type="submit" value="{% if object %}{% trans "Save changes" %}{% else %}{% trans "Create backlog" %}{% endif %}">

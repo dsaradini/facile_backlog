@@ -74,14 +74,14 @@ class BacklogEditionForm(BackMixin, ModelForm):
 
 class BacklogCreationForm(BacklogEditionForm):
 
-    def __init__(self, project, *args, **kwargs):
+    def __init__(self, holder, *args, **kwargs):
         super(BacklogCreationForm, self).__init__(*args, **kwargs)
         self.fields['name'].widget.attrs['autofocus'] = ''
-        self.project = project
+        self.holder = holder
 
     def save(self, commit=True):
         backlog = super(BacklogCreationForm, self).save(commit=False)
-        backlog.project = self.project
+        backlog.set_holder(self.holder)
         backlog.kind = Backlog.GENERAL
         if commit:
             backlog.save()

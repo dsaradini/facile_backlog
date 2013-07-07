@@ -19,10 +19,14 @@
 						<a href="{% url "project_detail" event.project_id %}"><i class="icon-book"></i> {{ event.project.name }}</a>
 					{% endif %}
 					{% if event.backlog %}
-						<a href="{% url "project_backlogs" event.project_id %}"><i class="icon-list-ul"></i> {{ event.backlog.name }}</a>
+						{% if event.backlog.project_id %}
+							<a href="{% url "project_backlogs" event.backlog.project_id %}"><i class="icon-list-ul"></i> {{ event.backlog.name }}</a>
+						{% elif event.backlog.org_id %}
+							<a href="{% url "org_sprint_planning" event.backlog.org_id %}"><i class="icon-list-ul"></i> {{ event.backlog.name }}</a>
+						{% endif %}
 					{% endif %}
 					{% if event.story %}
-						<a href="{% url "story_detail" event.project_id event.story_id %}"><i class="icon-list-alt"></i> {{ event.story.code }}</a>
+						<a href="{% url "story_detail" event.story.project_id event.story_id %}"><i class="icon-list-alt"></i> {{ event.story.code }}</a>
 					{% endif %}
 				</div>
 				<span class="when"><i class="icon-time"></i> {{ event.when|naturaltime }}</span>

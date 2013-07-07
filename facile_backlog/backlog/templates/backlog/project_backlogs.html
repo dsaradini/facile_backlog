@@ -117,7 +117,7 @@
 					order.push(parseInt($(this).attr('backlog-id')));
 				});
 				$.ajax({
-					url: '{% url "api_move_backlog" project.pk %}',
+					url: '{% url "api_project_move_backlog" project.pk %}',
 					type: "POST",
 					contentType:"application/json; charset=utf-8",
 					dataType: "json",
@@ -178,7 +178,7 @@
 				}
 				if (ajax_data) {
 					$.ajax({
-						url: '{% url "api_move_story" project.pk %}',
+						url: '{% url "api_move_story" %}',
 						type: "POST",
 						contentType:"application/json; charset=utf-8",
 						dataType: "json",
