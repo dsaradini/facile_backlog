@@ -1,30 +1,20 @@
 {% extends "project_base.html" %}
 {% load static sekizai_tags %}
-{% block title %}{% trans "Project" %} &mdash; {{ project.name }} &mdash; {% trans "backlogs" %}{% endblock %}
+{% block title %}{% trans "Organization" %} &mdash; {{ organization.name }} &mdash; {% trans "Sprint planning" %}{% endblock %}
 
-{% block content_class %}project-backlogs{% endblock %}
+{% block content_class %}organization-split-planning{% endblock %}
 
 {% block content %}
 
-	{% include "backlog/_project_head.html" %}
+	{% include "backlog/_org_head.html" %}
 
 	<ul class="nav nav-tabs">
-		<li><a href="{% url "project_detail" project.pk %}">{% trans "General" %}</a></li>
-		<li class="active"><a href="{% url "project_backlogs" project.pk %}">{% trans "Backlogs" %} </a></li>
-		<li><a href="{% url "project_users" project.pk %}">{% trans "Members" %} </a>
-		<li><a href="{% url "project_stories" project.pk %}">{% trans "Stories" %}</a></li>
+		<li><a href="{% url "org_detail" organization.pk %}">{% trans "General" %}</a></li>
+		<li class="active"><a href="{% url "org_sprint_planning" organization.pk %}">{% trans "Sprint planning" %} </a></li>
+		<li><a href="{% url "org_users" organization.pk %}">{% trans "Members" %} </a>
+		<li><a href="{% url "org_stories" organization.pk %}">{% trans "Stories" %}</a></li>
 	</ul>
-	<form class="form-inline boxed">
-		<label>{% trans "Highlight theme" %}</label>&nbsp;
-		<select class="select" id="theme-select">
-			<option value="">{% trans "No filter" %}</option>
-			{% for theme in project.all_themes %}
-				<option value="{{ theme }}">{{ theme }}</option>
-			{% endfor %}
-		</select>
-		<a href=".">{% trans "Refresh" %}</a>
-		<a class="btn btn-primary btn-small pull-right" href="{% url "project_backlog_create" project.pk %}">{% trans "Create backlog" %}</a>
-	</form>
+
 	<div class="backlog-lanes" style="width:{% widthratio backlog_list.count 1 320 %}px">
 		{% for backlog in backlog_list %}
 			<article class="backlog" id="backlog-{{ backlog.pk }}" backlog-id="{{ backlog.pk }}">
@@ -36,10 +26,10 @@
 						</a>
 						<ul class="dropdown-menu">
 							<li class="dropdown-title">{% trans "Backlog" %}</li>
-							<li><a href="{% url "print_stories" project.pk %}?backlog_id={{ backlog.pk }}">{% trans "Print stories" %}</a></li>
+							<li><a href="{% url "org_print_stories" organization.pk %}?backlog_id={{ backlog.pk }}">{% trans "Print stories" %}</a></li>
 							<li class="divider"></li>
-							<li><a href="{% url "project_backlog_edit" project.pk backlog.pk %}?_back=project">{% trans "Edit" %}</a></li>
-							<li><a href="{% url "project_backlog_delete" project.pk backlog.pk %}?_back=project">{% trans "Delete" %}</a></li>
+							<li><a href="{% url "org_backlog_edit" organization.pk backlog.pk %}">{% trans "Edit" %}</a></li>
+							<li><a href="{% url "org_backlog_delete" organization.pk backlog.pk %}">{% trans "Delete" %}</a></li>
 						</ul>
 					</div>
 					<span class="muted small">({{ backlog.stats.total_stories }})</span>
@@ -58,9 +48,9 @@
 										</a>
 										<ul class="dropdown-menu">
 											<li class="dropdown-title">{% trans "Story" %}</li>
-											<li><a href="{% url "story_detail" project.pk story.pk %}">{% trans "Details" %}</a></li>
-											<li><a href="{% url "story_edit" project.pk story.pk %}?_back=project">{% trans "Edit" %}</a></li>
-											<li><a href="{% url "story_delete" project.pk story.pk %}?_back=project">{% trans "Delete" %}</a></li>
+											<li><a href="{% url "story_detail" story.project_id story.pk %}">{% trans "Details" %}</a></li>
+											<li><a href="{% url "story_edit" story.project_id story.pk %}?_back=organization">{% trans "Edit" %}</a></li>
+											<li><a href="{% url "story_delete" story.project_id story.pk %}?_back=organization">{% trans "Delete" %}</a></li>
 
 										</ul>
 									</div>
@@ -79,9 +69,6 @@
 							</div>
 						</article>
 					{%  endfor %}
-				</div>
-				<div class="backlog-action">
-					<a href="{% url "story_create" project.pk backlog.pk %}?_back=project" class="btn btn-primary btn-small">{% trans "Add story" %}</a>
 				</div>
 			</article>
 		{% endfor %}

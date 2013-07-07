@@ -5,7 +5,11 @@
 {% block content %}
 	<ul class="breadcrumb">
 		<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a><span class="divider">/</span></li>
-		<li class="active"><i>{% trans "Create project" %}</i><span class="divider"></span></li>
+		{% if object %}
+			<li class="active"><i class="icon-book"></i> {% trans "Edit project" %}<span class="divider"></span></li>
+		{% else %}
+			<li class="active"><i>{% trans "Create project" %}</i><span class="divider"></span></li>
+		{% endif %}
 	</ul>
 
 <div class="row-fluid">

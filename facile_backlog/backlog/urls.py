@@ -2,7 +2,8 @@ from django.conf.urls import patterns, url
 
 from .views import (project_detail, project_create, project_edit,
                     project_delete, project_backlog_create,
-                    backlog_delete, backlog_edit, story_edit, story_create,
+                    project_backlog_delete, project_backlog_edit, story_edit,
+                    story_create,
                     story_detail, story_delete, story_change_status,
                     project_invite_user, dashboard,
                     invitation_activate, project_users, auth_delete,
@@ -40,7 +41,7 @@ urlpatterns += patterns(
         name='org_stories'),
 
     url(r'^orgs/(?P<org_id>[\d]+)/backlogs/$', EMPTY_VIEW,
-        name='org_backlogs'),
+        name='org_sprint_planning'),
 
     url(r'^orgs/(?P<org_id>[\d]+)/invite_user/$',
         EMPTY_VIEW,
@@ -91,26 +92,22 @@ urlpatterns += patterns(
     url(r'^projects_invitation_decline/(?P<auth_id>[\d]+)/$',
         invitation_decline,
         name='invitation_decline'),
-)
-
-# backlogs
-urlpatterns += patterns(
-    '',
 
     url(r'^projects/(?P<project_id>[\d]+)/backlogs/(?P<backlog_id>[\d]+)/'
         r'edit/$',
-        backlog_edit,
-        name='backlog_edit'),
+        project_backlog_edit,
+        name='project_backlog_edit'),
 
     url(r'^projects/(?P<project_id>[\d]+)/backlogs/(?P<backlog_id>[\d]+)/'
         r'delete/$',
-        backlog_delete,
-        name='backlog_delete'),
+        project_backlog_delete,
+        name='project_backlog_delete'),
 
     url(r'^projects/(?P<project_id>[\d]+)/backlogs/new/$',
         project_backlog_create,
         name='project_backlog_create'),
 )
+
 
 # user stories
 urlpatterns += patterns(

@@ -9,12 +9,19 @@
 		{% trans "Are you sure you want to delete this backlog and all its stories?" %}
 		<h4>{% trans "This operation cannot be undone" %}</h4>
 	</div>
-	<form method="post" id="delete_form" action="{% url "backlog_delete" project.pk backlog.pk %}">
+	{% if project %}
+		{% url "project_backlog_delete" project.pk backlog.pk as action_url%}
+		{% url "project_backlogs" project.pk as cancel_url%}
+	{% elif organization %}
+		{% url "org_backlog_delete" organization.pk backlog.pk as action_url%}
+		{% url "org_sprint_planning" organization.pk as cancel_url%}
+	{% endif %}
+	<form method="post" id="delete_form" action="{{ action_url }}">
 		{% csrf_token %}
 		{{ form }}
 		<div class="submit-delete actions">
 			<button class="btn btn-danger" type="submit">{% trans "Delete this backlog" %}</button>
-			<a href="{% url "project_detail" project.pk %}">{% trans "Cancel" %}</a>
+			<a href="{{ cancel_url }}">{% trans "Cancel" %}</a>
 		</div>
 	</form>
 </div>

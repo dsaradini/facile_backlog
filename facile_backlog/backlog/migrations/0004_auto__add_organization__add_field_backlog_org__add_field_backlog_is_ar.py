@@ -40,14 +40,22 @@ class Migration(SchemaMigration):
 
         # Adding field 'Project.org'
         db.add_column(u'backlog_project', 'org',
-                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['backlog.Organization'], null=True, blank=True),
+                      self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='projects', null=True, to=orm['backlog.Organization']),
+                      keep_default=False)
+
+        # Adding field 'Project.last_modified'
+        db.add_column(u'backlog_project', 'last_modified',
+                      self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, auto_now=True, blank=True),
                       keep_default=False)
 
         # Adding field 'Event.organization'
         db.add_column(u'backlog_event', 'organization',
-                      self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='organizations', null=True, on_delete=models.SET_NULL, to=orm['backlog.Organization']),
+                      self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='events', null=True, on_delete=models.SET_NULL, to=orm['backlog.Organization']),
                       keep_default=False)
 
+
+        # Changing field 'Event.when'
+        db.alter_column(u'backlog_event', 'when', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True))
 
         # Changing field 'Event.project'
         db.alter_column(u'backlog_event', 'project_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, on_delete=models.SET_NULL, to=orm['backlog.Project']))
@@ -91,9 +99,15 @@ class Migration(SchemaMigration):
         # Deleting field 'Project.org'
         db.delete_column(u'backlog_project', 'org_id')
 
+        # Deleting field 'Project.last_modified'
+        db.delete_column(u'backlog_project', 'last_modified')
+
         # Deleting field 'Event.organization'
         db.delete_column(u'backlog_event', 'organization_id')
 
+
+        # Changing field 'Event.when'
+        db.alter_column(u'backlog_event', 'when', self.gf('django.db.models.fields.DateTimeField')(auto_now=True))
 
         # Changing field 'Event.project'
         db.alter_column(u'backlog_event', 'project_id', self.gf('django.db.models.fields.related.ForeignKey')(default=0, to=orm['backlog.Project']))
@@ -133,12 +147,12 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "('-when',)", 'object_name': 'Event'},
             'backlog': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'events'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': u"orm['backlog.Backlog']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'organization': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'organizations'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': u"orm['backlog.Organization']"}),
+            'organization': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'events'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': u"orm['backlog.Organization']"}),
             'project': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'events'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': u"orm['backlog.Project']"}),
             'story': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'events'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': u"orm['backlog.UserStory']"}),
             'text': ('django.db.models.fields.TextField', [], {}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'events'", 'to': u"orm['core.User']"}),
-            'when': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
+            'when': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'})
         },
         u'backlog.organization': {
             'Meta': {'ordering': "('name',)", 'object_name': 'Organization'},
@@ -155,8 +169,9 @@ class Migration(SchemaMigration):
             'code': ('django.db.models.fields.CharField', [], {'max_length': '5'}),
             'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'last_modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'auto_now': 'True', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'org': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['backlog.Organization']", 'null': 'True', 'blank': 'True'}),
+            'org': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'projects'", 'null': 'True', 'to': u"orm['backlog.Organization']"}),
             'story_counter': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'blank': 'True'}),
             'users': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'projects'", 'symmetrical': 'False', 'through': u"orm['backlog.AuthorizationAssociation']", 'to': u"orm['core.User']"})
         },

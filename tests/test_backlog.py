@@ -53,7 +53,8 @@ class BacklogTest(WebTest):
             'name': "Backlog 1",
             'description': "Description 1",
         })
-        url = reverse('backlog_edit', args=(backlog.project.pk, backlog.pk))
+        url = reverse('project_backlog_edit', args=(
+            backlog.project.pk, backlog.pk))
         # login redirect
         self.app.get(url, status=302)
         response = self.app.get(url, user=user)
@@ -86,7 +87,8 @@ class BacklogTest(WebTest):
                 'name': "My backlog"
             }
         )
-        url = reverse('backlog_delete', args=(backlog.project.pk, backlog.pk))
+        url = reverse('project_backlog_delete', args=(
+            backlog.project.pk, backlog.pk))
         # login redirect
         self.app.get(url, status=302)
         response = self.app.get(url, user=user)
@@ -107,7 +109,7 @@ class BacklogTest(WebTest):
 
         backlog = factories.create_sample_backlog(user_1)
         project = backlog.project
-        url = reverse('backlog_edit', args=(project.pk, backlog.pk))
+        url = reverse('project_backlog_edit', args=(project.pk, backlog.pk))
         self.app.get(url, user=user_1)
         self.app.get(url, user=user_2, status=404)
 

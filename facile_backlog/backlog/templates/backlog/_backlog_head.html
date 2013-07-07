@@ -2,14 +2,25 @@
 
 <ul class="breadcrumb">
 	<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a><span class="divider">/</span></li>
-	<li><i class="icon-book"></i> <a href="{% url "project_detail" project.pk %}"> {% trans "Projects" %}</a><span class="divider">/</span></li>
+	{% if project %}
+			<li> <i class="icon-book"></i><a href="{% url "project_backlogs" project.pk %}">{{ project.name }}</a><span class="divider">/</span></li>
+		{% elif organization %}
+			<li> <i class="icon-building"></i><a href="{% url "org_sprint_planning" organization.pk %}">{{ organization.name }}</a><span class="divider">/</span></li>
+		{% endif %}
 	<li class="active"><i class="icon-list-ul"></i> {{ backlog.name }}<span class="divider"></span></li>
 </ul>
 
 <div class="project-head">
 	<h1 class="inline-title">{{ backlog.name }}</h1>
-	{% if project|can_admin:request.user %}
-		<a class="btn-link" href="{% url "backlog_edit" project.pk backlog.pk %}">{% trans "Edit" %}</a>
-		<a class="btn-link" href="{% url "backlog_delete" project.pk backlog.pk %}">{% trans "Delete" %}</a>
+	{% if project %}
+		{% if project|can_admin:request.user %}
+			<a class="btn-link" href="{% url "project_backlog_edit" project.pk backlog.pk %}">{% trans "Edit" %}</a>
+			<a class="btn-link" href="{% url "project_backlog_delete" project.pk backlog.pk %}">{% trans "Delete" %}</a>
+		{% endif %}
+	{% elif organization %}
+		{% if organization|can_admin:request.user %}
+			<a class="btn-link" href="{% url "org_backlog_edit" organization.pk backlog.pk %}">{% trans "Edit" %}</a>
+			<a class="btn-link" href="{% url "org_backlog_delete" organization.pk backlog.pk %}">{% trans "Delete" %}</a>
+		{% endif %}
 	{% endif %}
 </div>

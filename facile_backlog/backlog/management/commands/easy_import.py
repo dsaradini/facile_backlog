@@ -9,7 +9,7 @@ from django.utils.translation import ugettext as _
 
 from optparse import make_option
 
-from ...models import Project, Backlog, UserStory, create_event
+from ...models import Project, Backlog, UserStory, create_event, Organization
 
 from ....core.models import User
 
@@ -49,7 +49,7 @@ def get_user(name):
 
 
 class Command(BaseCommand):
-    args = '[<user_email> <project id>]'
+    args = '[<user_email> <company_id>]'
     help = 'Imports easybacklog backlogs and stories'
     option_list = BaseCommand.option_list + (
         make_option('--ignore-errors', action='store_true', default=False,
@@ -61,69 +61,126 @@ class Command(BaseCommand):
             raise CommandError("Need at less first argument <user_email>")
         self.user = get_user(args[0])
         if len(args) > 1:
-            lookup_backlog_id = args[1]
+            self.lookup_company_id = args[1]
         else:
-            lookup_backlog_id = None
+            self.lookup_company_id = None
         self.fill_status()
+        self.project_map = dict()  # Hold company_id-->project
+
         accounts = self.get_accounts()
         for account in accounts:
-            self.handle_account(account, lookup_backlog_id)
+            self.handle_account(account)
 
-    def handle_account(self, account, lookup_backlog=None):
+    def get_or_create_org(self, account):
         account_id = account['id']
-        backlogs = easy_request(
-            "accounts/{0}/backlogs".format(account_id)
-        ).json()
-        for backlog in backlogs:
-            if not lookup_backlog or int(lookup_backlog) == int(backlog['id']):
-                self.handle_backlog(backlog)
+        unique_key = "EASY_BACKLOG:account:{0}".format(account_id)
+        try:
+            org = Organization.objects.get(description=unique_key)
+        except Organization.DoesNotExist:
+            org = Organization(
+                name=account['name'],
+                description=unique_key,
+            )
+        org.name = account['name']
+        org.save()
+        org.add_user(self.user)
+        return org
 
-    def handle_backlog(self, easy_backlog):
-        backlog_id = easy_backlog['id']
-        project = Project(
-            name=easy_backlog['name'],
-            description="Imported from easy backlog ID: {0}".format(
-                backlog_id),
-            active=True,
-        )
+    def get_or_create_project(self, external_id, name):
+        unique_key = "EASY_BACKLOG:company:{0}".format(external_id)
+        try:
+            project = Project.objects.get(description=unique_key)
+        except Project.DoesNotExist:
+            project = Project(
+                name=name,
+                description=unique_key,
+                active=True,
+            )
+        project.name = name
+        project.org = self.organization
         project.save()
-        if self.user:
-            project.add_user(self.user, is_admin=True)
-
-        accepted_backlog = Backlog(
+        project.accepted_backlog = Backlog(
             project=project,
             name=_("Accepted stories"),
             description=_("This is the backlog for accepted stories"),
             kind=Backlog.COMPLETED,
+            is_archive=True,
             order=10,
         )
-        accepted_backlog.save()
-        backlog = Backlog(
+        project.accepted_backlog.save()
+        project.main_backlog = Backlog(
             project=project,
             name=_("Main backlog"),
             description=_("This is the main backlog for the project"),
             kind=Backlog.TODO,
+            is_main=True,
             order=1,
         )
-        backlog.save()
+        project.main_backlog.save()
+        self.project_map[external_id] = project
+        return project
+
+    def handle_company(self, company):
+        project = self.get_or_create_project(company['id'], company['name'])
+        if self.user:
+            project.add_user(self.user, is_admin=True)
+
+    def handle_account(self, account):
+        account_id = account['id']
+        self.organization = self.get_or_create_org(account)
+        companies = self.get_companies(account_id)
+
+        for company in companies:
+            if not self.lookup_company_id:
+                self.handle_company(company)
+            elif self.lookup_company_id in (company['id'], company['name']):
+                self.handle_company(company)
+        backlogs = easy_request(
+            "accounts/{0}/backlogs".format(account_id)
+        ).json()
+        for backlog in backlogs:
+            self.handle_backlog(backlog)
+
+    def handle_backlog(self, easy_backlog):
+        backlog_id = easy_backlog['id']
+        company_id = easy_backlog.get('company_id', None)
+        if company_id:
+            project = self.project_map[company_id]
+            backlog = Backlog.objects.create(
+                project=project,
+                name=easy_backlog['name'],
+                description="EASY_BACKLOG:backlog:{0}".format(backlog_id),
+                kind=Backlog.GENERAL,
+                is_archive=easy_backlog['archived'],
+                order=0,
+            )
+        else:
+            project = self.get_or_create_project(
+                "backlog:{0}".format(backlog_id), easy_backlog['name'])
+            backlog = project.main_backlog
+
+        if self.user:
+            project.add_user(self.user, is_admin=True)
+
         story_status = self.get_stories_status(backlog_id)
 
         themes = easy_request(
             "backlogs/{0}/themes".format(backlog_id)
         ).json()
         for theme in themes:
-            self.handle_theme(project, backlog, theme, story_status)
+            self.handle_theme(project, backlog,
+                              theme, story_status)
 
         # place stories in the right backlog
         for story in UserStory.objects.filter(project=project):
             if story.status == UserStory.ACCEPTED:
-                story.backlog = accepted_backlog
+                story.backlog = project.accepted_backlog
                 story.save()
 
     def handle_theme(self, project, backlog, easy_theme, story_status):
         theme_id = easy_theme['id']
         stories = easy_request(
-            "themes/{0}/stories".format(theme_id)
+            "themes/{0}/stories?include_associated_data=true".format(theme_id)
         ).json()
         for story in stories:
             self.handle_story(project, backlog, story,
@@ -132,7 +189,8 @@ class Command(BaseCommand):
     def handle_story(self, project, backlog, easy_story,
                      easy_theme, story_status):
         story_id = easy_story['id']
-        acceptances = self.get_acceptances(story_id)
+        acceptances = self.format_acceptances(
+            easy_story[u'acceptance_criteria'])
         story = UserStory(
             project=project,
             status=story_status.get(story_id, UserStory.TODO),
@@ -156,10 +214,7 @@ class Command(BaseCommand):
         )
         logger.log(logging.INFO, "Story {0} imported".format(story.code))
 
-    def get_acceptances(self, story_id):
-        acceptances = easy_request(
-            "stories/{0}/acceptance-criteria".format(story_id)
-        ).json()
+    def format_acceptances(self, acceptances):
         return "".join((
             u"- {0}\n".format(empty_string_dict(a, 'criterion'))
             for a in acceptances
@@ -179,6 +234,10 @@ class Command(BaseCommand):
 
     def get_accounts(self):
         result = easy_request("accounts")
+        return result.json()
+
+    def get_companies(self, account_id):
+        result = easy_request("accounts/{0}/companies".format(account_id))
         return result.json()
 
     def fill_status(self):

@@ -5,7 +5,8 @@ from django_webtest import WebTest
 from requests import Response
 
 from facile_backlog.backlog.management.commands.easy_import import Command
-from facile_backlog.backlog.models import Project, UserStory
+from facile_backlog.backlog.models import (Project, UserStory, Organization,
+                                           Backlog)
 
 from . import factories
 
@@ -43,7 +44,7 @@ def request_get(url, *args, **kwargs):
                 "default_velocity": None,
                 "id": 33,
                 "locale_id": 1,
-                "name": "API Access Demo Account",
+                "name": "Sample account",
                 "scoring_rule_id": None,
                 "updated_at": "2012-05-21T21:33:51Z"
             }
@@ -55,7 +56,7 @@ def request_get(url, *args, **kwargs):
                 "account_id": 33,
                 "archived": False,
                 "author_id": 1,
-                "company_id": None,
+                "company_id": 99,
                 "created_at": "2011-01-03T15:03:00Z",
                 "last_modified_user_id": 1,
                 "name": "Example corporate website backlog",
@@ -64,6 +65,19 @@ def request_get(url, *args, **kwargs):
                 "updated_at": "2011-02-17T15:03:00Z",
                 "use_50_90": False,
                 "velocity": "3.0"
+            }
+        ])
+    elif url.endswith("/accounts/33/companies"):
+        return json_respnse([
+            {
+                "account_id": 33,
+                "created_at": "2012-05-25T17:11:20Z",
+                "default_rate": 800,
+                "default_use_50_90": False,
+                "default_velocity": "3.0",
+                "id": 99,
+                "name": "Test company",
+                "updated_at": "2012-05-25T17:11:42Z"
             }
         ])
     elif url.endswith("/api/backlogs/357/sprints?include_associated_data=true"):  # noqa
@@ -109,7 +123,7 @@ def request_get(url, *args, **kwargs):
                 "updated_at": "2012-05-25T17:11:20Z"
             }
         ])
-    elif url.endswith("/api/themes/1164/stories"):
+    elif url.endswith("/api/themes/1164/stories?include_associated_data=true"):
         return json_respnse([
             {
                 "as_a": "user",
@@ -123,21 +137,17 @@ def request_get(url, *args, **kwargs):
                 "theme_id": 1164,
                 "unique_id": 5,
                 "updated_at": "2012-05-23T17:42:10Z",
-                "score": "3.0"
-            }
-        ])
-    elif url.endswith("/api/stories/3159/acceptance-criteria"):
-        return json_respnse([
-            {
-                "criterion": "Make test working",
-                "id": 7658,
-                "position": 1,
-                "story_id": 3159
+                "score": "3.0",
+                "acceptance_criteria": [{
+                    "criterion": "Make test working",
+                    "id": 7658,
+                    "position": 1,
+                    "story_id": 3159
+                }],
             }
         ])
     else:
-        print url
-        raise NotImplementedError
+        raise NotImplementedError(url)
 
 
 class HomeTest(WebTest):
@@ -147,8 +157,16 @@ class HomeTest(WebTest):
         get.side_effect = request_get
         factories.UserFactory.create(email="test@test.com")
         Command().handle("test@test.com")
+        org = Organization.objects.get()
+        self.assertEqual(org.name, "Sample account")
         project = Project.objects.get()
-        self.assertEqual(project.name, "Example corporate website backlog")
+        self.assertEqual(project.name, "Test company")
+        self.assertEqual(org, project.org)
+        backlogs = Backlog.objects.all()
+        self.assertEqual(3, backlogs.count())
+        self.assertEqual(backlogs[0].name, "Example corporate website backlog")
+        self.assertEqual(backlogs[1].name, "Main backlog")
+        self.assertEqual(backlogs[2].name, "Accepted stories")
         story = UserStory.objects.get()
         self.assertEqual(story.text, "As user, I want to view a set of simple "
                                      "screen shots, so I can understand how "

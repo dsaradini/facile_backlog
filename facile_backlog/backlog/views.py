@@ -382,7 +382,7 @@ project_backlogs = login_required(ProjectBacklogs.as_view())
 # Backlogs
 
 
-class BacklogMixin(BackMixin):
+class ProjectBacklogMixin(BackMixin):
     admin_only = False
     """
     Mixin to fetch a project and backlog by a view.
@@ -403,13 +403,14 @@ class BacklogMixin(BackMixin):
         render = self.pre_dispatch(request, **kwargs)
         if render:
             return render
-        return super(BacklogMixin, self).dispatch(request, *args, **kwargs)
+        return super(ProjectBacklogMixin, self).dispatch(request, *args,
+                                                         **kwargs)
 
     def pre_dispatch(self, request, **kwargs):
         pass
 
     def get_context_data(self, **kwargs):
-        context = super(BacklogMixin, self).get_context_data(**kwargs)
+        context = super(ProjectBacklogMixin, self).get_context_data(**kwargs)
         context['project'] = self.project
         context['backlog'] = self.backlog
         return context
@@ -446,7 +447,7 @@ class BacklogCreate(ProjectMixin, generic.CreateView):
 project_backlog_create = login_required(BacklogCreate.as_view())
 
 
-class BacklogEdit(BacklogMixin, generic.UpdateView):
+class ProjectBacklogEdit(ProjectBacklogMixin, generic.UpdateView):
     admin_only = True
     template_name = "backlog/backlog_form.html"
     form_class = BacklogEditionForm
@@ -455,7 +456,7 @@ class BacklogEdit(BacklogMixin, generic.UpdateView):
         return self.backlog
 
     def get_context_data(self, **kwargs):
-        context = super(BacklogEdit, self).get_context_data(**kwargs)
+        context = super(ProjectBacklogEdit, self).get_context_data(**kwargs)
         if self.back == "project" or not self.object:
             context['cancel_url'] = reverse("project_backlogs", args=(
                 self.project.pk,
@@ -481,10 +482,10 @@ class BacklogEdit(BacklogMixin, generic.UpdateView):
                     self.project.pk,
                 )), backlog.pk))
         return redirect(reverse("project_backlogs", args=(self.project.pk,)))
-backlog_edit = login_required(BacklogEdit.as_view())
+project_backlog_edit = login_required(ProjectBacklogEdit.as_view())
 
 
-class BacklogDelete(BacklogMixin, generic.DeleteView):
+class ProjectBacklogDelete(ProjectBacklogMixin, generic.DeleteView):
     admin_only = True
     template_name = "backlog/backlog_confirm_delete.html"
 
@@ -500,7 +501,7 @@ class BacklogDelete(BacklogMixin, generic.DeleteView):
         messages.success(request,
                          _("Backlog successfully deleted."))
         return redirect(reverse('project_backlogs', args=(self.project.pk,)))
-backlog_delete = login_required(BacklogDelete.as_view())
+project_backlog_delete = login_required(ProjectBacklogDelete.as_view())
 
 
 class StoryMixin(BackMixin):
@@ -562,7 +563,7 @@ class StoryDetail(StoryMixin, generic.DetailView):
 story_detail = login_required(StoryDetail.as_view())
 
 
-class StoryCreate(BacklogMixin, generic.CreateView):
+class StoryCreate(ProjectBacklogMixin, generic.CreateView):
     template_name = "backlog/story_form.html"
 
     model = UserStory

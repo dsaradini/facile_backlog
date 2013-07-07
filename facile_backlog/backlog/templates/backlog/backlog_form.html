@@ -6,7 +6,11 @@
 
 	<ul class="breadcrumb">
 		<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a><span class="divider">/</span></li>
-		<li> <i class="icon-book"></i><a href="{% url "project_detail" project.pk %}">{{ project.name }}</a><span class="divider">/</span></li>
+		{% if project %}
+			<li> <i class="icon-book"></i><a href="{% url "project_backlogs" project.pk %}">{{ project.name }}</a><span class="divider">/</span></li>
+		{% elif organization %}
+			<li> <i class="icon-building"></i><a href="{% url "org_sprint_planning" organization.pk %}">{{ organization.name }}</a><span class="divider">/</span></li>
+		{% endif %}
 		<li class="active">{% if object %}{% trans "Edit backlog" %}{% else %}{% trans "Create backlog" %}{% endif %}<span class="divider"></span>
 		</li>
 	</ul>
@@ -14,7 +18,24 @@
 <div class="row-fluid">
 	<div class="span6 offset3 base-form">
 	{% if not object %}<h1>{% trans "Add a new backlog" %}</h1>{% endif %}
-    <form method="post" id="edit_backlog_form" action="{% if object %}{% url "backlog_edit" project.pk object.pk %}{% else %}{% url "project_backlog_create" project.pk %}{% endif %}">
+
+	{% if project %}
+		{% if object %}
+			{% url "project_backlog_edit" project.pk object.pk as action_url%}
+		{% else %}
+			{% url "project_backlog_create" project.pk as action_url%}
+		{% endif %}
+		{% url "project_backlogs" project.pk as cancel_url%}
+	{% elif organization %}
+		{% if object %}
+			{% url "org_backlog_edit" organization.pk object.pk as action_url%}
+		{% else %}
+			{% url "org_backlog_create" organization.pk as action_url%}
+		{% endif %}
+		{% url "org_sprint_planning" backlog.org_id as cancel_url%}
+	{% endif %}
+
+    <form method="post" id="edit_backlog_form" action="{{ action_url }}">
 
         {% csrf_token %}
         {% include "form.html" %}

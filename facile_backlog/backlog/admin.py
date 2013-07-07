@@ -10,7 +10,7 @@ class OrganizationAdmin(admin.ModelAdmin):
 
 
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ("name", "active", "code")
+    list_display = ("name", "active", "code", "org")
     readonly_fields = ("story_counter", "get_acl", )
     search_fields = ("name", "code")
     raw_id_fields = ("org",)

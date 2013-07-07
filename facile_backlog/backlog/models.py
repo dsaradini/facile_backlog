@@ -89,7 +89,7 @@ class AuthorizationAssociation(models.Model):
                                                   self.org_id,
                                                   self.user.email)
         else:
-            return u"UNKNOWN - {1}".format(self.user.email)
+            return u"UNKNOWN - {0}".format(self.user.email)
 
     class Meta:
         unique_together = (("user", "project"), ("user", "org"))
@@ -187,7 +187,7 @@ class Organization(AclMixin, models.Model):
 
     @property
     def ordered_projects(self):
-        return self.projects.all()
+        return self.projects.order_by("name")
 
     def my_projects(self, user):
         return user.projects.filter(
@@ -224,6 +224,8 @@ class Project(StatsMixin, AclMixin, models.Model):
     story_counter = models.IntegerField(default=0, blank=True, null=True)
     org = models.ForeignKey(Organization, verbose_name=_("Organization"),
                             null=True, blank=True, related_name="projects")
+    last_modified = models.DateTimeField(_("Last modified"), auto_now=True,
+                                         default=timezone.now)
     users = models.ManyToManyField(
         User,
         verbose_name=_('Authorization'),
@@ -256,10 +258,7 @@ class Project(StatsMixin, AclMixin, models.Model):
         if not user.is_authenticated():
             return Project.objects.none()
 
-        projects = cls.my_projects(user)
-
-        return sorted(list(projects), key=lambda p: p.last_activity(),
-                      reverse=True)
+        return cls.my_projects(user).order_by("-last_modified")
 
     def authorizations(self):
         return AuthorizationAssociation.objects.filter(
@@ -509,7 +508,7 @@ get_model(*User.split('.', 1)).notification_count = user_notification_count
 class Event(models.Model):
     user = models.ForeignKey(User, verbose_name=_("User"),
                              related_name="events")
-    when = models.DateTimeField(_("When"), auto_now=True)
+    when = models.DateTimeField(_("When"), auto_now_add=True)
     project = models.ForeignKey(Project, verbose_name=_("Project"),
                                 related_name="events", null=True,
                                 on_delete=models.SET_NULL)
