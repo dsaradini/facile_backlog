@@ -1,8 +1,6 @@
 import re
 import datetime
 
-from palette import Color
-
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.core.validators import EmailValidator, URLValidator
@@ -486,17 +484,6 @@ class UserStory(models.Model):
             _("As"), self.as_a,
             _("I want to"), self.i_want_to,
             _("so I can"), self.so_i_can)
-
-    @property
-    def css_color(self):
-        if len(self.color) < 3:
-            return "rgba(255,255,255,0.5)"
-        try:
-            color = Color(self.color).lighter(amt=0.1)
-        except ValueError:
-            return "transparent"
-        color.a = 0.5
-        return color.css
 
     def get_absolute_url(self):
         return reverse("story_detail", args=(self.project.pk, self.pk))

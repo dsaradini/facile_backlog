@@ -1,8 +1,9 @@
+import urllib
 from django.core.urlresolvers import reverse
 from django_webtest import WebTest
 
 from facile_backlog.backlog.models import (AuthorizationAssociation,
-                                           Event, Organization)
+                                           Event, Organization, UserStory)
 
 from . import factories
 
@@ -161,3 +162,52 @@ class OrganizationTest(WebTest):
                              "Administrator" if auth.is_admin else "User")
             self.assertEqual(elm.find("td.user-invitation").text(),
                              "Accepted" if auth.is_active else "Pending")
+
+    def test_project_stories(self):
+        user_1 = factories.UserFactory.create()
+        user_2 = factories.UserFactory.create()
+        org = factories.create_sample_organization(user_1)
+        project = factories.create_sample_project(user_1, project_kwargs={
+            'org': org
+        })
+        for i in range(0, 12):
+            factories.UserStoryFactory.create(
+                project=project,
+            )
+        url = reverse('org_stories', args=(org.pk,))
+        self.app.get(url, user=user_2, status=404)
+        response = self.app.get(url, user=user_1)
+        for story in UserStory.objects.filter(project=project):
+            elm = response.pyquery("#story-{0}".format(story.pk))
+            self.assertEqual(elm.find("td.story-code").text(),
+                             story.code)
+            if story.points != -1:
+                self.assertEqual(elm.find("td.story-points").text(),
+                                 "{0:.0f}".format(story.points))
+            else:
+                self.assertEqual(elm.find("td.story-points").text(), "")
+
+    def test_project_stories_filter(self):
+        user = factories.UserFactory.create()
+        org = factories.create_sample_organization(user)
+        project = factories.create_sample_project(user, project_kwargs={
+            'org': org
+        })
+
+        for i in range(0, 12):
+            factories.UserStoryFactory.create(
+                project=project,
+                as_a="a User {0}".format(i),
+                status="to_do" if divmod(i, 2)[1] == 0 else "completed",
+            )
+        url = "{0}?{1}".format(
+            reverse('org_stories', args=(project.pk,)),
+            urllib.urlencode({
+                'q': 'User',
+                's': '-theme',
+                'st': 'to_do'
+            }),
+        )
+        response = self.app.get(url, user=user)
+        elms = response.pyquery("tbody tr")
+        self.assertEqual(elms.length, 6)

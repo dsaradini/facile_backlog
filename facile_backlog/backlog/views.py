@@ -710,6 +710,8 @@ class StoryMixin(BackMixin):
             raise Http404('No matches found.')
         if backlog_id and self.story.backlog.pk != int(backlog_id):
             raise Http404('No matches found.')
+        if not self.story.can_read(request.user):
+            raise Http404('No matches found.')
         self.project = self.story.project
         self.backlog = self.story.backlog if backlog_id else None
         self.pre_dispatch()

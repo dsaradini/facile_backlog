@@ -186,7 +186,7 @@ def move_story(request):
         raise Http404
 
     story = UserStory.objects.get(pk=story_id)
-    if not story.project.can_admin(request.user):
+    if not story.can_admin(request.user):
         # verify access rights on story project
         raise Http404
 
