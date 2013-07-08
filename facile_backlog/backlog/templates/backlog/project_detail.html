@@ -34,7 +34,22 @@
 			{% for backlog in project.backlogs.all %}
 				<li>
 					<div class="title">
-						<a href="{% url "project_backlogs" project.pk %}"> <i class="icon-list-ul black"></i> {{ backlog.name }}</a>
+						<H4><a href="{% url "project_backlogs" project.pk %}"> <i class="icon-list-ul black"></i> {{ backlog.name }}</a>
+						{% if project|can_admin:request.user and not backlog.is_main%}
+							<small class="muted">[
+								<a href="#">{% trans "set main" %}</a>
+								{% if not main.is_archive %}
+									| <a href="#">{% trans "archive" %}</a>
+								{% endif %}
+							]</small>
+						{% endif %}
+						{% if backlog.is_archive %}
+							<i class="muted icon-archive"></i>
+						{% endif %}
+						{% if backlog.is_main %}
+							<span class="label label-inverse">{% trans "main" %}</span>
+						{% endif %}
+						</H4>
 					</div>
 					<div class="stats">
 						<div class="story-stats percent-cell">
@@ -57,7 +72,6 @@
 							{% endif %}
 						</div>
 					</div>
-					<a class="btn btn-link btn-mini create" href="{% url "story_create" project.pk backlog.pk %}">{% trans "Create story" %}</a>
 				</li>
 			{% empty %}
 				{% trans "No backlog" %}

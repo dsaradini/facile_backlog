@@ -288,10 +288,16 @@ class OrgBacklogs(OrgMixin, generic.TemplateView):
             ).all()[:1]
             if first:
                 context['backlog_of_interest'] = first[0]
-        context['projects_with_main'] = [p for p in
-                                         self.organization.projects.all()
-                                         if p.main_backlog]
-        backlogs = self.organization.backlogs.all()
+        #context['projects_with_main'] = [p for p in
+        #                                 self.organization.projects.all()
+        #                                 if p.main_backlog]
+        backlogs = Backlog.objects.filter(
+            is_main=True,
+            project__org=self.organization
+        ).select_related("project").order_by("project__name")
+        context['projects_with_main'] = [b.project for b in backlogs.all()]
+
+        backlogs = self.organization.backlogs.select_related("project").all()
         context['backlog_list'] = backlogs
         context['backlog_width'] = 320 * (len(backlogs)+1)
         return context

@@ -35,7 +35,6 @@
 							<span class="caret"></span>
 						</a>
 						<ul class="dropdown-menu">
-							<li class="dropdown-title">{% trans "Backlog" %}</li>
 							<li><a href="{% url "print_stories" project.pk %}?backlog_id={{ backlog.pk }}">{% trans "Print stories" %}</a></li>
 							<li class="divider"></li>
 							<li><a href="{% url "project_backlog_edit" project.pk backlog.pk %}?_back=project">{% trans "Edit" %}</a></li>
@@ -45,7 +44,7 @@
 					<span class="muted small">({{ backlog.stats.total_stories }})</span>
 
 					{% if backlog.is_main %}
-						<span class="muted"> ({% trans "main" %})</span>
+						<span class="label label-inverse pull-right">{% trans "main" %}</span>
 					{% else %}
 						<a class="close pull-right close-lane" href="#">&times;</a>
 					{% endif %}
@@ -62,7 +61,6 @@
 											<span class="caret"></span>
 										</a>
 										<ul class="dropdown-menu">
-											<li class="dropdown-title">{% trans "Story" %}</li>
 											<li><a href="{% url "story_detail" project.pk story.pk %}">{% trans "Details" %}</a></li>
 											<li><a href="{% url "story_edit" project.pk story.pk %}?_back=project">{% trans "Edit" %}</a></li>
 											<li><a href="{% url "story_delete" project.pk story.pk %}?_back=project">{% trans "Delete" %}</a></li>

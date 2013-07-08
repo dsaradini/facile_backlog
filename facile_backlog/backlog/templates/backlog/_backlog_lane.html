@@ -4,7 +4,7 @@
 			<a class="btn btn-link dropdown-toggle padding-reset" href="#" data-toggle="dropdown">
 				<span class="project-chooser">
 				{% if backlog.project_id %}
-					[{{ backlog.project.code }}] {{ backlog.project.name }}
+					 {{ backlog.project.name }} [{{ backlog.project.code }}]
 				{% else %}
 					{{ backlog.name }}
 				{% endif %}
@@ -18,10 +18,9 @@
 			<ul class="dropdown-menu">
 				{% if is_project_backlog %}
 					{% for proj in projects_with_main %}
-						<li><a class="project-chooser" href="{% url "org_sprint_planning" organization.pk %}?project_id={{ proj.pk }}"><small class="muted">[{{ proj.code }}]</small> {{ proj.name }}</a></li>
+						<li><a class="project-chooser-list" href="{% url "org_sprint_planning" organization.pk %}?project_id={{ proj.pk }}">{{ proj.name }} <small class="muted">[{{ proj.code }}]</small> </a></li>
 					{% endfor %}
 				{% else %}
-					<li class="dropdown-title">{% trans "Backlog" %}</li>
 					<li>{% trans "Print stories" %}</li>
 					<li class="divider"></li>
 					<li><a href="{% url "org_backlog_edit" organization.pk backlog.pk %}">{% trans "Edit" %}</a></li>
@@ -32,7 +31,7 @@
 		<span class="muted small">({{ backlog.stats.total_stories }})</span>
 		{% if backlog.is_main %}
 			{% if not is_project_backlog %}
-				<span class="muted"> ({% trans "current" %})</span>
+				<span class="label label-inverse pull-right">{% trans "current" %}</span>
 			{% endif %}
 		{% else %}
 			<a class="close pull-right close-lane" href="#">&times;</a>
@@ -50,7 +49,6 @@
 								<span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu">
-								<li class="dropdown-title">{% trans "Story" %}</li>
 								<li><a href="{% url "story_detail" story.project_id story.pk %}">{% trans "Details" %}</a></li>
 								<li><a href="{% url "story_edit" story.project_id story.pk %}?_back=organization">{% trans "Edit" %}</a></li>
 								<li><a href="{% url "story_delete" story.project_id story.pk %}?_back=organization">{% trans "Delete" %}</a></li>
@@ -66,8 +64,11 @@
 						{% endif %}
 					</div>
 					<div class="text">{% include "backlog/user_story_text.html" %}</div>
+					{% if not is_project_backlog %}
+						<div class="text theme"><i class="icon-book"></i> {{ story.project.name }}</div>
+					{% endif %}
 					{% if story.theme %}
-						<div class="theme"><i class="icon-tag"></i> {{ story.theme }}</div>
+						<div class="text theme"><i class="icon-tag"></i> {{ story.theme }}</div>
 					{% endif %}
 				</div>
 			</article>
