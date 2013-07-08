@@ -192,11 +192,17 @@ def move_story(request):
 
     # handle move story
     old_backlog = story.backlog
-    if story.backlog.project_id != backlog.project_id:
+    if backlog.project_id and story.backlog.project_id != backlog.project_id:
+        return Response({
+            'errors': [u"Unable to move a story from a given project to a "
+                       u"backlog that is not part of this project or "
+                       u"organization"]
+        }, status=400)
+    if story.backlog.project_id:
         text = u"moved story from backlog '{0}' to backlog '{1}'".format(
             old_backlog.full_name,
             backlog.full_name,
-        ),
+        )
     else:
         text = u"moved story from backlog '{0}' to backlog '{1}'".format(
             old_backlog.name,

@@ -272,10 +272,28 @@ org_backlog_edit = login_required(OrgBacklogEdit.as_view())
 class OrgBacklogs(OrgMixin, generic.TemplateView):
     template_name = "backlog/org_sprint_planning.html"
 
+    def pre_dispatch(self):
+        self.project_id = self.request.GET.get("project_id", None)
+
     def get_context_data(self, **kwargs):
         context = super(OrgBacklogs, self).get_context_data(**kwargs)
         context['organization'] = self.organization
-        context['backlog_list'] = self.organization.backlogs.all()
+        if self.project_id:
+            context['backlog_of_interest'] = self.organization.projects.get(
+                pk=self.project_id
+            ).main_backlog
+        else:
+            first = self.organization.projects.filter(
+                backlogs__is_main=True
+            ).all()[:1]
+            if first:
+                context['backlog_of_interest'] = first[0]
+        context['projects_with_main'] = [p for p in
+                                         self.organization.projects.all()
+                                         if p.main_backlog]
+        backlogs = self.organization.backlogs.all()
+        context['backlog_list'] = backlogs
+        context['backlog_width'] = 320 * (len(backlogs)+1)
         return context
 org_backlogs = login_required(OrgBacklogs.as_view())
 

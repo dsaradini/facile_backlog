@@ -18,71 +18,25 @@
 		<label>{% trans "Highlight theme" %}</label>&nbsp;
 		<select class="select" id="theme-select">
 			<option value="">{% trans "No filter" %}</option>
-			{% for theme in project.all_themes %}
+			{% for theme in organization.all_themes %}
 				<option value="{{ theme }}">{{ theme }}</option>
 			{% endfor %}
 		</select>
 		<a href=".">{% trans "Refresh" %}</a>
 		<a class="btn btn-primary btn-small pull-right" href="{% url "org_backlog_create" organization.pk %}">{% trans "Create backlog" %}</a>
 	</form>
+	<div class="lanes" style="width:{{ backlog_width }}px">
+		<div class="backlog-lanes-source pull-left" style="width:320px">
+			{% if backlog_of_interest %}
+				{% include "backlog/_backlog_lane.html" with backlog=backlog_of_interest is_project_backlog=True %}
+			{% endif %}
+		</div>
 
-	<div class="backlog-lanes" style="width:{% widthratio backlog_list.count 1 320 %}px">
-		{% for backlog in backlog_list %}
-			<article class="backlog" id="backlog-{{ backlog.pk }}" backlog-id="{{ backlog.pk }}">
-				<div class="backlog-title">
-					<div class="btn-group">
-						<a class="btn btn-link dropdown-toggle padding-reset" href="#" data-toggle="dropdown">
-							{{ backlog.name }}
-							<span class="caret"></span>
-						</a>
-						<ul class="dropdown-menu">
-							<li class="dropdown-title">{% trans "Backlog" %}</li>
-							<li>{% trans "Print stories" %}</li>
-							<li class="divider"></li>
-							<li><a href="{% url "org_backlog_edit" organization.pk backlog.pk %}">{% trans "Edit" %}</a></li>
-							<li><a href="{% url "org_backlog_delete" organization.pk backlog.pk %}">{% trans "Delete" %}</a></li>
-						</ul>
-					</div>
-					<span class="muted small">({{ backlog.stats.total_stories }})</span>
-					<a class="close pull-right close-lane" href="#">&times;</a>
-				</div>
-				<div class="stories" backlog-id="{{ backlog.pk }}">
-					{% for story in backlog.ordered_stories %}
-						<article theme-id="{{ story.theme }}" class="small-story" id="story-{{ story.pk }}" story-id="{{ story.pk }}">
-							<div class="handle" style="background-color:{{ story.color }}"></div>
-							<div class="handled">
-								<div class="story-title">
-									<div class="btn-group">
-										<a class="btn btn-link dropdown-toggle padding-reset" href="#" data-toggle="dropdown">
-											{{ story.code }}
-											<span class="caret"></span>
-										</a>
-										<ul class="dropdown-menu">
-											<li class="dropdown-title">{% trans "Story" %}</li>
-											<li><a href="{% url "story_detail" story.project_id story.pk %}">{% trans "Details" %}</a></li>
-											<li><a href="{% url "story_edit" story.project_id story.pk %}?_back=organization">{% trans "Edit" %}</a></li>
-											<li><a href="{% url "story_delete" story.project_id story.pk %}?_back=organization">{% trans "Delete" %}</a></li>
-
-										</ul>
-									</div>
-								</div>
-								<div class="points">
-									{% if story.points >= 0%}
-										{{ story.points|floatformat:"0" }}
-									{% else %}
-									&mdash;
-									{% endif %}
-								</div>
-								<div class="text">{% include "backlog/user_story_text.html" %}</div>
-								{% if story.theme %}
-									<div class="theme"><i class="icon-tag"></i> {{ story.theme }}</div>
-								{% endif %}
-							</div>
-						</article>
-					{%  endfor %}
-				</div>
-			</article>
-		{% endfor %}
+		<div class="backlog-lanes" style="width:{% widthratio backlog_list.count 1 320 %}px">
+			{% for backlog in backlog_list %}
+				{% include "backlog/_backlog_lane.html" %}
+			{% endfor %}
+		</div>
 	</div>
 {% addtoblock "js" %}
 <script type="text/javascript" src="{% static "core/js/jquery.js" %}"></script>
@@ -99,6 +53,33 @@
 {% addtoblock "js" %}
 <script type="text/javascript">
 	$(function() {
+		var show_error = function( message , jqXHR) {
+			if (jqXHR.responseText) {
+				try {
+					var obj = JSON.parse(jqXHR.responseText);
+					if (obj.errors) {
+						$ul = $("<ul>")
+						$main = $("<div>").addClass("alert alert-block alert-error");
+						$main.append($('<button type="button" class="close" data-dismiss="alert">&times;</button>'));
+						$main.append($ul)
+						obj.errors.forEach(function(e){
+							$ul.append($("<li>").text(e))
+						});
+						$("#messages").empty().append($main);
+						return;
+					}
+				} catch(ex){
+					console.error(ex)
+				}
+			}
+			$("#messages").empty().append(
+				$("<div>").addClass("alert alert-block alert-error").append(
+					$("<span>").text(message),
+					$('<button type="button" class="close" data-dismiss="alert">&times;</button>')
+				)
+			);
+		}
+
 		// keep a clone of speakers to replace the cell
 		// if an error occurs on server
 
@@ -124,9 +105,7 @@
 						order: order
 					}),
 					error: function( jqXHR, textStatus, errorThrown ){
-						$("#messages").empty().append(
-							$("<div>").addClass("error").text( '{% trans "Server return an error."%}' )
-						);
+						show_error('{% trans "Server return an error."%}', jqXHR)
 						$('.backlog-list').sortable( "cancel" );
 					},
 					success: function() {
@@ -182,9 +161,8 @@
 						dataType: "json",
 						data: JSON.stringify(ajax_data),
 						error: function( jqXHR, textStatus, errorThrown ){
-							$("#messages").empty().append(
-								$("<div>").addClass("error").text( '{% trans "Server return an error."%}' )
-							);
+							console.log(jqXHR, textStatus, errorThrown)
+							show_error('{% trans "Server return an error."%}', jqXHR)
 							$('.stories').sortable( "cancel" );
 						},
 						success: function() {

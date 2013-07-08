@@ -108,7 +108,7 @@ class Command(BaseCommand):
             order=10,
         )
         project.accepted_backlog.save()
-        project.main_backlog = Backlog(
+        main_backlog = Backlog(
             project=project,
             name=_("Main backlog"),
             description=_("This is the main backlog for the project"),
@@ -116,7 +116,7 @@ class Command(BaseCommand):
             is_main=True,
             order=1,
         )
-        project.main_backlog.save()
+        main_backlog.save()
         self.project_map[external_id] = project
         return project
 

@@ -27,7 +27,7 @@
 	</form>
 	<div class="backlog-lanes" style="width:{% widthratio backlog_list.count 1 320 %}px">
 		{% for backlog in backlog_list %}
-			<article class="backlog" id="backlog-{{ backlog.pk }}" backlog-id="{{ backlog.pk }}">
+			<article class="{% if backlog.is_main %}main{% endif %} backlog" id="backlog-{{ backlog.pk }}" backlog-id="{{ backlog.pk }}">
 				<div class="backlog-title">
 					<div class="btn-group">
 						<a class="btn btn-link dropdown-toggle padding-reset" href="#" data-toggle="dropdown">
@@ -43,7 +43,12 @@
 						</ul>
 					</div>
 					<span class="muted small">({{ backlog.stats.total_stories }})</span>
-					<a class="close pull-right close-lane" href="#">&times;</a>
+
+					{% if backlog.is_main %}
+						<span class="muted"> ({% trans "main" %})</span>
+					{% else %}
+						<a class="close pull-right close-lane" href="#">&times;</a>
+					{% endif %}
 				</div>
 				<div class="stories" backlog-id="{{ backlog.pk }}">
 					{% for story in backlog.ordered_stories %}
@@ -101,6 +106,33 @@
 {% addtoblock "js" %}
 <script type="text/javascript">
 	$(function() {
+		var show_error = function( message , jqXHR) {
+			if (jqXHR.responseText) {
+				try {
+					var obj = JSON.parse(jqXHR.responseText);
+					if (obj.errors) {
+						$ul = $("<ul>")
+						$main = $("<div>").addClass("alert alert-block alert-error");
+						$main.append($('<button type="button" class="close" data-dismiss="alert">&times;</button>'));
+						$main.append($ul)
+						obj.errors.forEach(function(e){
+							$ul.append($("<li>").text(e))
+						});
+						$("#messages").empty().append($main);
+						return;
+					}
+				} catch(ex){
+					console.error(ex)
+				}
+			}
+			$("#messages").empty().append(
+				$("<div>").addClass("alert alert-block alert-error").append(
+					$("<span>").text(message),
+					$('<button type="button" class="close" data-dismiss="alert">&times;</button>')
+				)
+			);
+		}
+
 		// keep a clone of speakers to replace the cell
 		// if an error occurs on server
 
@@ -126,9 +158,7 @@
 						order: order
 					}),
 					error: function( jqXHR, textStatus, errorThrown ){
-						$("#messages").empty().append(
-							$("<div>").addClass("error").text( '{% trans "Server return an error."%}' )
-						);
+						show_error( '{% trans "Server return an error."%}', jqXHR)
 						$('.backlog-list').sortable( "cancel" );
 					},
 					success: function() {
@@ -184,9 +214,7 @@
 						dataType: "json",
 						data: JSON.stringify(ajax_data),
 						error: function( jqXHR, textStatus, errorThrown ){
-							$("#messages").empty().append(
-								$("<div>").addClass("error").text( '{% trans "Server return an error."%}' )
-							);
+							show_error( '{% trans "Server return an error."%}', jqXHR)
 							$('.stories').sortable( "cancel" );
 						},
 						success: function() {

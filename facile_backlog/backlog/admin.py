@@ -21,11 +21,11 @@ class ProjectAdmin(admin.ModelAdmin):
 
 
 class BacklogAdmin(admin.ModelAdmin):
-    list_display = ("name", "project", "kind", "is_archive")
+    list_display = ("name", "project", "kind", "is_main", "is_archive")
     fields = ("name", "description", "org", "project", "kind", "last_modified",
-              "order", "is_archive", "auto_status",)
+              "order", "is_main", "is_archive", "auto_status",)
     readonly_fields = ("last_modified",)
-    search_fields = ("project__name",)
+    search_fields = ("project__name", "name")
     raw_id_fields = ("project", "org")
 
     def queryset(self, request):

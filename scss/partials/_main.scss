@@ -133,6 +133,10 @@ $box-border-color: #e3e3e3;
 	background-image:         linear-gradient(top, $header-background-color 0%, $header-background-color-end 100%);
 }
 
+.black {
+	color: $text-color;
+}
+
 .project-list, .backlog-list {
 	clear: both;
 
@@ -144,9 +148,7 @@ $box-border-color: #e3e3e3;
 		clear: both;
 		.title {
 			padding: 0.2em 0;
-			.black {
-				color: $text-color;
-			}
+
 		}
 		.info {
 			color: $gray-text-color;
@@ -471,9 +473,20 @@ textarea[name=i_want_to] {
 		width: auto;
 		margin:0;
 	}
-
 	.backlog-lanes {
+		float: left;
+	}
+	.backlog-lanes-source {
 		clear: both;
+		background-color: #0088cc;
+		border-radius: 10px;
+	}
+	.project-chooser {
+		max-width:220px;
+		display: inline-block;
+		overflow: hidden;
+	}
+	.backlog-lanes, .backlog-lanes-source {
 		position: relative;
 		.backlog-handle {
 			border-bottom: 1px solid rgba(black, 0.1);
@@ -501,6 +514,12 @@ textarea[name=i_want_to] {
 			position: relative;
 		}
 		article.backlog {
+			&.main {
+				background-color: #d9edf7;
+				border:1px solid #0088cc;
+				//color: #0088cc;
+			}
+			box-sizing: border-box;
 			background: #e3e3e3;
 			margin: 9px;
 			position: relative;

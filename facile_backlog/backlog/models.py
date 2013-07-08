@@ -182,10 +182,6 @@ class Organization(AclMixin, WithThemeMixin, models.Model):
             authorizations__is_active=True
         )
 
-    def last_activity(self):
-        when = self.events.values_list("when", flat=True).all()[:1]
-        return when[0] if when else "not found"
-
     @property
     def ordered_projects(self):
         return self.projects.order_by("name")
@@ -221,6 +217,13 @@ class Organization(AclMixin, WithThemeMixin, models.Model):
         AuthorizationAssociation.objects.filter(
             user=user, org=self
         ).delete()
+
+    @property
+    def main_backlog(self):
+        try:
+            return self.backlogs.get(is_main=True)
+        except Backlog.DoesNotExist:
+            return None
 
 
 class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
@@ -311,9 +314,17 @@ class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
     def all_status(self):
         return UserStory.STATUS_CHOICE
 
-    def last_activity(self):
-        when = self.events.values_list("when", flat=True).all()[:1]
-        return when[0] if when else LONG_AGO
+    @property
+    def main_backlog(self):
+        if not hasattr(self, "_main_backlog"):
+            try:
+                if self.backlogs.exists():
+                    self._main_backlog = self.backlogs.get(is_main=True)
+                else:
+                    self._main_backlog = None
+            except Backlog.DoesNotExist:
+                self._main_backlog = None
+        return self._main_backlog
 
 
 class Backlog(StatsMixin, WithThemeMixin, models.Model):
@@ -328,7 +339,7 @@ class Backlog(StatsMixin, WithThemeMixin, models.Model):
     )
 
     project = models.ForeignKey(Project, verbose_name=_("Project"),
-                                related_name='backlogs', null=True)
+                                related_name='backlogs', null=True, blank=True)
     org = models.ForeignKey(Organization, verbose_name=_("Organization"),
                             related_name='backlogs', null=True, blank=True)
     name = models.CharField(_("Name"), max_length=256)

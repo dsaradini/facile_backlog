@@ -1,0 +1,76 @@
+<article class="{% if backlog.is_main %}main{% endif %} backlog" id="backlog-{{ backlog.pk }}" backlog-id="{{ backlog.pk }}">
+	<div class="backlog-title">
+		<div class="btn-group">
+			<a class="btn btn-link dropdown-toggle padding-reset" href="#" data-toggle="dropdown">
+				<span class="project-chooser">
+				{% if backlog.project_id %}
+					[{{ backlog.project.code }}] {{ backlog.project.name }}
+				{% else %}
+					{{ backlog.name }}
+				{% endif %}
+				</span>
+				{% if not is_project_backlog %}
+					<span class="caret"></span>
+				{% else %}
+					<span class="icon-sort black"></span>
+				{% endif %}
+			</a>
+			<ul class="dropdown-menu">
+				{% if is_project_backlog %}
+					{% for proj in projects_with_main %}
+						<li><a class="project-chooser" href="{% url "org_sprint_planning" organization.pk %}?project_id={{ proj.pk }}"><small class="muted">[{{ proj.code }}]</small> {{ proj.name }}</a></li>
+					{% endfor %}
+				{% else %}
+					<li class="dropdown-title">{% trans "Backlog" %}</li>
+					<li>{% trans "Print stories" %}</li>
+					<li class="divider"></li>
+					<li><a href="{% url "org_backlog_edit" organization.pk backlog.pk %}">{% trans "Edit" %}</a></li>
+					<li><a href="{% url "org_backlog_delete" organization.pk backlog.pk %}">{% trans "Delete" %}</a></li>
+				{% endif %}
+			</ul>
+		</div>
+		<span class="muted small">({{ backlog.stats.total_stories }})</span>
+		{% if backlog.is_main %}
+			{% if not is_project_backlog %}
+				<span class="muted"> ({% trans "current" %})</span>
+			{% endif %}
+		{% else %}
+			<a class="close pull-right close-lane" href="#">&times;</a>
+		{% endif %}
+	</div>
+	<div class="stories" backlog-id="{{ backlog.pk }}">
+		{% for story in backlog.ordered_stories %}
+			<article theme-id="{{ story.theme }}" class="small-story" id="story-{{ story.pk }}" story-id="{{ story.pk }}">
+				<div class="handle" style="background-color:{{ story.color }}"></div>
+				<div class="handled">
+					<div class="story-title">
+						<div class="btn-group">
+							<a class="btn btn-link dropdown-toggle padding-reset" href="#" data-toggle="dropdown">
+								{{ story.code }}
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li class="dropdown-title">{% trans "Story" %}</li>
+								<li><a href="{% url "story_detail" story.project_id story.pk %}">{% trans "Details" %}</a></li>
+								<li><a href="{% url "story_edit" story.project_id story.pk %}?_back=organization">{% trans "Edit" %}</a></li>
+								<li><a href="{% url "story_delete" story.project_id story.pk %}?_back=organization">{% trans "Delete" %}</a></li>
+
+							</ul>
+						</div>
+					</div>
+					<div class="points">
+						{% if story.points >= 0%}
+							{{ story.points|floatformat:"0" }}
+						{% else %}
+						&mdash;
+						{% endif %}
+					</div>
+					<div class="text">{% include "backlog/user_story_text.html" %}</div>
+					{% if story.theme %}
+						<div class="theme"><i class="icon-tag"></i> {{ story.theme }}</div>
+					{% endif %}
+				</div>
+			</article>
+		{%  endfor %}
+	</div>
+</article>
