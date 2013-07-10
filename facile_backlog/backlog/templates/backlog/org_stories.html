@@ -15,6 +15,7 @@
 
 	<h2 class="inline-title">{% trans "Stories" %}</h2>
 	<h2 class="inline-title muted"> ({{ page_obj.paginator.count }})</h2>
+	<a class="btn btn-link" href="{% url "print_stories" %}?org_id={{ organization.pk }}">{% trans "Generate PDF" %}</a>
 
 	<div class="description">
 		<p>{% blocktrans %}Here is the list of all stories in this organization. Those stories are not sorted, to have a sorted "view" of project stories, use backlogs.{% endblocktrans %}</p>
@@ -23,15 +24,15 @@
 	{% url "org_stories" organization.pk as base_url %}
 	<div class="">
 		<form class="form-inline" action="{% url "org_stories" organization.pk %}" method="get">
-			<input type="text" placeholder="find story..." name="q" value="{{ query.q }}">
+			<input class="input-medium" type="text" placeholder="find story..." name="q" value="{{ query.q }}">
 			<label for="status-select">{% trans "Status" %}</label>
-			<select name="st" id="status-select">
+			<select class="input-medium" name="st" id="status-select">
 				<option value="">{% trans "Any" %}</option>
 				{% for status, text in organization.all_status %}
 					<option value="{{ status }}" {% if query.st == status %}selected{% endif %}>{{ text }}</option>
 				{% endfor %}
 			</select>
-			<input autocomplete="off" type="text" placeholder="find theme..." name="t" value="{{ query.t }}">
+			<input class="input-medium" autocomplete="off" type="text" placeholder="find theme..." name="t" value="{{ query.t }}">
 			<input name="s" type="hidden" value="{% if sort_sign == '-' %}-{% endif %}{{ sort }}">
 			<label class="checkbox">
 				<input type="checkbox" name="sa" value="True" {% if query.sa %}checked{% endif %}> {% trans "Show archived" %}

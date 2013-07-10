@@ -21,7 +21,7 @@
 						<li><a class="project-chooser-list" href="{% url "org_sprint_planning" organization.pk %}?project_id={{ proj.pk }}">{{ proj.name }} <small class="muted">[{{ proj.code }}]</small> </a></li>
 					{% endfor %}
 				{% else %}
-					<li>{% trans "Print stories" %}</li>
+					<li><a href="{% url "print_stories" %}?backlog_id={{ backlog.pk }}">{% trans "Print stories" %}</a></li>
 					<li class="divider"></li>
 					<li><a href="{% url "org_backlog_edit" organization.pk backlog.pk %}">{% trans "Edit" %}</a></li>
 					<li><a href="{% url "org_backlog_delete" organization.pk backlog.pk %}">{% trans "Delete" %}</a></li>

@@ -18,10 +18,10 @@ class BacklogTest(WebTest):
         story = factories.UserStory.objects.all()[0]
         story.points = -1
         story.save()
-        url = reverse("print_stories", args=(backlog.project_id,))
-        url_plus = "{0}?backlog={1}".format(url, backlog.pk)
+        url = reverse("print_stories")
+        url_plus = "{0}?backlog_id={1}".format(url, backlog.pk)
         self.app.get(url_plus, status=302)
-        response = self.app.get(url, user=user)
+        response = self.app.get(url_plus, user=user)
         form = response.forms['print_pdf_form']
         for k, f in form.fields.items():
             if k and "story-" in k:
@@ -40,7 +40,7 @@ class BacklogTest(WebTest):
         self.assertEqual([0, 0, 841, 595],
                          [int(x) for x in pdf.getPage(0)["/MediaBox"]])
 
-        response = self.app.get(url, user=user)
+        response = self.app.get(url_plus, user=user)
         form = response.forms['print_pdf_form']
         for k, f in form.fields.items():
             if k and "story-" in k:
@@ -55,3 +55,42 @@ class BacklogTest(WebTest):
         self.assertEqual(pdf.getNumPages(), 6)
         self.assertEqual("backlogman.com", info['/Author'])
         self.assertEqual([0, 0, 792, 612], pdf.getPage(0)["/MediaBox"])
+
+    def test_project_list(self):
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        backlog = factories.create_project_sample_backlog(user)
+        for i in range(0, 10):
+            factories.create_sample_story(user, backlog=backlog)
+        # special printing of -1 points
+        story = factories.UserStory.objects.all()[0]
+        story.points = -1
+        story.save()
+        url = reverse("print_stories")
+        url_plus = "{0}?project_id={1}".format(url, backlog.project_id)
+        self.app.get(url_plus, status=302)
+        response = self.app.get(url_plus, user=user)
+        self.assertEqual(response.pyquery("td.story-code").length, 10)
+
+    def test_org_list(self):
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        org = factories.create_sample_organization(user)
+        project = factories.create_sample_project(user, project_kwargs={
+            'org': org
+        })
+        backlog = factories.BacklogFactory.create(
+            project=project
+        )
+        for i in range(0, 10):
+            factories.UserStoryFactory.create(
+                backlog=backlog, project=project)
+        # special printing of -1 points
+        story = factories.UserStory.objects.all()[0]
+        story.points = -1
+        story.save()
+        url = reverse("print_stories")
+        url_plus = "{0}?org_id={1}".format(url, org.pk)
+        self.app.get(url_plus, status=302)
+        response = self.app.get(url_plus, user=user)
+        self.assertEqual(response.pyquery("td.story-code").length, 10)

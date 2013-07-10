@@ -98,7 +98,7 @@ def draw_story_front(c, story, positions, position=0):
 
     # Point
     if story.points >= 0:
-        txt = "{0}".format(story.points)
+        txt = "{0:.0f}".format(story.points)
         circle_color = toColor("#BBBBBB")
         txt_color = "white"
     else:

@@ -15,7 +15,7 @@
 
 	<h2 class="inline-title">{% trans "Stories" %}</h2>
 	<h2 class="inline-title muted"> ({{ page_obj.paginator.count }})</h2>
-	<a class="btn btn-link" href="{% url "print_stories" project.pk %}?backlog_id={{ backlog.pk }}">{% trans "Generate PDF" %}</a>
+	<a class="btn btn-link" href="{% url "print_stories" %}?project_id={{ project.pk }}">{% trans "Generate PDF" %}</a>
 
 	<div class="description">
 		<p>{% blocktrans %}Here is the list of all stories in this project. Those stories are not sorted, to have a sorted "view" of project sotries, use backlogs.{% endblocktrans %}</p>

@@ -35,7 +35,7 @@
 							<span class="caret"></span>
 						</a>
 						<ul class="dropdown-menu">
-							<li><a href="{% url "print_stories" project.pk %}?backlog_id={{ backlog.pk }}">{% trans "Print stories" %}</a></li>
+							<li><a href="{% url "print_stories" %}?backlog_id={{ backlog.pk }}">{% trans "Print stories" %}</a></li>
 							<li class="divider"></li>
 							<li><a href="{% url "project_backlog_edit" project.pk backlog.pk %}?_back=project">{% trans "Edit" %}</a></li>
 							<li><a href="{% url "project_backlog_delete" project.pk backlog.pk %}?_back=project">{% trans "Delete" %}</a></li>

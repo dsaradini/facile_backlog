@@ -3,13 +3,15 @@
 {% block title %}{% trans "Invite user" %}{% endblock %}
 
 {% block content %}
-	<h1>{% trans "Invite user" %}</h1>
+<div class="row-fluid">
+	<div class="span6 offset3 base-form">
+	<h1>{% trans "Send invitation" %}</h1>
 	{% if project %}
-		<h2>{{ project.name }}</h2>
+		<h3>{% trans "Invite to project," %} "<span class="text-info">{{ project.name }}</span>"</h3>
 	{% elif organization %}
-		<h2>{{ organization.name }}</h2>
+		<h3>{% trans "Invite to organization," %} "<span class="text-info">{{ organization.name }}</span>"</h3>
 	{% endif %}
-	<p>{% trans "Enter user email yout want to invite." %}</p>
+	<p>{% trans "Enter user email yout want to invite, and click the checkbox if you want to inivite the user as an administrator." %}</p>
 	{% if project %}
 		{% url "project_invite_user" project.pk as action_url %}
 		{% url "project_users" project.pk as cancel_url %}
@@ -24,4 +26,6 @@
 			<a class="btn btn-link" href="{{ cancel_url }}">{% trans "Cancel" %}</a>
 		</div>
 	</form>
+	</div>
+</div>
 {% endblock %}

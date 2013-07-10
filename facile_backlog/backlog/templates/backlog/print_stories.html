@@ -5,7 +5,7 @@
 {% block content %}
 	<h1>{% trans "Generate PDF for printing" %}</h1>
 	<p class="description">{% trans "Select the stories you want to see on your PDF" %}</p>
-	<form method="post" id="print_pdf_form" action="{% url "print_stories" project.pk %}">
+	<form method="post" id="print_pdf_form" action="{% url "print_stories" %}">
 		<p>
 			<h4 class="inline-title">{% trans "Paper format" %}</h4>&nbsp;
 			<select name="print-format" class="select-mini">
@@ -63,7 +63,7 @@
 		{% csrf_token %}
 		<div class="submit-delete actions">
 			<button class="btn btn-inverse" type="submit">{% trans "Generate PDF" %}</button>
-			<a class="btn btn-link" href="{% url "project_detail" project.pk %}">{% trans "Back to backlog" %}</a>
+			<a class="btn btn-link" href="{{ back_url }}">{% trans "Back to backlog" %}</a>
 		</div>
 	</form>
 {% addtoblock "js" %}

@@ -149,9 +149,6 @@ urlpatterns += patterns(
         story_create,
         name='story_create'),
 
-    url(r'^projects/(?P<project_id>[\d]+)/print_stories/$',
-        print_stories,
-        name='print_stories'),
 )
 
 # utilities
@@ -173,4 +170,8 @@ urlpatterns += patterns(
     url(r'^invitation/(?P<object_id>[\d]+)/activate/(?P<token>[\w:-]+)/$',
         invitation_activate,
         name='invitation_activate'),
+
+    url(r'^print_stories/$',
+        print_stories,
+        name='print_stories'),
 )

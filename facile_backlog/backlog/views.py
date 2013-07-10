@@ -1035,22 +1035,54 @@ class StoryDelete(StoryMixin, generic.DeleteView):
 story_delete = login_required(StoryDelete.as_view())
 
 
-class PrintStories(ProjectMixin, generic.TemplateView):
+class PrintStories(generic.TemplateView):
     template_name = "backlog/print_stories.html"
 
-    def pre_dispatch(self):
-        backlog_id = self.request.GET.get('backlog_id', None)
+    def dispatch(self, request, *args, **kwargs):
+        backlog_id = request.GET.get('backlog_id', None)
+        project_id = request.GET.get('project_id', None)
+        org_id = request.GET.get('org_id', None)
         if backlog_id:
-            self.backlog = get_object_or_404(Backlog, pk=backlog_id)
-            self.stories = self.backlog.stories
+            self.object = get_object_or_404(Backlog, pk=backlog_id)
+            self.stories = self.object.stories
+            self.object_type = "backlog"
+        elif project_id:
+            self.object = get_object_or_404(Project, pk=project_id)
+            self.stories = self.object.stories
+            self.object_type = "project"
+        elif org_id:
+            self.object = get_object_or_404(Organization, pk=org_id)
+            self.stories = self.object.stories
+            self.object_type = "org"
+        elif request.method != "POST":
+            raise Http404
         else:
-            self.backlog = None
-            self.stories = self.project.stories
+            self.object = None
+            self.object_type = "none"
+            self.stories = UserStory.objects.none()
+        if self.object and not self.object.can_read(request.user):
+            raise Http404
+        self.stories = self.stories.filter(
+            backlog__is_archive=False
+        ).select_related("project", "backlog", "project__org")
+        return super(PrintStories, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         data = super(PrintStories, self).get_context_data(**kwargs)
         data['stories'] = self.stories.all()
-        data['project'] = self.project
+        if self.object_type == "project":
+            data['back_url'] = reverse("project_stories", args=(
+                self.object.pk,))
+        elif self.object_type == "org":
+            data['back_url'] = reverse("org_stories", args=(
+                self.object.pk,))
+        elif self.object_type == "backlog":
+            if self.object.project_id:
+                data['back_url'] = reverse("project_backlogs", args=(
+                    self.object.project_id,))
+            else:
+                data['back_url'] = reverse("org_sprint_planning", args=(
+                    self.object.org_id,))
         return data
 
     def post(self, request, *args, **kwargs):
@@ -1058,10 +1090,11 @@ class PrintStories(ProjectMixin, generic.TemplateView):
         for k, v in request.POST.items():
             if k.find("story-") == 0:
                 ids.append(k.split("-")[1])
-        stories = self.project.stories.filter(pk__in=ids)
+        # potential security problem here
+        stories = UserStory.objects.filter(pk__in=ids)
         print_format = request.POST.get("print-format")
         print_side = request.POST.get("print-side")
-        name = "{0}-stories".format(self.project.code)
+        name = "Backlogman-user-stories"
         return generate_pdf(stories, name, print_side=print_side,
                             print_format=print_format)
 print_stories = login_required(PrintStories.as_view())
