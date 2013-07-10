@@ -33,8 +33,11 @@
 			</select>
 			<input autocomplete="off" type="text" placeholder="find theme..." name="t" value="{{ query.t }}">
 			<input name="s" type="hidden" value="{% if sort_sign == '-' %}-{% endif %}{{ sort }}">
-			<button type="submit" class="btn btn-small">{% trans "apply filters" %}</button>
-			<a class="btn btn-link" href=".">{% trans "reset" %}</a>
+			<label class="checkbox">
+				<input type="checkbox" name="sa" value="True" {% if query.sa %}checked{% endif %}> {% trans "Show archived" %}
+			</label>
+			<button type="submit" class="btn btn-small btn-inverse">{% trans "apply filters" %}</button>
+			<a class="btn btn-small" href=".">{% trans "reset filters" %}</a>
 		</form>
 	</div>
 

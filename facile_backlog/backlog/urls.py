@@ -6,12 +6,13 @@ from .views import (project_detail, project_create, project_edit,
                     story_create,
                     story_detail, story_delete,
                     project_invite_user, dashboard,
-                    invitation_activate, project_users, auth_delete,
+                    invitation_activate, project_users, project_auth_delete,
                     notification_view, invitation_accept, invitation_decline,
                     project_stories, print_stories, project_backlogs,
                     org_create, org_edit, org_detail, org_delete, org_users,
                     org_backlog_edit, org_backlog_create, org_backlogs,
-                    org_backlog_delete, org_stories, EMPTY_VIEW)
+                    org_backlog_delete, org_stories, project_backlog_archive,
+                    org_backlog_archive, org_invite_user, org_auth_delete)
 
 # root
 urlpatterns = patterns(
@@ -45,8 +46,12 @@ urlpatterns += patterns(
         name='org_sprint_planning'),
 
     url(r'^orgs/(?P<org_id>[\d]+)/invite_user/$',
-        EMPTY_VIEW,
+        org_invite_user,
         name='org_invite_user'),
+
+    url(r'^orgs/(?P<org_id>[\d]+)/revoke/(?P<auth_id>[\d]+)/$',
+        org_auth_delete,
+        name='org_auth_delete'),
 
     url(r'^orgs/(?P<org_id>[\d]+)/backlogs/(?P<backlog_id>[\d]+)/'
         r'edit/$',
@@ -57,6 +62,11 @@ urlpatterns += patterns(
         r'delete/$',
         org_backlog_delete,
         name='org_backlog_delete'),
+
+    url(r'^orgs/(?P<org_id>[\d]+)/backlogs/(?P<backlog_id>[\d]+)/'
+        r'archive/$',
+        org_backlog_archive,
+        name='org_backlog_archive'),
 
     url(r'^orgs/(?P<org_id>[\d]+)/backlogs/new/$',
         org_backlog_create,
@@ -92,21 +102,9 @@ urlpatterns += patterns(
         project_invite_user,
         name='project_invite_user'),
 
-    url(r'^projects/(?P<project_id>[\d]+)/invitation/(?P<token>[\w:-]+)/$',
-        invitation_activate,
-        name='invitation_activate'),
-
     url(r'^projects/(?P<project_id>[\d]+)/revoke/(?P<auth_id>[\d]+)/$',
-        auth_delete,
-        name='auth_delete'),
-
-    url(r'^projects_invitation_accept/(?P<auth_id>[\d]+)/$',
-        invitation_accept,
-        name='invitation_accept'),
-
-    url(r'^projects_invitation_decline/(?P<auth_id>[\d]+)/$',
-        invitation_decline,
-        name='invitation_decline'),
+        project_auth_delete,
+        name='project_auth_delete'),
 
     url(r'^projects/(?P<project_id>[\d]+)/backlogs/(?P<backlog_id>[\d]+)/'
         r'edit/$',
@@ -117,6 +115,11 @@ urlpatterns += patterns(
         r'delete/$',
         project_backlog_delete,
         name='project_backlog_delete'),
+
+    url(r'^projects/(?P<project_id>[\d]+)/backlogs/(?P<backlog_id>[\d]+)/'
+        r'archive/$',
+        project_backlog_archive,
+        name='project_backlog_archive'),
 
     url(r'^projects/(?P<project_id>[\d]+)/backlogs/new/$',
         project_backlog_create,
@@ -159,4 +162,15 @@ urlpatterns += patterns(
         notification_view,
         name='my_notifications'),
 
+    url(r'^invitation_accept/(?P<auth_id>[\d]+)/$',
+        invitation_accept,
+        name='invitation_accept'),
+
+    url(r'^invitation_decline/(?P<auth_id>[\d]+)/$',
+        invitation_decline,
+        name='invitation_decline'),
+
+    url(r'^invitation/(?P<object_id>[\d]+)/activate/(?P<token>[\w:-]+)/$',
+        invitation_activate,
+        name='invitation_activate'),
 )

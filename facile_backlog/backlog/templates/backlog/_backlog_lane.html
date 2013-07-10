@@ -39,7 +39,7 @@
 	</div>
 	<div class="stories" backlog-id="{{ backlog.pk }}">
 		{% for story in backlog.ordered_stories %}
-			<article theme-id="{{ story.theme }}" class="small-story" id="story-{{ story.pk }}" story-id="{{ story.pk }}">
+			<article theme-id="{{ story.theme }}" project-id="{{ story.project_id }}" class="small-story" id="story-{{ story.pk }}" story-id="{{ story.pk }}">
 				<div class="handle" style="background-color:{{ story.color }}"></div>
 				<div class="handled">
 					<div class="story-title">
@@ -64,9 +64,7 @@
 						{% endif %}
 					</div>
 					<div class="text">{% include "backlog/user_story_text.html" %}</div>
-					{% if not is_project_backlog %}
-						<div class="text theme"><i class="icon-book"></i> {{ story.project.name }}</div>
-					{% endif %}
+					<div class="text theme"><i class="icon-book"></i> {{ story.project.name }}</div>
 					{% if story.theme %}
 						<div class="text theme"><i class="icon-tag"></i> {{ story.theme }}</div>
 					{% endif %}

@@ -4,20 +4,31 @@
 {% block content %}
 	<h1>{% trans "Revoke user" %}</h1>
 	{% if object.user.pk == request.user.pk %}
-		<h1>{% blocktrans %}You cannot revoke yourself from the project{% endblocktrans %}</h1>
-		<a class="alt-button" href="{% url "project_detail" project.pk %}">{% trans "Back" %}</a>
+		{% if project %}
+			<h2>{% blocktrans %}You cannot revoke yourself from the project{% endblocktrans %}</h2>
+			<a class="alt-button" href="{% url "project_users" project.pk %}">{% trans "Back" %}</a>
+		{% elif organization %}
+			<h2>{% blocktrans %}You cannot revoke yourself from the organization{% endblocktrans %}</h2>
+			<a class="alt-button" href="{% url "org_users" organization.pk %}">{% trans "Back" %}</a>
+		{% endif %}
 	{% else %}
-
 		<div class="alert alert-danger">
+		{% if project %}
 			{% blocktrans with user=user.full_name project=project.name %}Are you sure you want to revoke '{{ user }}' from the project '{{ project }}'?{% endblocktrans %}
+			{% url "project_auth_delete" project.pk object.pk as action_url %}
+			{% url "project_users" project.pk as cancel_url %}
+		{% elif organization %}
+			{% blocktrans with user=user.full_name org=organization.name %}Are you sure you want to revoke '{{ user }}' from the organization '{{ org }}'?{% endblocktrans %}
+			{% url "org_auth_delete" organization.pk object.pk as action_url %}
+			{% url "project_users" project.pk as cancel_url %}
+		{% endif %}
 		</div>
-
-		<form method="post" id="delete_form" action="{% url "auth_delete" project.pk object.pk %}">
+		<form method="post" id="delete_form" action="{{ action_url }}">
 			{% csrf_token %}
 			{{ form }}
 			<div class="submit-row">
 				<button class="btn btn-danger" type="submit">{% trans "Revoke user" %}</button>
-				<a class="btn btn-link" href="{% url "project_detail" project.pk %}">{% trans "Cancel" %}</a>
+				<a class="btn btn-link" href="{{ cancel_url }}">{% trans "Cancel" %}</a>
 			</div>
 		</form>
 	{% endif %}

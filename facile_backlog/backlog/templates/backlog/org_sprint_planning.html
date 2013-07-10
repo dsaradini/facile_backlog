@@ -22,21 +22,42 @@
 				<option value="{{ theme }}">{{ theme }}</option>
 			{% endfor %}
 		</select>
+		<label>{% trans "Highlight project" %}</label>&nbsp;
+		<select class="select" id="project-select">
+			<option value="">{% trans "No filter" %}</option>
+			{% for proj in organization.projects.all %}
+				<option value="{{ proj.pk }}">{{ proj.name }}</option>
+			{% endfor %}
+		</select>
 		<a href=".">{% trans "Refresh" %}</a>
 		<a class="btn btn-primary btn-small pull-right" href="{% url "org_backlog_create" organization.pk %}">{% trans "Create backlog" %}</a>
 	</form>
 	<div class="lanes" style="width:{{ backlog_width }}px">
-		<div class="backlog-lanes-source pull-left" style="width:320px">
-			{% if backlog_of_interest %}
+		{% if backlog_of_interest %}
+			<div class="backlog-lanes-source pull-left" style="width:320px">
 				{% include "backlog/_backlog_lane.html" with backlog=backlog_of_interest is_project_backlog=True %}
-			{% endif %}
-		</div>
+			</div>
+		{% else %}
+			<div class="backlog-lanes" style="width:320px">
+				<div class="alert alert-info alert-block">
+					{% trans "There is no project in your organization with a main backlog set" %}
+				</div>
+			</div>
+		{% endif %}
 
-		<div class="backlog-lanes" style="width:{% widthratio backlog_list.count 1 320 %}px">
-			{% for backlog in backlog_list %}
-				{% include "backlog/_backlog_lane.html" %}
-			{% endfor %}
-		</div>
+		{% if backlog_list %}
+			<div class="backlog-lanes" style="width:{% widthratio backlog_list.count 1 320 %}px">
+				{% for backlog in backlog_list %}
+					{% include "backlog/_backlog_lane.html" %}
+				{% endfor %}
+			</div>
+		{% else %}
+			<div class="backlog-lanes" style="width:320px">
+				<div class="alert-info alert">
+					{% trans "There is no active backlog in your organization" %}
+				</div>
+			</div>
+		{% endif %}
 	</div>
 {% addtoblock "js" %}
 <script type="text/javascript" src="{% static "core/js/jquery.js" %}"></script>
@@ -180,12 +201,23 @@
 
 		$(".filter").show(); // hidden by default, if scripting is disabled, they should not show
 		$("#theme-select").change(function() {
+			$("#project-select").val("");
 			var theme_id = $(this).val();
 			$(".filter-highlighted").removeClass("filter-highlighted");
 			$(".filter-opacified").removeClass("filter-opacified");
 			if (theme_id) {
 				$("article[theme-id]").addClass("filter-opacified");
 				$("article[theme-id='"+theme_id+"']").addClass("filter-highlighted").removeClass("filter-opacified")
+			}
+		});
+		$("#project-select").change(function() {
+			$("#theme-select").val("");
+			var project_id = $(this).val();
+			$(".filter-highlighted").removeClass("filter-highlighted");
+			$(".filter-opacified").removeClass("filter-opacified");
+			if (project_id) {
+				$("article[project-id]").addClass("filter-opacified");
+				$("article[project-id='"+project_id+"']").addClass("filter-highlighted").removeClass("filter-opacified")
 			}
 		});
 		$(".close-lane").click(function() {

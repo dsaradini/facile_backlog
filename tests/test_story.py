@@ -315,3 +315,91 @@ class AjaxTest(WebTest):
             event.text.find(u"moved story from backlog"), 0
         )
         self.assertEqual(event.user, user)
+
+    def test_project_to_org_story_move(self):
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        org1 = factories.OrganizationFactory.create(
+            owner=user
+        )
+        proj1_org1 = factories.ProjectFactory.create(
+            name="Project 1",
+            org=org1,
+        )
+        backlog_p1 = factories.BacklogFactory.create(
+            project=proj1_org1,
+        )
+        backlog_o1 = factories.BacklogFactory.create(
+            org=org1
+        )
+        story = factories.UserStoryFactory.create(
+            backlog=backlog_p1
+        )
+
+        data = json.dumps({
+            'moved_story': story.pk,
+            'target_backlog': backlog_o1.pk
+        })
+        url = reverse('api_move_story')
+        # proj1_org1 is not authorized for user, should return 404
+        self.app.post(url, data, content_type="application/json", user=user,
+                      status=404)
+
+        proj1_org1.add_user(user)
+        self.app.post(url, data, content_type="application/json", user=user,
+                      status=403)
+
+        proj1_org1.add_user(user, is_admin=True)
+        self.app.post(url, data, content_type="application/json", user=user)
+        backlog_ok = Backlog.objects.get(pk=backlog_o1.pk)
+        self.assertIn(story, set(backlog_ok.stories.all()))
+
+    def test_org_to_project_story_move(self):
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        org1 = factories.OrganizationFactory.create(
+            owner=user
+        )
+        proj1_org1 = factories.ProjectFactory.create(
+            name="Project 1",
+            org=org1,
+            owner=user
+        )
+        project_alone = factories.ProjectFactory.create(
+            name="Project alone",
+            owner=user
+        )
+        backlog_alone = factories.BacklogFactory.create(
+            project=project_alone,
+        )
+        backlog_p1 = factories.BacklogFactory.create(
+            project=proj1_org1,
+        )
+        backlog_o1 = factories.BacklogFactory.create(
+            org=org1
+        )
+        story = factories.UserStoryFactory.create(
+            backlog=backlog_o1,
+            project=proj1_org1
+        )
+        data = json.dumps({
+            'moved_story': story.pk,
+            'target_backlog': backlog_alone.pk
+        })
+        url = reverse('api_move_story')
+        # not authorized, project is not part of the org
+        response = self.app.post(url, data, content_type="application/json",
+                                 user=user, status=400)
+        errors = json.loads(response.content)
+        self.assertEqual(errors['errors'][0],
+                         'Unable to move a story from a given project to a '
+                         'backlog that is not part of this project or '
+                         'organization')
+
+        data = json.dumps({
+            'moved_story': story.pk,
+            'target_backlog': backlog_p1.pk
+        })
+        self.app.post(url, data, content_type="application/json", user=user)
+        backlog_ok = Backlog.objects.get(pk=backlog_p1.pk)
+        self.assertIn(story, set(backlog_ok.stories.all()))

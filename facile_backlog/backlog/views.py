@@ -29,6 +29,10 @@ from ..core.models import User
 from .pdf import generate_pdf
 
 
+AUTH_TYPE_PROJECT = "prj"
+AUTH_TYPE_ORG = "org"
+
+
 def get_projects(user):
     return Project.my_recent_projects(user)
 
@@ -53,7 +57,9 @@ class Dashboard(generic.TemplateView):
             "project", "backlog", "user", "story", "story__project",
             "organization")[:10]
 
-        context['projects'] = get_projects(self.request.user)
+        context['projects'] = get_projects(self.request.user).filter(
+            org=None
+        )
         context['organizations'] = get_organizations(self.request.user)
         return context
 dashboard = login_required(Dashboard.as_view())
@@ -297,9 +303,11 @@ class OrgBacklogs(OrgMixin, generic.TemplateView):
         ).select_related("project").order_by("project__name")
         context['projects_with_main'] = [b.project for b in backlogs.all()]
 
-        backlogs = self.organization.backlogs.select_related("project").all()
+        backlogs = self.organization.backlogs.filter(
+            is_archive=False
+        ).select_related("project").all()
         context['backlog_list'] = backlogs
-        context['backlog_width'] = 320 * (len(backlogs)+1)
+        context['backlog_width'] = 320 * (max(len(backlogs)+1, 2))
         return context
 org_backlogs = login_required(OrgBacklogs.as_view())
 
@@ -331,6 +339,26 @@ class OrgBacklogDelete(OrgBacklogMixin, generic.DeleteView):
 org_backlog_delete = login_required(OrgBacklogDelete.as_view())
 
 
+class OrgBacklogArchive(OrgBacklogMixin, generic.DeleteView):
+    admin_only = True
+    template_name = "backlog/backlog_confirm_archive.html"
+
+    def get_object(self):
+        return self.backlog
+
+    def post(self, request, *args, **kwargs):
+        self.backlog.archive()
+        create_event(
+            self.request.user, organization=self.organization,
+            text=u"archived backlog {0}".format(self.backlog.name),
+        )
+        messages.success(request,
+                         _("Backlog successfully archived."))
+        return redirect(reverse('org_detail',
+                                args=(self.organization.pk,)))
+org_backlog_archive = login_required(OrgBacklogArchive.as_view())
+
+
 class OrgStories(OrgMixin, generic.ListView):
     template_name = "backlog/org_stories.html"
     paginate_by = 30
@@ -340,13 +368,16 @@ class OrgStories(OrgMixin, generic.ListView):
         self.query = {
             'q': request.GET.get('q', ""),
             't': request.GET.get('t', ""),
-            'st': request.GET.get('st', "")
+            'st': request.GET.get('st', ""),
+            'sa': request.GET.get('sa', ""),
         }
         return super(OrgStories, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         stories_qs = self.organization.stories.select_related(
             "backlog", "project")
+        if not self.query['sa']:
+            stories_qs = stories_qs.filter(backlog__is_archive=False)
         if self.sort:
             stories_qs = stories_qs.extra(order_by=["{0}".format(self.sort)])
         if self.query['t']:
@@ -384,6 +415,119 @@ class OrgStories(OrgMixin, generic.ListView):
             })
         return context
 org_stories = login_required(OrgStories.as_view())
+
+
+class OrgInviteUser(OrgMixin, generic.FormView):
+    admin_only = True
+    salt = 'facile_user_invitation'
+    template_name = "users/invite_user.html"
+    email_template_name = "users/invitation_email.txt"
+    email_subject_template_name = "users/invitation_email_subject.txt"
+    form_class = InviteUserForm
+
+    def get_context_data(self, **kwargs):
+        data = super(OrgInviteUser, self).get_context_data(**kwargs)
+        data['organization'] = self.organization
+        return data
+
+    def send_notification(self, user, is_admin):
+        context = {
+            'site': RequestSite(self.request),
+            'user': user,
+            'activation_key': signing.dumps({
+                't': AUTH_TYPE_ORG,
+                'id': self.organization.pk
+            }, salt=self.salt),
+            'secure': self.request.is_secure(),
+            'organization': self.organization,
+            'object': self.organization,
+            'is_admin': is_admin,
+        }
+        body = loader.render_to_string(self.email_template_name,
+                                       context).strip()
+        subject = loader.render_to_string(self.email_subject_template_name,
+                                          context).strip()
+        send_mail(subject, body, settings.DEFAULT_FROM_EMAIL,
+                  [user.email])
+
+    def form_valid(self, form):
+        super(OrgInviteUser, self).form_valid(form)
+        email = form.cleaned_data['email']
+        admin = form.cleaned_data['admin']
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            user = User.objects.create_user(email)
+
+        try:
+            auth = AuthorizationAssociation.objects.get(
+                org=self.organization,
+                user=user,
+            )
+            # Can upgrade to admin only (no downgrade)
+            if not auth.is_admin and admin:
+                auth.is_admin = True
+                auth.save()
+        except AuthorizationAssociation.DoesNotExist:
+            AuthorizationAssociation.objects.create(
+                org=self.organization,
+                user=user,
+                is_active=False,
+                is_admin=admin,
+            )
+        self.send_notification(user, admin)
+        messages.success(self.request,
+                         _('Invitation has been sent to {0}.'.format(email)))
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse("org_users", args=(self.organization.pk,))
+org_invite_user = login_required(OrgInviteUser.as_view())
+
+
+class OrgRevokeAuthorization(OrgMixin, generic.DeleteView):
+    admin_only = True
+    template_name = "users/auth_confirm_delete.html"
+    email_template_name = "users/revoke_email.txt"
+    email_subject_template_name = "users/revoke_email_subject.txt"
+
+    def dispatch(self, request, *args, **kwargs):
+        self.auth = get_object_or_404(AuthorizationAssociation,
+                                      pk=kwargs['auth_id'])
+        return super(OrgRevokeAuthorization, self).dispatch(request, *args,
+                                                            **kwargs)
+
+    def get_object(self, queryset=None):
+        return self.auth
+
+    def get_context_data(self, **kwargs):
+        data = super(OrgRevokeAuthorization, self).get_context_data(**kwargs)
+        data['organization'] = self.organization
+        return data
+
+    def send_notification(self, user):
+        context = {
+            'site': RequestSite(self.request),
+            'user': user,
+            'secure': self.request.is_secure(),
+            'organization': self.organization,
+        }
+        body = loader.render_to_string(self.email_template_name,
+                                       context).strip()
+        subject = loader.render_to_string(self.email_subject_template_name,
+                                          context).strip()
+        send_mail(subject, body, settings.DEFAULT_FROM_EMAIL,
+                  [user.email])
+
+    def delete(self, request, *args, **kwargs):
+        user = self.auth.user
+        if user.is_active:
+            self.send_notification(user)
+        self.auth.delete()
+        messages.success(self.request,
+                         _('User {0} has been revoked.'.format(user.email)))
+        return redirect(reverse('org_users', args=(self.organization.pk,)))
+org_auth_delete = login_required(OrgRevokeAuthorization.as_view())
 
 
 #############
@@ -533,12 +677,15 @@ class ProjectStories(ProjectMixin, generic.ListView):
         self.query = {
             'q': request.GET.get('q', ""),
             't': request.GET.get('t', ""),
-            'st': request.GET.get('st', "")
+            'st': request.GET.get('st', ""),
+            'sa': request.GET.get('sa', "")
         }
         return super(ProjectStories, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         stories_qs = self.project.stories.select_related("backlog", "project")
+        if not self.query['sa']:
+            stories_qs = stories_qs.filter(backlog__is_archive=False)
         if self.sort:
             stories_qs = stories_qs.extra(order_by=["{0}".format(self.sort)])
         if self.query['t']:
@@ -584,9 +731,11 @@ class ProjectBacklogs(ProjectMixin, generic.TemplateView):
     def get_context_data(self, **kwargs):
         context = super(ProjectBacklogs, self).get_context_data(**kwargs)
         context['project'] = self.project
-        context['backlog_list'] = self.project.backlogs.all()
+        context['backlog_list'] = [b for b in self.project.backlogs.all()
+                                   if not b.is_archive]
         return context
 project_backlogs = login_required(ProjectBacklogs.as_view())
+
 
 # Backlogs
 
@@ -711,6 +860,25 @@ class ProjectBacklogDelete(ProjectBacklogMixin, generic.DeleteView):
                          _("Backlog successfully deleted."))
         return redirect(reverse('project_backlogs', args=(self.project.pk,)))
 project_backlog_delete = login_required(ProjectBacklogDelete.as_view())
+
+
+class ProjectBacklogArchive(ProjectBacklogMixin, generic.DeleteView):
+    admin_only = True
+    template_name = "backlog/backlog_confirm_archive.html"
+
+    def get_object(self):
+        return self.backlog
+
+    def post(self, request, *args, **kwargs):
+        self.backlog.archive()
+        create_event(
+            self.request.user, project=self.project,
+            text=u"archived backlog {0}".format(self.backlog.name),
+        )
+        messages.success(request,
+                         _("Backlog successfully archived."))
+        return redirect(reverse('project_backlogs', args=(self.project.pk,)))
+project_backlog_archive = login_required(ProjectBacklogArchive.as_view())
 
 
 class StoryMixin(BackMixin):
@@ -916,11 +1084,13 @@ class ProjectInviteUser(ProjectMixin, generic.FormView):
         context = {
             'site': RequestSite(self.request),
             'user': user,
-            'activation_key': signing.dumps(
-                self.project.pk,
-                salt=self.salt),
+            'activation_key': signing.dumps({
+                't': AUTH_TYPE_PROJECT,
+                'id': self.project.pk
+            }, salt=self.salt),
             'secure': self.request.is_secure(),
             'project': self.project,
+            'object': self.project,
             'is_admin': is_admin,
         }
         body = loader.render_to_string(self.email_template_name,
@@ -962,7 +1132,6 @@ class ProjectInviteUser(ProjectMixin, generic.FormView):
 
     def get_success_url(self):
         return reverse("project_users", args=(self.project.pk,))
-
 project_invite_user = login_required(ProjectInviteUser.as_view())
 
 
@@ -971,18 +1140,31 @@ class InvitationActivate(generic.TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         token = kwargs['token']
-        project_pk = signing.loads(token, salt=ProjectInviteUser.salt,
-                                   max_age=60*60*24*7)
-        if project_pk != int(kwargs['project_id']):
+        src = signing.loads(token, salt=ProjectInviteUser.salt,
+                            max_age=60*60*24*7)
+        invitation_type = src['t']
+        object_id = src['id']
+        if object_id != int(kwargs['object_id']):
             raise Http404()
-        self.project = get_object_or_404(Project, pk=project_pk)
+        auth_kwargs = {
+            'user': request.user
+        }
+        if invitation_type == AUTH_TYPE_PROJECT:
+            auth_kwargs['project_id'] = object_id
+            self.project = get_object_or_404(Project, pk=object_id)
+            self.organization = None
+        elif invitation_type == AUTH_TYPE_ORG:
+            auth_kwargs['org_id'] = object_id
+            self.organization = get_object_or_404(Organization, pk=object_id)
+            self.project = None
+        else:
+            raise Http404
         try:
-            auth = AuthorizationAssociation.objects.get(
-                project_id=project_pk,
-                user=request.user
-            )
+            auth = AuthorizationAssociation.objects.get(**auth_kwargs)
         except AuthorizationAssociation.DoesNotExist:
-            raise Http404()
+            raise Http404
+        if auth.is_active:
+            raise Http404
         auth.activate(request.user)
         return super(InvitationActivate, self).dispatch(
             request, *args, **kwargs)
@@ -990,12 +1172,12 @@ class InvitationActivate(generic.TemplateView):
     def get_context_data(self, **kwargs):
         data = super(InvitationActivate, self).get_context_data(**kwargs)
         data['project'] = self.project
+        data['organization'] = self.organization
         return data
-
 invitation_activate = login_required(InvitationActivate.as_view())
 
 
-class RevokeAuthorization(ProjectMixin, generic.DeleteView):
+class ProjectRevokeAuthorization(ProjectMixin, generic.DeleteView):
     admin_only = True
     template_name = "users/auth_confirm_delete.html"
     email_template_name = "users/revoke_email.txt"
@@ -1004,14 +1186,15 @@ class RevokeAuthorization(ProjectMixin, generic.DeleteView):
     def dispatch(self, request, *args, **kwargs):
         self.auth = get_object_or_404(AuthorizationAssociation,
                                       pk=kwargs['auth_id'])
-        return super(RevokeAuthorization, self).dispatch(request, *args,
-                                                         **kwargs)
+        return super(ProjectRevokeAuthorization, self).dispatch(request, *args,
+                                                                **kwargs)
 
     def get_object(self, queryset=None):
         return self.auth
 
     def get_context_data(self, **kwargs):
-        data = super(RevokeAuthorization, self).get_context_data(**kwargs)
+        data = super(ProjectRevokeAuthorization,
+                     self).get_context_data(**kwargs)
         data['project'] = self.project
         return data
 
@@ -1037,7 +1220,7 @@ class RevokeAuthorization(ProjectMixin, generic.DeleteView):
         messages.success(self.request,
                          _('User {0} has been revoked.'.format(user.email)))
         return redirect(reverse('project_users', args=(self.project.pk,)))
-auth_delete = login_required(RevokeAuthorization.as_view())
+project_auth_delete = login_required(ProjectRevokeAuthorization.as_view())
 
 
 class NotificationView(generic.TemplateView):
@@ -1062,8 +1245,14 @@ def invitation_accept(request, auth_id):
         raise Http404
     if not auth.is_active:
         auth.activate(request.user)
-    messages.success(request, _("You are now a member of this project"))
-    return redirect(reverse("project_detail", args=(auth.project_id,)))
+
+    if auth.project_id:
+        messages.success(request, _("You are now a member of this project"))
+        return redirect(reverse("project_backlogs", args=(auth.project_id,)))
+    else:
+        messages.success(request, _("You are now a member of this "
+                                    "organization"))
+        return redirect(reverse("org_detail", args=(auth.org_id,)))
 
 
 @require_POST

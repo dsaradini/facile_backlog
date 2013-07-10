@@ -10,7 +10,7 @@ from facile_backlog.blog.models import BlogPost
 
 from facile_backlog.core.models import User
 
-from . import rand_lorem_phrase, rand_email
+from tests import rand_lorem_phrase, rand_email
 
 
 class OrganizationFactory(Factory):
@@ -18,12 +18,13 @@ class OrganizationFactory(Factory):
 
     @classmethod
     def _prepare(cls, create, **kwargs):
+        owner = kwargs.pop("owner", None)
         result = super(OrganizationFactory, cls)._prepare(create, **kwargs)
-        if 'owner' in kwargs:
+        if owner:
             AuthorizationAssociation.objects.create(
                 is_admin=True,
                 org=result,
-                user=kwargs['owner']
+                user=owner
             )
         return result
 
@@ -43,12 +44,13 @@ class ProjectFactory(Factory):
 
     @classmethod
     def _prepare(cls, create, **kwargs):
+        owner = kwargs.pop("owner", None)
         result = super(ProjectFactory, cls)._prepare(create, **kwargs)
-        if 'owner' in kwargs:
+        if owner:
             AuthorizationAssociation.objects.create(
                 is_admin=True,
                 project=result,
-                user=kwargs['owner']
+                user=owner
             )
         return result
 

@@ -112,11 +112,17 @@ class AuthorizationAssociation(models.Model):
             self.is_active = True
             self.date_joined = timezone.now()
             self.save(update_fields=("is_active", "date_joined"))
+            if self.project_id:
+                text = "joined the project as {0}".format(
+                    "administrator" if self.is_admin else "team member")
+            elif self.org_id:
+                text = "joined the organization as {0}".format(
+                    "administrator" if self.is_admin else "team member")
+            else:
+                text = ""
             create_event(
-                user, project=self.project,
-                text="joined the project as {0}".format(
-                    "administrator" if self.is_admin else "team member"
-                )
+                user, project=self.project, organization=self.org,
+                text=text
             )
 
 
@@ -220,10 +226,13 @@ class Organization(AclMixin, WithThemeMixin, models.Model):
 
     @property
     def main_backlog(self):
-        try:
-            return self.backlogs.get(is_main=True)
-        except Backlog.DoesNotExist:
-            return None
+        if not hasattr(self, "_main_backlog"):
+            if self.backlogs.filter(is_main=True).exists():
+                self._main_backlog = [b for b in list(self.backlogs.all())
+                                      if b.is_main][0]
+            else:
+                self._main_backlog = None
+        return self._main_backlog
 
 
 class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
@@ -317,12 +326,10 @@ class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
     @property
     def main_backlog(self):
         if not hasattr(self, "_main_backlog"):
-            try:
-                if self.backlogs.exists():
-                    self._main_backlog = self.backlogs.get(is_main=True)
-                else:
-                    self._main_backlog = None
-            except Backlog.DoesNotExist:
+            if self.backlogs.filter(is_main=True).exists():
+                self._main_backlog = [b for b in list(self.backlogs.all())
+                                      if b.is_main][0]
+            else:
                 self._main_backlog = None
         return self._main_backlog
 
@@ -413,6 +420,14 @@ class Backlog(StatsMixin, WithThemeMixin, models.Model):
                 self.name, self.project.name)
         else:
             return self.name
+
+    def archive(self):
+        self.is_archive = True
+        self.save(update_fields=("is_archive",))
+
+    @property
+    def can_modify(self):
+        return not (self.is_archive or self.is_main)
 
 
 class UserStory(models.Model):

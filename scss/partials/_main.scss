@@ -27,10 +27,12 @@ $box-border-color: #e3e3e3;
 	border: 1px solid rgba(0,0,0,0.3);
 	background-color: mix(red, $header-background-color, 50%);
 	border-radius: 2em;
-	padding: 0 0.5em;
+	padding: 2px 0.5em;
 	box-sizing: border-box;
-	display: inline-block;
 	color: #ddd;
+	&:hover {
+		background-color: mix(red, $header-background-color, 80%);
+	}
 }
 
 .base-form {

@@ -13,7 +13,34 @@ class HomeTest(WebTest):
     def test_navigate(self):
         user = factories.UserFactory.create(
             email='test@epyx.ch', password='pass')
+        user_2 = factories.UserFactory.create()
+        user_3 = factories.UserFactory.create()
         factories.create_sample_story(user)
+        org1 = factories.OrganizationFactory.create(
+            owner=user
+        )
+        org1.add_user(user_3)
+        proj1_org1 = factories.ProjectFactory.create(
+            org=org1,
+            owner=user
+        )
+        project_alone = factories.ProjectFactory.create(
+            owner=user
+        )
+        project_alone.add_user(user_2)
+        factories.BacklogFactory.create(
+            project=project_alone,
+        )
+        factories.BacklogFactory.create(
+            project=proj1_org1,
+        )
+        backlog_o1 = factories.BacklogFactory.create(
+            org=org1
+        )
+        factories.UserStoryFactory.create(
+            backlog=backlog_o1,
+            project=proj1_org1
+        )
         url = reverse('home')
         self.visited = []
         self.follow_href(url, user=user)
@@ -25,6 +52,29 @@ class HomeTest(WebTest):
             is_superuser=True)
 
         factories.create_sample_story(user)
+        org1 = factories.OrganizationFactory.create(
+            owner=user
+        )
+        proj1_org1 = factories.ProjectFactory.create(
+            org=org1,
+            owner=user
+        )
+        project_alone = factories.ProjectFactory.create(
+            owner=user
+        )
+        factories.BacklogFactory.create(
+            project=project_alone,
+        )
+        factories.BacklogFactory.create(
+            project=proj1_org1,
+        )
+        backlog_o1 = factories.BacklogFactory.create(
+            org=org1
+        )
+        factories.UserStoryFactory.create(
+            backlog=backlog_o1,
+            project=proj1_org1
+        )
         url = reverse('admin:index')
         self.visited = []
         self.follow_href(url, user=user)

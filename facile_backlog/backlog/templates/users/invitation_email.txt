@@ -1,9 +1,12 @@
 {% blocktrans with name=user.full_name %}Dear {{ name }},{% endblocktrans %}
 
-{% blocktrans with project=project.name %}You have been invited to join the project '{{ project }}', to accept the invitation, please navigate the URL below:{% endblocktrans %}
+{% if project %}
+	{% blocktrans with project=project.name %}You have been invited to join the project '{{ project }}', to accept the invitation, please navigate the URL below:{% endblocktrans %}
+{% elif organization %}
+	{% blocktrans with org=organization.name %}You have been invited to join the organization '{{ org }}', to accept the invitation, please navigate the URL below:{% endblocktrans %}
+{% endif %}
 
-
-http{% if secure %}s{% endif %}://{{ site.domain }}{% url "invitation_activate" project.pk activation_key %}
+http{% if secure %}s{% endif %}://{{ site.domain }}{% url "invitation_activate" object.pk activation_key %}
 
 
 {% include "email_footer.txt" %}

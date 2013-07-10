@@ -187,12 +187,14 @@ def move_story(request):
 
     story = UserStory.objects.get(pk=story_id)
     if not story.can_admin(request.user):
+        if story.can_read(request.user):
+            return Response("You are not admin of this story", status=403)
         # verify access rights on story project
         raise Http404
 
     # handle move story
     old_backlog = story.backlog
-    if backlog.project_id and story.backlog.project_id != backlog.project_id:
+    if backlog.project_id and story.project_id != backlog.project_id:
         return Response({
             'errors': [u"Unable to move a story from a given project to a "
                        u"backlog that is not part of this project or "

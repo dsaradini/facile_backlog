@@ -1,1 +1,5 @@
-{% blocktrans with domain=site.domain project=project.name %}You have been revoked from project {{ project }} on {{ domain }}{% endblocktrans %}
+{% if project %}
+	{% blocktrans with domain=site.domain project=project.name %}You have been revoked to project {{ project }} on {{ domain }}{% endblocktrans %}
+{% elif organization %}
+	{% blocktrans with domain=site.domain org=organization.name %}You have been revoked to organization {{ org }} on {{ domain }}{% endblocktrans %}
+{% endif %}

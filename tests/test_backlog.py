@@ -41,11 +41,17 @@ class BacklogTest(WebTest):
         self.assertTrue(Backlog.objects.exists())
         event = Event.objects.get(
             project=project,
-            backlog=backlog
+            backlog=backlog,
         )
         self.assertEqual(backlog.project, project)
         self.assertEqual(event.text, "created this backlog")
         self.assertEqual(event.user, user)
+
+        self.assertFalse(project.main_backlog)
+        backlog.is_main = True
+        backlog.save()
+        project = Project.objects.get(pk=project.pk)
+        self.assertEqual(project.main_backlog, backlog)
 
     def test_org_backlog_create(self):
         user = factories.UserFactory.create(
@@ -76,6 +82,12 @@ class BacklogTest(WebTest):
         self.assertEqual(backlog.org, org)
         self.assertEqual(event.text, "created this backlog")
         self.assertEqual(event.user, user)
+
+        self.assertFalse(org.main_backlog)
+        backlog.is_main = True
+        backlog.save()
+        org = Organization.objects.get(pk=org.pk)
+        self.assertEqual(org.main_backlog, backlog)
 
     def test_project_backlog_edit(self):
         user = factories.UserFactory.create(
@@ -273,6 +285,64 @@ class BacklogTest(WebTest):
 
         org.remove_user(user_1)
         self.app.get(url, user=user_1, status=404)
+
+    def test_project_backlog_archive(self):
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        user_2 = factories.UserFactory.create()
+        backlog = factories.create_project_sample_backlog(
+            user, backlog_kwargs={
+                'name': "My backlog"
+            }
+        )
+        url = reverse('project_backlog_archive', args=(
+            backlog.project.pk, backlog.pk))
+
+        # login redirect
+        self.app.get(url, status=302)
+        self.app.get(url, user=user_2, status=404)
+        response = self.app.get(url, user=user)
+        self.assertContains(response, u"Archive backlog")
+        form = response.forms['archive_form']
+        response = form.submit().follow()
+
+        self.assertContains(response, u"Backlog successfully archived.")
+        backlog = Backlog.objects.get(pk=backlog.pk)
+        self.assertTrue(backlog.is_archive)
+        event = Event.objects.get(
+            project=backlog.project,
+        )
+        self.assertEqual(event.text, "archived backlog My backlog")
+        self.assertEqual(event.user, user)
+
+    def test_org_backlog_archive(self):
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        user_2 = factories.UserFactory.create()
+        backlog = factories.create_org_sample_backlog(
+            user, backlog_kwargs={
+                'name': "My backlog"
+            }
+        )
+        url = reverse('org_backlog_archive', args=(
+            backlog.org.pk, backlog.pk))
+
+        # login redirect
+        self.app.get(url, status=302)
+        self.app.get(url, user=user_2, status=404)
+        response = self.app.get(url, user=user)
+        self.assertContains(response, u"Archive backlog")
+        form = response.forms['archive_form']
+        response = form.submit().follow()
+
+        self.assertContains(response, u"Backlog successfully archived.")
+        backlog = Backlog.objects.get(pk=backlog.pk)
+        self.assertTrue(backlog.is_archive)
+        event = Event.objects.get(
+            organization=backlog.org,
+        )
+        self.assertEqual(event.text, "archived backlog My backlog")
+        self.assertEqual(event.user, user)
 
 
 class AjaxTest(WebTest):

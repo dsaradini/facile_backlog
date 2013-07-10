@@ -1,0 +1,32 @@
+{% extends "project_base.html" %}
+{% block title %}{% trans "Archive backlog" %}{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+	<h1>{% trans "Archive backlog" %}</h1>
+	<h2><i class="icon-list-ul muted"></i> {{ backlog.name }}</h2>
+	<div class="alert alert-info">
+		<p>
+			{% trans "Are you sure you want to archive this backlog and all its stories?" %}
+		</p>
+		<p>
+			{% trans "Archived backlogs are not shown in backlog management views" %}
+		</p>
+	</div>
+	{% if project %}
+		{% url "project_backlog_archive" project.pk backlog.pk as action_url%}
+		{% url "project_backlogs" project.pk as cancel_url%}
+	{% elif organization %}
+		{% url "org_backlog_archive" organization.pk backlog.pk as action_url%}
+		{% url "org_sprint_planning" organization.pk as cancel_url%}
+	{% endif %}
+	<form method="post" id="archive_form" action="{{ action_url }}">
+		{% csrf_token %}
+		{{ form }}
+		<div class="actions">
+			<button class="btn btn-primary" type="submit">{% trans "Archive this backlog" %}</button>
+			<a href="{{ cancel_url }}">{% trans "Cancel" %}</a>
+		</div>
+	</form>
+</div>
+{% endblock %}

@@ -4,14 +4,24 @@
 
 {% block content %}
 	<h1>{% trans "Invite user" %}</h1>
-
+	{% if project %}
+		<h2>{{ project.name }}</h2>
+	{% elif organization %}
+		<h2>{{ organization.name }}</h2>
+	{% endif %}
 	<p>{% trans "Enter user email yout want to invite." %}</p>
-
-	<form method="post" id="register_form" action="{% url "project_invite_user" project.pk %}">
+	{% if project %}
+		{% url "project_invite_user" project.pk as action_url %}
+		{% url "project_users" project.pk as cancel_url %}
+	{% elif organization %}
+		{% url "org_invite_user" organization.pk as action_url %}
+		{% url "org_users" organization.pk as cancel_url %}
+	{% endif %}
+	<form method="post" id="register_form" action="{{ action_url }}">
 		{% include "form.html" %}
 		<div class="submit">
 			<input class="btn btn-primary" type="submit" value="{% trans "Invite" %}">
-			<a class="btn btn-link" href="{% url "project_detail" project.pk %}">{% trans "Cancel" %}</a>
+			<a class="btn btn-link" href="{{ cancel_url }}">{% trans "Cancel" %}</a>
 		</div>
 	</form>
 {% endblock %}

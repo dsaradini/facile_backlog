@@ -46,7 +46,7 @@
 					<td class="user-role">{% if auth.is_admin %}{% trans "Administrator" %}{% else %}{% trans "User" %}{% endif %}</td>
 					<td class="user-actions">
 						{% if organization|can_admin:request.user and auth.user_id != request.user.pk%}
-						<a title="{% trans "Delete" %}" href="{% url "auth_delete" organization.pk auth.pk %}"><i class="icon-remove"></i></a>
+						<a title="{% trans "Delete" %}" href="{% url "org_auth_delete" organization.pk auth.pk %}"><i class="icon-remove"></i></a>
 						{% endif %}
 					</td>
 				</tr>
