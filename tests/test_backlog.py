@@ -454,7 +454,7 @@ class AjaxTest(WebTest):
         wrong_user = factories.UserFactory.create(
             email='wrong@test.ch', password='pass')
         org = factories.create_sample_organization(user)
-        for i in range(1, 4):
+        for i in range(1, 6):
             factories.BacklogFactory.create(
                 org=org,
                 order=i,
@@ -463,8 +463,9 @@ class AjaxTest(WebTest):
         order = [c.pk for c in org.backlogs.all()]
         order.reverse()
         url = reverse('api_org_move_backlog', args=(org.pk,))
+        # remove the first backlog, it should be at the end after re-order
         data = json.dumps({
-            'order': order,
+            'order': order[1:],
         })
         # if no write access, returns a 404
         self.app.post(url, data, status=401)
@@ -474,4 +475,5 @@ class AjaxTest(WebTest):
                       user=user)
         org = Organization.objects.get(pk=org.pk)
         result_order = [c.pk for c in org.backlogs.all()]
-        self.assertEqual(order, result_order)
+        # it is at the end
+        self.assertEqual([4, 3, 2, 1, 5], result_order)
