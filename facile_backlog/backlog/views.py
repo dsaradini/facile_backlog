@@ -8,6 +8,7 @@ from django.core import signing
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.db.models import Q
+from django.forms import forms
 from django.http import Http404
 from django.http.response import (HttpResponse, HttpResponseForbidden)
 from django.shortcuts import get_object_or_404, redirect
@@ -879,6 +880,74 @@ class ProjectBacklogArchive(ProjectBacklogMixin, generic.DeleteView):
                          _("Backlog successfully archived."))
         return redirect(reverse('project_backlogs', args=(self.project.pk,)))
 project_backlog_archive = login_required(ProjectBacklogArchive.as_view())
+
+
+#############
+# Backlogs #
+###########
+
+
+class BacklogMixin(object):
+    admin_only = False
+    """
+    Mixin to fetch a a backlog by a view.
+    """
+    def dispatch(self, request, *args, **kwargs):
+        backlog_id = kwargs['backlog_id']
+        self.backlog = get_my_object_or_404(Backlog, request.user, backlog_id)
+        if self.admin_only and not self.backlog.can_admin(request.user):
+            return HttpResponseForbidden()
+        self.request = request
+        render = self.pre_dispatch(request, **kwargs)
+        if render:
+            return render
+        return super(BacklogMixin, self).dispatch(request, *args,
+                                                  **kwargs)
+
+    def pre_dispatch(self, request, **kwargs):
+        pass
+
+    def get_context_data(self, **kwargs):
+        context = super(BacklogMixin, self).get_context_data(**kwargs)
+        context['backlog'] = self.backlog
+        return context
+
+
+class BacklogSetMain(BacklogMixin, generic.FormView):
+    template_name = "backlog/backlog_confirm_main.html"
+    form_class = forms.Form
+
+    def get_object(self, queryset=None):
+        return self.backlog
+
+    def form_valid(self, form):
+        if self.backlog.org_id:
+            backlog_list = self.backlog.org.backlogs
+            follow = redirect(reverse('org_detail',
+                                      args=(self.backlog.org_id,)))
+        elif self.backlog.project_id:
+            backlog_list = self.backlog.project.backlogs
+            follow = redirect(reverse('project_detail',
+                                      args=(self.backlog.project_id,)))
+        else:
+            raise ValueError("Backlog has no project nor organization")
+        backlog_list.update(is_main=False)
+        self.backlog.is_main = True
+        self.backlog.save()
+        create_event(
+            self.request.user, backlog=self.backlog,
+            organization=self.backlog.org_id,
+            project=self.backlog.project_id,
+            text="Set backlog as main",
+        )
+        messages.success(self.request,
+                         _("Backlog successfully set as main."))
+        return follow
+backlog_set_main = login_required(BacklogSetMain.as_view())
+
+############
+# Stories #
+##########
 
 
 class StoryMixin(BackMixin):

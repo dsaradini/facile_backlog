@@ -37,7 +37,7 @@
 						<H4><a href="{% url "org_sprint_planning" organization.pk %}"> <i class="icon-list-ul black"></i> {{ backlog.name }}</a>
 						{% if organization|can_admin:request.user and backlog.can_modify%}
 							<small class="muted">[
-								<a href="#">{% trans "set main" %}</a>
+								<a href="{% url "backlog_set_main" backlog.pk %}">{% trans "set main" %}</a>
 								{% if not main.is_archive %}
 									| <a href="{% url "org_backlog_archive" organization.pk backlog.pk %}">{% trans "archive" %}</a>
 								{% endif %}

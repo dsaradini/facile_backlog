@@ -3,7 +3,7 @@ from django.conf.urls import patterns, url
 from .views import (project_detail, project_create, project_edit,
                     project_delete, project_backlog_create,
                     project_backlog_delete, project_backlog_edit, story_edit,
-                    story_create,
+                    story_create, backlog_set_main,
                     story_detail, story_delete,
                     project_invite_user, dashboard,
                     invitation_activate, project_users, project_auth_delete,
@@ -149,6 +149,14 @@ urlpatterns += patterns(
         story_create,
         name='story_create'),
 
+)
+
+#backlogs
+urlpatterns += patterns(
+    '',
+    url(r'^backlog/(?P<backlog_id>[\d]+)/set_main/$',
+        backlog_set_main,
+        name='backlog_set_main'),
 )
 
 # utilities

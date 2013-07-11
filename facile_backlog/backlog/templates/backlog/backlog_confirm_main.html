@@ -1,0 +1,34 @@
+{% extends "project_base.html" %}
+{% block title %}{% trans "Set main backlog" %}{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+	<h1>{% trans "Set main backlog" %}</h1>
+	<h2>{% blocktrans with name=backlog.name %}Set backlog "<span class="text-info">{{ name }}</span>" as main{% endblocktrans %}</h2>
+	<div class="alert alert-info alert-block">
+		<p>
+			{% trans "Are you sure you want to set this backlog as the main backlog?" %}
+		</p>
+		{% if backlog.project_id and backlog.project.org_id %}
+			{% trans "In an organization, main project backlog is the one used as source of user stories for sprint planning " %}
+		{% elif backlog.org_id %} %}
+			{% trans "Main organization backlog is generally the current sprint backlog" %}
+		{% endif %}
+	</div>
+	{% if backlog.project_id %}
+		{% url "backlog_set_main" backlog.pk as action_url%}
+		{% url "project_backlogs" backlog.project_id as cancel_url%}
+	{% elif backlog.org_id %}
+		{% url "backlog_set_main" backlog.pk as action_url%}
+		{% url "org_sprint_planning" backlog.org_id as cancel_url%}
+	{% endif %}
+	<form method="post" id="set_main_form" action="{{ action_url }}">
+		{% csrf_token %}
+		{{ form }}
+		<div class="actions">
+			<button class="btn btn-primary" type="submit">{% trans "Set as main" %}</button>
+			<a href="{{ cancel_url }}">{% trans "Cancel" %}</a>
+		</div>
+	</form>
+</div>
+{% endblock %}

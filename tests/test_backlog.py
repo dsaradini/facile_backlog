@@ -92,16 +92,21 @@ class BacklogTest(WebTest):
     def test_project_backlog_edit(self):
         user = factories.UserFactory.create(
             email='test@epyx.ch', password='pass')
+        wrong_user = factories.UserFactory.create()
+        team_user = factories.UserFactory.create()
         backlog = factories.create_project_sample_backlog(
             user, backlog_kwargs={
                 'name': "Backlog 1",
                 'description': "Description 1",
             }
         )
+        backlog.project.add_user(team_user, is_admin=False)
         url = reverse('project_backlog_edit', args=(
             backlog.project.pk, backlog.pk))
         # login redirect
         self.app.get(url, status=302)
+        self.app.get(url, user=wrong_user, status=404)
+        self.app.get(url, user=team_user, status=403)
         response = self.app.get(url, user=user)
         self.assertContains(response, u"Edit backlog")
 
@@ -127,16 +132,21 @@ class BacklogTest(WebTest):
     def test_org_backlog_edit(self):
         user = factories.UserFactory.create(
             email='test@epyx.ch', password='pass')
+        wrong_user = factories.UserFactory.create()
+        team_user = factories.UserFactory.create()
         backlog = factories.create_org_sample_backlog(
             user, backlog_kwargs={
                 'name': "Backlog 1",
                 'description': "Description 1",
             }
         )
+        backlog.org.add_user(team_user, is_admin=False)
         url = reverse('org_backlog_edit', args=(
             backlog.org.pk, backlog.pk))
         # login redirect
         self.app.get(url, status=302)
+        self.app.get(url, user=wrong_user, status=404)
+        self.app.get(url, user=team_user, status=403)
         response = self.app.get(url, user=user)
         self.assertContains(response, u"Edit backlog")
 
@@ -343,6 +353,68 @@ class BacklogTest(WebTest):
         )
         self.assertEqual(event.text, "archived backlog My backlog")
         self.assertEqual(event.user, user)
+
+    def test_org_backlog_set_main(self):
+        user = factories.UserFactory.create()
+        wrong_user = factories.UserFactory.create()
+        org = factories.create_sample_organization(user)
+        for i in range(1, 4):
+            factories.BacklogFactory.create(
+                org=org,
+                order=i,
+            )
+        backlog = Backlog.objects.all()[0]
+        backlog_other = Backlog.objects.all()[1]
+        self.assertFalse(org.main_backlog)
+        url = reverse("backlog_set_main", args=(backlog.pk,))
+        # if no write access, returns a 404
+        self.app.get(url, status=302)
+        self.app.get(url, user=wrong_user, status=404)
+        response = self.app.get(url, user=user)
+        self.assertContains(response, u"et main backlog")
+        form = response.forms['set_main_form']
+        response = form.submit().follow()
+        self.assertContains(response, "Backlog successfully set as main.")
+        backlog = Backlog.objects.get(pk=backlog.pk)
+        self.assertTrue(backlog.is_main)
+        org = Organization.objects.get(pk=org.pk)
+        self.assertTrue(org.main_backlog)
+
+        url = reverse("backlog_set_main", args=(backlog_other.pk,))
+        response = self.app.get(url, user=user)
+        form = response.forms['set_main_form']
+        form.submit().follow()
+        org = Organization.objects.get(pk=org.pk)
+        backlog = Backlog.objects.get(pk=backlog.pk)
+        backlog_other = Backlog.objects.get(pk=backlog_other.pk)
+        self.assertFalse(backlog.is_main)
+        self.assertTrue(backlog_other.is_main)
+        self.assertEqual(backlog_other, org.main_backlog)
+
+    def test_project_backlog_set_main(self):
+        user = factories.UserFactory.create()
+        wrong_user = factories.UserFactory.create()
+        project = factories.create_sample_project(user)
+        for i in range(1, 4):
+            factories.BacklogFactory.create(
+                project=project,
+                order=i,
+            )
+        backlog = Backlog.objects.all()[0]
+        self.assertFalse(project.main_backlog)
+        url = reverse("backlog_set_main", args=(backlog.pk,))
+        # if no write access, returns a 404
+        self.app.get(url, status=302)
+        self.app.get(url, user=wrong_user, status=404)
+        response = self.app.get(url, user=user)
+        self.assertContains(response, u"et main backlog")
+        form = response.forms['set_main_form']
+        response = form.submit().follow()
+        self.assertContains(response, "Backlog successfully set as main.")
+        backlog = Backlog.objects.get(pk=backlog.pk)
+        self.assertTrue(backlog.is_main)
+        project = Project.objects.get(pk=project.pk)
+        self.assertEqual(backlog, project.main_backlog)
 
 
 class AjaxTest(WebTest):

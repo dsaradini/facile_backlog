@@ -198,11 +198,6 @@ class Organization(AclMixin, WithThemeMixin, models.Model):
             project__in=self.projects.values_list('pk', flat=True)
         )
 
-    def my_projects(self, user):
-        return user.projects.filter(
-            org=self
-        )
-
     def all_status(self):
         return UserStory.STATUS_CHOICE
 
@@ -309,12 +304,6 @@ class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
         if not self.code:
             self.code = re.sub('[\W]*', '', self.name)[:5].upper()
         return super(Project, self).save(*args, **kwargs)
-
-    def get_stats(self):
-        return {
-            'user_count': self.users.count(),
-            'backlog_count': self.backlogs.count(),
-        }
 
     def all_as_a(self):
         result = self.stories.values_list('as_a', flat=True).distinct()
