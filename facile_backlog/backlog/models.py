@@ -90,13 +90,15 @@ class AuthorizationAssociation(models.Model):
 
     def __unicode__(self):
         if self.project_id:
-            return u"Project - {0}[{1}] - {2}".format(self.project.name,
-                                                      self.project_id,
-                                                      self.user.email)
+            return u"Project - {0}[{1}] - {2}:{3}".format(self.project.name,
+                                                          self.project_id,
+                                                          self.user.email,
+                                                          self.is_active)
         elif self.org_id:
-            return u"Org - {0}[{1}] - {2}".format(self.org.name,
-                                                  self.org_id,
-                                                  self.user.email)
+            return u"Org - {0}[{1}] - {2}:{3}".format(self.org.name,
+                                                      self.org_id,
+                                                      self.user.email,
+                                                      self.is_active)
         else:
             return u"UNKNOWN - {0}".format(self.user.email)
 
@@ -112,6 +114,23 @@ class AuthorizationAssociation(models.Model):
             self.is_active = True
             self.date_joined = timezone.now()
             self.save(update_fields=("is_active", "date_joined"))
+            if self.org_id:
+                # grant authorization to all project too
+                for p in self.org.projects.all():
+                    try:
+                        p_auth = AuthorizationAssociation.objects.get(
+                            user=user,
+                            project=p,
+                        )
+                    except AuthorizationAssociation.DoesNotExist:
+                        p_auth = AuthorizationAssociation(
+                            user=user,
+                            project=p,
+                        )
+                    p_auth.is_admin = self.is_admin
+                    p_auth.is_active = True
+                    p_auth.save()
+
             if self.project_id:
                 text = "joined the project as {0}".format(
                     "administrator" if self.is_admin else "team member")
@@ -124,6 +143,15 @@ class AuthorizationAssociation(models.Model):
                 user, project=self.project, organization=self.org,
                 text=text
             )
+
+    def delete(self, using=None):
+        org_id = self.org_id
+        super(AuthorizationAssociation, self).delete()
+        if org_id:
+            AuthorizationAssociation.objects.filter(
+                user=self.user,
+                project__in=self.org.projects.values_list("pk", flat=True)
+            ).delete()
 
 
 class AclMixin(object):

@@ -1347,7 +1347,6 @@ def invitation_accept(request, auth_id):
         raise Http404
     if not auth.is_active:
         auth.activate(request.user)
-
     if auth.project_id:
         messages.success(request, _("You are now a member of this project"))
         return redirect(reverse("project_backlogs", args=(auth.project_id,)))

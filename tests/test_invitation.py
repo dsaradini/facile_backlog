@@ -2,10 +2,11 @@ from django.core import mail
 from django.core.urlresolvers import reverse
 from django.utils.html import escape
 from django_webtest import WebTest
-from facile_backlog.backlog.models import (AuthorizationAssociation, Event)
+from facile_backlog.backlog.models import (AuthorizationAssociation, Event,
+                                           Project)
 
 from factories import (UserFactory, create_sample_project,
-                       create_sample_organization)
+                       create_sample_organization, ProjectFactory)
 
 from tests import line_starting
 
@@ -63,6 +64,12 @@ class RegistrationTest(WebTest):
         org = create_sample_organization(user_a, org_kwargs={
             'name': u"My first org",
         })
+        project = ProjectFactory.create(
+            name=u"Project 007",
+            owner=user_a,
+            org=org,
+        )
+        self.assertFalse(project.can_read(user_b))
         url = reverse('org_invite_user', args=(org.pk,))
         # require login
         self.app.get(url, status=302)
@@ -86,7 +93,6 @@ class RegistrationTest(WebTest):
         )
         answer_url = line_starting(message.body, u"http://localhost:80/")
         self.app.get(answer_url, user=user_a, status=404)
-
         response = self.app.get(answer_url, user=user_b)
         self.assertContains(
             response,
@@ -101,6 +107,9 @@ class RegistrationTest(WebTest):
         )
         self.assertEqual(event.text, "joined the organization as team member")
         self.assertEqual(event.user, user_b)
+        # ensure we also granted user to the projects
+        project = Project.objects.get(pk=project.pk)
+        self.assertTrue(project.can_read(user_b))
 
     def test_project_revoke_invitation(self):
         user_a = UserFactory.create(email="a@test.ch")
@@ -137,7 +146,14 @@ class RegistrationTest(WebTest):
         org = create_sample_organization(user_a, org_kwargs={
             'name': u"My first org",
         })
+        project = ProjectFactory.create(
+            name=u"my project",
+            org=org
+        )
         org.add_user(user_b)
+        project.add_user(user_b)
+        self.assertTrue(project.can_read(user_b))
+
         url = reverse("dashboard")
         response = self.app.get(url, user=user_b)
         self.assertContains(response, u"My first org")
@@ -159,6 +175,9 @@ class RegistrationTest(WebTest):
         url = reverse("dashboard")
         response = self.app.get(url, user=user_b)
         self.assertNotContains(response, u"My first org")
+        # ensure we revoked the rights for project too
+        project = Project.objects.get(pk=project.pk)
+        self.assertFalse(project.can_read(user_b))
 
     def test_project_accept_invitation(self):
         user_a = UserFactory.create(email="a@test.ch")
