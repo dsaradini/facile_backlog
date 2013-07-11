@@ -226,15 +226,6 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'stream': sys.stdout,
         },
-        'null': {
-            'level': 'DEBUG',
-            'class': 'django.utils.log.NullHandler',
-        },
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
-        },
         'sentry': {
             'level': 'ERROR',
             'class':
@@ -242,6 +233,10 @@ LOGGING = {
         },
     },
     'loggers': {
+        'facile_backlog': {
+            'handlers': ['console', 'sentry'],
+            'level': 'DEBUG',
+        },
         'django.request': {
             'handlers': ['console', 'sentry'],
             'level': 'ERROR',
@@ -260,10 +255,6 @@ LOGGING = {
         'ratelimitbackend': {
             'handlers': ['console', 'sentry'],
             'level': 'WARNING',
-        },
-        'facile_backlog': {
-            'handlers': ['console', 'sentry'],
-            'level': 'DEBUG',
         },
     }
 }

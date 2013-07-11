@@ -49,7 +49,7 @@
 						<a class="close pull-right close-lane" href="#">&times;</a>
 					{% endif %}
 				</div>
-				<div class="stories" backlog-id="{{ backlog.pk }}">
+				<div class="stories" story-backlog-id="{{ backlog.pk }}">
 					{% for story in backlog.ordered_stories %}
 						<article theme-id="{{ story.theme }}" class="small-story" id="story-{{ story.pk }}" story-id="{{ story.pk }}">
 							<div class="handle" style="background-color:{{ story.color }}"></div>
@@ -156,7 +156,7 @@
 				$('.backlog-list').sortable("disable");
 				var backlog_pk = ui.item.attr("backlog-id");
 				var order = [];
-				$('[backlog-id]').each(function() {
+				$('article[backlog-id]').each(function() {
 					order.push(parseInt($(this).attr('backlog-id')));
 				});
 				$.ajax({

@@ -113,7 +113,7 @@
 				$('.backlog-list').sortable("disable");
 				var backlog_pk = ui.item.attr("backlog-id");
 				var order = [];
-				$('[backlog-id]').each(function() {
+				$('article[backlog-id]').each(function() {
 					order.push(parseInt($(this).attr('backlog-id')));
 				});
 				$.ajax({

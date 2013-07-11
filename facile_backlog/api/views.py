@@ -254,10 +254,14 @@ def _move_backlog(request, qs, object_id):
         return Response({
             'errors': errors
         }, content_type="application/json", status=400)
-
     order = [int(x) for x in order]
+    end_index = len(order)
     for backlog in obj.backlogs.all():
-        new_index = order.index(backlog.pk)
+        try:
+            new_index = order.index(backlog.pk)
+        except ValueError:
+            new_index = end_index
+            end_index += 1
         touched = False
         if new_index != backlog.order:
             backlog.order = new_index

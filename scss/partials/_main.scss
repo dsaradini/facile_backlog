@@ -610,6 +610,12 @@ textarea[name=i_want_to] {
 				color: #999;
 				text-align: center;
 				font-size: 0.75rem;
+				div.btn-group, a.btn {
+					line-height: 11px;
+				}
+				ul {
+					text-align: left;
+				}
 			}
 			.text {
 				cursor: pointer;

@@ -457,9 +457,9 @@ class UserStory(models.Model):
     STATUS_CHOICE = (
         (TODO, _("To do")),
         (IN_PROGRESS, _("In progress")),
+        (COMPLETED, _("Completed")),
         (ACCEPTED, _("Accepted")),
         (REJECTED, _("Rejected")),
-        (COMPLETED, _("Completed")),
     )
 
     FIBONACCI_CHOICE = (

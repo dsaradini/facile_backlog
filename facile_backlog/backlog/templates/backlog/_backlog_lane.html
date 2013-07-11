@@ -1,3 +1,4 @@
+{% load sekizai_tags %}
 <article class="{% if backlog.is_main %}main{% endif %} backlog" id="backlog-{{ backlog.pk }}" backlog-id="{{ backlog.pk }}">
 	<div class="backlog-title">
 		<div class="btn-group">
@@ -37,7 +38,7 @@
 			<a class="close pull-right close-lane" href="#">&times;</a>
 		{% endif %}
 	</div>
-	<div class="stories" backlog-id="{{ backlog.pk }}">
+	<div class="stories" story-backlog-id="{{ backlog.pk }}">
 		{% for story in backlog.ordered_stories %}
 			<article theme-id="{{ story.theme }}" project-id="{{ story.project_id }}" class="small-story" id="story-{{ story.pk }}" story-id="{{ story.pk }}">
 				<div class="handle" style="background-color:{{ story.color }}"></div>
@@ -52,6 +53,8 @@
 								<li><a href="{% url "story_detail" story.project_id story.pk %}">{% trans "Details" %}</a></li>
 								<li><a href="{% url "story_edit" story.project_id story.pk %}?_back=organization">{% trans "Edit" %}</a></li>
 								<li><a href="{% url "story_delete" story.project_id story.pk %}?_back=organization">{% trans "Delete" %}</a></li>
+								<li class="divider"></li>
+								<li><a href="#">{% trans "Bring back to project" %}</a></li>
 							</ul>
 						</div>
 					</div>
@@ -63,17 +66,26 @@
 						{% endif %}
 					</div>
 					<div class="status">
-						{% if story.status == 'in_progress' %}
-							<i class="icon-gears black"> </i>
-						{% elif story.status == 'completed' %}
-							<i class="icon-ok text-info"> </i>
-						{% elif story.status == 'accepted' %}
-							<i class="icon-thumbs-up text-success"> </i>
-						{% elif story.status == 'rejected' %}
-							<i class="icon-thumbs-down text-error"> </i>
-						{% else %}
-							&nbsp;
-						{% endif %}
+						<div class="btn-group">
+							<a class="btn btn-link dropdown-toggle padding-reset" href="#" data-toggle="dropdown">
+								{% if story.status == 'in_progress' %}
+									<i class="icon-gears black"> </i>
+								{% elif story.status == 'completed' %}
+									<i class="icon-ok text-info"> </i>
+								{% elif story.status == 'accepted' %}
+									<i class="icon-thumbs-up text-success"> </i>
+								{% elif story.status == 'rejected' %}
+									<i class="icon-thumbs-down text-error"> </i>
+								{% else %}
+									&nbsp;&nbsp;
+								{% endif %}
+							</a>
+							<ul class="dropdown-menu">
+								{% for s in story.project.all_status %}
+									<li><a href="javascript:set_story_status({{ story.pk }},'{{ s.0 }}')">{{ s.1 }}</a></li>
+								{% endfor %}
+							</ul>
+						</div>
 					</div>
 					<div class="text">{% include "backlog/user_story_text.html" %}</div>
 					<div class="text theme"><i class="icon-book"></i> {{ story.project.name }}</div>
@@ -84,4 +96,11 @@
 			</article>
 		{%  endfor %}
 	</div>
+{% addtoblock "js" %}
+<script type="text/javascript">
+var set_story_status = function(story_id, status) {
+	alert("Not yet implemented, use 'edit story'")
+}
+</script>
+{% endaddtoblock %}
 </article>
