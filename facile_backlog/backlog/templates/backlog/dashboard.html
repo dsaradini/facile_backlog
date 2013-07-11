@@ -89,11 +89,7 @@
 			</div>
 		{%  else %}
 			<div class="alert alert-info">
-				{% if not query %}
-					{% trans "You have no active project that is not linked to an organization" %}
-				{% else %}
-					{% trans "No project found" %}
-				{% endif %}
+				{% trans "You have no stand-alone project that is not part of an organization" %}
 			</div>
 		{% endif %}
 		</div>

@@ -328,7 +328,11 @@ Type: application/json
 
 + **'status'** *(string)*
 		Status for the story.
-		Possible values 'todo', 'in_progress', 'completed', 'accepted', 'rejected'
+	+ 'todo'
+	+ 'in_progress'
+	+ 'completed'
+	+ 'accepted'
+	+ 'rejected'
 
 <code type="block">
 {

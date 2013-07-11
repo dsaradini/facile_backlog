@@ -72,7 +72,20 @@
 									{% if story.points >= 0%}
 										{{ story.points|floatformat:"0" }}
 									{% else %}
-									&mdash;
+									&nbsp;
+									{% endif %}
+								</div>
+								<div class="status">
+									{% if story.status == 'in_progress' %}
+										<i class="icon-gears black"> </i>
+									{% elif story.status == 'completed' %}
+										<i class="icon-ok text-info"> </i>
+									{% elif story.status == 'accepted' %}
+										<i class="icon-thumbs-up text-success"> </i>
+									{% elif story.status == 'rejected' %}
+										<i class="icon-thumbs-down text-error"> </i>
+									{% else %}
+										&nbsp;
 									{% endif %}
 								</div>
 								<div class="text">{% include "backlog/user_story_text.html" %}</div>

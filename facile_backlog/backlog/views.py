@@ -134,7 +134,9 @@ class OrgDetail(OrgMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super(OrgDetail, self).get_context_data(**kwargs)
         context['organization'] = self.organization
-        context['events'] = self.organization.events.select_related()[:10]
+        context['events'] = self.organization.events.select_related(
+            "backlog", "backlog__project", "project", "org", "story",
+            "user", "story__project")[:10]
         return context
 org_detail = login_required(OrgDetail.as_view())
 
@@ -563,7 +565,9 @@ class ProjectDetail(ProjectMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super(ProjectDetail, self).get_context_data(**kwargs)
         context['project'] = self.project
-        context['events'] = self.project.events.select_related()[:10]
+        context['events'] = self.project.events.select_related(
+            "backlog", "backlog__project", "project", "org", "story",
+            "user", "story__project")[:10]
         return context
 project_detail = login_required(ProjectDetail.as_view())
 

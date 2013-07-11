@@ -322,7 +322,7 @@ ul.errorlist li {
 				background-color: rgb(0,100,150);
 			}
 			&[status=in_progress] {
-				background-color: rgb(150,150,80);
+				background-color: #444;
 			}
 
 		}
@@ -589,12 +589,24 @@ textarea[name=i_want_to] {
 				text-align: left;
 			}
 			.points {
-				margin: 2px 0;
+				margin: 2px 2px;
 				float: right;
 				width: 20px;
 				font-weight: bold;
 				border-radius: 2em;
-				border: 2px solid #999;
+				border: 2px solid $box-border-color;
+				color: #444;
+				text-align: center;
+				font-size: 0.75rem;
+				background-color: rgba(white,1.0);
+			}
+			.status {
+				margin: 2px 2px;
+				float: right;
+				width: 20px;
+				font-weight: bold;
+				border-radius: 2em;
+				border: 2px solid $box-border-color;
 				color: #999;
 				text-align: center;
 				font-size: 0.75rem;
