@@ -314,4 +314,44 @@ Response
 </code>
 
 
+
+`/api/stories/[story-id]/status/`
+==========================================
+Reorder backlog in an organization
+
+Allow: *POST*, *GET*
+
+Request
+-------
+
+Type: application/json
+
++ **'status'** *(string)*
+		Status for the story.
+		Possible values 'todo', 'in_progress', 'completed', 'accepted', 'rejected'
+
+<code type="block">
+{
+	"status": 'completed,
+}
+</code>
+
+Response
+--------
+
+<code type="block">
+GET
+{
+	"status": 'completed'
+}
+</code>
+
+
+<code type="block">
+POST
+{
+	"ok": true
+}
+</code>
+
 [Back to index](index)

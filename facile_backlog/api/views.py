@@ -176,7 +176,7 @@ def move_story(request):
     if errors:
         return Response({
             'errors': errors
-        }, status=400)
+        }, content_type="application/json", status=400)
 
     order = [int(x) for x in order]
     backlog = Backlog.objects.get(pk=backlog_id)
@@ -188,7 +188,8 @@ def move_story(request):
     story = UserStory.objects.get(pk=story_id)
     if not story.can_admin(request.user):
         if story.can_read(request.user):
-            return Response("You are not admin of this story", status=403)
+            return Response("You are not admin of this story",
+                            content_type="application/json", status=403)
         # verify access rights on story project
         raise Http404
 
@@ -199,7 +200,7 @@ def move_story(request):
             'errors': [u"Unable to move a story from a given project to a "
                        u"backlog that is not part of this project or "
                        u"organization"]
-        }, status=400)
+        }, content_type="application/json", status=400)
     if story.backlog.project_id:
         text = u"moved story from backlog '{0}' to backlog '{1}'".format(
             old_backlog.full_name,
@@ -252,7 +253,7 @@ def _move_backlog(request, qs, object_id):
     if errors:
         return Response({
             'errors': errors
-        }, status=400)
+        }, content_type="application/json", status=400)
 
     order = [int(x) for x in order]
     for backlog in obj.backlogs.all():
@@ -283,3 +284,49 @@ def project_move_backlog(request, project_id):
 @transaction.commit_on_success
 def org_move_backlog(request, org_id):
     return _move_backlog(request, request.user.organizations, org_id)
+
+
+@api_view(["POST", "GET"])
+@parser_classes((JSONParser,))
+@throttle_classes([GeneralUserThrottle])
+@transaction.commit_on_success
+def story_change_status(request, story_id):
+    story = get_object_or_404(UserStory, pk=story_id)
+    if request.method == "GET":
+        if story.can_read(request.user):
+            return Response({
+                'status': story.status
+            }, content_type="application/json", status=200)
+        else:
+            raise Http404
+    # POST
+    if not story.can_admin(request.user):
+        if story.can_read(request.user):
+            return Response("You are not admin of this story", status=403)
+        # verify access rights on story project
+        raise Http404
+    errors = []
+    status = get_or_errors(request.DATA, 'status', errors)
+    if errors:
+        return Response({
+            'errors': errors
+        }, content_type="application/json", status=400)
+    choices = [s[0] for s in UserStory.STATUS_CHOICE]
+    if status not in choices:
+        return Response({
+            'errors': ["Unknown status '{0}', "
+                       "should be in {1}".format(status, choices)]
+        }, content_type="application/json", status=400)
+    story.status = status
+    story.save()
+    story.project.save(update_fields=("last_modified",))
+    create_event(
+        request.user,
+        text=u"changed story status to {0}".format(status),
+        backlog=story.backlog_id,
+        project=story.project_id,
+        story=story,
+    )
+    return Response({
+        'ok': True
+    }, content_type="application/json", status=200)

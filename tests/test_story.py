@@ -403,3 +403,36 @@ class AjaxTest(WebTest):
         self.app.post(url, data, content_type="application/json", user=user)
         backlog_ok = Backlog.objects.get(pk=backlog_p1.pk)
         self.assertIn(story, set(backlog_ok.stories.all()))
+
+    def test_change_status(self):
+        user = factories.UserFactory.create()
+        user_2 = factories.UserFactory.create()
+        user_3 = factories.UserFactory.create()
+        story = factories.create_sample_story(user, story_kwargs={
+            'status': UserStory.IN_PROGRESS
+        })
+        story.project.add_user(user_2, is_admin=False)
+
+        data_ok = json.dumps({
+            'status': UserStory.COMPLETED,
+        })
+        data_wrong = json.dumps({
+            'status': 'FunnyStatus',
+        })
+        url = reverse('api_story_status', args=(story.pk,))
+        self.app.get(url,  user=user_3, status=404)
+        response = self.app.get(url,  user=user_2)
+        jon = json.loads(response.content)
+        status = jon.get('status')
+        self.assertEqual(story.status, status)
+
+        self.app.post(url, data_ok, content_type="application/json",
+                      user=user_3, status=404)
+        self.app.post(url, data_ok, content_type="application/json",
+                      user=user_2, status=403)
+        self.app.post(url, data_wrong, content_type="application/json",
+                      user=user, status=400)
+        self.app.post(url, data_ok, content_type="application/json",
+                      user=user)
+        story = UserStory.objects.get(pk=story.pk)
+        self.assertEqual(story.status, UserStory.COMPLETED)
