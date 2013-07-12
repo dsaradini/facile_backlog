@@ -25,7 +25,7 @@
 		<a href=".">{% trans "Refresh" %}</a>
 		<a class="btn btn-primary btn-small pull-right" href="{% url "project_backlog_create" project.pk %}">{% trans "Create backlog" %}</a>
 	</form>
-	<div class="backlog-lanes" style="width:{% widthratio backlog_list.count 1 320 %}px">
+	<div class="backlog-lanes" style="width:{% widthratio backlog_list|length 1 320 %}px">
 		{% for backlog in backlog_list %}
 			<article class="{% if backlog.is_main %}main{% endif %} backlog" id="backlog-{{ backlog.pk }}" backlog-id="{{ backlog.pk }}">
 				<div class="backlog-title">
@@ -104,6 +104,7 @@
 		{% endfor %}
 	</div>
 {% include "backlog/_script_status_change.html" %}
+{% include "backlog/_script_show_errors.html" %}
 {% addtoblock "js" %}
 <script type="text/javascript" src="{% static "core/js/jquery.js" %}"></script>
 {% endaddtoblock %}
@@ -119,32 +120,6 @@
 {% addtoblock "js" %}
 <script type="text/javascript">
 	$(function() {
-		var show_error = function( message , jqXHR) {
-			if (jqXHR.responseText) {
-				try {
-					var obj = JSON.parse(jqXHR.responseText);
-					if (obj.errors) {
-						$ul = $("<ul>")
-						$main = $("<div>").addClass("alert alert-block alert-error");
-						$main.append($('<button type="button" class="close" data-dismiss="alert">&times;</button>'));
-						$main.append($ul)
-						obj.errors.forEach(function(e){
-							$ul.append($("<li>").text(e))
-						});
-						$("#messages").empty().append($main);
-						return;
-					}
-				} catch(ex){
-					console.error(ex)
-				}
-			}
-			$("#messages").empty().append(
-				$("<div>").addClass("alert alert-block alert-error").append(
-					$("<span>").text(message),
-					$('<button type="button" class="close" data-dismiss="alert">&times;</button>')
-				)
-			);
-		}
 
 		// keep a clone of speakers to replace the cell
 		// if an error occurs on server
@@ -171,7 +146,7 @@
 						order: order
 					}),
 					error: function( jqXHR, textStatus, errorThrown ){
-						show_error( '{% trans "Server return an error."%}', jqXHR)
+						$.show_error( '{% trans "Server return an error."%}', jqXHR)
 						$('.backlog-list').sortable( "cancel" );
 					},
 					success: function() {
@@ -227,7 +202,7 @@
 						dataType: "json",
 						data: JSON.stringify(ajax_data),
 						error: function( jqXHR, textStatus, errorThrown ){
-							show_error( '{% trans "Server return an error."%}', jqXHR)
+							$.show_error( '{% trans "Server return an error."%}', jqXHR)
 							$('.stories').sortable( "cancel" );
 						},
 						success: function() {

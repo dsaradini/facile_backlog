@@ -1,5 +1,7 @@
 {% load static sekizai_tags %}
 
+{% include "backlog/_script_show_errors.html" %}
+
 {% addtoblock "js" %}
 <script type="text/javascript">
 var api_story_status_url = '{% url "api_story_status" 0 %}';
@@ -15,7 +17,7 @@ var set_story_status = function(src, story_id, status) {
 			status: status
 		}),
 		error: function( jqXHR, textStatus, errorThrown ){
-			show_error('{% trans "Server return an error."%}', jqXHR)
+			$.show_error('{% trans "Server return an error."%}', jqXHR)
 			$('.backlog-list').sortable( "cancel" );
 		},
 		success: function() {

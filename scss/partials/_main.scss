@@ -22,6 +22,18 @@ $box-border-color: #e3e3e3;
 	padding: 0 0.25em;
 }
 
+.option-caret {
+	display: inline-block;
+  	width: 10px;
+  	height: 10px;
+  	vertical-align: top;
+	&:before {
+		font-size: 10px;
+  		content: "\f0dc";
+		line-height: 10px;
+		font-family: fontawesome;
+	}
+}
 
 .notification_count {
 	border: 1px solid rgba(0,0,0,0.3);

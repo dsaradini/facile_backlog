@@ -188,8 +188,8 @@ class Organization(AclMixin, WithThemeMixin, models.Model):
     description = models.TextField(_("Description"), blank=True)
     email = models.CharField(
         _("Email"), max_length=128, blank=True, validators=[EmailValidator()],
-        help_text=u"Organization email is used to display gravatar image if"
-                  u" any."
+        help_text=_(u"Organization email is used to display gravatar image if"
+                    u" any.")
     )
     web_site = models.CharField(_("Web site"), max_length=256, blank=True,
                                 validators=[URLValidator])

@@ -13,7 +13,7 @@
 				{% if not is_project_backlog %}
 					<span class="caret"></span>
 				{% else %}
-					<span class="icon-sort black"></span>
+					<span class="option-caret black"></span>
 				{% endif %}
 			</a>
 			<ul class="dropdown-menu">
@@ -53,8 +53,10 @@
 								<li><a href="{% url "story_detail" story.project_id story.pk %}">{% trans "Details" %}</a></li>
 								<li><a href="{% url "story_edit" story.project_id story.pk %}?_back=organization">{% trans "Edit" %}</a></li>
 								<li><a href="{% url "story_delete" story.project_id story.pk %}?_back=organization">{% trans "Delete" %}</a></li>
-								<li class="divider"></li>
-								<li><a href="#">{% trans "Bring back to project" %}</a></li>
+								{% if not is_project_backlog%}
+									<li class="divider"></li>
+									<li><a href="#" onclick="javascript:back_to_main(this,{{ story.pk }})">{% trans "Bring back to project" %}</a></li>
+								{% endif %}
 							</ul>
 						</div>
 					</div>
@@ -89,4 +91,35 @@
 		{%  endfor %}
 	</div>
 {% include "backlog/_script_status_change.html" %}
+{% include "backlog/_script_show_errors.html" %}
+
+{% addtoblock "js" %}
+<script type="text/javascript">
+var api_story_status_url = '{% url "api_story_status" 0 %}';
+
+var back_to_main = function(src, story_id) {
+	$.ajax({
+		url: '{% url "api_move_story" %}',
+		type: "POST",
+		contentType:"application/json; charset=utf-8",
+		dataType: "json",
+		data: JSON.stringify({
+			"target_backlog": "project_main_backlog",
+			"moved_story": story_id,
+			"order": [story_id]
+		}),
+		error: function( jqXHR, textStatus, errorThrown ){
+			$.show_error('{% trans "Server return an error."%}', jqXHR)
+			$('.backlog-list').sortable( "cancel" );
+		},
+		success: function() {
+			$("article[story-id="+story_id+"]").fadeOut()
+		},
+		complete: function(){
+			$('.backlog-list').sortable("enable");
+		}
+	});
+}
+</script>
+{% endaddtoblock %}
 </article>

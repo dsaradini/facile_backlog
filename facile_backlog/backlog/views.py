@@ -134,9 +134,8 @@ class OrgDetail(OrgMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super(OrgDetail, self).get_context_data(**kwargs)
         context['organization'] = self.organization
-        context['events'] = self.organization.events.select_related(
-            "backlog", "backlog__project", "project", "org", "story",
-            "user", "story__project")[:10]
+        context['projects'] = self.organization.projects.order_by(
+            "-last_modified")
         return context
 org_detail = login_required(OrgDetail.as_view())
 

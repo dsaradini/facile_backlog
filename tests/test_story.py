@@ -259,7 +259,7 @@ class AjaxTest(WebTest):
             'moved_story': story.pk,
             'target_backlog': backlog_wrong.pk
         })
-        self.app.post(url, data, content_type="application/json", status=404)
+        self.app.post(url, data, content_type="application/json", status=403)
         event = Event.objects.get(
             backlog=backlog_2
         )
@@ -307,7 +307,7 @@ class AjaxTest(WebTest):
             'moved_story': story.pk,
             'target_backlog': backlog_wrong.pk
         })
-        self.app.post(url, data, content_type="application/json", status=404)
+        self.app.post(url, data, content_type="application/json", status=403)
         event = Event.objects.get(
             backlog=backlog_2
         )
@@ -315,6 +315,44 @@ class AjaxTest(WebTest):
             event.text.find(u"moved story from backlog"), 0
         )
         self.assertEqual(event.user, user)
+
+    def test_story_move_back_to_main(self):
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        org = factories.OrganizationFactory.create(
+            owner=user
+        )
+        backlog_org = factories.BacklogFactory.create(
+            org=org,
+            name="Target backlog",
+        )
+        project = factories.create_sample_project(user, project_kwargs={
+            'org': org
+        })
+        backlog_proj = factories.BacklogFactory.create(
+            project=project,
+            name="Target backlog",
+        )
+        story = factories.UserStoryFactory.create(
+            backlog=backlog_org,
+            project=project,
+        )
+
+        data = json.dumps({
+            'moved_story': story.pk,
+            'target_backlog': "project_main_backlog"
+        })
+        url = reverse('api_move_story')
+         # if no write access, returns a 404
+        response = self.app.post(url, data, content_type="application/json",
+                                 user=user, status=400)
+        self.assertEqual(u"story's project does not have main backlog",
+                         response.json['errors'][0])
+        backlog_proj.is_main = True
+        backlog_proj.save()
+        self.app.post(url, data, content_type="application/json", user=user)
+        backlog_proj = Backlog.objects.get(pk=backlog_proj.pk)
+        self.assertIn(story, set(backlog_proj.stories.all()))
 
     def test_project_to_org_story_move(self):
         user = factories.UserFactory.create(

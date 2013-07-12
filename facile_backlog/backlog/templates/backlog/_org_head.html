@@ -10,10 +10,10 @@
 	{% if organization|can_admin:request.user %}
 		<small class="muted">[
 		<a class="btn-link" href="{% url "org_edit" organization.pk %}">
-			{% trans "Edit" %}
+			{% trans "edit" %}
 		</a>|
 		<a class="btn-link" href="{% url "org_delete" organization.pk %}">
-			{% trans "Delete" %}
+			{% trans "delete" %}
 		</a>
 		]</small>
 	{% endif %}

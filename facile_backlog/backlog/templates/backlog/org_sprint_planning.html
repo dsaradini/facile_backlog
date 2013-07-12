@@ -30,7 +30,7 @@
 			{% endfor %}
 		</select>
 		<a href=".">{% trans "Refresh" %}</a>
-		<a class="btn btn-primary btn-small pull-right" href="{% url "org_backlog_create" organization.pk %}">{% trans "Create backlog" %}</a>
+		<a class="btn btn-primary btn-small" href="{% url "org_backlog_create" organization.pk %}">{% trans "Create backlog" %}</a>
 	</form>
 	<div class="lanes" style="width:{{ backlog_width }}px">
 		{% if backlog_of_interest %}

@@ -179,11 +179,6 @@ def move_story(request):
         }, content_type="application/json", status=400)
 
     order = [int(x) for x in order]
-    backlog = Backlog.objects.get(pk=backlog_id)
-
-    if not backlog.can_admin(request.user):
-        # verify access rights on target backlog
-        raise Http404
 
     story = UserStory.objects.get(pk=story_id)
     if not story.can_admin(request.user):
@@ -192,6 +187,22 @@ def move_story(request):
                             content_type="application/json", status=403)
         # verify access rights on story project
         raise Http404
+
+    if backlog_id == "project_main_backlog":
+        if not story.project.main_backlog:
+            return Response({
+                'errors': [u"story's project does not have main backlog"]
+            }, content_type="application/json", status=400)
+        else:
+            backlog = story.project.main_backlog
+    else:
+        backlog = Backlog.objects.get(pk=backlog_id)
+
+    if not backlog.can_admin(request.user):
+        # verify access rights on target backlog
+        return Response({
+            'errors': [u"your are not admin of the target backlog"]
+        }, content_type="application/json", status=403)
 
     # handle move story
     old_backlog = story.backlog
@@ -221,9 +232,14 @@ def move_story(request):
         story.move_to(backlog)
     # handle order backlog
     touched = False
+    end_index = len(order)
     if order:
         for story in backlog.ordered_stories:
-            new_index = order.index(story.pk)
+            try:
+                new_index = order.index(story.pk)
+            except ValueError:
+                new_index = end_index
+                end_index += 1
             if new_index != story.order:
                 story.order = new_index
                 story.save(update_fields=('order',))

@@ -1,5 +1,5 @@
 {% extends "project_base.html" %}
-{% load staticfiles sekizai_tags markup acl %}
+{% load staticfiles sekizai_tags markup acl humanize %}
 
 {% block title %}{% trans "Project" %} &mdash; {{ project.name }}{% endblock %}
 {% block content %}
@@ -34,7 +34,12 @@
 			{% for backlog in organization.backlogs.all %}
 				<li>
 					<div class="title">
-						<H4><a href="{% url "org_sprint_planning" organization.pk %}"> <i class="icon-list-ul black"></i> {{ backlog.name }}</a>
+						<H4>
+							{% if not backlog.is_archive %}
+								<a href="{% url "org_sprint_planning" organization.pk %}"> <i class="icon-list-ul black"></i> {{ backlog.name }}</a>
+							{% else %}
+								<i class="icon-list-ul muted"></i> {{ backlog.name }}
+							{% endif %}
 						{% if organization|can_admin:request.user and backlog.can_modify%}
 							<small class="muted">[
 								<a href="{% url "backlog_set_main" backlog.pk %}">{% trans "set main" %}</a>
@@ -51,27 +56,29 @@
 						{% endif %}
 						</H4>
 					</div>
-					<div class="stats">
-						<div class="story-stats percent-cell">
-							<div class="name">
-								<i class="icon-list-alt info"></i> <b>{{ backlog.stats.total_stories }}</b>
-								&nbsp;</span><a href="{% url "org_sprint_planning" organization.pk %}" class="info">{% trans "Stories" %} </a>
-								&nbsp;
-								<i class="icon-circle info"></i> <b>{{ backlog.stats.total_points }}</b>
-								&nbsp;</span><a href="{% url "org_sprint_planning" organization.pk %}" class="info">{% trans "Points" %} </a>
+					{% if not backlog.is_archive %}
+						<div class="stats">
+							<div class="story-stats percent-cell">
+								<div class="name">
+									<i class="icon-list-alt info"></i> <b>{{ backlog.stats.total_stories }}</b>
+									&nbsp;</span><a href="{% url "org_sprint_planning" organization.pk %}" class="info">{% trans "Stories" %} </a>
+									&nbsp;
+									<i class="icon-circle info"></i> <b>{{ backlog.stats.total_points }}</b>
+									&nbsp;</span><a href="{% url "org_sprint_planning" organization.pk %}" class="info">{% trans "Points" %} </a>
+								</div>
+								{% if backlog.stats.estimated_stories %}
+									<span class="percent bg-blue" style="width:{{ backlog.stats.percent_estimated }}%">{{ backlog.stats.estimated_stories }} <i class="icon-circle info"></i> {{ backlog.stats.estimated_points }} pts</span>
+								{% else %}
+									<span class="percent" style="width:0"></span>
+								{% endif %}
+								{% if backlog.stats.completed_stories %}
+									<span class="percent bg-green" style="width:{{ backlog.stats.percent_completed }}%">{{ backlog.stats.completed_stories }} <i class="icon-circle info"></i> {{ backlog.stats.completed_points }} pts</span>
+								{% else %}
+									<span class="percent" style="width:0"></span>
+								{% endif %}
 							</div>
-							{% if backlog.stats.estimated_stories %}
-								<span class="percent bg-blue" style="width:{{ backlog.stats.percent_estimated }}%">{{ backlog.stats.estimated_stories }} <i class="icon-circle info"></i> {{ backlog.stats.estimated_points }} pts</span>
-							{% else %}
-								<span class="percent" style="width:0"></span>
-							{% endif %}
-							{% if backlog.stats.completed_stories %}
-								<span class="percent bg-green" style="width:{{ backlog.stats.percent_completed }}%">{{ backlog.stats.completed_stories }} <i class="icon-circle info"></i> {{ backlog.stats.completed_points }} pts</span>
-							{% else %}
-								<span class="percent" style="width:0"></span>
-							{% endif %}
 						</div>
-					</div>
+					{% endif %}
 				</li>
 			{% empty %}
 				{% trans "No backlog" %}
@@ -79,9 +86,34 @@
 		</ul>
 	</div>
 	<div class="span6">
-		<h2>{% trans "Last activities" %}</h2>
+		<h2>{% trans "Projects" %}</h2>
 		<div class="actions"></div>
-		{% include "backlog/_events.html" with events=events %}
+		{% if projects %}
+			<div class="span12">
+				{% for object in projects %}
+				<div>
+					<h4 class="inline-title">
+						<i class="icon-book"></i>
+						<a href="{% url 'project_detail' object.pk %}"> {{ object.name }}</a>
+						{% if object|can_admin:request.user %}
+							<small>[
+								<a class="muted" href="{% url 'project_edit' object.pk %}">{% trans "edit" %}</a>
+								|
+								<a class="muted" href="{% url 'project_delete' object.pk %}">{% trans "delete" %}</a>
+							]</small>
+						{% endif %}
+					</h4>
+				</div>
+				<div class="margin-left">
+					<div class="span12 muted small"><i class="icon-time"></i> {% trans "Last update" %}  {{ object.last_modified|naturaltime }}</div>
+				</div>
+				{% endfor %}
+			</div>
+		{%  else %}
+			<div class="text-warning margin-left">
+				{% trans "You have no stand-alone project that is not part of an organization" %}
+			</div>
+		{% endif %}
 	</div>
 </div>
 {% endblock %}

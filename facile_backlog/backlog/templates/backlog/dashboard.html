@@ -19,7 +19,7 @@
 		{% if organizations %}
 			<div class="span12">
 				{% for org in organizations %}
-				<div>
+				<div style="clear:both;">
 					<div>
 						<h4 class="inline-title">
 							<i class="icon-building"></i>
@@ -83,7 +83,7 @@
 					</h4>
 				</div>
 				<div class="margin-left">
-					<div class="span12 muted small"><i class="icon-time"></i> {% trans "Last update" %}  {{ object.last_modified|naturaltime }}</i></div>
+					<div class="span12 muted small"><i class="icon-time"></i> {% trans "Last update" %}  {{ object.last_modified|naturaltime }}</div>
 				</div>
 				{% endfor %}
 			</div>
