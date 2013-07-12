@@ -68,21 +68,13 @@
 					<div class="status">
 						<div class="btn-group">
 							<a class="btn btn-link dropdown-toggle padding-reset" href="#" data-toggle="dropdown">
-								{% if story.status == 'in_progress' %}
-									<i class="icon-gears black"> </i>
-								{% elif story.status == 'completed' %}
-									<i class="icon-ok text-info"> </i>
-								{% elif story.status == 'accepted' %}
-									<i class="icon-thumbs-up text-success"> </i>
-								{% elif story.status == 'rejected' %}
-									<i class="icon-thumbs-down text-error"> </i>
-								{% else %}
-									&nbsp;&nbsp;
-								{% endif %}
+								<span class="story-status" status={{ story.status }}>
+									<i class="icon icon-circle"></i> <i class="icon-caret-down"></i>
+								</span>
 							</a>
 							<ul class="dropdown-menu">
 								{% for s in story.project.all_status %}
-									<li><a href="javascript:set_story_status({{ story.pk }},'{{ s.0 }}')">{{ s.1 }}</a></li>
+									<li><a onclick="javascript:set_story_status(this, {{ story.pk }}, '{{ s.0 }}')">{{ s.1 }}</a></li>
 								{% endfor %}
 							</ul>
 						</div>
@@ -96,11 +88,5 @@
 			</article>
 		{%  endfor %}
 	</div>
-{% addtoblock "js" %}
-<script type="text/javascript">
-var set_story_status = function(story_id, status) {
-	alert("Not yet implemented, use 'edit story'")
-}
-</script>
-{% endaddtoblock %}
+{% include "backlog/_script_status_change.html" %}
 </article>

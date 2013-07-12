@@ -1,0 +1,31 @@
+{% load static sekizai_tags %}
+
+{% addtoblock "js" %}
+<script type="text/javascript">
+var api_story_status_url = '{% url "api_story_status" 0 %}';
+
+var set_story_status = function(src, story_id, status) {
+	var url = api_story_status_url.replace('0', story_id);
+	$.ajax({
+		url: url,
+		type: "POST",
+		contentType:"application/json; charset=utf-8",
+		dataType: "json",
+		data: JSON.stringify({
+			status: status
+		}),
+		error: function( jqXHR, textStatus, errorThrown ){
+			show_error('{% trans "Server return an error."%}', jqXHR)
+			$('.backlog-list').sortable( "cancel" );
+		},
+		success: function() {
+			$("article[story-id="+story_id+"] .story-status").attr("status", status);
+			$(':focus').blur();
+		},
+		complete: function(){
+			$('.backlog-list').sortable("enable");
+		}
+	});
+}
+</script>
+{% endaddtoblock %}

@@ -150,7 +150,7 @@
 				$('.stories').sortable("disable");
 				var $this = $(this);
 				var story_pk = ui.item.attr("story-id");
-				var current_backlog_pk =  $this.attr("backlog-id");
+				var current_backlog_pk =  $this.attr("story-backlog-id");
 				var from_backlog = ui.sender && ui.sender.attr("backlog-id");
 				var ajax_data;
 				if ( $this.find("[story-id="+story_pk+"]").length ) {
