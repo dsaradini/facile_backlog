@@ -4,14 +4,7 @@
 {% block title %}{% trans "User Story" %} &mdash; {{ story.code }}{% endblock %}
 
 {% block content %}
-	<ul class="breadcrumb">
-		<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a><span class="divider">/</span></li>
-		<li><i class="icon-book"></i> <a href="{% url "project_detail" project.pk %}"> {% trans "Projects" %}</a><span class="divider">/</span></li>
-		{% if backlog %}
-			<li><i class="icon-list-ul"></i> <a href="{% url "project_backlogs" project.pk %}">  {{ backlog.name }}</a><span class="divider">/</span></li>
-		{% endif %}
-		<li class="active"><i class="icon-list-ul"></i> {{ story.code }}<span class="divider"></span></li>
-	</ul>
+	{% include "backlog/_story_head.html" %}
 
 	<div class="story-detail row-fluid">
 		<div style="border-left:10px solid {{ story.color }};" class="description span10">

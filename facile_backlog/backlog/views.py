@@ -410,7 +410,7 @@ class OrgStories(OrgMixin, generic.ListView):
                 context['sort_sign'] = "+"
                 context['sort'] = self.sort
         context['query'] = self.query
-        context['current_query'] = self.query
+        context['current_query'] = urllib.urlencode(self.query)
         if self.sort:
             context['current_sort'] = urllib.urlencode({
                 's': self.sort[1:] if self.sort[0] == '-' else self.sort
