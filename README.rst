@@ -53,6 +53,7 @@ Development extension
 - Install tools
 	- compass ( gem install compass ) and dependencies
 	- less ( gem install less ) and dependencies
+	- bootstrap-sass ( gem install bootstrap-sass ) and dependencies
 
 
 

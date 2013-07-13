@@ -40,12 +40,12 @@ class UserStoryAdmin(admin.ModelAdmin):
 
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ("when", "text", "project", "story", "backlog")
-    search_fields = ("project__name", "when", "text")
+    list_display = ("when", "text", "project", "story", "user")
+    search_fields = ("project__name", "when", "text", "user__email")
 
     def queryset(self, request):
         return super(EventAdmin, self).queryset(
-            request).select_related("project", "story", "backlog")
+            request).select_related("project", "story",  "user")
 
     def get_readonly_fields(self, request, obj=None):
         if obj:

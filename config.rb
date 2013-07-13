@@ -1,4 +1,5 @@
 require 'less'
+require 'bootstrap-sass'
 
 http_path = '/'
 css_dir = 'facile_backlog/core/static/core/css'
