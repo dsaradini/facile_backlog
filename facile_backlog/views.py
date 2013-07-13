@@ -31,6 +31,11 @@ class HomeView(TemplateView):
 home_view = HomeView.as_view()
 
 
+class WebScocketExample(TemplateView):
+    template_name = "websocket_example.html"
+web_socket_example = WebScocketExample.as_view()
+
+
 def page_404(request):
     response = render(request, "404.html")
     response.status_code = 404
