@@ -130,7 +130,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     # cache middleware must come here
     'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -167,6 +169,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django_extensions',
+    'redis_cache',
     'sekizai',
     'facile_backlog',
     'facile_backlog.backlog',
@@ -180,6 +183,24 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
 )
 
+# caching
+
+REDIS_URL = os.environ.get("REDIS_URL", "localhost:6379")
+
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': REDIS_URL,
+        'OPTIONS': {
+            'DB': 1,
+            'PASSWORD': '',
+            'PARSER_CLASS': 'redis.connection.HiredisParser'
+        },
+    },
+}
+
+# Sentry
+
 if 'SENTRY_DSN' in os.environ:
     INSTALLED_APPS += (
         'raven.contrib.django.raven_compat',
@@ -190,6 +211,7 @@ if 'SENTRY_DSN' in os.environ:
 
 
 #Rest framework
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
