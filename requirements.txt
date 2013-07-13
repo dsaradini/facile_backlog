@@ -7,8 +7,10 @@ django-filter==0.6
 django-le-social==0.8
 django-password-reset==0.4
 django-ratelimit-backend==0.6
+django-redis-cache==0.9.7
 django-sekizai==0.7
 djangorestframework==2.3.5
+hiredis==0.1.1
 html5lib==0.95
 Markdown==2.2.1
 palette==0.2
