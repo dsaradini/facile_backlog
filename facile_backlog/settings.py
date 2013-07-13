@@ -128,11 +128,9 @@ else:
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
-    # cache middleware must come here
     'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.cache.UpdateCacheMiddleware',
+    # cache middleware must come here
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -169,7 +167,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django_extensions',
-    'redis_cache',
     'sekizai',
     'facile_backlog',
     'facile_backlog.backlog',
@@ -182,6 +179,8 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
+
+SESSION_ENGINE = 'facile_backlog.session'
 
 # caching
 
