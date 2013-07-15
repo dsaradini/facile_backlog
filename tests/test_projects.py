@@ -66,6 +66,56 @@ class ProjectTest(WebTest):
         self.assertEqual(event.text, "created this project")
         self.assertEqual(event.user, user)
 
+    def test_org_project_create(self):
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        user_2 = factories.UserFactory.create()
+        org_ok = factories.create_sample_organization(user, org_kwargs={
+            'name': "Org ok"
+        })
+        org_wrong = factories.create_sample_organization(user_2, org_kwargs={
+            'name': "Org wrong"
+        })
+
+        url = reverse('project_create')
+        # login redirect
+        self.app.get(url, status=302)
+        self.app.get("{0}?org=999".format(url), user=user, status=404)
+        response = self.app.get(
+            "{0}?org={1}".format(url, org_ok.pk), user=user)
+        self.assertContains(response, u"Add a new project")
+
+        form = response.forms['edit_project_form']
+        for key, value in {
+            'name': 'Project one',
+            'code': 'PRO01',
+            'org': org_wrong
+        }.iteritems():
+            form[key] = value
+        response = form.submit()
+        self.assertContains(response, "Please correct the errors below")
+
+        response = self.app.get(
+            "{0}?org={1}".format(url, org_ok.pk), user=user)
+        form = response.forms['edit_project_form']
+        for key, value in {
+            'name': 'Project one',
+            'code': 'PRO01',
+        }.iteritems():
+            form[key] = value
+        response = form.submit().follow()
+
+        self.assertContains(response, u"Project successfully created.")
+        self.assertContains(response, u"Project one")
+        project = Project.objects.get()
+        self.assertTrue(project.can_read(user))
+        self.assertTrue(project.can_admin(user))
+        event = Event.objects.get(
+            project=project
+        )
+        self.assertEqual(event.text, "created this project")
+        self.assertEqual(event.user, user)
+
     def test_project_edit(self):
         user = factories.UserFactory.create(
             email='test@epyx.ch', password='pass')
