@@ -4,6 +4,15 @@
 
 {% block content_class %}org-backlogs{% endblock %}
 
+{% block navbar %}
+	{{ block.super }}
+	<li>
+		<p class="navbar-text" id="ws-status">
+			<span class="status label"></span>
+		</p>
+	</li>
+{% endblock %}
+
 {% block content %}
 
 	{% include "backlog/_org_head.html" %}
@@ -231,7 +240,28 @@
 		$.ws_sbscribe({
 			url: '{{ ws_url }}Org/{{ organization.pk }}/',
 			on_message: function(message) {
-				console.log("WS", message)
+				if (message.type == "backlogs_moved") {
+					var $parent = $(".backlog-lanes");
+					for (var i in message.order) {
+						var pk = message.order[i];
+						var $article = $("article.backlog[backlog-id="+pk+"]");
+						$parent.append($article);
+					}
+				} else if (message.type == "stories_moved") {
+					console.log(message)
+					var $parent = $("[story-backlog-id="+message.backlog_id+"]");
+					for (var i in message.order) {
+						var pk = message.order[i];
+						var $article = $("article.small-story[story-id="+pk+"]");
+						$parent.append($article);
+					}
+				}
+			},
+			on_connect: function() {
+				$("#ws-status .status").empty().attr("status","connected").append("<i class='icon-signal'></i> {% trans "online" %}")
+			},
+			on_disconnect: function() {
+				$("#ws-status .status").empty().attr("status","disconnected").append("<i class='icon-signal'></i> {% trans "offline" %}")
 			}
 		})
 	});
