@@ -4,6 +4,15 @@
 
 {% block content_class %}project-backlogs{% endblock %}
 
+{% block navbar %}
+	{{ block.super }}
+	<li>
+		<p class="navbar-text" id="ws-status">
+			<span class="status label"></span>
+		</p>
+	</li>
+{% endblock %}
+
 {% block content %}
 
 	{% include "backlog/_project_head.html" %}
@@ -255,6 +264,12 @@
 						$parent.append($article);
 					}
 				}
+			},
+			on_connect: function() {
+				$("#ws-status .status").empty().attr("status","connected").append("<i class='icon-signal'></i> {% trans "online" %}")
+			},
+			on_disconnect: function() {
+				$("#ws-status .status").empty().attr("status","disconnected").append("<i class='icon-signal'></i> {% trans "offline" %}")
 			}
 		})
 	});

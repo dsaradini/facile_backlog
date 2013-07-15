@@ -31,6 +31,10 @@
 					error_callback();
 				};
 			};
+			window.onbeforeunload = function() {
+				ws.onclose = function () {}; // disable onclose handler first
+				ws.close()
+			};
 			connect_ws();
 		}
 	}

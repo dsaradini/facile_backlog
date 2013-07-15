@@ -1,42 +1,42 @@
 import logging
-from urlparse import urlparse
+import logging.config
+
+import tornado.options
+from tornado.httpserver import HTTPServer
+from tornado.ioloop import IOLoop
+from tornado.options import options, define
+from tornado.web import Application
 
 from django.conf import settings
-import django.core.handlers.wsgi
 
-import tornado.httpserver
-import tornado.ioloop
-import tornado.web
-import tornado.wsgi
-from tornado.options import options, define
+from facile_backlog.websockets import (SocketHandler, start_listener)
 
-
-from facile_backlog.websockets import SocketHandler, start_listener
+logging.config.dictConfig(settings.LOGGING)
 
 logger = logging.getLogger(__name__)
 
-ws_url = urlparse(settings.WEBSOCKET_URL)
+ws_port = settings.WEBSOCKET_PORT
 
-define('port', type=int, default=ws_url.port)
+define('port', type=int, default=ws_port)
 tornado.options.parse_command_line()
 
 
 def main():
 
     logger = logging.getLogger(__name__)
-    wsgi_app = tornado.wsgi.WSGIContainer(
-        django.core.handlers.wsgi.WSGIHandler())
-    tornado_app = tornado.web.Application(
+    tornado_app = Application(
         [
             (r'/ws/(?P<obj_type>[\w]+)/(?P<obj_id>[\d]+)/$', SocketHandler),
-            (r'.*', tornado.web.FallbackHandler, dict(fallback=wsgi_app)),
         ], debug=True)
     start_listener()
-    logger.info("Tornado server starting on port {0}".format(ws_url.port))
-    server = tornado.httpserver.HTTPServer(tornado_app)
+    logger.info("Tornado websocket server started on port {0}".format(ws_port))
+    server = HTTPServer(tornado_app)
     server.listen(options.port)
-    tornado.ioloop.IOLoop.instance().start()
-
+    try:
+        IOLoop.instance().start()
+    except KeyboardInterrupt:
+        logger.warn("Keyboard Interrupt")
+        IOLoop.instance().stop()
 
 if __name__ == '__main__':
     main()
