@@ -260,13 +260,10 @@ class AjaxTest(WebTest):
             'target_backlog': backlog_wrong.pk
         })
         self.app.post(url, data, content_type="application/json", status=403)
-        event = Event.objects.get(
+        events = Event.objects.filter(
             backlog=backlog_2
         )
-        self.assertEqual(
-            event.text.find(u"moved story from backlog"), 0
-        )
-        self.assertEqual(event.user, user)
+        self.assertEqual(events.count(), 2)
 
     def test_org_story_move(self):
         user = factories.UserFactory.create(
@@ -308,13 +305,19 @@ class AjaxTest(WebTest):
             'target_backlog': backlog_wrong.pk
         })
         self.app.post(url, data, content_type="application/json", status=403)
-        event = Event.objects.get(
+        events = Event.objects.filter(
             backlog=backlog_2
         )
+        # events are sorted
+        self.assertEqual(events.count(), 2)
+
         self.assertEqual(
-            event.text.find(u"moved story from backlog"), 0
+            events.all()[0].text.find(u"re-ordered story in backlog"), 0
         )
-        self.assertEqual(event.user, user)
+        self.assertEqual(
+            events.all()[1].text.find(u"moved story from backlog"), 0
+        )
+        self.assertEqual(events.all()[0].user, user)
 
     def test_story_move_back_to_main(self):
         user = factories.UserFactory.create(
