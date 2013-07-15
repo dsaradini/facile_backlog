@@ -118,6 +118,10 @@
 {% endaddtoblock %}
 
 {% addtoblock "js" %}
+<script type="text/javascript" src="{% static "core/js/jquery.ws-notify.js" %}"></script>
+{% endaddtoblock %}
+
+{% addtoblock "js" %}
 <script type="text/javascript">
 	$(function() {
 
@@ -130,7 +134,7 @@
 			cursor: "move",
 			revert: 100,
 			update: function(event, ui) {
-				$('.backlog-list').sortable("disable");
+				$('.backlog-lanes').sortable("disable");
 				var backlog_pk = ui.item.attr("backlog-id");
 				var order = [];
 				$('article[backlog-id]').each(function() {
@@ -147,13 +151,13 @@
 					}),
 					error: function( jqXHR, textStatus, errorThrown ){
 						$.show_error( '{% trans "Server return an error."%}', jqXHR)
-						$('.backlog-list').sortable( "cancel" );
+						$('.backlog-lanes').sortable( "cancel" );
 					},
 					success: function() {
 
 					},
 					complete: function(){
-						$('.backlog-list').sortable("enable");
+						$('.backlog-lanes').sortable("enable");
 					}
 				});
 			}
@@ -230,6 +234,28 @@
 		});
 		$(".close-lane").click(function() {
 			$(this).parents("article.backlog").fadeOut()
+		});
+
+		$.ws_sbscribe({
+			url: '{{ ws_url }}Project/{{ project.pk }}/',
+			on_message: function(message) {
+				if (message.type == "backlogs_moved") {
+					var $parent = $(".backlog-lanes");
+					for (var i in message.order) {
+						var pk = message.order[i];
+						var $article = $("article.backlog[backlog-id="+pk+"]");
+						$parent.append($article);
+					}
+				} else if (message.type == "stories_moved") {
+					console.log(message)
+					var $parent = $("[story-backlog-id="+message.backlog_id+"]");
+					for (var i in message.order) {
+						var pk = message.order[i];
+						var $article = $("article.small-story[story-id="+pk+"]");
+						$parent.append($article);
+					}
+				}
+			}
 		})
 	});
 </script>

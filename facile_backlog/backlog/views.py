@@ -310,6 +310,7 @@ class OrgBacklogs(OrgMixin, generic.TemplateView):
         ).select_related("project").all()
         context['backlog_list'] = backlogs
         context['backlog_width'] = 320 * (max(len(backlogs)+1, 2))
+        context['ws_url'] = settings.WEBSOCKET_URL
         return context
 org_backlogs = login_required(OrgBacklogs.as_view())
 
@@ -737,6 +738,7 @@ class ProjectBacklogs(ProjectMixin, generic.TemplateView):
         context['project'] = self.project
         context['backlog_list'] = [b for b in self.project.backlogs.all()
                                    if not b.is_archive]
+        context['ws_url'] = settings.WEBSOCKET_URL
         return context
 project_backlogs = login_required(ProjectBacklogs.as_view())
 

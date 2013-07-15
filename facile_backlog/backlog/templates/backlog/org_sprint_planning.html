@@ -72,6 +72,10 @@
 {% endaddtoblock %}
 
 {% addtoblock "js" %}
+<script type="text/javascript" src="{% static "core/js/jquery.ws-notify.js" %}"></script>
+{% endaddtoblock %}
+
+{% addtoblock "js" %}
 <script type="text/javascript">
 	$(function() {
 		var show_error = function( message , jqXHR) {
@@ -110,7 +114,7 @@
 			cursor: "move",
 			revert: 100,
 			update: function(event, ui) {
-				$('.backlog-list').sortable("disable");
+				$('.backlog-lanes').sortable("disable");
 				var backlog_pk = ui.item.attr("backlog-id");
 				var order = [];
 				$('article[backlog-id]').each(function() {
@@ -127,13 +131,13 @@
 					}),
 					error: function( jqXHR, textStatus, errorThrown ){
 						show_error('{% trans "Server return an error."%}', jqXHR)
-						$('.backlog-list').sortable( "cancel" );
+						$('.backlog-lanes').sortable( "cancel" );
 					},
 					success: function() {
 
 					},
 					complete: function(){
-						$('.backlog-list').sortable("enable");
+						$('.backlog-lanes').sortable("enable");
 					}
 				});
 			}
@@ -222,6 +226,13 @@
 		});
 		$(".close-lane").click(function() {
 			$(this).parents("article.backlog").fadeOut()
+		})
+
+		$.ws_sbscribe({
+			url: '{{ ws_url }}Org/{{ organization.pk }}/',
+			on_message: function(message) {
+				console.log("WS", message)
+			}
 		})
 	});
 </script>

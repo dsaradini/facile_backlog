@@ -11,6 +11,7 @@ from django.db import transaction
 from django.http import Http404
 from django.shortcuts import redirect
 
+from .notify import notify_changes
 
 from .serializers import (ProjectSerializer, BacklogSerializer,
                           StorySerializer, OrgSerializer)
@@ -230,8 +231,10 @@ def move_story(request):
             story=story,
         )
         story.move_to(backlog)
+        touched = True
+    else:
+        touched = False
     # handle order backlog
-    touched = False
     end_index = len(order)
     if order:
         for story in backlog.ordered_stories:
@@ -248,6 +251,7 @@ def move_story(request):
         max_order = max([s.order for s in backlog.stories.all()])
         story.order = max_order+1
         story.save(update_fields=('order',))
+        touched = True
 
     if touched:
         backlog.save(update_fields=("last_modified",))
@@ -257,12 +261,29 @@ def move_story(request):
             backlog=backlog,
             story=story,
         )
+        notify_backlog_changed(request, backlog, order)
+
     return Response({
         'ok': True
     })
 
 
-def _move_backlog(request, qs, object_id):
+def notify_backlog_changed(request, backlog, order):
+    if backlog.project_id:
+        o_type = "Project"
+        object_id = backlog.project_id
+    else:
+        o_type = "Org"
+        object_id = backlog.org_id
+    notify_changes(o_type, object_id, {
+        'backlog_id': backlog.pk,
+        'type': "stories_moved",
+        'order': [s.pk for s in backlog.ordered_stories.all()],
+        'username': request.user.email,
+    })
+
+
+def _move_backlog(request, o_type, qs, object_id):
     obj = get_object_or_404(qs, pk=object_id)
     errors = []
     order = get_or_errors(request.DATA, 'order', errors)
@@ -285,6 +306,11 @@ def _move_backlog(request, qs, object_id):
             touched = True
         if touched:
             obj.save()  # last modified is modified
+    notify_changes(o_type, object_id, {
+        'type': "backlogs_moved",
+        'order': order,
+        'username': request.user.email,
+    })
     return Response({
         'ok': True
     })
@@ -295,7 +321,7 @@ def _move_backlog(request, qs, object_id):
 @throttle_classes([GeneralUserThrottle])
 @transaction.commit_on_success
 def project_move_backlog(request, project_id):
-    return _move_backlog(request, request.user.projects, project_id)
+    return _move_backlog(request, "Project", request.user.projects, project_id)
 
 
 @api_view(["POST"])
@@ -303,7 +329,7 @@ def project_move_backlog(request, project_id):
 @throttle_classes([GeneralUserThrottle])
 @transaction.commit_on_success
 def org_move_backlog(request, org_id):
-    return _move_backlog(request, request.user.organizations, org_id)
+    return _move_backlog(request, "Org", request.user.organizations, org_id)
 
 
 @api_view(["POST", "GET"])
