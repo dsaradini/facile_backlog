@@ -227,6 +227,10 @@ if os.environ.get('HTTPS', False):
 
 API_THROTTLE = "100/m"
 
+# WebScokets
+
+WEBSOCKET_URL = os.environ.get("WEBSOCKET_URL", "ws://localhost:8001/ws/")
+WEBSOCKET_PORT = os.environ.get("WEBSOCKET_PORT", "8001")
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

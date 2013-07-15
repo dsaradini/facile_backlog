@@ -4,6 +4,9 @@ run:
 start:
 	envdir envdir python manage.py runserver 0.0.0.0:8000 --traceback
 
+run-tornado:
+	envdir envdir python main_tornado.py
+
 test:
 	envdir tests/envdir python manage.py test --traceback --failfast --noinput
 

@@ -72,6 +72,10 @@
 {% endaddtoblock %}
 
 {% addtoblock "js" %}
+<script type="text/javascript" src="{% static "core/js/jquery.ws-notify.js" %}"></script>
+{% endaddtoblock %}
+
+{% addtoblock "js" %}
 <script type="text/javascript">
 	$(function() {
 		var show_error = function( message , jqXHR) {
@@ -222,6 +226,13 @@
 		});
 		$(".close-lane").click(function() {
 			$(this).parents("article.backlog").fadeOut()
+		})
+
+		$.ws_sbscribe({
+			url: '{{ ws_url }}Org/{{ organization.pk }}/',
+			on_message: function(message) {
+				console.log("WS", message)
+			}
 		})
 	});
 </script>
