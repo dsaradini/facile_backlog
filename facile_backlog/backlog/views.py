@@ -96,6 +96,14 @@ class OrgCreate(generic.CreateView):
             is_admin=True,
             is_active=True
         )
+        Backlog.objects.create(
+            name=_("Main backlog"),
+            description=_("This is the main backlog for the organization."),
+            org=self.object,
+            kind=Backlog.TODO,
+            is_main=True,
+            order=1,
+        )
         create_event(
             self.request.user, organization=self.object,
             text="created this organization"
@@ -580,13 +588,22 @@ class ProjectCreate(generic.CreateView):
     def dispatch(self, request, *args, **kwargs):
         org_id = request.GET.get("org", None)
         if org_id:
-            self.org = Organization.my_organizations(self.request.user).get(
-                pk=org_id
-            )
+            try:
+                self.org = Organization.my_organizations(
+                    self.request.user).get(
+                        pk=org_id
+                    )
+            except Organization.DoesNotExist:
+                raise Http404
         else:
             self.org = None
         self.request = request
         return super(ProjectCreate, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectCreate, self).get_context_data(**kwargs)
+        context['organization'] = self.org
+        return context
 
     def get_form_kwargs(self):
         kwargs = super(ProjectCreate, self).get_form_kwargs()

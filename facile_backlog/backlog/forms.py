@@ -23,6 +23,9 @@ class OrgEditionForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(OrgEditionForm, self).__init__(*args, **kwargs)
         self.fields['name'].widget.attrs['autofocus'] = ''
+        self.fields['name'].widget.attrs["autocomplete"] = 'off'
+        self.fields['email'].widget.attrs["autocomplete"] = 'off'
+        self.fields['web_site'].widget.attrs["autocomplete"] = 'off'
 
     class Meta:
         model = Organization
@@ -38,6 +41,7 @@ class ProjectEditionForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProjectEditionForm, self).__init__(*args, **kwargs)
         self.fields['name'].widget.attrs['autofocus'] = ''
+        self.fields['name'].widget.attrs["autocomplete"] = 'off'
 
     class Meta:
         model = Project
@@ -51,10 +55,12 @@ class ProjectCreationForm(ProjectEditionForm):
 
     def __init__(self, request, org, *args, **kwargs):
         super(ProjectCreationForm, self).__init__(*args, **kwargs)
-        self.fields['org'].query_set = \
+        self.fields['org'].queryset = \
             Organization.my_organizations(request.user)
-        self.fields['org'].widget.attrs['readonly'] = True
+        self.fields['org'].widget = HiddenInput()
         self.fields['org'].initial = org
+        self.fields['name'].widget.attrs["autocomplete"] = 'off'
+        self.fields['code'].widget.attrs["autocomplete"] = 'off'
         self.request = request
 
     def save(self, commit=True):

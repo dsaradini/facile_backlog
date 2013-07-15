@@ -81,7 +81,9 @@
 					{% endif %}
 				</li>
 			{% empty %}
-				{% trans "No backlog" %}
+				<div class="text-warning margin-left">
+					{% trans "No backlog" %}
+				</div>
 			{% endfor %}
 		</ul>
 	</div>
@@ -111,7 +113,7 @@
 			</div>
 		{%  else %}
 			<div class="text-warning margin-left">
-				{% trans "You have no stand-alone project that is not part of an organization" %}
+				{% trans "You have no active project in this organization" %}
 			</div>
 		{% endif %}
 	</div>

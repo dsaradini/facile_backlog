@@ -53,7 +53,7 @@ Response
 </code>
 
 
-`/api/organization/[org-id]/`
+`/api/organizations/[org-id]/`
 ============================
 **Details for a given organization**
 
@@ -283,7 +283,7 @@ Response
 </code>
 
 
-`/api/organization/[org-id]/_order_backlog/`
+`/api/organizations/[org-id]/_order_backlog/`
 ==========================================
 Reorder backlog in an organization
 
