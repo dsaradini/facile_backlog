@@ -74,7 +74,7 @@ class WithThemeMixin(object):
         if not hasattr(self, "_all_themes"):
             result = [x for x in self.stories.values_list(
                       'theme', flat=True).distinct() if x]
-            self._all_themes = list(result)
+            self._all_themes = sorted(list(result))
         return self._all_themes
 
 

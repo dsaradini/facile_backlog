@@ -114,21 +114,6 @@
 	</div>
 {% include "backlog/_script_status_change.html" %}
 {% include "backlog/_script_show_errors.html" %}
-{% addtoblock "js" %}
-<script type="text/javascript" src="{% static "core/js/jquery.js" %}"></script>
-{% endaddtoblock %}
-
-{% addtoblock "js" %}
-<script type="text/javascript" src="{% static "core/js/jquery.csrf.js" %}"></script>
-{% endaddtoblock %}
-
-{% addtoblock "js" %}
-<script type="text/javascript" src="{% static "core/js/jquery-ui.custom.min.js" %}"></script>
-{% endaddtoblock %}
-
-{% addtoblock "js" %}
-<script type="text/javascript" src="{% static "core/js/jquery.ws-notify.js" %}"></script>
-{% endaddtoblock %}
 
 {% addtoblock "js" %}
 <script type="text/javascript">
@@ -232,7 +217,10 @@
 		});
 
 		$(".filter").show(); // hidden by default, if scripting is disabled, they should not show
-		$("#theme-select").change(function() {
+		$("#theme-select").select2({
+			allowClear: true,
+			width: "180px",
+		}).change(function() {
 			var theme_id = $(this).val();
 			$(".filter-highlighted").removeClass("filter-highlighted");
 			$(".filter-opacified").removeClass("filter-opacified");

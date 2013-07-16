@@ -69,22 +69,6 @@
 		{% endif %}
 	</div>
 {% addtoblock "js" %}
-<script type="text/javascript" src="{% static "core/js/jquery.js" %}"></script>
-{% endaddtoblock %}
-
-{% addtoblock "js" %}
-<script type="text/javascript" src="{% static "core/js/jquery.csrf.js" %}"></script>
-{% endaddtoblock %}
-
-{% addtoblock "js" %}
-<script type="text/javascript" src="{% static "core/js/jquery-ui.custom.min.js" %}"></script>
-{% endaddtoblock %}
-
-{% addtoblock "js" %}
-<script type="text/javascript" src="{% static "core/js/jquery.ws-notify.js" %}"></script>
-{% endaddtoblock %}
-
-{% addtoblock "js" %}
 <script type="text/javascript">
 	$(function() {
 		var show_error = function( message , jqXHR) {
@@ -213,7 +197,10 @@
 		});
 
 		$(".filter").show(); // hidden by default, if scripting is disabled, they should not show
-		$("#theme-select").change(function() {
+		$("#theme-select").select2({
+			allowClear: true,
+			width: "180px",
+		}).change(function() {
 			$("#project-select").val("");
 			var theme_id = $(this).val();
 			$(".filter-highlighted").removeClass("filter-highlighted");
@@ -223,7 +210,10 @@
 				$("article[theme-id='"+theme_id+"']").addClass("filter-highlighted").removeClass("filter-opacified")
 			}
 		});
-		$("#project-select").change(function() {
+		$("#project-select").select2({
+			allowClear: true,
+			width: "180px",
+		}).change(function() {
 			$("#theme-select").val("");
 			var project_id = $(this).val();
 			$(".filter-highlighted").removeClass("filter-highlighted");

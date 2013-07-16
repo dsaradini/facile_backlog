@@ -1101,6 +1101,11 @@ class StoryEdit(StoryMixin, generic.UpdateView):
                 "{0}#story-{1}".format(reverse("project_backlogs", args=(
                     self.project.pk,
                 )), self.object.pk))
+        elif self.back == "organization":
+            return redirect(
+                "{0}#story-{1}".format(reverse("org_sprint_planning", args=(
+                    self.object.project.org.pk,
+                )), self.object.pk))
         return redirect(story.get_absolute_url())
 story_edit = login_required(StoryEdit.as_view())
 
