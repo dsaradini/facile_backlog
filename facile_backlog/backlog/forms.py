@@ -95,7 +95,8 @@ class BacklogCreationForm(BacklogEditionForm):
 
 
 class StoryEditionForm(BackMixin, ModelForm):
-    points = ChoiceField(label=_("Points"), help_text=_("Fibonacci series"))
+    points = CharField(label=_("Points"), help_text=_("Estimated points"),
+                       required=False)
 
     def __init__(self, *args, **kwargs):
         super(StoryEditionForm, self).__init__(*args, **kwargs)
@@ -113,12 +114,23 @@ class StoryEditionForm(BackMixin, ModelForm):
         self.fields['acceptances'].help_text = _(
             "Use markdown list format: line with '-' in front")
 
-        self.fields['points'].choices = UserStory.FIBONACCI_CHOICE
+        if self.instance:
+            self.initial['points'] = "" if self.instance.points == -1 \
+                else self.instance.points
+        else:
+            self.initial['points'] = ""
 
     class Meta:
         model = UserStory
         fields = ("as_a", "i_want_to", "so_i_can", "acceptances", "points",
                   "status", "theme", "color", "comments")
+
+    def clean_points(self):
+        value = self.cleaned_data['points']
+        if not value:
+            return -1
+        else:
+            return float(value)
 
 
 class StoryCreationForm(StoryEditionForm):
