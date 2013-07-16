@@ -4,17 +4,3 @@
 	<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a><span class="divider">/</span></li>
 	<li class="active"><i class="icon-building"></i> {{ organization.name }}<span class="divider"></span></li>
 </ul>
-
-<div class="org-head">
-	<h1 class="inline-title">{{ organization.name }}</h1>
-	{% if organization|can_admin:request.user %}
-		<small class="muted">[
-		<a class="btn-link" href="{% url "org_edit" organization.pk %}">
-			{% trans "edit" %}
-		</a>|
-		<a class="btn-link" href="{% url "org_delete" organization.pk %}">
-			{% trans "delete" %}
-		</a>
-		]</small>
-	{% endif %}
-</div>

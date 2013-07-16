@@ -13,6 +13,20 @@
 		<li><a href="{% url "org_stories" organization.pk %}">{% trans "Stories" %}</a></li>
 	</ul>
 
+	<div class="org-head">
+		<h1 class="inline-title">{{ organization.name }}</h1>
+		{% if organization|can_admin:request.user %}
+			<small class="muted">[
+			<a class="btn-link" href="{% url "org_edit" organization.pk %}">
+				{% trans "edit" %}
+			</a>|
+			<a class="btn-link" href="{% url "org_delete" organization.pk %}">
+				{% trans "delete" %}
+			</a>
+			]</small>
+		{% endif %}
+	</div>
+
 	<div class="description span12">
 		{% if organization.description %}
 			{{ organization.description|markdown }}

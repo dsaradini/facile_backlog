@@ -13,6 +13,20 @@
 		<li><a href="{% url "project_stories" project.pk %}">{% trans "Stories" %}</a></li>
 	</ul>
 
+	<div class="project-head">
+		<h1 class="inline-title">{{ project.name }}</h1>
+		{% if project|can_admin:request.user %}
+			<small class="muted">[
+			<a class="btn-link" href="{% url "project_edit" project.pk %}">
+				{% trans "edit" %}
+			</a>|
+			<a class="btn-link" href="{% url "project_delete" project.pk %}">
+				{% trans "delete" %}
+			</a>
+			]</small>
+		{% endif %}
+	</div>
+
 	<div class="description span12">
 		{% if project.description %}
 			{{ project.description|markdown }}

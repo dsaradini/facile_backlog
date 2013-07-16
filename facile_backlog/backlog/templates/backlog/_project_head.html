@@ -7,17 +7,3 @@
 	{% endif %}
 	<li class="active"><i class="icon-book"></i> {{ project.name }}<span class="divider"></span></li>
 </ul>
-
-<div class="project-head">
-	<h1 class="inline-title">{{ project.name }}</h1>
-	{% if project|can_admin:request.user %}
-		<small class="muted">[
-		<a class="btn-link" href="{% url "project_edit" project.pk %}">
-			{% trans "edit" %}
-		</a>|
-		<a class="btn-link" href="{% url "project_delete" project.pk %}">
-			{% trans "delete" %}
-		</a>
-		]</small>
-	{% endif %}
-</div>
