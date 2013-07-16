@@ -83,7 +83,7 @@ class Command(BaseCommand):
             )
         org.name = account['name']
         org.save()
-        org.add_user(self.user)
+        org.add_user(self.user, is_admin=True)
         return org
 
     def get_or_create_project(self, external_id, name):
@@ -144,7 +144,7 @@ class Command(BaseCommand):
     def handle_backlog(self, easy_backlog):
         backlog_id = easy_backlog['id']
         company_id = easy_backlog.get('company_id', None)
-        if company_id:
+        if company_id and company_id in self.project_map:
             project = self.project_map[company_id]
             backlog = Backlog.objects.create(
                 project=project,
