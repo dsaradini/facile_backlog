@@ -75,9 +75,10 @@ class RegistrationForm(forms.Form):
         if 'user' not in self.cleaned_data:
             user = get_user_model().objects.create_user(
                 self.cleaned_data['email'],
-                password=self.cleaned_data['password'],
                 full_name=self.cleaned_data['full_name'],
             )
+            user.set_password(self.cleaned_data['password'])
+            user.save()
             return user
         return self.cleaned_data['user']
 
