@@ -1,0 +1,34 @@
+{% load markup %}
+<article class="story" id="story-{{ story.pk }}" story-id="{{ story.pk }}" theme-id="{{ story.theme }}">
+    <div class="handle" style="background-color:{{ story.color }}"></div>
+    <div class="handled">
+			<div class="row-fluid">
+				<div class="code span11">
+					<h4 class="inline-title">{{ story.code }}</h4> <small class="muted">[ <a href="{% url "story_edit" story.project_id story.pk %}?_back=backlog">{% trans "edit" %}</a> ]</small>
+				</div>
+				<div class="span1 text-center">
+					<div class="points {% if story.points == -1 %}no-points{% endif %}">
+						{% if story.points >= 0%}
+							{{ story.points|floatformat:"0" }}
+						{% else %}
+						&nbsp;
+						{% endif %}
+					</div>
+				</div>
+			</div>
+			<div class="row-fluid">
+				<div class="text span4">
+					{% include "backlog/user_story_text.html" %}
+				</div>
+				<div class="acceptances span4">
+					{{ story.acceptances|markdown }}
+				</div>
+				<div class="comments span4">
+					{{ story.comments|markdown }}
+				</div>
+			</div>
+			<div class="row-fluid">
+				<div class="theme span12"><i class="icon-tag"></i> {{ story.theme }}</div>
+			</div>
+    </div>
+</article>

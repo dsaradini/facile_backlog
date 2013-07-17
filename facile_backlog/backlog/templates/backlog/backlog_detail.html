@@ -1,0 +1,136 @@
+{% extends "project_base.html" %}
+{% load staticfiles sekizai_tags markup acl %}
+
+{% block title %}{% trans "Backlog" %} &mdash; {{ backlog.name }}{% endblock %}
+
+{% block navbar %}
+	{{ block.super }}
+	<li>
+		<p class="navbar-text" id="ws-status">
+			<span class="status label"></span>
+		</p>
+	</li>
+{% endblock %}
+
+{% block content %}
+    {% include "backlog/_backlog_head.html" %}
+
+	<form class="form-inline boxed">
+		<label>{% trans "Highlight theme" %}</label>&nbsp;
+		<select class="select-mini" id="theme-select">
+			<option value="">{% trans "No filter" %}</option>
+			{% for theme in backlog.all_themes %}
+				<option value="{{ theme }}">{{ theme }}</option>
+			{% endfor %}
+		</select>
+	</form>
+    <div class="stories">
+        {% for story in stories %}
+            {% include "backlog/_story_big_cell.html" %}
+        {% empty %}
+            {% trans "No stories" %}
+        {% endfor %}
+    </div>
+{% include "backlog/_script_show_errors.html" %}
+
+{% addtoblock "js" %}
+<script type="text/javascript">
+    $(function() {
+		$('.stories').sortable({
+			placeholder: "large-story-place-holder",
+			forcePlaceholderSize: true,
+			distance: 3,
+			cursor: "move",
+			revert: 100,
+			update: function(event, ui) {
+				$('.stories').sortable("disable");
+				var $this = $(this);
+				var story_pk = ui.item.attr("story-id");
+				var ajax_data;
+				var order = [];
+				$this.find('[story-id]').each(function() {
+					order.push(parseInt($(this).attr('story-id')));
+				});
+				ajax_data = {
+					target_backlog: {{ backlog.pk }},
+					moved_story: story_pk,
+					order: order,
+					action: "order"
+				};
+				if (ajax_data) {
+					$.ajax({
+						url: '{% url "api_move_story" %}',
+						type: "POST",
+						contentType:"application/json; charset=utf-8",
+						dataType: "json",
+						data: JSON.stringify(ajax_data),
+						error: function( jqXHR, textStatus, errorThrown ){
+							$.show_error( '{% trans "Server return an error."%}', jqXHR)
+							$('.stories').sortable( "cancel" );
+						},
+						success: function() {
+
+						},
+						complete: function(){
+							$('.stories').sortable("enable");
+						}
+					});
+				} else {
+					$('.stories').sortable("enable");
+				}
+			}
+		});
+        // handle selection of themes
+        $(".filter").show(); // hidden by default, if scripting is disabled, they should not show
+        $("#theme-select").select2({
+			width: "180px",
+			allowClear: true
+		}).change(function() {
+            var theme_id = $(this).val();
+            $(".filter-highlighted").removeClass("filter-highlighted");
+            $(".filter-opacified").removeClass("filter-opacified");
+            if (theme_id) {
+                $("article").addClass("filter-opacified");
+                $("article[theme-id='"+theme_id+"']").addClass("filter-highlighted").removeClass("filter-opacified")
+            }
+        });
+		var flash = function($item) {
+			$item.css("box-shadow", "0 0 15px rgba(0,100,255,0.5)");
+			setTimeout(function() {
+				$item.css("box-shadow", "none");
+			}, 2000);
+		};
+
+		{% if backlog.project_id %}
+			var ws_url = '{{ ws_url }}Project/{{ backlog.project_id }}/';
+		{% elif backlog.org_id %}
+			var ws_url = '{{ ws_url }}Organization/{{ backlog.org_id }}/';
+		{% endif %}
+		$.ws_sbscribe({
+			url: ws_url,
+			on_message: function(message) {
+				if (message.type == "stories_moved") {
+					if (message.backlog_id == {{ backlog.pk }}) {
+						var $parent = $(".stories");
+						for (var i in message.order) {
+							var pk = message.order[i];
+							var $article = $("article.story[story-id="+pk+"]");
+							$parent.append($article);
+						}
+						if (message.moved_story_id) {
+								flash($("article.story[story-id="+message.moved_story_id+"]"));
+						}
+					}
+				}
+			},
+			on_connect: function() {
+				$("#ws-status .status").empty().attr("status","connected").append("<i class='icon-signal'></i> {% trans "online" %}")
+			},
+			on_disconnect: function() {
+				$("#ws-status .status").empty().attr("status","disconnected").append("<i class='icon-signal'></i> {% trans "offline" %}")
+			}
+		})
+    });
+</script>
+{% endaddtoblock %}
+{% endblock %}

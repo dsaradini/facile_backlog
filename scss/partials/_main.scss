@@ -688,3 +688,70 @@ textarea[name=i_want_to] {
 		background-color: #b94a48;
 	}
 }
+
+article.story {
+	border:1px solid #777;
+	border-radius:10px;
+	margin: 10px 0;
+	background-color:  $box-background-color;
+	position: relative;
+	.handle {
+		position: absolute;
+		top: 0px;
+		width: 12px;
+		bottom: 0px;
+		left: 0px;
+		border-top-left-radius: 10px;
+		border-bottom-left-radius: 10px;
+		background-color: transparent;
+		display: hidden;
+		border-top: 1px solid rgba(white, 0.7);
+		border-left: 1px solid rgba(white, 0.5);
+		border-bottom: 1px solid rgba(black, 0.5);
+		border-right: 1px solid rgba(black, 0.2);
+	}
+	.handled {
+		padding: 0px 6px 0px 26px;
+	}
+	.code {
+		box-sizing: border-box;
+	}
+	.points {
+		margin: 6px 0;
+		width: 40px;
+		line-height: 40px;
+		font-weight: bold;
+		color: #444;
+		text-align: center;
+		font-size: 1.25rem;
+		border: 1px solid #0088cc;
+		background-color: white;
+		border-radius: 2em;
+		display: inline-block;
+	}
+	.text {
+		clear: left;
+		font-size: 1.25rem;
+	}
+	.theme {
+		padding: 10px 0;
+		color: #777;
+		clear: both;
+	}
+	.acceptances, .comments {
+		min-height: 1rem;
+		border-left: 2px solid $box-border-color;
+		box-sizing: border-box;
+		padding-left: 6px;
+	}
+}
+
+.large-story-place-holder {
+	background-color: rgba(255,255,255,0.5);
+	border:1px dashed rgba(0,0,0,0.2);
+	border-radius:5px;
+	// should be the same as article ( jquery-ui-soratbale )
+	margin: 0.5em 0 0.5em 0;
+	// do not forget dashed border
+	box-sizing: border-box;
+}

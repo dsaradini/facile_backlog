@@ -261,14 +261,14 @@ def move_story(request):
             backlog=backlog,
             story=story,
         )
-        notify_backlog_changed(request, backlog, order)
+        notify_backlog_changed(request, backlog, order, story_id)
 
     return Response({
         'ok': True
     })
 
 
-def notify_backlog_changed(request, backlog, order):
+def notify_backlog_changed(request, backlog, order, moved_story=None):
     if backlog.project_id:
         o_type = "Project"
         object_id = backlog.project_id
@@ -279,6 +279,7 @@ def notify_backlog_changed(request, backlog, order):
         'backlog_id': backlog.pk,
         'type': "stories_moved",
         'order': [s.pk for s in backlog.ordered_stories.all()],
+        'moved_story_id': moved_story,
         'username': request.user.email,
     })
 

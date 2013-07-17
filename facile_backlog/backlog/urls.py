@@ -5,7 +5,7 @@ from .views import (project_detail, project_create, project_edit,
                     project_backlog_delete, project_backlog_edit, story_edit,
                     story_create, backlog_set_main,
                     story_detail, story_delete,
-                    project_invite_user, dashboard,
+                    project_invite_user, dashboard, backlog_detail,
                     invitation_activate, project_users, project_auth_delete,
                     notification_view, invitation_accept, invitation_decline,
                     project_stories, print_stories, project_backlogs,
@@ -157,6 +157,10 @@ urlpatterns += patterns(
     url(r'^backlog/(?P<backlog_id>[\d]+)/set_main/$',
         backlog_set_main,
         name='backlog_set_main'),
+
+    url(r'^backlog/(?P<backlog_id>[\d]+)/detail/$',
+        backlog_detail,
+        name='backlog_detail'),
 )
 
 # utilities

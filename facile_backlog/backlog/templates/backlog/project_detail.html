@@ -50,7 +50,7 @@
 					<div class="title">
 						<H4>
 						{% if not backlog.is_archive %}
-							<a href="{% url "project_backlogs" project.pk %}"> <i class="icon-list-ul black"></i> {{ backlog.name }}</a>
+							<a href="{% url "backlog_detail" backlog.pk %}"> <i class="icon-list-ul black"></i> {{ backlog.name }}</a>
 						{% else %}
 							<i class="icon-list-ul muted"></i> {{ backlog.name }}
 						{% endif %}

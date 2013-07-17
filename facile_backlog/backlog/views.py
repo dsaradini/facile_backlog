@@ -967,6 +967,21 @@ class BacklogSetMain(BacklogMixin, generic.FormView):
         return follow
 backlog_set_main = login_required(BacklogSetMain.as_view())
 
+
+class BacklogDetail(BacklogMixin, generic.TemplateView):
+    template_name = "backlog/backlog_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(BacklogDetail, self).get_context_data(**kwargs)
+        context['stories'] = self.backlog.ordered_stories.select_related(
+            "project", "backlog")
+        context['ws_url'] = settings.WEBSOCKET_URL
+        return context
+
+backlog_detail = login_required(BacklogDetail.as_view())
+
+
+
 ############
 # Stories #
 ##########
@@ -1085,6 +1100,28 @@ class StoryEdit(StoryMixin, generic.UpdateView):
         for k in self.notify_changed:
             self._old_values[k] = getattr(self.story, k)
 
+    def get_back_url(self):
+        if self.back == "project":
+            return "{0}#story-{1}".format(
+                reverse("project_backlogs", args=(self.project.pk,)),
+                self.object.pk)
+        elif self.back == "organization":
+            return "{0}#story-{1}".format(
+                reverse("org_sprint_planning", args=(
+                    self.object.project.org.pk,)
+                ),
+                self.object.pk)
+        elif self.back == "backlog":
+            return "{0}#story-{1}".format(
+                reverse("backlog_detail", args=(self.object.backlog_id,)),
+                self.object.pk)
+        return self.object.get_absolute_url()
+
+    def get_context_data(self, **kwargs):
+        context = super(StoryMixin, self).get_context_data(**kwargs)
+        context['cancel_url'] = self.get_back_url()
+        return context
+
     def form_valid(self, form):
         story = form.save()
         create_event(
@@ -1096,17 +1133,7 @@ class StoryEdit(StoryMixin, generic.UpdateView):
         story.property_changed(self.request.user, **self._old_values)
         messages.success(self.request,
                          _("Story successfully updated."))
-        if self.back == "project":
-            return redirect(
-                "{0}#story-{1}".format(reverse("project_backlogs", args=(
-                    self.project.pk,
-                )), self.object.pk))
-        elif self.back == "organization":
-            return redirect(
-                "{0}#story-{1}".format(reverse("org_sprint_planning", args=(
-                    self.object.project.org.pk,
-                )), self.object.pk))
-        return redirect(story.get_absolute_url())
+        return redirect(self.get_back_url())
 story_edit = login_required(StoryEdit.as_view())
 
 
