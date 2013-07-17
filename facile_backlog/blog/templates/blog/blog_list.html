@@ -1,8 +1,9 @@
-{% load static markup %}
+{% load static markup humanize %}
 {% for blog in blog_list %}
 	<article class="blog-entry {% if blog.sticky %}sticky{% endif %} markdown">
 		{{ blog.body|markdown }}
-		<span class="when"><i class="icon-time"></i> {{ blog.created|date:"DATETIME_FORMAT" }} </span>
+		<span class="since"><i class="icon-time"></i> {{ blog.created|naturaltime }} </span>
+		<span class="when"><i class="icon-calendar"></i> {{ blog.created }} </span>
 	</article>
 
 {% endfor %}

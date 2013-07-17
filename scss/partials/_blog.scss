@@ -16,5 +16,11 @@ article.blog-entry {
 	.when {
 		display: block;
 		text-align: right;
+		color: $gray-text-color;
+	}
+	.since{
+		float:left;
+		line-height: 2em;
+		color: $gray-text-color;
 	}
 }
