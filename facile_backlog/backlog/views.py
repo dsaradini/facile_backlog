@@ -13,10 +13,12 @@ from django.http import Http404
 from django.http.response import (HttpResponse, HttpResponseForbidden)
 from django.shortcuts import get_object_or_404, redirect
 from django.template import loader
+from django.utils.cache import patch_cache_control
 from django.utils.translation import ugettext as _
 from django.views import generic
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.cache import never_cache
 
 from .models import (Project, Backlog, UserStory, AuthorizationAssociation,
                      create_event, Organization)
@@ -64,6 +66,17 @@ class Dashboard(generic.TemplateView):
         context['organizations'] = get_organizations(self.request.user)
         return context
 dashboard = login_required(Dashboard.as_view())
+
+
+class NoCacheMixin(object):
+    no_cache = False
+
+    def dispatch(self, request, *args, **kwargs):
+        result =  super(NoCacheMixin, self).dispatch(request, *args, **kwargs)
+        if self.no_cache:
+            patch_cache_control(
+                result, no_cache=True, no_store=True, must_revalidate=True)
+        return result
 
 
 class BackMixin(object):
@@ -114,7 +127,7 @@ class OrgCreate(generic.CreateView):
 org_create = login_required(OrgCreate.as_view())
 
 
-class OrgMixin(object):
+class OrgMixin(NoCacheMixin):
     admin_only = False
     """
     Mixin to fetch a organization by a view.
@@ -287,6 +300,7 @@ org_backlog_edit = login_required(OrgBacklogEdit.as_view())
 
 class OrgBacklogs(OrgMixin, generic.TemplateView):
     template_name = "backlog/org_sprint_planning.html"
+    no_cache = True
 
     def pre_dispatch(self):
         self.project_id = self.request.GET.get("project_id", None)
@@ -546,8 +560,9 @@ org_auth_delete = login_required(OrgRevokeAuthorization.as_view())
 ###########
 
 
-class ProjectMixin(object):
+class ProjectMixin(NoCacheMixin):
     admin_only = False
+    no_cache = False
     """
     Mixin to fetch a project by a view.
     """
@@ -558,7 +573,12 @@ class ProjectMixin(object):
             raise Http404
         self.request = request
         self.pre_dispatch()
-        return super(ProjectMixin, self).dispatch(request, *args, **kwargs)
+        response = super(ProjectMixin, self).dispatch(request, *args, **kwargs)
+
+        if self.no_cache:
+            patch_cache_control(
+                response, no_cache=True, no_store=True, must_revalidate=True)
+        return response
 
     def pre_dispatch(self):
         pass
@@ -749,6 +769,7 @@ project_stories = login_required(ProjectStories.as_view())
 
 class ProjectBacklogs(ProjectMixin, generic.TemplateView):
     template_name = "backlog/project_backlogs.html"
+    no_cache = True
 
     def get_context_data(self, **kwargs):
         context = super(ProjectBacklogs, self).get_context_data(**kwargs)
@@ -761,7 +782,6 @@ project_backlogs = login_required(ProjectBacklogs.as_view())
 
 
 # Backlogs
-
 
 class ProjectBacklogMixin(BackMixin):
     admin_only = False
@@ -781,13 +801,17 @@ class ProjectBacklogMixin(BackMixin):
         if self.admin_only and not self.project.can_admin(request.user):
             return HttpResponseForbidden()
         self.request = request
-        render = self.pre_dispatch(request, **kwargs)
-        if render:
-            return render
-        return super(ProjectBacklogMixin, self).dispatch(request, *args,
-                                                         **kwargs)
+        response = self.pre_dispatch(request, **kwargs)
+        if not response:
+            response = super(ProjectBacklogMixin,
+                             self).dispatch(request, *args, **kwargs)
+        self.post_dispatch(request, response)
+        return response
 
     def pre_dispatch(self, request, **kwargs):
+        pass
+
+    def post_dispatch(self, request, response):
         pass
 
     def get_context_data(self, **kwargs):
@@ -909,7 +933,7 @@ project_backlog_archive = login_required(ProjectBacklogArchive.as_view())
 ###########
 
 
-class BacklogMixin(object):
+class BacklogMixin(NoCacheMixin):
     admin_only = False
     """
     Mixin to fetch a a backlog by a view.
@@ -970,6 +994,7 @@ backlog_set_main = login_required(BacklogSetMain.as_view())
 
 class BacklogDetail(BacklogMixin, generic.TemplateView):
     template_name = "backlog/backlog_detail.html"
+    no_cache = True
 
     def get_context_data(self, **kwargs):
         context = super(BacklogDetail, self).get_context_data(**kwargs)
@@ -979,8 +1004,6 @@ class BacklogDetail(BacklogMixin, generic.TemplateView):
         return context
 
 backlog_detail = login_required(BacklogDetail.as_view())
-
-
 
 ############
 # Stories #
