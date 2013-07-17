@@ -420,10 +420,12 @@ class BacklogTest(WebTest):
         user = factories.UserFactory.create()
         wrong_user = factories.UserFactory.create()
         backlog = factories.create_org_sample_backlog(user)
-        us1 = factories.create_org_sample_story(user,
+        us1 = factories.create_org_sample_story(
+            user,
             backlog=backlog,
         )
-        us2 = factories.create_org_sample_story(user,
+        us2 = factories.create_org_sample_story(
+            user,
             backlog=backlog,
         )
         url = reverse("backlog_detail", args=(backlog.pk,))
