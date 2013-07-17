@@ -230,6 +230,7 @@
 		$.ws_sbscribe({
 			url: '{{ ws_url }}Org/{{ organization.pk }}/',
 			on_message: function(message) {
+				$("#ws-status .status").flash("white", 500);
 				if (message.type == "backlogs_moved") {
 					var $parent = $(".backlog-lanes");
 					for (var i in message.order) {
@@ -244,6 +245,9 @@
 						var pk = message.order[i];
 						var $article = $("article.small-story[story-id="+pk+"]");
 						$parent.append($article);
+					}
+					if (message.moved_story_id) {
+						$("article.small-story[story-id="+message.moved_story_id+"]").flash("green", 500);
 					}
 				}
 			},

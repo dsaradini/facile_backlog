@@ -45,6 +45,7 @@
 						</a>
 						<ul class="dropdown-menu">
 							<li><a href="{% url "print_stories" %}?backlog_id={{ backlog.pk }}">{% trans "Print stories" %}</a></li>
+							<li><a href="{% url "backlog_detail" backlog.pk %}">{% trans "Priority view" %}</a></li>
 							<li class="divider"></li>
 							<li><a href="{% url "project_backlog_edit" project.pk backlog.pk %}?_back=project">{% trans "Edit" %}</a></li>
 							<li><a href="{% url "project_backlog_delete" project.pk backlog.pk %}?_back=project">{% trans "Delete" %}</a></li>
@@ -219,7 +220,7 @@
 		$(".filter").show(); // hidden by default, if scripting is disabled, they should not show
 		$("#theme-select").select2({
 			allowClear: true,
-			width: "180px",
+			width: "180px"
 		}).change(function() {
 			var theme_id = $(this).val();
 			$(".filter-highlighted").removeClass("filter-highlighted");
@@ -236,6 +237,7 @@
 		$.ws_sbscribe({
 			url: '{{ ws_url }}Project/{{ project.pk }}/',
 			on_message: function(message) {
+				$("#ws-status .status").flash("white", 500);
 				if (message.type == "backlogs_moved") {
 					var $parent = $(".backlog-lanes");
 					for (var i in message.order) {
@@ -250,6 +252,9 @@
 						var pk = message.order[i];
 						var $article = $("article.small-story[story-id="+pk+"]");
 						$parent.append($article);
+					}
+					if (message.moved_story_id) {
+						$("article.small-story[story-id="+message.moved_story_id+"]").flash("green", 500);
 					}
 				}
 			},

@@ -38,4 +38,30 @@
 			connect_ws();
 		}
 	}
+
+	if(typeof $.fn.flash == "undefined"){
+		$.fn.flash = function(color, delay) {
+			var $item = $(this);
+			if (!color) {
+				color = "blue";
+			}
+			if (!delay) {
+				delay = 1000;
+			}
+			var to = $item.data("_flash_to");
+			if (to) {
+				clearTimeout(to);
+				$item.data("_flash_to", null);
+			}
+			$item.data("_flash_to", to);
+			$item.css({
+				"transition": "box-shadow 0.5s ease",
+				"box-shadow": "0 0 15px "+color
+			});
+			to = setTimeout(function() {
+				$item.css("box-shadow", "");
+			}, delay);
+			$item.data("_flash_to", to)
+		};
+	}
  }(jQuery));

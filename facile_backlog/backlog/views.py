@@ -660,7 +660,7 @@ class ProjectCreate(generic.CreateView):
         )
         messages.success(self.request,
                          _("Project successfully created."))
-        return redirect(reverse("dashboard"))
+        return redirect(reverse("project_detail", args=(self.object.pk,)))
 project_create = login_required(ProjectCreate.as_view())
 
 

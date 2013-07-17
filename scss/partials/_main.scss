@@ -103,7 +103,7 @@ $box-border-color: #e3e3e3;
 }
 
 .filter-highlighted {
-	box-shadow: 0px 0px 10px green;
+	box-shadow: 0px 0px 10px #0088cc;
 }
 .filter-opacified {
 	opacity: 0.3;
@@ -577,6 +577,8 @@ textarea[name=i_want_to] {
 			border-radius: 5px;
 			border:1px solid rgba(black,0.2);
 			box-sizing: border-box;
+			transition: box-shadow 0.5s ease;
+			transition: opacity 0.5s ease;
 			.handle {
 				position: absolute;
 				top: 2px;
@@ -687,6 +689,9 @@ textarea[name=i_want_to] {
 	.status[status=disconnected] {
 		background-color: #b94a48;
 	}
+	.status {
+		transition: all 0.5s ease;
+	}
 }
 
 article.story {
@@ -695,6 +700,8 @@ article.story {
 	margin: 10px 0;
 	background-color:  $box-background-color;
 	position: relative;
+	transition: box-shadow 0.5s ease;
+	transition: opacity 0.5s ease;
 	.handle {
 		position: absolute;
 		top: 0px;
@@ -707,11 +714,14 @@ article.story {
 		display: hidden;
 		border-top: 1px solid rgba(white, 0.7);
 		border-left: 1px solid rgba(white, 0.5);
-		border-bottom: 1px solid rgba(black, 0.5);
+		border-bottom: 1px solid rgba(black, 0.1);
 		border-right: 1px solid rgba(black, 0.2);
 	}
 	.handled {
-		padding: 0px 6px 0px 26px;
+		margin: 0px 6px 0px 14px;
+		padding-left: 10px;
+		box-sizing: border-box;
+		border-left: 1px solid white;
 	}
 	.code {
 		box-sizing: border-box;
@@ -731,7 +741,7 @@ article.story {
 	}
 	.text {
 		clear: left;
-		font-size: 1.25rem;
+		text-align: justify;
 	}
 	.theme {
 		padding: 10px 0;
@@ -747,11 +757,15 @@ article.story {
 }
 
 .large-story-place-holder {
-	background-color: rgba(255,255,255,0.5);
+	background-color: rgba(0,0,0,0.1);
 	border:1px dashed rgba(0,0,0,0.2);
 	border-radius:5px;
 	// should be the same as article ( jquery-ui-soratbale )
 	margin: 0.5em 0 0.5em 0;
 	// do not forget dashed border
 	box-sizing: border-box;
+}
+
+.nav>li>a, a.brand {
+	transition: color 0.5s ease;
 }

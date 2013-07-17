@@ -94,11 +94,24 @@
                 $("article[theme-id='"+theme_id+"']").addClass("filter-highlighted").removeClass("filter-opacified")
             }
         });
-		var flash = function($item) {
-			$item.css("box-shadow", "0 0 15px rgba(0,100,255,0.5)");
-			setTimeout(function() {
+		var flash = function($item, color, delay) {
+			if (!color) {
+				color = "blue";
+			}
+			if (!delay) {
+				delay = 1000;
+			}
+			var to = $item.data("_flash_to");
+			if (to) {
+				clearTimeout(to);
+				$item.data("_flash_to", null);
+			}
+			$item.data("_flash_to", to)
+			$item.css("box-shadow", "0 0 15px "+color);
+			to = setTimeout(function() {
 				$item.css("box-shadow", "none");
-			}, 2000);
+			}, delay);
+			$item.data("_flash_to", to)
 		};
 
 		{% if backlog.project_id %}
@@ -109,6 +122,7 @@
 		$.ws_sbscribe({
 			url: ws_url,
 			on_message: function(message) {
+				$("#ws-status .status").flash("white", 500);
 				if (message.type == "stories_moved") {
 					if (message.backlog_id == {{ backlog.pk }}) {
 						var $parent = $(".stories");
@@ -118,7 +132,7 @@
 							$parent.append($article);
 						}
 						if (message.moved_story_id) {
-								flash($("article.story[story-id="+message.moved_story_id+"]"));
+							$("article.story[story-id="+message.moved_story_id+"]").flash("green", 500);
 						}
 					}
 				}

@@ -23,6 +23,7 @@
 					{% endfor %}
 				{% else %}
 					<li><a href="{% url "print_stories" %}?backlog_id={{ backlog.pk }}">{% trans "Print stories" %}</a></li>
+					<li><a href="{% url "backlog_detail" backlog.pk %}">{% trans "Priority view" %}</a></li>
 					<li class="divider"></li>
 					<li><a href="{% url "org_backlog_edit" organization.pk backlog.pk %}">{% trans "Edit" %}</a></li>
 					<li><a href="{% url "org_backlog_delete" organization.pk backlog.pk %}">{% trans "Delete" %}</a></li>
