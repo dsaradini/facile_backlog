@@ -1,9 +1,9 @@
-import hashlib
-
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+
+from ..util import gravatar_url
 
 
 class UserManager(BaseUserManager):
@@ -61,7 +61,4 @@ class User(AbstractBaseUser):
         return True
 
     def get_gravatar_url(self, size=32):
-        return "https://www.gravatar.com/avatar/{0}?s={1}".format(
-            hashlib.md5(self.email).hexdigest(),
-            size,
-        )
+        return gravatar_url(self.email, size)

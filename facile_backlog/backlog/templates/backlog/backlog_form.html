@@ -9,7 +9,7 @@
 		{% if project %}
 			<li> <i class="icon-book"></i><a href="{% url "project_backlogs" project.pk %}">{{ project.name }}</a><span class="divider">/</span></li>
 		{% elif organization %}
-			<li> <i class="icon-building"></i><a href="{% url "org_sprint_planning" organization.pk %}">{{ organization.name }}</a><span class="divider">/</span></li>
+			<li>{{ organization.get_mini_logo }} <a href="{% url "org_sprint_planning" organization.pk %}">{{ organization.name }}</a><span class="divider">/</span></li>
 		{% endif %}
 		<li class="active">{% if object %}{% trans "Edit backlog" %}{% else %}{% trans "Create backlog" %}{% endif %}<span class="divider"></span>
 		</li>

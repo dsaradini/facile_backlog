@@ -22,7 +22,7 @@
 				<div style="clear:both;">
 					<div>
 						<h4 class="inline-title">
-							<i class="icon-building"></i>
+							{{ org.get_logo }}
 							<a href="{% url 'org_detail' org.pk %}"> {{ org.name }}</a>
 							{% if org|can_admin:request.user %}
 								<small>[

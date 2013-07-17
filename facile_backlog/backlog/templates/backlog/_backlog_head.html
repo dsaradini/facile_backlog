@@ -3,9 +3,12 @@
 <ul class="breadcrumb">
 	<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a><span class="divider">/</span></li>
 		{% if backlog.project_id %}
-			<li> <i class="icon-book"></i> <a href="{% url "project_backlogs" backlog.project_id %}">{{ backlog.project.name }}</a><span class="divider">/</span></li>
+			{% if backlog.project.org_id %}
+				<li><a href="{% url "org_sprint_planning" backlog.project.org_id %}">{{ backlog.project.org.get_mini_logo }} {{ backlog.project.org.name }}</a><span class="divider">/</span></li>
+			{% endif %}
+			<li> <a href="{% url "project_backlogs" backlog.project_id %}"><i class="icon-book"></i> {{ backlog.project.name }}</a><span class="divider">/</span></li>
 		{% elif backlog.org_id %}
-			<li> <i class="icon-building"></i> <a href="{% url "org_sprint_planning" backlog.org_id %}">{{ backlog.org.name }}</a><span class="divider">/</span></li>
+			<li> <a href="{% url "org_sprint_planning" backlog.org_id %}"><i class="icon-building"></i>{{ backlog.org.get_mini_logo }} {{ backlog.org.name }}</a><span class="divider">/</span></li>
 		{% endif %}
 	<li class="active"><i class="icon-list-ul"></i> {{ backlog.name }}<span class="divider"></span></li>
 </ul>

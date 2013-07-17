@@ -3,7 +3,7 @@
 <ul class="breadcrumb">
 	<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a><span class="divider">/</span></li>
 	{% if project.org_id %}
-		<li><a href="{% url "org_detail" project.org_id %}"> <i class="icon-building"></i> {{ project.org.name }}</a><span class="divider">/</span></li>
+		<li><a href="{% url "org_detail" project.org_id %}">{{ project.org.get_mini_logo }} {{ project.org.name }}</a><span class="divider">/</span></li>
 	{% endif %}
 	<li class="active"><i class="icon-book"></i> {{ project.name }}<span class="divider"></span></li>
 </ul>

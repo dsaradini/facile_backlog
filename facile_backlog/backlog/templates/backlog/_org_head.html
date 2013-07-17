@@ -2,5 +2,5 @@
 
 <ul class="breadcrumb">
 	<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a><span class="divider">/</span></li>
-	<li class="active"><i class="icon-building"></i> {{ organization.name }}<span class="divider"></span></li>
+	<li class="active">{{ organization.get_mini_logo }} {{ organization.name }}<span class="divider"></span></li>
 </ul>

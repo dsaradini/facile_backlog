@@ -6,8 +6,12 @@ from django.core.urlresolvers import reverse
 from django.core.validators import EmailValidator, URLValidator
 from django.db import models, transaction
 from django.db.models.loading import get_model
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+
+from ..util import gravatar_url
+
 
 User = settings.AUTH_USER_MODEL
 
@@ -256,6 +260,28 @@ class Organization(AclMixin, WithThemeMixin, models.Model):
             else:
                 self._main_backlog = None
         return self._main_backlog
+
+    def _get_logo(self, size):
+        if self.email:
+            return format_html(
+                u"<img src='{0}' style='height:{1}px; width:{1}px;'>",
+                gravatar_url(self.email, size),
+                size
+            )
+        else:
+            return format_html(u"<i class='icon-building'></i>")
+
+    def get_big_logo(self):
+        return self._get_logo(48)
+    get_big_logo.allow_tags = True
+
+    def get_logo(self):
+        return self._get_logo(24)
+    get_logo.allow_tags = True
+
+    def get_mini_logo(self):
+        return self._get_logo(14)
+    get_mini_logo.allow_tags = True
 
 
 class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):

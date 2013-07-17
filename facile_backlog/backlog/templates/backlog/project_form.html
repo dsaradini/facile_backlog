@@ -6,7 +6,7 @@
 	<ul class="breadcrumb">
 		<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a><span class="divider">/</span></li>
 		{% if organization %}
-			<li><a href="{% url "org_detail" organization.pk %}"> <i class="icon-building"></i> {{ organization.name }}</a><span class="divider">/</span></li>
+			<li><a href="{% url "org_detail" organization.pk %}">{{ organization.get_mini_logo }} {{ organization.name }}</a><span class="divider">/</span></li>
 		{% endif %}
 		{% if object %}
 			<li class="active"><i class="icon-book"></i> {% trans "Edit project" %}<span class="divider"></span></li>

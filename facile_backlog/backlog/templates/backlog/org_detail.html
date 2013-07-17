@@ -14,7 +14,7 @@
 	</ul>
 
 	<div class="org-head">
-		<h1 class="inline-title">{{ organization.name }}</h1>
+		<h1 class="inline-title">{{ organization.get_big_logo }} {{ organization.name }}</h1>
 		{% if organization|can_admin:request.user %}
 			<small class="muted">[
 			<a class="btn-link" href="{% url "org_edit" organization.pk %}">

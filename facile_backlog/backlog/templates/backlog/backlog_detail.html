@@ -28,7 +28,9 @@
         {% for story in stories %}
             {% include "backlog/_story_big_cell.html" %}
         {% empty %}
-            {% trans "No stories" %}
+			<div class="text-warning alert">
+            	{% trans "No story in this backlog" %}
+			</div>
         {% endfor %}
     </div>
 {% include "backlog/_script_show_errors.html" %}
