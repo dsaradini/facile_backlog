@@ -1,7 +1,7 @@
 from django.forms.fields import CharField
 from django.forms.models import ModelForm
 from django.forms import Form, HiddenInput
-from django.forms import EmailField, BooleanField, ChoiceField
+from django.forms import EmailField, BooleanField
 from django.forms.widgets import TextInput
 from django.utils.translation import ugettext as _
 

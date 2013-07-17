@@ -18,7 +18,6 @@ from django.utils.translation import ugettext as _
 from django.views import generic
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect
-from django.views.decorators.cache import never_cache
 
 from .models import (Project, Backlog, UserStory, AuthorizationAssociation,
                      create_event, Organization)
@@ -72,7 +71,7 @@ class NoCacheMixin(object):
     no_cache = False
 
     def dispatch(self, request, *args, **kwargs):
-        result =  super(NoCacheMixin, self).dispatch(request, *args, **kwargs)
+        result = super(NoCacheMixin, self).dispatch(request, *args, **kwargs)
         if self.no_cache:
             patch_cache_control(
                 result, no_cache=True, no_store=True, must_revalidate=True)
