@@ -4,7 +4,7 @@ import datetime
 
 from collections import defaultdict
 
-from tornado.gen import engine, Task
+from tornado.gen import coroutine, Task
 from tornado.ioloop import IOLoop
 from tornado.websocket import WebSocketHandler
 
@@ -48,7 +48,7 @@ def on_redis_message(message):
         logger.debug("Received unknown message {0}".format(message))
 
 
-@engine
+@coroutine
 def listen():
     global client
     host, _, port = settings.REDIS_URL.partition(":")
@@ -66,7 +66,7 @@ def listen():
         ), listen)
 
 
-@engine
+@coroutine
 def garbager():
     try:
         for k, c_list in CLIENTS.items():
@@ -108,6 +108,10 @@ def write_to_clients(src_client, data, self_message=True):
 
 class SocketHandler(WebSocketHandler):
 
+    def __init__(self, *args, **kwargs):
+        self._test_user = kwargs.pop("test_user", None)
+        super(SocketHandler, self).__init__(*args, **kwargs)
+
     def __unicode__(self):
         return u"WebSocket user[{0}] - Origin[{1}]".format(
             getattr(self, 'user', "anonymous"),
@@ -133,7 +137,7 @@ class SocketHandler(WebSocketHandler):
 
     def on_message(self, message):
         data = json.loads(message)
-        data['username'] = self.user.full_name
+        data['username'] = self.user.full_name if self.user else "anonymous"
         write_to_clients(self, data)
 
     def get_django_session(self):
@@ -146,6 +150,9 @@ class SocketHandler(WebSocketHandler):
         return self._session
 
     def get_current_user(self):
+        if self._test_user:
+            return self._test_user
+
         # get_user needs a django request object, but only looks at the session
         class Dummy(object):
             pass

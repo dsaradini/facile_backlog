@@ -27,7 +27,7 @@ def main():
     tornado_app = Application(
         [
             (r'/ws/(?P<obj_type>[\w]+)/(?P<obj_id>[\d]+)/$', SocketHandler),
-        ], debug=True)
+        ], debug=False)
     start_listener()
     logger.info("Tornado websocket server started on port {0}".format(ws_port))
     server = HTTPServer(tornado_app)
