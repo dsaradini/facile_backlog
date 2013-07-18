@@ -62,3 +62,6 @@ class User(AbstractBaseUser):
 
     def get_gravatar_url(self, size=32):
         return gravatar_url(self.email, size)
+
+    def get_mini_gravatar_url(self):
+        return gravatar_url(self.email, 24)

@@ -8,7 +8,7 @@
 	<tbody>
 	{% for event in events %}
 		<tr>
-			<td><img src="{{ event.user.get_gravatar_url }}"></td>
+			<td><img src="{{ event.user.get_mini_gravatar_url }}"></td>
 			<td>
 				<div class="info">
 					<b>{{ event.user.full_name }}</b> {{ event.text }}

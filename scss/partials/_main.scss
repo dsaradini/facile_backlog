@@ -73,12 +73,6 @@ $box-border-color: #e3e3e3;
 	box-sizing: border-box;
 }
 
-.user_image_cell {
-	width: 36px;
-	min-width: 36px;
-	max-width: 36px;
-}
-
 .padding-reset {
 	padding: 0px;
 }
@@ -118,10 +112,11 @@ $box-border-color: #e3e3e3;
 		padding-bottom: 10px;
 	}
 	img {
-		margin-right: 6px;
-		width:32px;
-		height:32px;
-		min-width: 32px;
+		margin-right: 3px;
+		width:24px;
+		height:24px;
+		min-width: 24px;
+		border-radius:4px;
 	}
 	.info {
 		a {
@@ -135,6 +130,11 @@ $box-border-color: #e3e3e3;
 		float:left;
 		line-height: 2em;
 		color: $gray-text-color;
+	}
+	.user_image_cell {
+		width: 30px;
+		min-width: 30px;
+		max-width: 30px;
 	}
 }
 
@@ -766,4 +766,8 @@ article.story {
 
 .nav>li>a, a.brand {
 	transition: color 0.5s ease;
+}
+
+.btn{
+	transition: all 0.5s ease;
 }

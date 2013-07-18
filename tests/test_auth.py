@@ -39,6 +39,7 @@ class RegistrationTest(WebTest):
         self.assertContains(response, "Account activated")
         user = User.objects.get()
         self.assertTrue(user.is_active)
+        self.assertTrue(user.check_password("xxx"))
 
     def test_create_superuser(self):
         User.objects.create_superuser(
