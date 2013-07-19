@@ -1,5 +1,5 @@
-{% load markup %}
-<article class="story" id="story-{{ story.pk }}" story-id="{{ story.pk }}" theme-id="{{ story.theme }}">
+{% load markup hashcolor%}
+<article class="story" id="story-{{ story.pk }}" story-id="{{ story.pk }}" theme-id="{{ story.theme }}" color-story="{{ story.color }}" color-theme="{{ story.theme|hashcolor }}">
     <div class="handle" style="background-color:{{ story.color }}"></div>
     <div class="handled">
 			<div class="row-fluid">
@@ -11,14 +11,22 @@
 							</div>
 							{% include "backlog/user_story_text.html" %}
 							{% if story.theme %}
-								<div class="theme"><i class="icon-tag"></i> {{ story.theme }}</div>
+								<div class="theme"><i style="color:{{ story.theme|hashcolor }};" class="icon-tag"></i> {{ story.theme }}</div>
 							{% endif %}
 						</div>
 						<div class="acceptances span4">
-							{{ story.acceptances|markdown }}
+							{% if story.acceptances %}
+								{{ story.acceptances|markdown }}
+							{% else %}
+								<h4 class="muted-more text-center">{% trans "No acceptance criterias" %}</h4>
+							{% endif %}
 						</div>
 						<div class="comments span4">
-							{{ story.comments|markdown }}
+							{% if story.comments %}
+								{{ story.comments|markdown }}
+							{% else %}
+								<h4 class="muted-more text-center">{% trans "No comments" %}</h4>
+							{% endif %}
 						</div>
 					</div>
 				</div>

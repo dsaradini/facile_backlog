@@ -23,6 +23,11 @@
 				<option value="{{ theme }}">{{ theme }}</option>
 			{% endfor %}
 		</select>
+		<label>{% trans "Colorized by" %}</label>&nbsp;
+		<select class="select-mini" id="color-select">
+			<option value="color-story" selected>{% trans "Story color" %}</option>
+			<option value="color-theme">{% trans "Theme color" %}</option>
+		</select>
 	</form>
     <div class="stories">
         {% for story in stories %}
@@ -96,25 +101,22 @@
                 $("article[theme-id='"+theme_id+"']").addClass("filter-highlighted").removeClass("filter-opacified")
             }
         });
-		var flash = function($item, color, delay) {
-			if (!color) {
-				color = "blue";
-			}
-			if (!delay) {
-				delay = 1000;
-			}
-			var to = $item.data("_flash_to");
-			if (to) {
-				clearTimeout(to);
-				$item.data("_flash_to", null);
-			}
-			$item.data("_flash_to", to)
-			$item.css("box-shadow", "0 0 15px "+color);
-			to = setTimeout(function() {
-				$item.css("box-shadow", "none");
-			}, delay);
-			$item.data("_flash_to", to)
-		};
+		$("#color-select").select2({
+			width: "180px",
+			allowClear: false
+		}).change(function() {
+            var color_tag = $(this).val();
+			$("article.story").each(function() {
+				var $this = $(this);
+				var c = $this.attr(color_tag);
+				if (c.length < 3) {
+					c = "transparent";
+				}
+				$this.find(".handle").css({
+					"background-color": c
+				})
+			});
+        });
 
 		{% if backlog.project_id %}
 			var ws_url = '{{ ws_url }}Project/{{ backlog.project_id }}/';

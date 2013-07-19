@@ -44,7 +44,7 @@
 	<div class="lanes" style="width:{{ backlog_width }}px">
 		{% if backlog_of_interest %}
 			<div class="backlog-lanes-source pull-left" style="width:320px">
-				{% include "backlog/_backlog_lane.html" with backlog=backlog_of_interest is_project_backlog=True %}
+				{% include "backlog/_backlog_lane.html" with backlog=backlog_of_interest is_project_backlog=True%}
 			</div>
 		{% else %}
 			<div class="backlog-lanes" style="width:320px">
@@ -57,7 +57,7 @@
 		{% if backlog_list %}
 			<div class="backlog-lanes" style="width:{% widthratio backlog_list.count 1 320 %}px">
 				{% for backlog in backlog_list %}
-					{% include "backlog/_backlog_lane.html" %}
+					{% include "backlog/_backlog_lane.html" with is_org_backlog=True%}
 				{% endfor %}
 			</div>
 		{% else %}
@@ -110,7 +110,7 @@
 				$('.backlog-lanes').sortable("disable");
 				var backlog_pk = ui.item.attr("backlog-id");
 				var order = [];
-				$('article[backlog-id]').each(function() {
+				$(this).find('article[backlog-id]').each(function() {
 					order.push(parseInt($(this).attr('backlog-id')));
 				});
 				$.ajax({
@@ -199,9 +199,9 @@
 		$(".filter").show(); // hidden by default, if scripting is disabled, they should not show
 		$("#theme-select").select2({
 			allowClear: true,
-			width: "180px",
+			width: "180px"
 		}).change(function() {
-			$("#project-select").val("");
+			$("#project-select").select2("val","");
 			var theme_id = $(this).val();
 			$(".filter-highlighted").removeClass("filter-highlighted");
 			$(".filter-opacified").removeClass("filter-opacified");
@@ -212,9 +212,9 @@
 		});
 		$("#project-select").select2({
 			allowClear: true,
-			width: "180px",
+			width: "180px"
 		}).change(function() {
-			$("#theme-select").val("");
+			$("#theme-select").select2("val","");
 			var project_id = $(this).val();
 			$(".filter-highlighted").removeClass("filter-highlighted");
 			$(".filter-opacified").removeClass("filter-opacified");

@@ -1,5 +1,5 @@
 {% extends "project_base.html" %}
-{% load static sekizai_tags %}
+{% load static sekizai_tags hashcolor %}
 {% block title %}{% trans "Project" %} &mdash; {{ project.name }} &mdash; {% trans "backlogs" %}{% endblock %}
 
 {% block content_class %}project-backlogs{% endblock %}
@@ -31,8 +31,13 @@
 				<option value="{{ theme }}">{{ theme }}</option>
 			{% endfor %}
 		</select>
+		<label>{% trans "Colorized by" %}</label>&nbsp;
+		<select class="select-mini" id="color-select">
+			<option value="color-story" selected>{% trans "Story color" %}</option>
+			<option value="color-theme">{% trans "Theme color" %}</option>
+		</select>
 		<a href=".">{% trans "Refresh" %}</a>
-		<a class="btn btn-primary btn-small pull-right" href="{% url "project_backlog_create" project.pk %}">{% trans "Create backlog" %}</a>
+		<a class="btn btn-primary btn-small" href="{% url "project_backlog_create" project.pk %}">{% trans "Create backlog" %}</a>
 	</form>
 	<div class="backlog-lanes" style="width:{% widthratio backlog_list|length 1 320 %}px">
 		{% for backlog in backlog_list %}
@@ -61,50 +66,7 @@
 				</div>
 				<div class="stories" story-backlog-id="{{ backlog.pk }}">
 					{% for story in backlog.ordered_stories %}
-						<article theme-id="{{ story.theme }}" class="small-story" id="story-{{ story.pk }}" story-id="{{ story.pk }}">
-							<div class="handle" style="background-color:{{ story.color }}"></div>
-							<div class="handled">
-								<div class="story-title">
-									<div class="btn-group">
-										<a class="btn btn-link dropdown-toggle padding-reset" href="#" data-toggle="dropdown">
-											{{ story.code }}
-											<span class="caret"></span>
-										</a>
-										<ul class="dropdown-menu">
-											<li><a href="{% url "story_detail" project.pk story.pk %}">{% trans "Details" %}</a></li>
-											<li><a href="{% url "story_edit" project.pk story.pk %}?_back=project">{% trans "Edit" %}</a></li>
-											<li><a href="{% url "story_delete" project.pk story.pk %}?_back=project">{% trans "Delete" %}</a></li>
-
-										</ul>
-									</div>
-								</div>
-								<div class="points">
-									{% if story.points >= 0%}
-										{{ story.points|floatformat:"0" }}
-									{% else %}
-									&nbsp;
-									{% endif %}
-								</div>
-								<div class="status">
-									<div class="btn-group">
-										<a class="btn btn-link dropdown-toggle padding-reset" href="#" data-toggle="dropdown">
-											<span class="story-status" status={{ story.status }}>
-												<i class="icon icon-circle"></i> <i class="icon-caret-down"></i>
-											</span>
-										</a>
-										<ul class="dropdown-menu">
-											{% for s in story.project.all_status %}
-												<li><a onclick="javascript:set_story_status(this, {{ story.pk }}, '{{ s.0 }}')">{{ s.1 }}</a></li>
-											{% endfor %}
-										</ul>
-									</div>
-								</div>
-								<div class="text">{% include "backlog/user_story_text.html" %}</div>
-								{% if story.theme %}
-									<div class="theme"><i class="icon-tag"></i> {{ story.theme }}</div>
-								{% endif %}
-							</div>
-						</article>
+						{% include "backlog/_story_small.html" with back_mode="project"%}
 					{%  endfor %}
 				</div>
 				<div class="backlog-action">
@@ -132,7 +94,7 @@
 				$('.backlog-lanes').sortable("disable");
 				var backlog_pk = ui.item.attr("backlog-id");
 				var order = [];
-				$('article[backlog-id]').each(function() {
+				$(this).find('article[backlog-id]').each(function() {
 					order.push(parseInt($(this).attr('backlog-id')));
 				});
 				$.ajax({
@@ -230,6 +192,22 @@
 				$("article[theme-id='"+theme_id+"']").addClass("filter-highlighted").removeClass("filter-opacified")
 			}
 		});
+		$("#color-select").select2({
+			width: "180px",
+			allowClear: false
+		}).change(function() {
+            var color_tag = $(this).val();
+			$("article.small-story").each(function() {
+				var $this = $(this);
+				var c = $this.attr(color_tag);
+				if (c.length < 3) {
+					c = "transparent";
+				}
+				$this.find(".handle").css({
+					"background-color": c
+				})
+			});
+        });
 		$(".close-lane").click(function() {
 			$(this).parents("article.backlog").fadeOut()
 		});

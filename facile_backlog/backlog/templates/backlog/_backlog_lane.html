@@ -41,53 +41,7 @@
 	</div>
 	<div class="stories" story-backlog-id="{{ backlog.pk }}">
 		{% for story in backlog.ordered_stories %}
-			<article theme-id="{{ story.theme }}" project-id="{{ story.project_id }}" class="small-story" id="story-{{ story.pk }}" story-id="{{ story.pk }}">
-				<div class="handle" style="background-color:{{ story.color }}"></div>
-				<div class="handled">
-					<div class="story-title">
-						<div class="btn-group">
-							<a class="btn btn-link dropdown-toggle padding-reset" href="#" data-toggle="dropdown">
-								{{ story.code }}
-								<span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu">
-								<li><a href="{% url "story_detail" story.project_id story.pk %}">{% trans "Details" %}</a></li>
-								<li><a href="{% url "story_edit" story.project_id story.pk %}?_back=organization">{% trans "Edit" %}</a></li>
-								<li><a href="{% url "story_delete" story.project_id story.pk %}?_back=organization">{% trans "Delete" %}</a></li>
-								{% if not is_project_backlog%}
-									<li class="divider"></li>
-									<li><a href="#" onclick="javascript:back_to_main(this,{{ story.pk }})">{% trans "Bring back to project" %}</a></li>
-								{% endif %}
-							</ul>
-						</div>
-					</div>
-					<div class="points">
-						{% if story.points >= 0%}
-							{{ story.points|floatformat:"0" }}
-						{% else %}
-						&nbsp;
-						{% endif %}
-					</div>
-					<div class="status">
-						<div class="btn-group">
-							<a class="btn btn-link dropdown-toggle padding-reset" href="#" data-toggle="dropdown">
-								<span class="story-status" status={{ story.status }}>
-									<i class="icon icon-circle"></i> <i class="icon-caret-down"></i>
-								</span>
-							</a>
-							<ul class="dropdown-menu">
-								{% for s in story.project.all_status %}
-									<li><a onclick="javascript:set_story_status(this, {{ story.pk }}, '{{ s.0 }}')">{{ s.1 }}</a></li>
-								{% endfor %}
-							</ul>
-						</div>
-					</div>
-					<div class="text">{% include "backlog/user_story_text.html" %}</div>
-					{% if story.theme %}
-						<div class="text theme"><i class="icon-tag"></i> {{ story.theme }}</div>
-					{% endif %}
-				</div>
-			</article>
+			{% include "backlog/_story_small.html" with can_go_back=is_org_backlog  back_mode="organization"%}
 		{%  endfor %}
 	</div>
 {% include "backlog/_script_status_change.html" %}

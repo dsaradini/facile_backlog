@@ -316,7 +316,7 @@ class OrgBacklogs(OrgMixin, generic.TemplateView):
                 backlogs__is_main=True
             ).all()[:1]
             if first:
-                context['backlog_of_interest'] = first[0]
+                context['backlog_of_interest'] = first[0].main_backlog
         #context['projects_with_main'] = [p for p in
         #                                 self.organization.projects.all()
         #                                 if p.main_backlog]

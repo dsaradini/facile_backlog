@@ -687,7 +687,7 @@ article.story {
 	border:1px solid #777;
 	border-radius:10px;
 	margin: 10px 0;
-	background-color:  $box-background-color;
+	background-color:  rgba($box-background-color, 0.8);
 	position: relative;
 	transition: box-shadow 0.5s ease;
 	transition: opacity 0.5s ease;
@@ -739,9 +739,8 @@ article.story {
 	}
 	.acceptances, .comments {
 		min-height: 1rem;
-		border-left: 2px solid $box-border-color;
 		box-sizing: border-box;
-		padding-left: 6px;
+		padding: 6px;
 	}
 }
 
@@ -764,4 +763,35 @@ article.story {
 
 .btn{
 	transition: all 0.5s ease;
+}
+
+$patille-size: 12px;
+
+.pastille {
+	margin: 6px 0;
+	min-width: $patille-size;
+	max-width: $patille-size;
+	width: $patille-size;
+	min-height:$patille-size;
+	max-height:$patille-size;
+	height: $patille-size;
+	line-height: $patille-size;
+	font-size: $patille-size;
+	overflow: hidden;
+	text-align: center;
+	box-sizing: border-box;
+	//border-bottom: 1px solid rgba(black, 0.5);
+	//border-right: 1px solid rgba(black, 0.5);
+
+	//border-top: 1px solid rgba(white, 0.7);
+	//border-left: 1px solid rgba(white, 0.7);
+	box-shadow: 0px 0px 1px black;
+	border: 2px solid rgba(white, 0.7);
+	border-radius: 2em;
+	display: inline-block;
+}
+
+.muted-more {
+	color: $box-border-color;
+	text-shadow: 1px 1px white;
 }
