@@ -6,6 +6,8 @@
 		<link rel="stylesheet" href="{% static "core/css/main.css" %}">
 		<link rel="shortcut icon" href="{% static "core/img/favicon.png" %}">
 		<meta name="apple-mobile-web-app-title" content="Facile Backlog">
+		<meta name="keywords" content="backlog, agile, SCRUM, lean, software">
+		<meta name="description" content="Agile backlog management for software development">
 		<title>{% block title %}{% trans "Welcome" %}{% endblock %} &mdash; Backlogman</title>
 	</head>
 	<body class="{% block content_class %}{% endblock %}">
@@ -32,7 +34,7 @@
 						{% if notification_count %}
 							<li>
 								<a class="notif-link" href="{% url "my_notifications" %}" title="{% trans "Notifications" %}">
-									<span class="notification_count"><i class="icon-bell"></i> {{ notification_count }}</span>
+									<span class="notification_count"><span class="bell"><i class="bell icon-bell"></i></span> {{ notification_count }}</span>
 								</a>
 							</li>
 						{% endif %}
