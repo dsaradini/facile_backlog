@@ -135,8 +135,15 @@ Response
 		"theme two",
 		...list...
 	],
-	"stats: {
-
+	"stats": {
+		"estimated_points": (int) "number of estimated remaining points",
+        "completed_points": (int) "number of completed points",
+        "percent_estimated": (float) "percent of story estimated",
+        "percent_completed": (float) "percent of story completed,
+        "total_stories": (int) "total number of stories",
+        "total_points": (int) "total number of point"
+        "completed_stories": (int)"number of completed stories",
+        "estimated_stories": (int)"number of estimated stories"
 	}
 }
 </code>
@@ -170,12 +177,21 @@ Response
 	"url": "https://app.backlogman.com/api/projects/P_ID/backlogs/B_ID/",
 	"name": "BACKLOG_NAME",
 	"description": "BACKLOG_DESCRIPTION",
-	"story_count": 0,
 	"available_themes": [
 		"theme one",
 		"theme two",
 		...list...
-	]
+	],
+	"stats": {
+		"estimated_points": (int) "number of estimated remaining points",
+        "completed_points": (int) "number of completed points",
+        "percent_estimated": (float) "percent of story estimated",
+        "percent_completed": (float) "percent of story completed,
+        "total_stories": (int) "total number of stories",
+        "total_points": (int) "total number of point"
+        "completed_stories": (int)"number of completed stories",
+        "estimated_stories": (int)"number of estimated stories"
+	}
 }
 </code>
 
