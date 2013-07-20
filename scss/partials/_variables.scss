@@ -44,7 +44,8 @@ $linkColorHover:        darken($linkColor, 15%);
 
 // Typography
 // -------------------------
-$sansFontFamily:        "Helvetica Neue", Helvetica, Arial, sans-serif;
+//$sansFontFamily:        "Helvetica Neue", Helvetica, Arial, sans-serif;
+$sansFontFamily: 	    'Open Sans', HelveticaNeue, Helvetica, Arial;
 $serifFontFamily:       Georgia, "Times New Roman", Times, serif;
 $monoFontFamily:        Monaco, Menlo, Consolas, "Courier New", monospace;
 
