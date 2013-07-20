@@ -36,7 +36,7 @@ $(function(){
 	});
 	$('[name="theme"]').attr("autocomplete", "off");
 	$('[name="theme"]').typeahead({
-		source: {{ backlog.all_themes|jsonify }}
+		source: {{ project.all_themes|jsonify }}
 	});
 	$('[name="color"]').simpleColorPicker({
 		picker: true

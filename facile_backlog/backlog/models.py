@@ -506,7 +506,7 @@ class UserStory(models.Model):
 
     as_a = models.TextField(_("As"))
     i_want_to = models.TextField(_("I want to"))
-    so_i_can = models.TextField(_("so I can"))
+    so_i_can = models.TextField(_("so I can"), blank=True)
     color = models.CharField(_("Color"), max_length=7, blank=True)
     comments = models.TextField(_("Comments"), blank=True, default="")
     acceptances = models.TextField(_("acceptances"), blank=True, default="")
