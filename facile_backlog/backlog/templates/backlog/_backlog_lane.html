@@ -30,7 +30,11 @@
 				{% endif %}
 			</ul>
 		</div>
-		<span class="muted small">({{ backlog.stats.total_stories }})</span>
+		<small class="muted small">
+			<span class="backlog-stories">{{ backlog.stats.total_stories }}</span>
+			<i class="icon-circle"></i>
+			<span class="backlog-points">{{ backlog.stats.total_points }}</span> pts
+		</small>
 		{% if backlog.is_main %}
 			{% if not is_project_backlog %}
 				<span class="label label-inverse pull-right">{% trans "current" %}</span>

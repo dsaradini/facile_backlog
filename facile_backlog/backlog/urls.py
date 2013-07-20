@@ -158,7 +158,7 @@ urlpatterns += patterns(
         backlog_set_main,
         name='backlog_set_main'),
 
-    url(r'^backlog/(?P<backlog_id>[\d]+)/detail/$',
+    url(r'^backlog/(?P<backlog_id>[\d]+)/priority_view/$',
         backlog_detail,
         name='backlog_detail'),
 )

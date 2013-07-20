@@ -1,5 +1,6 @@
 {% load markup hashcolor%}
-<article theme-id="{{ story.theme }}" class="small-story" id="story-{{ story.pk }}" story-id="{{ story.pk }}" project-id="{{ story.project_id }}" color-story="{{ story.color }}" color-theme="{{ story.theme|hashcolor }}">
+<article theme-id="{{ story.theme }}" class="small-story" id="story-{{ story.pk }}" story-id="{{ story.pk }}" project-id="{{ story.project_id }}"
+		 color-story="{{ story.color }}" color-theme="{{ story.theme|hashcolor }}" points="{{ story.points }}">
 	<div class="handle" style="background-color:{{ story.color }}"></div>
 	<div class="handled">
 		<div class="story-title">

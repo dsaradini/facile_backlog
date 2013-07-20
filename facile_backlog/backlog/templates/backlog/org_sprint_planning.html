@@ -249,6 +249,7 @@
 					if (message.moved_story_id) {
 						$("article.small-story[story-id="+message.moved_story_id+"]").flash("green", 500);
 					}
+					recalculate_lanes()
 				}
 			},
 			on_connect: function() {
@@ -258,6 +259,25 @@
 				$("#ws-status .status").empty().attr("status","disconnected").append("<i class='icon-signal'></i> {% trans "offline" %}")
 			}
 		})
+
+		// redisplay the story count and point on each lane
+		var recalculate_lanes = function() {
+			$("article.backlog").each(function() {
+				var $lane = $(this);
+				var cnt = 0;
+				var pts = 0;
+				$lane.find("article.small-story").each(function() {
+					var $article = $(this);
+					cnt = cnt+1;
+					pt =  parseFloat($article.attr("points"));
+					if (pt > 0) {
+						pts = pts + pt;
+					}
+				});
+				$lane.find(".backlog-points").text(pts);
+				$lane.find(".backlog-stories").text(cnt);
+			})
+		}
 	});
 </script>
 {% endaddtoblock %}
