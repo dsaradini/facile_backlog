@@ -64,7 +64,7 @@ Response
 <code type="block">
 {
 	"id": ORG_ID,
-	"url": "https://app.backlogman.com/api/organization/ORG_ID/",
+	"url": "https://app.backlogman.com/api/organizations/ORG_ID/",
 	"name": "organization name",
 	"email": "organization email",
 	"web_site": "organization website URL"
@@ -78,7 +78,8 @@ Response
 	"projects": [
 		{
 			"id": "project id",
-			"name" "project name"
+			"name" "project name",
+			"url": "https://app.backlogman.com/api/projects/PROJ_ID/",
 		}
 		...list...
 	],
@@ -96,8 +97,14 @@ Response
 --------
 <code type="block">
 [
-	...list of project json element...
-	...see /api/project/[project-id]/
+	{
+		"id": PROJECT_ID,
+		"url": "https://app.backlogman.com/api/projects/PROJECT_ID/",
+		"name": "PROJECT NAME",
+		"code": "PCODE",
+		"description": "PROJECT_DESCRIPTION"
+	},
+	...list...
 ]
 </code>
 
@@ -128,6 +135,9 @@ Response
 		"theme two",
 		...list...
 	],
+	"stats: {
+
+	}
 }
 </code>
 

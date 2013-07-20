@@ -13,7 +13,8 @@ from django.shortcuts import redirect
 
 from .notify import notify_changes
 
-from .serializers import (ProjectSerializer, BacklogSerializer,
+from .serializers import (ProjectSerializer, ProjectListSerializer,
+                          BacklogSerializer,
                           StorySerializer, OrgSerializer)
 
 from ..backlog.models import (Project, Backlog, UserStory, Organization,
@@ -39,16 +40,21 @@ class HomeView(viewsets.ViewSet):
 home_view = HomeView.as_view({'get': 'list'})
 
 
-class ProjectViewSet(viewsets.ModelViewSet):
+class ProjectList(viewsets.ModelViewSet):
     pk_url_kwarg = "project_id"
-    serializer_class = ProjectSerializer
+    serializer_class = ProjectListSerializer
     model = Project
 
     def initial(self, request, *args, **kwargs):
         self.queryset = Project.my_projects(request.user)
-        return super(ProjectViewSet, self).initial(request, *args, **kwargs)
+        return super(ProjectList, self).initial(request, *args, **kwargs)
 
-project_list = ProjectViewSet.as_view({
+
+class ProjectViewSet(ProjectList):
+    serializer_class = ProjectSerializer
+
+
+project_list = ProjectList.as_view({
     'get': 'list',
 })
 

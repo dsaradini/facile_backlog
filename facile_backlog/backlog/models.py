@@ -54,9 +54,9 @@ class StatsMixin(object):
                 result['percent_completed'] = \
                     float(len(completed)) / float(len(story_stats)) * 100.0
 
-                result['total_points'] = sum(estimated)
-                result['estimated_points'] = sum(estimated)
-                result['completed_points'] = sum(completed)
+                result['total_points'] = int(sum(estimated))
+                result['estimated_points'] = int(sum(estimated))
+                result['completed_points'] = int(sum(completed))
             else:
                 result['total_stories'] = 0
                 result['total_points'] = 0
