@@ -1,5 +1,6 @@
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Paragraph, Frame
+from reportlab.lib.enums import TA_JUSTIFY
 from reportlab.lib.units import cm
 from reportlab.lib.colors import toColor
 from reportlab.lib.pagesizes import A4, LETTER, landscape
@@ -124,27 +125,42 @@ def draw_story_front(c, story, positions, position=0):
     p.drawOn(c, 1.1*cm, (SIZE[1]-TOP_HEIGHT+1.5)*cm)
 
     # Description
-    style = ParagraphStyle(name='Custom',
-                           parent=normalStyle,
-                           fontSize=15,
-                           leading=20,
-                           rightIndent=6,
-                           leftIndent=6,
-                           spaceBefore=0,
-                           spaceAfter=0)
-    # print the html version of the story text
-    t = loader.get_template("backlog/user_story_text.html")
-    text = t.render(Context({
-        'story': story
-    }))
-    p = Paragraph(text, style)
-    aW = SIZE[0]*cm
-    aH = (SIZE[1]-TOP_HEIGHT)*cm
-    w, h = p.wrap(aW, aH)  # find required space
-    if w <= aW and h <= aH:
-        p.drawOn(c, 0, (SIZE[1]-TOP_HEIGHT)*cm - h - 0.1*cm)
-    else:
-        raise ValueError("Not enough room")
+    found = False
+    font_size = 15
+    leading = 20
+    while not found:
+        style = ParagraphStyle(name='Custom',
+                               parent=normalStyle,
+                               fontSize=font_size,
+                               leading=leading,
+                               rightIndent=10,
+                               leftIndent=10,
+                               spaceBefore=0,
+                               spaceAfter=0,
+                               alignment=TA_JUSTIFY)
+        # print the html version of the story text
+        t = loader.get_template("backlog/user_story_text.html")
+        text = t.render(Context({
+            'story': story
+        }))
+        p = Paragraph(text, style)
+        aW = SIZE[0]*cm
+        aH = (SIZE[1]-TOP_HEIGHT)*cm
+        w, h = p.wrap(aW, aH)  # find required space
+        if w <= aW and h <= aH:
+            p.drawOn(c, 0, (SIZE[1]-TOP_HEIGHT)*cm - h - 0.1*cm)
+            found = True
+        else:
+            font_size -= 1
+            leading -= 1
+            # raise ValueError("Not enough room")
+    # print order
+    c.setStrokeColorRGB(0, 0, 0, alpha=0.2)
+    p = Paragraph("<font size=8 color=#cccccc>{0}</font>".format(
+        story.order+1), normalStyle)
+    p.wrap(0.5*cm, 0.5*cm)
+    p.drawOn(c, 0.2*cm, 0.1*cm)
+
     c.restoreState()
 
 
