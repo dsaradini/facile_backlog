@@ -5,6 +5,26 @@
 {% block title %}{% if object %}{% trans "Edit story" %}{% else %}{% trans "Add a new story" %}{% endif %}{% endblock %}
 
 {% block content %}
+
+<ul class="breadcrumb">
+	<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a></li>
+	<li class="divider"><div class="inner"></div></li>
+		{% if backlog.project_id %}
+			{% if backlog.project.org_id %}
+				<li><a href="{% url "org_sprint_planning" backlog.project.org_id %}">{{ backlog.project.org.get_mini_logo }} {{ backlog.project.org.name }}</a></li>
+				<li class="divider"><div class="inner"></div></li>
+			{% endif %}
+			<li> <a href="{% url "project_backlogs" backlog.project_id %}"><i class="icon-book"></i> {{ backlog.project.name }}</a></li>
+			<li class="divider"><div class="inner"></div></li>
+		{% elif backlog.org_id %}
+			<li> <a href="{% url "org_sprint_planning" backlog.org_id %}">{{ backlog.org.get_mini_logo }} {{ backlog.org.name }}</a></li>
+			<li class="divider"><div class="inner"></div></li>
+		{% endif %}
+		<li><a href="{% url "backlog_detail" backlog.pk %}"><i class="icon-list-ul"></i> {{ backlog.name }}</a></li>
+		<li class="divider"><div class="inner"></div></li>
+	<li class="active">{% if not object %}{% trans "Add a new story" %}{% else %}{{ object.code }}{% endif %}</li>
+</ul>
+
 <div class="row-fluid">
 	<div class="span6 offset3 base-form">
 	{% if not object %}<h1>{% trans "Add a new story" %}</h1>{% endif %}

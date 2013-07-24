@@ -25,14 +25,13 @@ class InnerProjectSerializer(serializers.ModelSerializer):
 
 class StorySerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField('_url')
-    create_date = serializers.DateTimeField(read_only=True)
     code = serializers.FloatField(read_only=True, source='code')
     backlog_id = serializers.SerializerMethodField('_backlog_id')
     project_id = serializers.SerializerMethodField('_proj_id')
 
     class Meta:
         model = UserStory
-        fields = ('id', 'url', 'code', 'create_date', 'as_a', 'i_want_to',
+        fields = ('id', 'url', 'code', 'as_a', 'i_want_to',
                   'so_i_can', 'color', 'comments', 'acceptances', 'points',
                   'theme', 'status', 'backlog_id', 'project_id')
 

@@ -290,6 +290,18 @@ def notify_backlog_changed(request, backlog, order, moved_story=None):
     })
 
 
+def notify_story_changed(request, story):
+    o_type = "Project"
+    object_id = story.project_id
+    data = StorySerializer(context={'request': request}).to_native(story)
+    notify_changes(o_type, object_id, {
+        'type': "story_changed",
+        'story_id': story.pk,
+        'story_data': data,
+        'username': request.user.email,
+    })
+
+
 def _move_backlog(request, o_type, qs, object_id):
     obj = get_object_or_404(qs, pk=object_id)
     errors = []
@@ -373,6 +385,7 @@ def story_change_status(request, story_id):
     story.status = status
     story.save()
     story.project.save(update_fields=("last_modified",))
+    notify_story_changed(request, story)
     create_event(
         request.user,
         text=u"changed story status to {0}".format(status),

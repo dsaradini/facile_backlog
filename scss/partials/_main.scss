@@ -659,8 +659,8 @@ textarea[name=i_want_to] {
 				cursor: pointer;
 				padding: 2px 0;
 				clear:both;
-				text-align: justify;
-				line-height: 1.2em;
+				//text-align: justify;
+				line-height: 1.3em;
 			}
 			.theme {
 				padding: 2px 0;
@@ -715,18 +715,66 @@ article.story {
 	.code {
 		box-sizing: border-box;
 	}
-	.points {
+	.points,.status {
 		margin: 6px 0;
 		width: 40px;
+		max-width:40px;
 		line-height: 40px;
 		font-weight: bold;
-		color: #444;
 		text-align: center;
 		font-size: 1.25rem;
-		border: 1px solid #0088cc;
 		background-color: white;
+		display: inline-block;
+	}
+	.points {
+		color: #444;
+		border: 1px solid #0088cc;
 		border-radius: 2em;
 		display: inline-block;
+	}
+	.status {
+		border: 1px solid $box-border-color;
+		border-radius: 2em;;
+		i {
+			font-size: 13px;
+			color: #444;
+		}
+		.story-status[status=to_do] {
+			i.icon:before {
+				content: "\f10c";
+				color: $box-border-color;
+			}
+		}
+		.story-status[status=in_progress] {
+			i.icon:before {
+				content: "\f085";
+				color: #777;
+			}
+		}
+		.story-status[status=completed] {
+			i.icon:before {
+				content: "\f00c";
+				color: #0c7e6e;
+			}
+		}
+		.story-status[status=accepted] {
+			i.icon:before {
+				content: "\f164";
+				color: #348038;
+			}
+		}
+		.story-status[status=rejected] {
+			i.icon:before {
+				content: "\f165";
+				color: #ff6466;
+			}
+		}
+		div.btn-group, a.btn {
+			line-height: 11px;
+		}
+		ul {
+			text-align: left;
+		}
 	}
 	.text {
 		clear: left;

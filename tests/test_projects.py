@@ -70,13 +70,14 @@ class ProjectTest(WebTest):
         user = factories.UserFactory.create(
             email='test@epyx.ch', password='pass')
         user_2 = factories.UserFactory.create()
+        user_3 = factories.UserFactory.create()
         org_ok = factories.create_sample_organization(user, org_kwargs={
             'name': "Org ok"
         })
         org_wrong = factories.create_sample_organization(user_2, org_kwargs={
             'name': "Org wrong"
         })
-
+        org_ok.add_user(user_3)
         url = reverse('project_create')
         # login redirect
         self.app.get(url, status=302)
@@ -108,8 +109,11 @@ class ProjectTest(WebTest):
         self.assertContains(response, u"Project successfully created.")
         self.assertContains(response, u"Project one")
         project = Project.objects.get()
+        self.assertEqual(project.org, org_ok)
         self.assertTrue(project.can_read(user))
         self.assertTrue(project.can_admin(user))
+        self.assertTrue(project.can_read(user_3))
+        self.assertFalse(project.can_admin(user_3))
         event = Event.objects.get(
             project=project
         )

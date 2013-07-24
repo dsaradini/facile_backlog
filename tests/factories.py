@@ -24,7 +24,8 @@ class OrganizationFactory(Factory):
             AuthorizationAssociation.objects.create(
                 is_admin=True,
                 org=result,
-                user=owner
+                user=owner,
+                is_active=True,
             )
         return result
 
@@ -50,7 +51,8 @@ class ProjectFactory(Factory):
             AuthorizationAssociation.objects.create(
                 is_admin=True,
                 project=result,
-                user=owner
+                user=owner,
+                is_active=True,
             )
         return result
 

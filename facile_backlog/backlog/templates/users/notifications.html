@@ -15,6 +15,9 @@
 		{% endif %}
 		</p>
 		<div class="invit-actions">
+		{% if i.project and i.project.org_id%}
+			<span class="muted">{%blocktrans with org=i.project.org.name %}This invitation will be automatically accepted if you accept to join the organization: <b>{{ org }}</b> {% endblocktrans %}</span>
+		{% else %}
 			<form method="POST" id="form_accept_{{ i.pk }}" action="{% url "invitation_accept" i.pk %}">
 				{% csrf_token %}
 				<button class="btn btn-success" type="submit">{% trans "Accept invitation" %}</button>
@@ -23,7 +26,9 @@
 				{% csrf_token %}
 				<button class="btn" type="submit">{% trans "I'm not interested!" %}</button>
 			</form>
+		{% endif %}
 		</div>
+
 	</div>
 {% empty %}
 	{% trans "You don't have any invitation pending" %}

@@ -58,6 +58,7 @@ class EventAdmin(admin.ModelAdmin):
 class AuthorizationAssociationAdmin(admin.ModelAdmin):
     readonly_fields = ("date_joined",)
     raw_id_fields = ("org", "project", "user")
+    search_fields = ("project__name", "org__name", "user__email")
 
     def queryset(self, request):
         qs = super(AuthorizationAssociationAdmin, self).queryset(request)

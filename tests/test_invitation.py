@@ -206,12 +206,19 @@ class RegistrationTest(WebTest):
         org = create_sample_organization(user_a, org_kwargs={
             'name': u"My first org",
         })
+        project = create_sample_project(user_a, project_kwargs={
+            'org': org
+        })
         auth = AuthorizationAssociation.objects.create(
             org=org,
             user=user_b,
             is_active=False,
             is_admin=True
         )
+        project.add_user(user_b, is_active=False)
+        project = Project.objects.get(pk=project.pk)
+        self.assertFalse(project.can_read(user_b))
+
         url = reverse("my_notifications")
         response = self.app.get(url, user=user_b)
         self.assertContains(response, org.name)
@@ -221,6 +228,8 @@ class RegistrationTest(WebTest):
                                       "organization")
         auth = AuthorizationAssociation.objects.get(pk=auth.pk)
         self.assertTrue(auth.is_active)
+        project = Project.objects.get(pk=project.pk)
+        self.assertTrue(project.can_read(user_b))
 
     def test_project_decline_invitation(self):
         user_a = UserFactory.create(email="a@test.ch")
@@ -249,12 +258,22 @@ class RegistrationTest(WebTest):
         org = create_sample_organization(user_a, org_kwargs={
             'name': u"My first org",
         })
+        project = create_sample_project(user_a, project_kwargs={
+            'org': org
+        })
         auth = AuthorizationAssociation.objects.create(
             org=org,
             user=user_b,
             is_active=False,
             is_admin=True
         )
+        auth_p = AuthorizationAssociation.objects.create(
+            project=project,
+            user=user_b,
+            is_active=False,
+            is_admin=True
+        )
+
         url = reverse("my_notifications")
         response = self.app.get(url, user=user_b)
         self.assertContains(response, org.name)
@@ -262,4 +281,6 @@ class RegistrationTest(WebTest):
         response = form.submit().follow()
         self.assertContains(response, "Invitation has been declined")
         auth_filter = AuthorizationAssociation.objects.filter(pk=auth.pk)
+        self.assertFalse(auth_filter.exists())
+        auth_filter = AuthorizationAssociation.objects.filter(pk=auth_p.pk)
         self.assertFalse(auth_filter.exists())

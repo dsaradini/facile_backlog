@@ -499,6 +499,15 @@ class OrgInviteUser(OrgMixin, generic.FormView):
                 is_active=False,
                 is_admin=admin,
             )
+        # invite to all projects too
+        for p in self.organization.projects.all():
+            auth, create = AuthorizationAssociation.objects.get_or_create(
+                project=p,
+                user=user
+            )
+            if admin:
+                auth.is_admin = admin
+                auth.save()
         self.send_notification(user, admin)
         messages.success(self.request,
                          _('Invitation has been sent to {0}.'.format(email)))
@@ -548,6 +557,12 @@ class OrgRevokeAuthorization(OrgMixin, generic.DeleteView):
         if user.is_active:
             self.send_notification(user)
         self.auth.delete()
+        if self.auth.org:
+            AuthorizationAssociation.objects.filter(
+                project__in=self.auth.org.projects.all(),
+                user=self.auth.user
+            ).delete()
+
         messages.success(self.request,
                          _('User {0} has been revoked.'.format(user.email)))
         return redirect(reverse('org_users', args=(self.organization.pk,)))
@@ -647,12 +662,26 @@ class ProjectCreate(generic.CreateView):
             kind=Backlog.COMPLETED,
             order=10,
         )
-        AuthorizationAssociation.objects.create(
-            project=form.instance,
-            user=self.request.user,
-            is_admin=True,
-            is_active=True
-        )
+        org = form.instance.org
+        if org:
+            # propagate authorizations (self should be in)
+            for auth in AuthorizationAssociation.objects.filter(
+                    org=org).all():
+                AuthorizationAssociation.objects.create(
+                    project=form.instance,
+                    user_id=auth.user_id,
+                    is_admin=auth.is_admin,
+                    is_active=auth.is_active
+                )
+        else:
+            # create self authorization
+            AuthorizationAssociation.objects.create(
+                project=form.instance,
+                user=self.request.user,
+                is_admin=True,
+                is_active=True
+            )
+
         create_event(
             self.request.user, project=self.object,
             organization=self.object.org,
@@ -1142,6 +1171,7 @@ class StoryEdit(StoryMixin, generic.UpdateView):
     def get_context_data(self, **kwargs):
         context = super(StoryMixin, self).get_context_data(**kwargs)
         context['cancel_url'] = self.get_back_url()
+        context['backlog'] = self.object.backlog
         return context
 
     def form_valid(self, form):

@@ -62,3 +62,12 @@
 		transform: rotate(45deg) translatey(2px);
 	}
 }
+
+.dropdown-right .dropdown-menu {
+    left: auto;
+    right: 0;
+	&:after {
+		 left: auto;
+    	right: 13px;
+	}
+}

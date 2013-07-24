@@ -20,9 +20,13 @@
 	</div>
 	<div class="actions">
 		{% if project|can_admin:request.user%}
+			{% if not project.org_id %}
 			<a class="btn btn-primary" href="{% url "project_invite_user" project.pk %}">
 				{% trans "Invite user" %}
 			</a>
+			{% else %}
+				<span class="text-warning">{% trans "This project is part of an organization, members must be managed by this organization" %}</span>
+			{% endif %}
 		{% endif %}
 	</div>
 	<table class="table table-striped">
@@ -45,7 +49,7 @@
 					<td class="user-invitation">{% if auth.is_active %}{% trans "Accepted" %}{% else %}{% trans "Pending" %}{% endif %}</td>
 					<td class="user-role">{% if auth.is_admin %}{% trans "Administrator" %}{% else %}{% trans "User" %}{% endif %}</td>
 					<td class="user-actions">
-						{% if project|can_admin:request.user and auth.user_id != request.user.pk%}
+						{% if project|can_admin:request.user and auth.user_id != request.user.pk and not project.org_id %}
 						<a title="{% trans "Delete" %}" href="{% url "project_auth_delete" project.pk auth.pk %}"><i class="icon-remove"></i></a>
 						{% endif %}
 					</td>
