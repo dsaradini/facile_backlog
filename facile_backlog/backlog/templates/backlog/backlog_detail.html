@@ -120,9 +120,9 @@
         });
 
 		{% if backlog.project_id %}
-			var ws_url = '{{ ws_url }}Project/{{ backlog.project_id }}/';
+			var ws_url = '{{ ws_url }}projects/{{ backlog.project_id }}/';
 		{% elif backlog.org_id %}
-			var ws_url = '{{ ws_url }}Organization/{{ backlog.org_id }}/';
+			var ws_url = '{{ ws_url }}organizations/{{ backlog.org_id }}/';
 		{% endif %}
 		$.ws_sbscribe({
 			url: ws_url,

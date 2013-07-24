@@ -228,7 +228,7 @@
 		})
 
 		$.ws_sbscribe({
-			url: '{{ ws_url }}Org/{{ organization.pk }}/',
+			url: '{{ ws_url }}organizations/{{ organization.pk }}/',
 			on_message: function(message) {
 				$("#ws-status .status").flash("white", 500);
 				if (message.type == "backlogs_moved") {

@@ -218,7 +218,7 @@
 		});
 
 		$.ws_sbscribe({
-			url: '{{ ws_url }}Project/{{ project.pk }}/',
+			url: '{{ ws_url }}projects/{{ project.pk }}/',
 			on_message: function(message) {
 				$("#ws-status .status").flash("white", 500);
 				if (message.type == "backlogs_moved") {

@@ -276,10 +276,10 @@ def move_story(request):
 
 def notify_backlog_changed(request, backlog, order, moved_story=None):
     if backlog.project_id:
-        o_type = "Project"
+        o_type = "projects"
         object_id = backlog.project_id
     else:
-        o_type = "Org"
+        o_type = "organizations"
         object_id = backlog.org_id
     notify_changes(o_type, object_id, {
         'backlog_id': backlog.pk,
@@ -291,7 +291,7 @@ def notify_backlog_changed(request, backlog, order, moved_story=None):
 
 
 def notify_story_changed(request, story):
-    o_type = "Project"
+    o_type = "projects"
     object_id = story.project_id
     data = StorySerializer(context={'request': request}).to_native(story)
     notify_changes(o_type, object_id, {

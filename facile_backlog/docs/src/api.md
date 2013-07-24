@@ -230,7 +230,6 @@ Response
 	"comments": "",
 	"acceptances": "- Can query project\n- Can query backlog\n- Can query story"
 	"points": STORY_POINTS,
-	"create_date": "2013-06-19T15:04:08.254Z",
 	"theme": "Story theme in project",
 	"status": "to_do|in_progress|accepted|rejected",
 	"backlog_id": 54
@@ -384,5 +383,67 @@ POST
 	"ok": true
 }
 </code>
+
+Backlogman WebSocker API
+========================
+
+2 web sockets are available to be notified of change on organization and project
+
+<code type="block">
+	wss://app.backlogman.com/ws/projects/(project-id)
+	wss://app.backlogman.com/ws/organizations/(org-id)
+</code>
+
+When connected to the specific WebSocket, you will receive all notifications for any elements contained in the project or organization (stories, backlogs)
+
+## Messages
+
+Messages are json utf-8 encoded string
+
+### Move story
+
+type: **stories_moved**
+
+Notification received when a story is moved in or out a backlog
+
+<code type="block">
+{
+	'backlog_id': (backlog-id), // Backlog id where the story is moved
+    'type': "stories_moved",
+    'order': [1,6 ,89, 34, 54], // Ordered of <story-id> in the backlog
+    'moved_story_id': (story-id), // id of the story moved
+    'username': (user-email), // email of the user who made the change
+}
+</code>
+
+### Story changed
+
+type: **story_changed**
+
+Notification received when a story content has changed ***Only 'status' for the moment***
+
+<code type="block">
+{
+	'type': "story_changed",
+    'story_id': (story-id), // id of the story changed
+    'story_data': {...}, json data of the story (see GET story)
+    'username': (user-email), // email of the user who made the change
+}
+</code>
+
+### Backlog moved
+
+type: **backlogs_moved**
+
+Notification received when the backlog order has changed in an organization or project
+
+<code type="block">
+{
+	'type': "backlogs_moved",
+    'order': [1,6 ,89, 34, 54], // Ordered of <backlog-id> in the project or organization
+    'username': (user-email), // email of the user who made the change
+}
+</code>
+
 
 [Back to index](index)
