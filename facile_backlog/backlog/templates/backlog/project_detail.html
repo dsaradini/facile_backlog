@@ -6,7 +6,7 @@
 
 	{% include "backlog/_project_head.html" %}
 
-	<ul class="nav nav-tabs">
+	<ul class="nav nav-pills">
 		<li class="active"><a href="{% url "project_detail" project.pk %}">{% trans "General" %}</a></li>
 		<li><a href="{% url "project_backlogs" project.pk %}">{% trans "Backlogs" %} </a></li>
 		<li><a href="{% url "project_users" project.pk %}">{% trans "Members" %} </a>
@@ -105,4 +105,5 @@
 		{% include "backlog/_events.html" with events=events %}
 	</div>
 </div>
+
 {% endblock %}

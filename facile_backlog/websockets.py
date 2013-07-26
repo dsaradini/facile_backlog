@@ -74,6 +74,7 @@ def garbager():
             CLIENTS[k] = new_list
             for c in c_list - new_list:
                 logger.info(u"Disconnected {0}".format(c))
+                _client_removed(c)
     finally:
         IOLoop.instance().add_timeout(datetime.timedelta(
             seconds=WEBSOCKET_GARBAGE_CHECK
@@ -88,22 +89,38 @@ def start_listener():
 def append_client(client):
     key = client.client_key
     CLIENTS[key].add(client)
+    write_to_clients(client, json.dumps({
+        'type': "user_join",
+        'user': client.user.email,
+        'users': [c.user.email for c in CLIENTS[key] if c.user]
+    }))
 
 
 def remove_client(client):
     key = client.client_key
     CLIENTS[key].discard(client)
+    _client_removed(client)
 
 
-def write_to_clients(src_client, data, self_message=True):
+def _client_removed(client):
+    key = client.client_key
+    write_to_clients(client, json.dumps({
+        'type': "user_leave",
+        'user': client.user.email,
+        'users': [c.user.email for c in CLIENTS[key] if c.user]
+    }))
+
+
+def write_to_clients(src_client, data, self_notify=True):
     logger.debug("Write to client {0} -> {1}".format(src_client, data))
     if isinstance(src_client, SocketHandler):
         key = src_client.client_key
     else:
         key = src_client
     for c in CLIENTS[key]:
-        if c.ws_connection and c != src_client:
-            c.write_message(data)
+        if c.ws_connection:
+            if self_notify or c != src_client:
+                c.write_message(data)
 
 
 class SocketHandler(WebSocketHandler):

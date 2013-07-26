@@ -17,12 +17,13 @@
 
 	{% include "backlog/_project_head.html" %}
 
-	<ul class="nav nav-tabs">
+	<ul class="nav nav-pills">
 		<li><a href="{% url "project_detail" project.pk %}">{% trans "General" %}</a></li>
 		<li class="active"><a href="{% url "project_backlogs" project.pk %}">{% trans "Backlogs" %} </a></li>
 		<li><a href="{% url "project_users" project.pk %}">{% trans "Members" %} </a>
 		<li><a href="{% url "project_stories" project.pk %}">{% trans "Stories" %}</a></li>
 	</ul>
+
 	<form class="form-inline boxed">
 		<label>{% trans "Highlight theme" %}</label>&nbsp;
 		<select class="select" id="theme-select">
@@ -80,6 +81,7 @@
 			</article>
 		{% endfor %}
 	</div>
+
 {% include "backlog/_script_status_change.html" %}
 {% include "backlog/_script_show_errors.html" %}
 
@@ -240,15 +242,35 @@
 						$("article.small-story[story-id="+message.moved_story_id+"]").flash("green", 500);
 					}
 					recalculate_lanes()
+				} else if (message.type == "user_join" || message.type == "user_leave") {
+					var $users = $("#ws-users").empty();
+					$users.text(message.users.length);
+					generate_ws_tooltip(message.users);
 				}
 			},
 			on_connect: function() {
-				$("#ws-status .status").empty().attr("status","connected").append("<i class='icon-signal'></i> {% trans "online" %}")
+				$("#ws-status .status").empty().attr("status","connected").append("<i class='icon-signal'></i> {% trans "online" %} <span id='ws-users'></span>")
 			},
 			on_disconnect: function() {
 				$("#ws-status .status").empty().attr("status","disconnected").append("<i class='icon-signal'></i> {% trans "offline" %}")
 			}
 		})
+
+		var WS_TOOLTIP = "";
+		var generate_ws_tooltip = function(users) {
+			var ret = "<h5>{% trans "Online users" %}</h5>";
+			users.forEach(function(u){
+				ret += ("<div class='tt-user'><img src='"+$.get_gravatar_url(u, 16)+"'><span>"+u+"</span></div>");
+			});
+			WS_TOOLTIP = ret;
+		}
+		$("#ws-status").tooltip({
+			html : true,
+			placement: "bottom",
+			title: function() {
+				return WS_TOOLTIP;
+			}
+		});
 
 		// redisplay the story count and point on each lane
 		var recalculate_lanes = function() {

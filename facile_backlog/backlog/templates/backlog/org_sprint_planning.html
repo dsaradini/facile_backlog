@@ -17,7 +17,7 @@
 
 	{% include "backlog/_org_head.html" %}
 
-	<ul class="nav nav-tabs">
+	<ul class="nav nav-pills">
 		<li><a href="{% url "org_detail" organization.pk %}">{% trans "General" %}</a></li>
 		<li class="active"><a href="{% url "org_sprint_planning" organization.pk %}">{% trans "Sprint planning" %} </a></li>
 		<li><a href="{% url "org_users" organization.pk %}">{% trans "Members" %} </a>
@@ -250,15 +250,35 @@
 						$("article.small-story[story-id="+message.moved_story_id+"]").flash("green", 500);
 					}
 					recalculate_lanes()
+				} else if (message.type == "user_join" || message.type == "user_leave") {
+					var $users = $("#ws-users").empty();
+					$users.text(message.users.length);
+					generate_ws_tooltip(message.users);
 				}
 			},
 			on_connect: function() {
-				$("#ws-status .status").empty().attr("status","connected").append("<i class='icon-signal'></i> {% trans "online" %}")
+				$("#ws-status .status").empty().attr("status","connected").append("<i class='icon-signal'></i> {% trans "online" %} <span id='ws-users'></span>")
 			},
 			on_disconnect: function() {
 				$("#ws-status .status").empty().attr("status","disconnected").append("<i class='icon-signal'></i> {% trans "offline" %}")
 			}
 		})
+
+		var WS_TOOLTIP = "";
+		var generate_ws_tooltip = function(users) {
+			var ret = "<h5>{% trans "Online users" %}</h5>";
+			users.forEach(function(u){
+				ret += ("<div class='tt-user'><img src='"+$.get_gravatar_url(u, 16)+"'><span>"+u+"</span></div>");
+			});
+			WS_TOOLTIP = ret;
+		}
+		$("#ws-status").tooltip({
+			html : true,
+			placement: "bottom",
+			title: function() {
+				return WS_TOOLTIP;
+			}
+		});
 
 		// redisplay the story count and point on each lane
 		var recalculate_lanes = function() {

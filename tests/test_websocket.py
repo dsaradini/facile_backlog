@@ -40,21 +40,30 @@ class TestWebSockets(AsyncHTTPTestCase):
         class WSClient(websocket.WebSocket):
             def on_open(self):
                 self.write_message(json.dumps({
-                    'echo': 'test-message'
+                    'type': 'test-message',
+                    'data': 'hello',
                 }))
 
             def on_message(self, data):
                 mess = json.loads(data)
-                _self.assertEquals(mess['echo'], 'test-end')
-                _self.io_loop.add_callback(_self.stop)
+                t = mess['type']
+                if t == 'test-end':
+                    _self.io_loop.add_callback(_self.stop)
+                elif t == 'user_join':
+                    _self.assertEqual(mess['user'], _self._test_user.email)
+                    _self.assertEqual(len(mess['users']), 1)
+                elif t == 'test-message':
+                    _self.assertEqual(mess['data'], "hello")
+                else:
+                    _self.fail("Unknown message {0}".format(mess))
 
         start_listener()
         self.io_loop.add_callback(
-            partial(WSClient, self.get_url('/ws/Project/1/'), self.io_loop))
+            partial(WSClient, self.get_url('/ws/projects/1/'), self.io_loop))
 
         def action():
-            notify_changes("Project", 1, {
-                'echo': 'test-end'
+            notify_changes("projects", 1, {
+                'type': 'test-end'
             })
 
         self.io_loop.add_timeout(datetime.timedelta(seconds=1), action)
