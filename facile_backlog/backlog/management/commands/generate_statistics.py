@@ -32,7 +32,8 @@ class Command(BaseCommand):
                 Client().captureException(ex)
             else:
                 logger.log(
-                    logging.INFO,
-                    u"Daily statistic generated for "
+                    logging.DEBUG,
+                    u"Daily statistics generated for "
                     u"project: '{0}' [{1}] ({2})".format(
                         project.name, project.code, project.pk))
+        logger.log(logging.INFO, u"Daily statistics generated")

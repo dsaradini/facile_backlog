@@ -4,6 +4,7 @@
 import os
 import urlparse
 import dj_database_url
+import sys
 
 from django.core.urlresolvers import reverse_lazy
 
@@ -245,21 +246,16 @@ LOGGING = {
             '()': 'django.utils.log.RequireDebugFalse'
         }
     },
-    'formatters': {
-        'simple': {
-            'format': '%(asctime)s %(levelname)s: %(message)s',
-        },
-    },
     'handlers': {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'simple'
+            'stream': sys.stdout,
         },
         'sentry': {
-            'level': 'INFO',
-            'filters': ['require_debug_false'],
-            'class': 'raven.contrib.django.handlers.SentryHandler',
+            'level': 'ERROR',
+            'class':
+            'raven.contrib.django.raven_compat.handlers.SentryHandler',
         },
     },
     'loggers': {
@@ -268,7 +264,7 @@ LOGGING = {
             'level': 'DEBUG',
         },
         'django.request': {
-            'handlers': ['console'],
+            'handlers': ['console', 'sentry'],
             'level': 'ERROR',
             'propagate': True,
         },
@@ -281,6 +277,10 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
+        },
+        'ratelimitbackend': {
+            'handlers': ['console', 'sentry'],
+            'level': 'WARNING',
         },
     }
 }
