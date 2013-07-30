@@ -4,6 +4,7 @@
 <script type="text/javascript">
 $(function() {
 	$.show_error = function( message , jqXHR) {
+		console.log("jqXHR", jqXHR);
 		if (jqXHR.responseText) {
 			try {
 				var obj = JSON.parse(jqXHR.responseText);
@@ -17,9 +18,11 @@ $(function() {
 					});
 					$("#messages").empty().append($main);
 					return;
+				} else if ( typeof obj == 'string') {
+					message = obj;
 				}
 			} catch(ex){
-				console.error(ex)
+				message = jqXHR.responseText;
 			}
 		}
 		$("#messages").empty().append(

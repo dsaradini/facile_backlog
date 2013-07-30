@@ -36,14 +36,14 @@
 <div class="row-fluid">
 
 	<div class="span6">
-		<h2>{% trans "Backlogs" %} <a class="btn btn-primary btn-small" href="{% url "org_backlog_create" organization.pk %}">{% trans "Create backlog" %}</a></h2>
-		<div class="actions">
-			{% if WRONG|can_admin:request.user %}
-				<a class="btn btn-primary" href="{% url "org_backlog_create" project.pk %}?">
+		<h2>{% trans "Backlogs" %}
+			{% if organization|can_admin:request.user %}
+				<a class="btn btn-primary btn-small" href="{% url "org_backlog_create" organization.pk %}?">
 					{% trans "Create backlog" %}
 				</a>
 			{% endif %}
-		</div>
+		</h2>
+		<div class="actions"></div>
 		<ul class="backlog-list">
 			{% for backlog in organization.backlogs.all %}
 				<li>
@@ -102,7 +102,11 @@
 		</ul>
 	</div>
 	<div class="span6">
-		<h2>{% trans "Projects" %} <a class="btn btn-primary btn-small" href="{% url "project_create" %}?org={{ organization.pk }}">{% trans "New project" %}</a></h2>
+		<h2>{% trans "Projects" %}
+			{% if organization|can_admin:request.user %}
+				<a class="btn btn-primary btn-small" href="{% url "project_create" %}?org={{ organization.pk }}">{% trans "New project" %}</a>
+			{% endif %}
+		</h2>
 		<div class="actions"></div>
 		{% if projects %}
 			<div class="span12">

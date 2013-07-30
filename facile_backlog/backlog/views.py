@@ -137,7 +137,10 @@ class OrgMixin(NoCacheMixin):
                                                  request.user,
                                                  pk=kwargs['org_id'])
         if self.admin_only and not self.organization.can_admin(request.user):
-            raise Http404
+            if self.organization.can_read(request.user):
+                return HttpResponseForbidden(_("Not authorized"))
+            else:
+                raise Http404
         self.request = request
         self.pre_dispatch()
         return super(OrgMixin, self).dispatch(request, *args, **kwargs)
@@ -223,7 +226,10 @@ class OrgBacklogMixin(BackMixin):
         if self.backlog.org_id != self.organization.pk:
             raise Http404('No matches found.')
         if self.admin_only and not self.organization.can_admin(request.user):
-            return HttpResponseForbidden()
+            if self.organization.can_read(request.user):
+                return HttpResponseForbidden(_("Not authorized"))
+            else:
+                raise Http404
         self.request = request
         render = self.pre_dispatch(request, **kwargs)
         if render:
@@ -585,7 +591,10 @@ class ProjectMixin(NoCacheMixin):
         self.project = get_my_object_or_404(Project, request.user,
                                             pk=kwargs['project_id'])
         if self.admin_only and not self.project.can_admin(request.user):
-            raise Http404
+            if self.project.can_read(request.user):
+                return HttpResponseForbidden(_("Not authorized"))
+            else:
+                raise Http404
         self.request = request
         self.pre_dispatch()
         response = super(ProjectMixin, self).dispatch(request, *args, **kwargs)
@@ -630,6 +639,11 @@ class ProjectCreate(generic.CreateView):
                     )
             except Organization.DoesNotExist:
                 raise Http404
+            if not self.org.can_admin(request.user):
+                if self.org.can_read(request.user):
+                    return HttpResponseForbidden(_("Not authorized"))
+                else:
+                    raise Http404
         else:
             self.org = None
         self.request = request
@@ -881,7 +895,10 @@ class ProjectBacklogMixin(BackMixin):
         if self.backlog.project.pk != self.project.pk:
             raise Http404('No matches found.')
         if self.admin_only and not self.project.can_admin(request.user):
-            return HttpResponseForbidden()
+            if self.project.can_read(request.user):
+                return HttpResponseForbidden(_("Not authorized"))
+            else:
+                raise Http404
         self.request = request
         response = self.pre_dispatch(request, **kwargs)
         if not response:
@@ -1024,7 +1041,10 @@ class BacklogMixin(NoCacheMixin):
         backlog_id = kwargs['backlog_id']
         self.backlog = get_my_object_or_404(Backlog, request.user, backlog_id)
         if self.admin_only and not self.backlog.can_admin(request.user):
-            return HttpResponseForbidden()
+            if self.backlog.can_read(request.user):
+                return HttpResponseForbidden(_("Not authorized"))
+            else:
+                raise Http404
         self.request = request
         render = self.pre_dispatch(request, **kwargs)
         if render:

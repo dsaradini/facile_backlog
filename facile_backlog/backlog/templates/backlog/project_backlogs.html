@@ -1,5 +1,5 @@
 {% extends "project_base.html" %}
-{% load static sekizai_tags hashcolor %}
+{% load static sekizai_tags hashcolor acl %}
 {% block title %}{% trans "Project" %} &mdash; {{ project.name }} &mdash; {% trans "backlogs" %}{% endblock %}
 
 {% block content_class %}project-backlogs{% endblock %}
@@ -32,7 +32,9 @@
 			<option value="color-theme">{% trans "Theme color" %}</option>
 		</select>
 		<a href=".">{% trans "Refresh" %}</a>
-		<a class="btn btn-primary btn-small" href="{% url "project_backlog_create" project.pk %}">{% trans "Create backlog" %}</a>
+		{% if project|can_admin:request.user %}
+			<a class="btn btn-primary btn-small" href="{% url "project_backlog_create" project.pk %}">{% trans "Create backlog" %}</a>
+		{% endif %}
 	</form>
 	<div class="backlog-lanes" style="width:{% widthratio backlog_list|length 1 320 %}px">
 		{% for backlog in backlog_list %}

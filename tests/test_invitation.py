@@ -128,7 +128,7 @@ class RegistrationTest(WebTest):
         )
 
         url = reverse("project_auth_delete", args=(project.pk, auth.pk))
-        self.app.get(url, user=user_b, status=404)
+        self.app.get(url, user=user_b, status=403)
         response = self.app.get(url, user=user_a)
         form = response.forms['delete_form']
         response = form.submit().follow()
@@ -164,7 +164,7 @@ class RegistrationTest(WebTest):
         )
 
         url = reverse("org_auth_delete", args=(org.pk, auth.pk))
-        self.app.get(url, user=user_b, status=404)
+        self.app.get(url, user=user_b, status=403)
         response = self.app.get(url, user=user_a)
         form = response.forms['delete_form']
         response = form.submit().follow()
