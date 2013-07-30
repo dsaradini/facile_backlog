@@ -1,0 +1,7 @@
+<ul class="nav nav-pills">
+	<li class="{% if active == 'detail' %}active{% endif %}"><a href="{% url "project_detail" project.pk %}">{% trans "General" %}</a></li>
+	<li class="{% if active == 'backlogs' %}active{% endif %}"><a href="{% url "project_backlogs" project.pk %}">{% trans "Backlogs" %} </a></li>
+	<li class="{% if active == 'users' %}active{% endif %}"><a href="{% url "project_users" project.pk %}">{% trans "Members" %} </a>
+	<li class="{% if active == 'stories' %}active{% endif %}"><a href="{% url "project_stories" project.pk %}">{% trans "Stories" %}</a></li>
+	<li class="{% if active == 'stats' %}active{% endif %}"><a href="{% url "project_stats" project.pk %}">{% trans "Statistics" %}</a></li>
+</ul>

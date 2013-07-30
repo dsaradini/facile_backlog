@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import (Project, Backlog, UserStory, AuthorizationAssociation,
-                     Event, Organization)
+                     Event, Organization, Statistic)
 
 
 class OrganizationAdmin(admin.ModelAdmin):
@@ -14,6 +14,13 @@ class ProjectAdmin(admin.ModelAdmin):
     readonly_fields = ("story_counter", "get_acl", )
     search_fields = ("name", "code")
     raw_id_fields = ("org",)
+    actions = ['generate_statistics']
+
+    def generate_statistics(self, request, queryset):
+        for project in queryset.all():
+            project.generate_daily_statistics()
+        self.message_user(request, "Statistics successfully generated.")
+    generate_statistics.short_description = "Generate daily statistics"
 
     def queryset(self, request):
         return super(ProjectAdmin,
@@ -64,9 +71,22 @@ class AuthorizationAssociationAdmin(admin.ModelAdmin):
         qs = super(AuthorizationAssociationAdmin, self).queryset(request)
         return qs.prefetch_related("user", "project")
 
+
+class StatisticAdmin(admin.ModelAdmin):
+    readonly_fields = ("data", "day")
+    raw_id_fields = ("project",)
+    search_fields = ("project__name",)
+    list_display = ("day", "project")
+
+    def queryset(self, request):
+        qs = super(StatisticAdmin, self).queryset(request)
+        return qs.prefetch_related("project")
+
+
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Backlog, BacklogAdmin)
 admin.site.register(UserStory, UserStoryAdmin)
 admin.site.register(AuthorizationAssociation, AuthorizationAssociationAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(Organization, OrganizationAdmin)
+admin.site.register(Statistic, StatisticAdmin)

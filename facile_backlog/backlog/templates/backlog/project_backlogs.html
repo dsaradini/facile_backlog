@@ -16,13 +16,7 @@
 {% block content %}
 
 	{% include "backlog/_project_head.html" %}
-
-	<ul class="nav nav-pills">
-		<li><a href="{% url "project_detail" project.pk %}">{% trans "General" %}</a></li>
-		<li class="active"><a href="{% url "project_backlogs" project.pk %}">{% trans "Backlogs" %} </a></li>
-		<li><a href="{% url "project_users" project.pk %}">{% trans "Members" %} </a>
-		<li><a href="{% url "project_stories" project.pk %}">{% trans "Stories" %}</a></li>
-	</ul>
+	{% include "backlog/_project_tabs.html" with active="backlogs" %}
 
 	<form class="form-inline boxed">
 		<label>{% trans "Highlight theme" %}</label>&nbsp;

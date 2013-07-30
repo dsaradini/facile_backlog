@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.forms import forms
 from django.http import Http404
-from django.http.response import (HttpResponse, HttpResponseForbidden)
+from django.http.response import (HttpResponseForbidden)
 from django.shortcuts import get_object_or_404, redirect
 from django.template import loader
 from django.utils.cache import patch_cache_control
@@ -20,7 +20,8 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect
 
 from .models import (Project, Backlog, UserStory, AuthorizationAssociation,
-                     create_event, Organization)
+                     create_event, Organization, status_for, STATUS_COLORS,
+                     Status)
 from .forms import (ProjectCreationForm, ProjectEditionForm,
                     BacklogCreationForm, BacklogEditionForm,
                     StoryEditionForm, StoryCreationForm, InviteUserForm,
@@ -809,6 +810,59 @@ class ProjectBacklogs(ProjectMixin, generic.TemplateView):
 project_backlogs = login_required(ProjectBacklogs.as_view())
 
 
+class ProjectStats(ProjectMixin, generic.TemplateView):
+    template_name = "backlog/project_stats.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectStats, self).get_context_data(**kwargs)
+        context['project'] = self.project
+
+        base = list(self.project.statistics.all()[:60])
+        if not base:
+            return context
+
+        def compute_series(name, call):
+            return {
+                'name': status_for(name),
+                'color': STATUS_COLORS[name],
+                'data': [s.time_series(call) for s in base],
+            }
+
+        context['all_points'] = [
+            compute_series(Status.TODO, "all.by_status.to_do.points"),
+            compute_series(Status.IN_PROGRESS,
+                           "all.by_status.in_progress.points"),
+            compute_series(Status.COMPLETED, "all.by_status.completed.points"),
+            compute_series(Status.REJECTED, "all.by_status.rejected.points"),
+            compute_series(Status.ACCEPTED, "all.by_status.accepted.points"),
+        ]
+
+        context['main_points'] = [
+            compute_series(Status.TODO, "main.by_status.to_do.points"),
+            compute_series(Status.IN_PROGRESS,
+                           "main.by_status.in_progress.points"),
+            compute_series(Status.COMPLETED,
+                           "main.by_status.completed.points"),
+            compute_series(Status.REJECTED, "main.by_status.rejected.points"),
+            compute_series(Status.ACCEPTED, "main.by_status.accepted.points"),
+        ]
+
+        def pie_element(name, value):
+            return {
+                'name': status_for(name),
+                'color': STATUS_COLORS[name],
+                'y': value['stories']
+            }
+        s = base[-1]
+        context['main_status_pie'] = [pie_element(k, v) for k, v in
+                                      s.data['main']['by_status'].items()]
+        context['project_status_pie'] = [pie_element(k, v) for k, v in
+                                         s.data['all']['by_status'].items()]
+
+        return context
+project_stats = login_required(ProjectStats.as_view())
+
+
 # Backlogs
 
 class ProjectBacklogMixin(BackMixin):
@@ -1473,8 +1527,3 @@ def invitation_decline(request, auth_id):
         auth.delete()
     messages.info(request, _("Invitation has been declined"))
     return redirect(reverse("my_notifications"))
-
-
-@login_required
-def EMPTY_VIEW(request, *args, **kwargs):
-    return HttpResponse("EMPTY VIEW !!!TEST-WARNING!!!")

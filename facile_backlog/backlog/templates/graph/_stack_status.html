@@ -1,0 +1,54 @@
+{% load jsonify %}
+<script type="text/javascript">
+$(function() {
+	$("{{ element_id }}").highcharts({
+		chart: {
+			type: 'area'
+		},
+
+		title: {
+			text: "{% trans graph_title %}"
+		},
+
+		xAxis: {
+			type: 'datetime',
+			tickmarkPlacement: 'on',
+			title: {
+				enabled: false
+			},
+			tickInterval: 24 * 3600 * 1000, // one day
+			tickWidth: 0,
+			gridLineWidth: 1
+		},
+
+		yAxis: {
+			allowDecimals: false,
+			min: 0,
+			title: {
+				text: "{% trans "Points" %}"
+			}
+		},
+		plotOptions: {
+			area: {
+				stacking: 'normal',
+				lineColor: '#666666',
+				lineWidth: 1,
+				marker: {
+					lineWidth: 1,
+					lineColor: '#666666'
+				}
+			}
+		},
+		tooltip: {
+			crosshairs: true,
+			formatter: function() {
+				return '<b>'+ this.x +'</b><br/>'+
+					this.series.name +': '+ this.y +'<br/>'+
+					'{% trans "Total:" %}'+ this.point.stackTotal;
+			}
+		},
+		series: {{ series | jsonify }}
+	});
+
+})
+</script>

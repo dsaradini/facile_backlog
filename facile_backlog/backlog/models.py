@@ -1,5 +1,8 @@
 import re
 import datetime
+import calendar
+
+from collections import defaultdict
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -9,6 +12,8 @@ from django.db.models.loading import get_model
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+
+from json_field import JSONField
 
 from ..util import gravatar_url
 
@@ -21,19 +26,38 @@ LONG_AGO = timezone.make_aware(datetime.datetime(2012, 7, 2),
 
 
 EMPTY = ""
-TODO = "to_do"
-ACCEPTED = "accepted"
-IN_PROGRESS = "in_progress"
-REJECTED = "rejected"
-COMPLETED = "completed"
+
+
+class Status(object):
+    TODO = "to_do"
+    ACCEPTED = "accepted"
+    IN_PROGRESS = "in_progress"
+    REJECTED = "rejected"
+    COMPLETED = "completed"
+
 
 STATUS_CHOICE = (
-    (TODO, _("To do")),
-    (IN_PROGRESS, _("In progress")),
-    (ACCEPTED, _("Accepted")),
-    (REJECTED, _("Rejected")),
-    (COMPLETED, _("Completed")),
+    (Status.TODO, _("To do")),
+    (Status.IN_PROGRESS, _("In progress")),
+    (Status.ACCEPTED, _("Accepted")),
+    (Status.REJECTED, _("Rejected")),
+    (Status.COMPLETED, _("Completed")),
 )
+
+STATUS_COLORS = {
+    Status.TODO: '#999999',
+    Status.IN_PROGRESS: '#2f7ed8',
+    Status.COMPLETED: '#0d233a',
+    Status.ACCEPTED: '#8bbc21',
+    Status.REJECTED: '#910000'
+}
+
+
+def status_for(key):
+    for k, v in STATUS_CHOICE:
+        if k == key:
+            return unicode(v)
+    raise KeyError("Unknown key {0}".format(key))
 
 
 class StatsMixin(object):
@@ -44,7 +68,8 @@ class StatsMixin(object):
             story_stats = self.stories.values_list("points", "status")
             estimated = [v[0] for v in story_stats if v[0] >= 0]
             completed = [v[0] for v in story_stats if
-                         v[1] in (UserStory.COMPLETED, UserStory.ACCEPTED)]
+                         v[1] in (Status.COMPLETED, Status.ACCEPTED)
+                         and v[0] >= 0]
             if len(story_stats):
                 result['total_stories'] = len(story_stats)
                 result['estimated_stories'] = len(estimated)
@@ -231,7 +256,7 @@ class Organization(AclMixin, WithThemeMixin, models.Model):
         )
 
     def all_status(self):
-        return UserStory.STATUS_CHOICE
+        return STATUS_CHOICE
 
     def add_user(self, user, is_active=True, is_admin=False):
         try:
@@ -364,7 +389,7 @@ class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
         return list(result)
 
     def all_status(self):
-        return UserStory.STATUS_CHOICE
+        return STATUS_CHOICE
 
     @property
     def main_backlog(self):
@@ -375,6 +400,42 @@ class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
             else:
                 self._main_backlog = None
         return self._main_backlog
+
+    def generate_daily_statistics(self, day=None):
+        if not day:
+            day = timezone.now()
+        statistics, create = Statistic.objects.get_or_create(
+            project=self, day=day)
+        data = dict()
+
+        def constant_factory():
+            return {
+                'stories': 0,
+                'points': 0,
+                'non_estimated': 0,
+            }
+
+        def populate(stories):
+            result = constant_factory()
+            result['by_status'] = defaultdict(constant_factory)
+            for s in stories.all():
+                bs = result['by_status'][s.status]
+                result['stories'] += 1
+                bs['stories'] += 1
+                if s.points > 0:
+                    result['points'] += int(s.points)
+                    bs['points'] += int(s.points)
+                elif s.points == -1:
+                    result['non_estimated'] += 1
+            return result
+
+        data['all'] = populate(self.stories)
+        if self.main_backlog:
+            data['main'] = populate(self.main_backlog.stories)
+        data['backlogs'] = self.backlogs.count()
+        statistics.data = data
+        statistics.save()
+        return statistics, create
 
 
 class Backlog(StatsMixin, WithThemeMixin, models.Model):
@@ -474,19 +535,6 @@ class Backlog(StatsMixin, WithThemeMixin, models.Model):
 
 
 class UserStory(models.Model):
-    TODO = "to_do"
-    ACCEPTED = "accepted"
-    IN_PROGRESS = "in_progress"
-    REJECTED = "rejected"
-    COMPLETED = "completed"
-
-    STATUS_CHOICE = (
-        (TODO, _("To do")),
-        (IN_PROGRESS, _("In progress")),
-        (COMPLETED, _("Completed")),
-        (ACCEPTED, _("Accepted")),
-        (REJECTED, _("Rejected")),
-    )
 
     FIBONACCI_CHOICE = (
         (-1, _("Not set")),
@@ -518,7 +566,7 @@ class UserStory(models.Model):
     backlog = models.ForeignKey(Backlog, verbose_name=_("Backlog"),
                                 related_name="stories")
     order = models.PositiveIntegerField()
-    status = models.CharField(_("Status"), max_length=20, default=TODO,
+    status = models.CharField(_("Status"), max_length=20, default=Status.TODO,
                               choices=STATUS_CHOICE)
 
     # DOT NOT PUT META ORDERING HERE it will break the distinct theme
@@ -634,6 +682,35 @@ class Event(models.Model):
 
     class Meta:
         ordering = ("-when",)
+
+
+class Statistic(models.Model):
+    project = models.ForeignKey(Project, verbose_name=_("Project"),
+                                related_name="statistics")
+    day = models.DateField(_("Day"), default=timezone.now)
+    data = JSONField(_("Data"))
+
+    class Meta:
+        ordering = ("day",)
+
+    @property
+    def js_date(self):
+        return calendar.timegm(self.day.timetuple()) * 1000
+
+    def __unicode__(self):
+        return "<Statistic - {0}>".format(self.day)
+
+    def time_series(self, t):
+        stack = t.split(".")
+
+        def get_it(pos, current):
+            v = current.get(stack[pos], None)
+            if v and pos < len(stack)-1:
+                return get_it(pos+1, v)
+            else:
+                return v
+
+        return [self.js_date, get_it(0, self.data)]
 
 
 def build_event_kwargs(values, **kwargs):

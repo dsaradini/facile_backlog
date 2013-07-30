@@ -4,7 +4,6 @@
 import os
 import urlparse
 import dj_database_url
-import sys
 
 from django.core.urlresolvers import reverse_lazy
 
@@ -176,6 +175,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'django.contrib.humanize',
+    'json_field',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -245,16 +245,21 @@ LOGGING = {
             '()': 'django.utils.log.RequireDebugFalse'
         }
     },
+    'formatters': {
+        'simple': {
+            'format': '%(asctime)s %(levelname)s: %(message)s',
+        },
+    },
     'handlers': {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'stream': sys.stdout,
+            'formatter': 'simple'
         },
         'sentry': {
-            'level': 'ERROR',
-            'class':
-            'raven.contrib.django.raven_compat.handlers.SentryHandler',
+            'level': 'INFO',
+            'filters': ['require_debug_false'],
+            'class': 'raven.contrib.django.handlers.SentryHandler',
         },
     },
     'loggers': {
@@ -263,7 +268,7 @@ LOGGING = {
             'level': 'DEBUG',
         },
         'django.request': {
-            'handlers': ['console', 'sentry'],
+            'handlers': ['console'],
             'level': 'ERROR',
             'propagate': True,
         },
@@ -276,10 +281,6 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
-        },
-        'ratelimitbackend': {
-            'handlers': ['console', 'sentry'],
-            'level': 'WARNING',
         },
     }
 }

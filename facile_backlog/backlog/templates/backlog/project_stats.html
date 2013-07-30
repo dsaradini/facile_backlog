@@ -1,0 +1,32 @@
+{% extends "project_base.html" %}
+{% load staticfiles sekizai_tags markup acl jsonify %}
+
+{% block title %}{% trans "Project" %} &mdash; {{ project.name }}  &mdash; Statistics{% endblock %}
+{% block content %}
+
+{% addtoblock "js" %}
+<script src="{% static "core/js/highcharts.js" %}"></script>
+{% include "graph/_stack_status.html" with graph_title="Story points in project" series=all_points element_id="#graph-project-points" %}
+{% include "graph/_stack_status.html" with graph_title="Story points in main backlog" series=main_points element_id="#graph-main-points" %}
+{% include "graph/_pie_status.html" with graph_title="Current project status" series=project_status_pie element_id="#graph-project-pie" %}
+{% include "graph/_pie_status.html" with graph_title="Current main backlog status" series=main_status_pie element_id="#graph-main-pie" %}
+
+{% endaddtoblock %}
+
+	{% include "backlog/_project_head.html" %}
+
+	{% include "backlog/_project_tabs.html" with active="stats" %}
+
+	<div class="row-fluid">
+		<div class="span8 graph400" id="graph-project-points">
+		</div>
+		<div class="span4 graph400" id="graph-project-pie">
+		</div>
+	</div>
+	<div class="row-fluid">
+		<div class="span8 graph400" id="graph-main-points">
+		</div>
+		<div class="span4 graph400" id="graph-main-pie">
+		</div>
+	</div>
+{% endblock %}

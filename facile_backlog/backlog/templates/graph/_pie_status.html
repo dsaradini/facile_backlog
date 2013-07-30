@@ -1,0 +1,41 @@
+{% load jsonify %}
+<script type="text/javascript">
+$(function() {
+	$("{{ element_id }}").highcharts({
+		chart: {
+			plotBackgroundColor: null,
+			plotBorderWidth: null,
+			plotShadow: false
+		},
+		title: {
+			text: "{% trans graph_title %}"
+		},
+		tooltip: {
+			formatter: function() {
+				return 	'<b>'+ this.point.name +'</b>: '+Highcharts.numberFormat(this.percentage, 2, ',')+'%<br>' +
+						'<b>{% trans "Stories" %}</b>: '+this.y;
+			}
+		},
+		plotOptions: {
+			pie: {
+				allowPointSelect: true,
+				cursor: 'pointer',
+				dataLabels: {
+					enabled: true,
+					color: '#000000',
+					connectorColor: '#000000',
+					formatter: function() {
+						return '<b>'+ this.point.name +'</b>';
+					}
+				}
+			}
+		},
+		series: [{
+			type: 'pie',
+			name: 'points',
+			data: {{ series | jsonify }}
+		}]
+	});
+
+})
+</script>

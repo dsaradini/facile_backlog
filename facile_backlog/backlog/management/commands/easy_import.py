@@ -9,7 +9,8 @@ from django.utils.translation import ugettext as _
 
 from optparse import make_option
 
-from ...models import Project, Backlog, UserStory, create_event, Organization
+from ...models import (Project, Backlog, UserStory, create_event, Organization,
+                       Status)
 
 from ....core.models import User
 
@@ -173,7 +174,7 @@ class Command(BaseCommand):
 
         # place stories in the right backlog
         for story in UserStory.objects.filter(project=project):
-            if story.status == UserStory.ACCEPTED:
+            if story.status == Status.ACCEPTED:
                 story.backlog = project.accepted_backlog
                 story.save()
 
@@ -193,7 +194,7 @@ class Command(BaseCommand):
             easy_story[u'acceptance_criteria'])
         story = UserStory(
             project=project,
-            status=story_status.get(story_id, UserStory.TODO),
+            status=story_status.get(story_id, Status.TODO),
             as_a=empty_string_dict(easy_story, 'as_a'),
             i_want_to=empty_string_dict(easy_story, 'i_want_to'),
             so_i_can=empty_string_dict(easy_story, 'so_i_can'),

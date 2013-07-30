@@ -1,17 +1,12 @@
 {% extends "project_base.html" %}
 {% load staticfiles sekizai_tags markup acl jsonify %}
 
-{% block title %}{% trans "Project" %} &mdash; {{ project.name }}{% endblock %}
+{% block title %}{% trans "Project" %} &mdash; {{ project.name }}  &mdash; Stories{% endblock %}
 {% block content %}
 
 	{% include "backlog/_project_head.html" %}
 
-	<ul class="nav nav-pills">
-		<li><a href="{% url "project_detail" project.pk %}">{% trans "General" %}</a></li>
-		<li><a href="{% url "project_backlogs" project.pk %}">{% trans "Backlogs" %} </a></li>
-		<li><a href="{% url "project_users" project.pk %}">{% trans "Members" %} </a>
-		<li class="active"><a href="{% url "project_stories" project.pk %}">{% trans "Stories" %}</a></li>
-	</ul>
+	{% include "backlog/_project_tabs.html" with active="stories" %}
 
 	<h2 class="inline-title">{% trans "Stories" %}</h2>
 	<h2 class="inline-title muted"> ({{ page_obj.paginator.count }})</h2>

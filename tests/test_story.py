@@ -3,7 +3,7 @@ import json
 from django.core.urlresolvers import reverse
 from django_webtest import WebTest
 
-from facile_backlog.backlog.models import UserStory, Backlog, Event
+from facile_backlog.backlog.models import UserStory, Backlog, Event, Status
 
 from . import factories
 
@@ -450,12 +450,12 @@ class AjaxTest(WebTest):
         user_2 = factories.UserFactory.create()
         user_3 = factories.UserFactory.create()
         story = factories.create_sample_story(user, story_kwargs={
-            'status': UserStory.IN_PROGRESS
+            'status': Status.IN_PROGRESS
         })
         story.project.add_user(user_2, is_admin=False)
 
         data_ok = json.dumps({
-            'status': UserStory.COMPLETED,
+            'status': Status.COMPLETED,
         })
         data_wrong = json.dumps({
             'status': 'FunnyStatus',
@@ -476,4 +476,4 @@ class AjaxTest(WebTest):
         self.app.post(url, data_ok, content_type="application/json",
                       user=user)
         story = UserStory.objects.get(pk=story.pk)
-        self.assertEqual(story.status, UserStory.COMPLETED)
+        self.assertEqual(story.status, Status.COMPLETED)

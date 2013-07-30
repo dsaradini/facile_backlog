@@ -18,7 +18,7 @@ from .serializers import (ProjectSerializer, ProjectListSerializer,
                           StorySerializer, OrgSerializer)
 
 from ..backlog.models import (Project, Backlog, UserStory, Organization,
-                              create_event)
+                              create_event, STATUS_CHOICE)
 
 
 def get_or_errors(dic, value, errors=[]):
@@ -376,7 +376,7 @@ def story_change_status(request, story_id):
         return Response({
             'errors': errors
         }, content_type="application/json", status=400)
-    choices = [s[0] for s in UserStory.STATUS_CHOICE]
+    choices = [s[0] for s in STATUS_CHOICE]
     if status not in choices:
         return Response({
             'errors': ["Unknown status '{0}', "

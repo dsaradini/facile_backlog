@@ -18,6 +18,5 @@ PASSWORD_HASHERS = [
     'tests.hashers.NotHashingHasher',
 ]
 
-LOGGING['loggers']['ratelimitbackend']['level'] = 'ERROR'
 LOGGING['loggers']['facile_backlog']['level'] = 'ERROR'
 LOGGING['loggers']['raven']['level'] = 'ERROR'
