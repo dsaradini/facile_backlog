@@ -708,7 +708,10 @@ class Statistic(models.Model):
             if v and pos < len(stack)-1:
                 return get_it(pos+1, v)
             else:
-                return v
+                if v:
+                    return v
+                else:
+                    return 0
 
         return [self.js_date, get_it(0, self.data)]
 
