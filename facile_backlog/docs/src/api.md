@@ -48,7 +48,13 @@ Response
 <code type="block">
 [
 	...list of organization json element...
-	...see /api/organization/[org-id]/
+	{
+        "id": ORG_ID,
+        "url": "http://localhost:8000/api/organizations/ORG_ID/",
+        "name": "ORG NAME",
+        "email": "organization email",
+        "web_site": "organization web site"
+    },
 ]
 </code>
 
@@ -73,16 +79,26 @@ Response
 		{
 			"full_name": "John Doe",
 			"email": "jdoe@backlogman.com"
-		}
+		},
+		... list ...
 	],
 	"projects": [
 		{
 			"id": "project id",
-			"name" "project name",
+			"name": "project name",
 			"url": "https://app.backlogman.com/api/projects/PROJ_ID/",
-		}
-		...list...
+		},
+		... lis t...
 	],
+	"backlogs": [
+		{
+			"id": BACKLOG_ID,
+			"name": "backlog name",
+			"is_main": boolean, is main backlog
+			"url": "https://app.backlogman.com/api/backlogs/BACKLOG_ID/",
+		},
+		... list ...
+	]
 }
 </code>
 
@@ -90,6 +106,8 @@ Response
 `/api/projects/`
 ================
 **List all projects the logged-in user is member of**
+
+Will list any project, even projects that are part of an organization
 
 Allow: *GET*, *HEAD*, *OPTIONS*
 
@@ -102,7 +120,8 @@ Response
 		"url": "https://app.backlogman.com/api/projects/PROJECT_ID/",
 		"name": "PROJECT NAME",
 		"code": "PCODE",
-		"description": "PROJECT_DESCRIPTION"
+		"description": "PROJECT_DESCRIPTION",
+		"organization_id": ORG_ID ( if any )
 	},
 	...list...
 ]
@@ -144,28 +163,25 @@ Response
         "total_points": (int) "total number of point"
         "completed_stories": (int)"number of completed stories",
         "estimated_stories": (int)"number of estimated stories"
-	}
+	},
+	"backlogs": [
+		{
+			"id": BACKLOG_ID,
+			"name": "backlog name",
+			"is_main": boolean, is main backlog
+			"url": "https://app.backlogman.com/api/backlogs/BACKLOG_ID/",
+		},
+		... list ...
+	]
 }
 </code>
 
-`/api/projects/[project-id]/backlogs/`
-====================================
-**All backlogs in a project**
 
-Allow: *GET*, *HEAD*, *OPTIONS*
-
-Response
---------
-<code type="block">
-[
-	...list of backlog json element...
-	...see /api/project/[project-id]/backlogs/[backlog-id]
-]
-</code>
-
-`/api/projects/[project-id]/backlogs/[backlog-id]`
+`/api/backlogs/[backlog-id]`
 ==================================================
-**Detail on a given project**
+**Detail on a given backlog**
+
+Backlog is hold by a project or an organization, if project_id is null, org_id is available and vise-versa.
 
 Allow: *GET*, *HEAD*, *OPTIONS*
 
@@ -177,6 +193,8 @@ Response
 	"url": "https://app.backlogman.com/api/projects/P_ID/backlogs/B_ID/",
 	"name": "BACKLOG_NAME",
 	"description": "BACKLOG_DESCRIPTION",
+	"organization_id": (if any) ORG_ID,
+    "project_id": (if any) PROJECT_ID,
 	"available_themes": [
 		"theme one",
 		"theme two",
@@ -195,7 +213,7 @@ Response
 }
 </code>
 
-`/api/projects/[project-id]/backlogs/[backlog-id]/stories/`
+`/api/backlogs/[backlog-id]/stories/`
 ==========================================================
 **All *ordered* stories in a backlog**
 
@@ -206,7 +224,7 @@ Response
 <code type="block">
 [
 	...list of stories json element...
-	...see `/api/project/[project-id]/backlogs/[backlog-id]/stories/[story-id]/`
+	...see `/api/backlogs/[backlog-id]/stories/[story-id]/`
 ]
 </code>
 
@@ -222,7 +240,7 @@ Response
 {
 	"id": STORY_ID,
 	"code": "PCODE-XXX",
-	"url": "https://app.backlogman.com/api/projects/P_ID/backlogs/B_ID/stories/S_ID/",
+	"url": "https://app.backlogman.com/backlogs/BACKLOG_ID/stories/STORY_ID/",
 	"as_a": "an api user",
 	"i_want_to": "be able to read project info using REST API",
 	"so_i_can": "create a client on mobile device",
@@ -232,7 +250,8 @@ Response
 	"points": STORY_POINTS,
 	"theme": "Story theme in project",
 	"status": "to_do|in_progress|accepted|rejected",
-	"backlog_id": 54
+	"backlog_id": BACKLOG_ID
+	"project_id": PROJECT_ID
 }
 </code>
 

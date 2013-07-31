@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import (api_view, throttle_classes,
                                        parser_classes)
 from rest_framework.parsers import JSONParser
+from rest_framework.permissions import BasePermission
 from rest_framework.throttling import UserRateThrottle
 
 from django.conf import settings
@@ -14,7 +15,7 @@ from django.shortcuts import redirect
 from .notify import notify_changes
 
 from .serializers import (ProjectSerializer, ProjectListSerializer,
-                          BacklogSerializer,
+                          BacklogSerializer, OrgListSerializer,
                           StorySerializer, OrgSerializer)
 
 from ..backlog.models import (Project, Backlog, UserStory, Organization,
@@ -26,6 +27,29 @@ def get_or_errors(dic, value, errors=[]):
         errors.append("Missing value '{0}' in content".format(value))
         return None
     return dic.get(value)
+
+
+class AclPermission(BasePermission):
+    def has_permission(self, request, view):
+        if not request.user.is_authenticated():
+            return False
+        if request.method in ("POST",):
+            can_post = getattr(view, 'can_post', None)
+            if can_post:
+                return view.can_post(request)
+            else:
+                raise Http404
+        return True
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in ("POST", "PUT", "DELETE", "PATCH"):
+            return obj.can_admin(request.user)
+        elif request.method in ("HEAD", "GET"):
+            if obj.can_read(request.user):
+                return True
+            else:
+                raise Http404
+        return False
 
 
 class GeneralUserThrottle(UserRateThrottle):
@@ -63,16 +87,21 @@ project_detail = ProjectViewSet.as_view({
 })
 
 
-class OrgViewSet(viewsets.ModelViewSet):
+class OrgList(viewsets.ModelViewSet):
     pk_url_kwarg = "org_id"
-    serializer_class = OrgSerializer
+    serializer_class = OrgListSerializer
     model = Organization
 
     def initial(self, request, *args, **kwargs):
         self.queryset = Organization.my_organizations(request.user)
-        return super(OrgViewSet, self).initial(request, *args, **kwargs)
+        return super(OrgList, self).initial(request, *args, **kwargs)
 
-org_list = OrgViewSet.as_view({
+
+class OrgViewSet(OrgList):
+    serializer_class = OrgSerializer
+
+
+org_list = OrgList.as_view({
     'get': 'list',
 })
 
@@ -85,27 +114,10 @@ class BacklogViewSet(viewsets.ModelViewSet):
     pk_url_kwarg = "backlog_id"
     serializer_class = BacklogSerializer
     model = Backlog
+    permission_classes = (AclPermission,)
 
     def initial(self, request, *args, **kwargs):
-        project_id = kwargs.pop("project_id")
-        projects = Project.my_projects(request.user)
-        try:
-            self.project = projects.get(pk=project_id)
-            self.queryset = self.project.backlogs.all()
-            if not self.project.can_read(request.user):
-                raise Project.DoesNotExist()
-        except Project.DoesNotExist:
-            self.project = None
-            self.queryset = Backlog.objects.none()
         return super(BacklogViewSet, self).initial(request, *args, **kwargs)
-
-    def check_permissions(self, request):
-        super(BacklogViewSet, self).check_permissions(request)
-        if not self.project:
-            raise Http404
-backlog_list = BacklogViewSet.as_view({
-    'get': 'list'
-})
 
 backlog_detail = BacklogViewSet.as_view({
     'get': 'retrieve'
@@ -116,30 +128,30 @@ class StoryViewSet(viewsets.ModelViewSet):
     pk_url_kwarg = "story_id"
     serializer_class = StorySerializer
     model = UserStory
+    permission_classes = (AclPermission,)
 
     def initial(self, request, *args, **kwargs):
-        project_id = kwargs.pop("project_id")
         backlog_id = kwargs.pop("backlog_id")
-        projects = Project.my_projects(request.user)
         try:
-            self.project = projects.get(pk=project_id)
-            self.backlog = self.project.backlogs.get(pk=backlog_id)
+            self.backlog = Backlog.objects.get(pk=backlog_id)
             self.queryset = self.backlog.ordered_stories
-            if not self.project.can_read(request.user):
-                raise Project.DoesNotExist()
-        except Project.DoesNotExist, Backlog.DoesNotExist:
-            self.project = None
+        except Backlog.DoesNotExist:
             self.backlog = None
             self.queryset = UserStory.objects.none()
         return super(StoryViewSet, self).initial(request, *args, **kwargs)
 
     def check_permissions(self, request):
         super(StoryViewSet, self).check_permissions(request)
-        if not self.project or not self.backlog:
+        if not self.backlog or not self.backlog.can_read(request.user):
             raise Http404
 
+    def can_post(self, request):
+        if not self.backlog.can_read(request.user):
+            raise Http404
+        return self.backlog.can_admin(request.user)
+
     def pre_save(self, obj):
-        obj.project = self.project
+        obj.project = self.backlog.project
         obj.backlog = self.backlog
         obj.order = self.backlog.end_position
         super(StoryViewSet, self).pre_save(obj)

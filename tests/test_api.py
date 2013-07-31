@@ -18,7 +18,7 @@ class APITestRead(JsonTestCase):
         user = UserFactory.create(email="test@test.ch")
         response = self.client.get(url, status=200, follow=True, user=user)
         # redirect to documentation
-        self.assertContains(response, "/api/project/[project-id]/")
+        self.assertContains(response, "/api/projects/[project-id]/")
 
     def test_api_project_list(self):
         user = UserFactory.create(email="test@test.ch")
@@ -48,28 +48,13 @@ class APITestRead(JsonTestCase):
         self.assertJsonKeyEqual(response, 'name', "My project")
         self.assertJsonKeyEqual(response, 'id', project.pk)
 
-    def test_api_backlog_list(self):
-        user = UserFactory.create(email="test@test.ch")
-        backlog = create_project_sample_backlog(user, backlog_kwargs={
-            'name': "My backlog",
-            'description': "My description"
-        })
-        url = reverse("api_backlog_list", args=(backlog.project.pk,))
-        self.client.get(url, status=401)
-        response = self.client.get(url, user=user)
-        self.assertEqual(len(response.json), 1)
-        self.assertEqual(response.json[0]['name'], "My backlog")
-        self.assertEqual(response.json[0]['description'], "My description")
-        self.assertEqual(response.json[0]['url'],
-                         "http://testserver/api/projects/1/backlogs/1/")
-
     def test_api_backlog_detail(self):
         user = UserFactory.create(email="test@test.ch")
         backlog = create_project_sample_backlog(user, backlog_kwargs={
             'name': "My backlog",
         })
         url = reverse("api_backlog_detail", args=(
-            backlog.project_id, backlog.pk))
+            backlog.pk,))
         self.client.get(url, status=401)
         response = self.client.get(url, user=user)
         self.assertJsonKeyEqual(response, 'name', "My backlog")
@@ -85,7 +70,7 @@ class APITest_Story(JsonTestCase):
             'i_want_to': "be able to run test",
             'so_i_can': "know if my tests pass"
         })
-        url = reverse("api_stories", args=(story.project.pk, story.backlog.pk))
+        url = reverse("api_stories", args=(story.backlog.pk,))
         self.client.get(url, status=401)
         self.client.get(url, status=404, user=wrong_user)
         response = self.client.get(url, user=user)
@@ -96,7 +81,7 @@ class APITest_Story(JsonTestCase):
         self.assertEqual(response.json[0]['code'], story.code)
         self.assertEqual(
             response.json[0]['url'],
-            "http://testserver/api/projects/1/backlogs/1/stories/1/"
+            "http://testserver/api/backlogs/1/stories/1/"
         )
 
     def test_story_detail(self):
@@ -108,7 +93,7 @@ class APITest_Story(JsonTestCase):
             'so_i_can': "know if my tests pass"
         })
         url = reverse("api_story_detail", args=(
-            story.project_id, story.backlog_id, story.pk))
+            story.backlog_id, story.pk))
         self.client.get(url, status=401)
         self.client.get(url, status=404, user=wrong_user)
         response = self.client.get(url, user=user)
@@ -118,9 +103,11 @@ class APITest_Story(JsonTestCase):
     def test_story_post(self):
         user = UserFactory.create(email="test@test.ch")
         wrong_user = UserFactory.create()
+        no_write_user = UserFactory.create()
         backlog = create_project_sample_backlog(user)
+        backlog.project.add_user(no_write_user)
         url = reverse("api_stories", args=(
-            backlog.project_id, backlog.pk, ))
+            backlog.pk, ))
         data = {
             'as_a': 'api user',
             'i_want_to': 'be able to post user story',
@@ -129,6 +116,7 @@ class APITest_Story(JsonTestCase):
         }
         self.client.post(url, data=data, status=401)
         self.client.post(url, data=data, status=404, user=wrong_user)
+        self.client.post(url, data=data, status=403, user=no_write_user)
         response = self.client.post(url, data=json.dumps(data),
                                     user=user, status=201,
                                     content_type="application/json")
@@ -144,7 +132,7 @@ class APITest_Story(JsonTestCase):
         wrong_user = UserFactory.create()
         story = create_sample_story(user)
         url = reverse("api_story_detail", args=(
-            story.project_id, story.backlog_id, story.pk))
+            story.backlog_id, story.pk))
         data = {
             'as_a': 'api user',
             'i_want_to': 'be able to post user story',
@@ -168,7 +156,7 @@ class APITest_Story(JsonTestCase):
         wrong_user = UserFactory.create()
         story = create_sample_story(user)
         url = reverse("api_story_detail", args=(
-            story.project_id, story.backlog_id, story.pk))
+            story.backlog_id, story.pk))
         data = {
             'as_a': 'api user',
             'status': 'accepted',
@@ -185,12 +173,15 @@ class APITest_Story(JsonTestCase):
 
     def test_story_delete(self):
         user = UserFactory.create(email="test@test.ch")
+        no_write_user = UserFactory.create()
         wrong_user = UserFactory.create()
         story = create_sample_story(user)
+        story.project.add_user(no_write_user)
         url = reverse("api_story_detail", args=(
-            story.project_id, story.backlog_id, story.pk))
+            story.backlog_id, story.pk))
         self.client.delete(url, status=401)
         self.client.delete(url, status=404, user=wrong_user)
+        self.client.delete(url, status=403, user=no_write_user)
         self.client.delete(url, user=user, status=204,
                            content_type="application/json")
         story_count = UserStory.objects.count()

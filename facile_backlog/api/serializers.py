@@ -37,7 +37,7 @@ class StorySerializer(serializers.ModelSerializer):
 
     def _url(self, obj):
         return reverse("api_story_detail",
-                       args=[obj.project_id, obj.backlog_id, obj.pk],
+                       args=[obj.backlog_id, obj.pk],
                        request=self.context['request'])
 
     def _backlog_id(self, obj):
@@ -45,6 +45,18 @@ class StorySerializer(serializers.ModelSerializer):
 
     def _proj_id(self, obj):
         return obj.project_id
+
+
+class InnerBacklogSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField('_url')
+
+    class Meta:
+        model = Backlog
+        fields = ('id', 'name', 'is_main', 'url')
+
+    def _url(self, obj):
+        return reverse("api_backlog_detail", args=[obj.pk],
+                       request=self.context['request'])
 
 
 class BacklogSerializer(serializers.ModelSerializer):
@@ -60,7 +72,7 @@ class BacklogSerializer(serializers.ModelSerializer):
                   'project_id', 'available_themes', 'stats')
 
     def _url(self, obj):
-        return reverse("api_backlog_detail", args=[obj.project_id, obj.pk],
+        return reverse("api_backlog_detail", args=[obj.pk],
                        request=self.context['request'])
 
     def themes(self, obj):
@@ -97,11 +109,13 @@ class ProjectSerializer(ProjectListSerializer):
     available_themes = serializers.SerializerMethodField('themes')
     stats = serializers.SerializerMethodField('_stats')
     users = MemberSerializer(many=True, allow_add_remove=False)
+    backlogs = InnerBacklogSerializer(many=True, allow_add_remove=False)
 
     class Meta(ProjectListSerializer.Meta):
         model = Project
         fields = ProjectListSerializer.Meta.fields + ('available_themes',
-                                                      'stats',  'users')
+                                                      'stats',  'users',
+                                                      'backlogs')
 
     def _stats(self, obj):
         return obj.stats
@@ -110,15 +124,26 @@ class ProjectSerializer(ProjectListSerializer):
         return obj.all_themes
 
 
-class OrgSerializer(serializers.ModelSerializer):
+class OrgListSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField('_url')
-    users = MemberSerializer(many=True, allow_add_remove=False)
-    projects = InnerProjectSerializer(many=True, allow_add_remove=False)
 
     class Meta:
         model = Organization
-        fields = ('id', 'url', 'name', 'email', 'web_site', 'description',
-                  'users', 'projects')
+        fields = ('id', 'url', 'name', 'email', 'web_site')
+
+    def _url(self, obj):
+        return reverse("api_org_detail", args=[obj.pk],
+                       request=self.context['request'])
+
+
+class OrgSerializer(OrgListSerializer):
+    users = MemberSerializer(many=True, allow_add_remove=False)
+    projects = InnerProjectSerializer(many=True, allow_add_remove=False)
+    backlogs = InnerBacklogSerializer(many=True, allow_add_remove=False)
+
+    class Meta(OrgListSerializer.Meta):
+        fields = OrgListSerializer.Meta.fields + ('description', 'users',
+                                                  'projects', 'backlogs')
 
     def _url(self, obj):
         return reverse("api_org_detail", args=[obj.pk],
