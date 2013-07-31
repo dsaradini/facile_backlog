@@ -13,12 +13,13 @@
 					<li><a href="{% url "story_detail" story.project_id story.pk %}">{% trans "Details" %}</a></li>
 					<li><a href="{% url "story_edit" story.project_id story.pk %}?_back={{ back_mode }}">{% trans "Edit" %}</a></li>
 					<li><a href="{% url "story_delete" story.project_id story.pk %}?_back={{ back_mode }}">{% trans "Delete" %}</a></li>
-					{% if is_org_backlog%}
-						<li class="divider"></li>
-						<li><a href="#" onclick="javascript:back_to_main(this,{{ story.pk }})">{% trans "Bring back to project" %}</a></li>
-					{% endif %}
+					<li class="back-to-main divider"></li>
+					<li class="back-to-main"><a href="#" onclick="javascript:back_to_main(this,{{ story.pk }})">{% trans "Bring back to project" %}</a></li>
 				</ul>
 			</div>
+		</div>
+		<div class="get-it">
+			<a href="#" onclick="javascript:get_story(this,{{ story.pk }})" class="btn btn-mini" title="{% trans "Get this story" %}"><i class="icon-arrow-right"></i></a>
 		</div>
 		<div class="points">
 			{% if story.points >= 0%}
@@ -45,5 +46,6 @@
 		{% if story.theme %}
 			<div class="theme"><i class="icon-tag"></i> {{ story.theme }}</div>
 		{% endif %}
+
 	</div>
 </article>

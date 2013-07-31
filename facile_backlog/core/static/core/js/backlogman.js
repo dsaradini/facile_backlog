@@ -1,5 +1,6 @@
  (function ($) {
  	if(typeof $.ws_sbscribe == "undefined"){
+		$.ws_status = "disconnected";
 		$.ws_sbscribe = function( options ) {
 			var empty_fn = function() {};
 			var reconnect_timeout = options.timeout || 5000;
@@ -17,6 +18,7 @@
 			var connect_ws = function() {
 				ws = new WebSocket(ws_url);
 				ws.onopen = function(){
+					$.ws_status = "connected";
 					connect_callback();
 				};
 				ws.onmessage = function(ev){
@@ -24,6 +26,7 @@
 					message_callback(data);
 				};
 				ws.onclose = function(ev){
+					$.ws_status = "disconnected";
 					disconnect_callback();
 					setTimeout(connect_ws, reconnect_timeout);
 				};

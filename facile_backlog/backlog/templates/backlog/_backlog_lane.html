@@ -1,5 +1,5 @@
 {% load sekizai_tags %}
-<article class="{% if backlog.is_main %}main{% endif %} backlog" id="backlog-{{ backlog.pk }}" backlog-id="{{ backlog.pk }}">
+<article class="{% if backlog.is_main %}main{% endif %} {% if is_org_backlog %}org-backlog{% endif %} backlog" id="backlog-{{ backlog.pk }}" backlog-id="{{ backlog.pk }}">
 	<div class="backlog-title">
 		<div class="btn-group">
 			<a class="btn btn-link dropdown-toggle padding-reset" href="#" data-toggle="dropdown">
@@ -45,7 +45,7 @@
 	</div>
 	<div class="stories" story-backlog-id="{{ backlog.pk }}">
 		{% for story in backlog.ordered_stories %}
-			{% include "backlog/_story_small.html" with can_go_back=is_org_backlog  back_mode="organization"%}
+			{% include "backlog/_story_small.html" with can_go_back=is_org_backlog can_get_it=True back_mode="organization"%}
 		{%  endfor %}
 	</div>
 {% include "backlog/_script_status_change.html" %}
@@ -71,7 +71,36 @@ var back_to_main = function(src, story_id) {
 			$('.backlog-list').sortable( "cancel" );
 		},
 		success: function() {
-			$("article[story-id="+story_id+"]").fadeOut()
+			var $story = $("article[story-id="+story_id+"]");
+			// faseout if no WebSocket notifications
+			if ($.ws_status != "connected") {
+				$story.fadeOut();
+			}
+		},
+		complete: function(){
+			$('.backlog-list').sortable("enable");
+		}
+	});
+}
+
+var get_story = function(src, story_id) {
+	$.ajax({
+		url: '{% url "api_move_story" %}',
+		type: "POST",
+		contentType:"application/json; charset=utf-8",
+		dataType: "json",
+		data: JSON.stringify({
+			"target_backlog": {{ organization.main_backlog.pk }},
+			"moved_story": story_id,
+			"order": [story_id]
+		}),
+		error: function( jqXHR, textStatus, errorThrown ){
+			$.show_error('{% trans "Server return an error."%}', jqXHR)
+			$('.backlog-list').sortable( "cancel" );
+		},
+		success: function() {
+			var $story = $("article[story-id="+story_id+"]");
+			$(".stories[story-backlog-id={{ organization.main_backlog.pk }}]").prepend($story)
 		},
 		complete: function(){
 			$('.backlog-list').sortable("enable");

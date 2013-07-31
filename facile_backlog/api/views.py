@@ -275,19 +275,21 @@ def move_story(request):
 
 
 def notify_backlog_changed(request, backlog, order, moved_story=None):
+    to_notify = []  # Tuple of (type, id)
     if backlog.project_id:
-        o_type = "projects"
-        object_id = backlog.project_id
+        to_notify.append(("projects", backlog.project_id))
+        if backlog.project.org_id:
+            to_notify.append(("organizations", backlog.project.org_id))
     else:
-        o_type = "organizations"
-        object_id = backlog.org_id
-    notify_changes(o_type, object_id, {
-        'backlog_id': backlog.pk,
-        'type': "stories_moved",
-        'order': [s.pk for s in backlog.ordered_stories.all()],
-        'moved_story_id': moved_story,
-        'username': request.user.email,
-    })
+        to_notify.append(("organizations", backlog.org_id))
+    for pair in to_notify:
+        notify_changes(pair[0], pair[1], {
+            'backlog_id': backlog.pk,
+            'type': "stories_moved",
+            'order': [s.pk for s in backlog.ordered_stories.all()],
+            'moved_story_id': moved_story,
+            'username': request.user.email,
+        })
 
 
 def notify_story_changed(request, story):

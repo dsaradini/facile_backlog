@@ -590,7 +590,7 @@ textarea[name=i_want_to] {
 			.story-title {
 				margin:4px 0;
 				float:left;
-				width: 180px;
+				width: 160px;
 				font-weight: bold;
 				text-align: left;
 			}
@@ -667,6 +667,13 @@ textarea[name=i_want_to] {
 			.theme {
 				padding: 2px 0;
 				color: gray;
+			}
+			.get-it {
+				margin: 3px;
+				float: right;
+				width: 22px;
+				height: 22px;
+				padding: 1px 0;
 			}
 		}
 	}
@@ -859,3 +866,24 @@ $patille-size: 12px;
 	min-height: 400px;
 	height: 400px;
 }
+
+article.backlog {
+	.back-to-main {
+		display: none;
+	}
+}
+
+article.backlog.org-backlog {
+	.back-to-main {
+		display: block;
+	}
+}
+.get-it {
+	display: none;
+}
+.backlog-lanes-source {
+	.get-it {
+		display: block;
+	}
+}
+
