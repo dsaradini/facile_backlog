@@ -1,1 +1,2 @@
-envdir /etc/backlogman.d/ /root/backlogman/facile_backlog/env/bin/python manage.py generate_statistics
+cd /root/backlogman/facile_backlog/
+envdir /etc/backlogman.d/ env/bin/python manage.py generate_statistics
