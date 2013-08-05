@@ -43,7 +43,7 @@ class HomeTest(WebTest):
         )
         url = reverse('home')
         self.visited = []
-        self.follow_href(url, user=user)
+        self.follow_href("ROOT", url, user=user)
         # print "Site URLS:", len(self.visited)
 
     def test_navigate_admin(self):
@@ -77,23 +77,30 @@ class HomeTest(WebTest):
         )
         url = reverse('admin:index')
         self.visited = []
-        self.follow_href(url, user=user)
+        self.follow_href("ROOT", url, user=user)
         # print "Admin URLS:", len(self.visited)
 
-    def follow_href(self, href, user):
+    def follow_href(self, src_url, href, user):
         if href in self.visited:
             return
         try:
             response = self.app.get(href, user=user, auto_follow=True)
-            if response.content.find("!!!TEST-WARNING!!!") != -1:
-                print "Warning, view not implemented {0}".format(href)
+            # put pquery in try/catch because response may not be HTML
+            if response.content_type in ('text/html', 'text/xml'):
+                anchors = response.pyquery("a")
+            else:
+                anchors = []
+        except Exception:
+            print "Exception when navigate to " \
+                  "href={0} from url={1}".format(href, src_url)
+            raise
         finally:
             self.visited.append(href)
-        anchors = response.pyquery("a")
+
         for a in anchors:
             url = self.should_follow(PyQuery(a).attr("href"))
             if url:
-                self.follow_href(url, user)
+                self.follow_href(href, url, user)
 
     def should_follow(self, url):
         if not url:
