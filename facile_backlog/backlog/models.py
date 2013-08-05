@@ -638,6 +638,7 @@ class UserStory(models.Model):
             return user.is_staff or self.project.can_read(user)
         else:
             return False
+    can_write = can_read
 
     def can_admin(self, user):
         if self.backlog_id:

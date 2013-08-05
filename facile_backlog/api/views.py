@@ -379,8 +379,8 @@ def story_change_status(request, story_id):
         else:
             raise Http404
     # POST
-    if not story.can_admin(request.user):
-        if story.can_read(request.user):
+    if not story.can_read(request.user):
+        if story.can_write(request.user):
             return Response("You are not admin of this story", status=403)
         # verify access rights on story project
         raise Http404

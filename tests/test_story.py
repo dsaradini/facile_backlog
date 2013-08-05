@@ -470,7 +470,7 @@ class AjaxTest(WebTest):
         self.app.post(url, data_ok, content_type="application/json",
                       user=user_3, status=404)
         self.app.post(url, data_ok, content_type="application/json",
-                      user=user_2, status=403)
+                      user=user_2, status=200)
         self.app.post(url, data_wrong, content_type="application/json",
                       user=user, status=400)
         self.app.post(url, data_ok, content_type="application/json",
