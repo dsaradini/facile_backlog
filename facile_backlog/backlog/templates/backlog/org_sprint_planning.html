@@ -100,8 +100,9 @@
 			);
 		}
 
-		// keep a clone of speakers to replace the cell
-		// if an error occurs on server
+		$('article.small-story').dblclick(function() {
+			window.location.href = $(this).find("a.dblclick").attr("href")
+		})
 
 		$('.backlog-lanes').sortable({
 			placeholder: "backlog-place-holder",
