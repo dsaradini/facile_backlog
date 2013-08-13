@@ -179,7 +179,8 @@ def create_sample_story(user, story_kwargs={}, project_kwargs={},
                                                 project_kwargs=project_kwargs,
                                                 backlog_kwargs=backlog_kwargs)
     _story_kwargs = story_kwargs.copy()
-    _story_kwargs['project'] = backlog.project
+    if backlog.project:
+        _story_kwargs['project'] = backlog.project
     _story_kwargs['backlog'] = backlog
     return UserStoryFactory.create(**_story_kwargs)
 
