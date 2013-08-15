@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.forms.fields import CharField
 from django.forms.models import ModelForm
 from django.forms import Form, HiddenInput
@@ -94,9 +95,17 @@ class BacklogCreationForm(BacklogEditionForm):
         return backlog
 
 
+def validate_points(value):
+    if value:
+        try:
+            return float(value)
+        except ValueError:
+            raise ValidationError("Points must be a number of empty string")
+
+
 class StoryEditionForm(BackMixin, ModelForm):
     points = CharField(label=_("Points"), help_text=_("Estimated points"),
-                       required=False)
+                       required=False, validators=[validate_points])
 
     def __init__(self, *args, **kwargs):
         super(StoryEditionForm, self).__init__(*args, **kwargs)
