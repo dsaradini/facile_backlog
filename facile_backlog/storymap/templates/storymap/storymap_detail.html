@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% load staticfiles sekizai_tags markup acl humanize story_in %}
+
+{% block title %}{% trans "Story Map" %} &mdash; {{ storymap.title }}{% endblock %}
+{% block content %}
+
+	{% include "storymap/_storymap_head.html" %}
+
+	<ul class="nav nav-pills">
+		<li class="active"><a href="{% url "storymap_detail" storymap.pk %}">{% trans "General" %}</a></li>
+	</ul>
+
+	<div class="storymap-head">
+		<h1 class="inline-title"><i class="icon-table"></i> {{ storymap.title }}</h1>
+		{% if storymap|can_admin:request.user %}
+			<small class="muted">[
+			<a class="btn-link" href="#">
+				{% trans "edit" %}
+			</a>|
+			<a class="btn-link" href="#">
+				{% trans "delete" %}
+			</a>
+			]</small>
+		{% endif %}
+	</div>
+
+	<div class="description span12">
+		{% if storymap.description %}
+			{{ storymap.description|markdown }}
+		{% endif %}
+	</div>
+
+	<table class="story-map">
+		<thead>
+			<tr>
+					<th class="table-corner">
+						{% if storymap|can_admin:request.user %}
+							<a class="btn btn-primary btn-mini create_theme" href="#">{% trans "Add theme" %}</a>
+							<a class="btn btn-primary btn-mini create_phase" href="#">{% trans "Add phase" %}</a>
+						{% endif %}
+					</th>
+				{% for theme in themes.all %}
+					<th theme-id="{{ theme.pk }}">
+						{{ theme.name }}
+						{% if storymap|can_admin:request.user %}
+						<small class="muted">[
+						<a class="btn-link" href="#">
+							{% trans "edit" %}
+						</a>|
+						<a class="btn-link" href="#">
+							{% trans "delete" %}
+						</a>
+						]</small>
+						{% endif %}
+					</th>
+				{% endfor %}
+
+			</tr>
+		</thead>
+		<tbody>
+			{% for phase in phases.all %}
+				<tr>
+					<td>
+						<span class="phase">{{ phase.name }}</span><br>
+						{% if storymap|can_admin:request.user %}
+						<small class="muted">[
+						<a class="btn-link" href="#">
+							{% trans "edit" %}
+						</a>|
+						<a class="btn-link" href="#">
+							{% trans "delete" %}
+						</a>
+						]</small>
+						{% endif %}
+					</td>
+					{% for theme in themes.all %}
+						<td class="story-cell" theme-id="{{ theme.pk }}" phase-id="{{ phase.pk }}">
+							<div class="plus">
+								<a class="btn btn-link btn-small create_story" href="#">{% trans "New story" %}</a>
+							</div>
+							<!-- All stories in theme and phase -->
+							{% for story in theme|story_in:phase %}
+								<div story-id="{{ story.pk }}" class="story">{{ story.title }}</div>
+							{% endfor %}
+						</td>
+					{% endfor %}
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<div id="theme-create-panel" class="modal hide fade">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>{% trans "Create theme" %}</h3>
+		</div>
+		<div class="modal-body">
+			<textarea class="fit" placeholder="{% trans "Theme name" %}"></textarea>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Close</a>
+			<a id="create-theme-btn" data-loading-text="{% trans "Creating..." %}" href="#" class="btn btn-primary">{% trans "Create" %}</a>
+		</div>
+	</div>
+
+	<div id="phase-create-panel" class="modal hide fade">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>{% trans "Create phase" %}</h3>
+		</div>
+		<div class="modal-body">
+			<textarea class="fit" placeholder="{% trans "Phase name" %}"></textarea>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Close</a>
+			<a id="create-phase-btn" data-loading-text="{% trans "Creating..." %}" href="#" class="btn btn-primary">{% trans "Create" %}</a>
+		</div>
+	</div>
+
+{% include "backlog/_script_show_errors.html" %}
+
+{% addtoblock "js" %}
+<script type="text/javascript">
+	$(function() {
+		$('.story-cell').sortable({
+			connectWith: ".story-cell",
+			placeholder: "story-placeholder",
+			forcePlaceholderSize: true,
+			distance: 3,
+			cursor: "move",
+			revert: 100,
+			update: function(event, ui) {
+				var $this = $(this);
+				var story_pk = ui.item.attr("story-id");
+				var phase_id =  $this.attr("phase-id");
+				var theme_id = $this.attr("theme-id");
+				if ( $this.find("[story-id="+story_pk+"]").length ) {
+					var content = {
+						phase_id: phase_id,
+						theme_id: theme_id
+					};
+					ajax_story_action("update", story_pk, content)
+				}
+			}
+		});
+		$(".create_story").live("click", function() {
+			var $this = $(this);
+			var $target = $this.closest(".story-cell");
+			var $story = $('<div class="story"></div>');
+			$target.append($story);
+			set_edit_story($story, true);
+		});
+
+		var ajax_story_action = function(action, story_pk, content, callback) {
+			var ajax_data = {
+				target: "story",
+				id: story_pk,
+				action: action,
+				content: content
+			};
+			$.ajax({
+				url: '{% url "api_story_map_action" storymap.pk %}',
+				type: "POST",
+				contentType:"application/json; charset=utf-8",
+				dataType: "json",
+				data: JSON.stringify(ajax_data),
+				error: function( jqXHR, textStatus, errorThrown ){
+					$.show_error( '{% trans "Server return an error."%}', jqXHR);
+					$('.stories').sortable( "cancel" );
+					callback && callback(errorThrown);
+				},
+				success: function(data) {
+					callback && callback(null,data);
+				},
+				complete: function(data){
+				}
+			});
+		};
+
+		var set_edit_story = function($this, new_story) {
+			if ($this.attr("editing")) {
+				return
+			}
+			$this.attr("editing", "true");
+			var $text = $('<textarea class="fit">'+$this.text()+'</textarea>');
+			$this.empty();
+			$this.append($text);
+			$text.blur(function() {
+				var txt = $text.val().trim();
+				var theme_id = $this.closest("[theme-id]").attr("theme-id");
+			    var phase_id = $this.closest("[phase-id]").attr("phase-id");
+				var content = {
+					'title': txt,
+					'theme_id': theme_id,
+					'phase_id': phase_id
+				}
+				$this.empty();
+				if (txt) {
+					$this.append(txt);
+					$this.attr("editing", null);
+					ajax_story_action(new_story?"create":"update", $this.attr("story-id"), content, function(err, data) {
+						if (data) {
+							$this.attr("story-id", data.id);
+						}
+					});
+				} else {
+					$this.remove();
+					if (!new_story) {
+						ajax_story_action("delete", $this.attr("story-id"), content);
+					}
+				}
+			});
+			setTimeout(function() {
+				$text.focus();
+			}, 10);
+		};
+
+		$(".story").live("dblclick", function() {
+			var $this = $(this);
+			set_edit_story($this, false);
+		});
+
+
+		$("#theme-create-panel").on("shown", function() {
+			$(this).find("textarea").focus()
+		});
+		$(".create_theme").click( function() {
+			$("#theme-create-panel").modal('show');
+		});
+		$("#create-theme-btn").click(function() {
+			var text = $("#theme-create-panel").find("textarea").val();
+			console.log("Create new theme: ", text);
+			$("#theme-create-panel").find("a").attr("disabled", "");
+			$(this).button('loading');
+			setTimeout(function() {
+				// ajax stuff here
+				$("#theme-create-panel").modal('hide');
+			}, 1000);
+		});
+
+		$("#phase-create-panel").on("shown", function() {
+			$(this).find("textarea").focus()
+		});
+		$(".create_phase").click( function() {
+			$("#phase-create-panel").modal('show');
+		});
+		$("#create-phase-btn").click(function() {
+			var text = $("#phase-create-panel").find("textarea").val();
+			console.log("Create new phase: ", text);
+			$("#phase-create-panel").find("a").attr("disabled", "");
+			$(this).button('loading');
+			setTimeout(function() {
+				// ajax stuff here
+				$("#phase-create-panel").modal('hide');
+			}, 1000);
+
+		});
+	});
+</script>
+{% endaddtoblock %}
+{% endblock %}
