@@ -92,7 +92,7 @@ def draw_story_front(c, story, positions, position=0):
            fill=1)
 
     # theme
-    p = Paragraph("<font color=gray size=15>{0}</font>".format(story.theme),
+    p = Paragraph(u"<font color=gray size=15>{0}</font>".format(story.theme),
                   normalStyle)
     p.wrap(SIZE[0]*cm, 2*cm)
     p.drawOn(c, 1.1*cm, (SIZE[1]-TOP_HEIGHT+0.4)*cm)
@@ -112,7 +112,7 @@ def draw_story_front(c, story, positions, position=0):
     c.circle((SIZE[0]-rad - 0.3)*cm, (SIZE[1] - TOP_HEIGHT/2)*cm, rad*cm,
              fill=1)
     p = Paragraph(
-        "<para fontSize=20 textColor={0} alignment=center>{1}</font>".format(
+        u"<para fontSize=20 textColor={0} alignment=center>{1}</font>".format(
             txt_color, txt
         ), normalStyle)
     p.wrap(rad*2*cm, 2*cm)
@@ -120,7 +120,7 @@ def draw_story_front(c, story, positions, position=0):
     c.setStrokeColorRGB(0, 0, 0, alpha=1.0)
 
     # Code
-    p = Paragraph("<font size=25>{0}</font>".format(story.code), normalStyle)
+    p = Paragraph(u"<font size=25>{0}</font>".format(story.code), normalStyle)
     p.wrap(5*cm, 2*cm)
     p.drawOn(c, 1.1*cm, (SIZE[1]-TOP_HEIGHT+1.5)*cm)
 
@@ -156,7 +156,7 @@ def draw_story_front(c, story, positions, position=0):
             # raise ValueError("Not enough room")
     # print order
     c.setStrokeColorRGB(0, 0, 0, alpha=0.2)
-    p = Paragraph("<font size=8 color=#cccccc>{0}</font>".format(
+    p = Paragraph(u"<font size=8 color=#cccccc>{0}</font>".format(
         story.order+1), normalStyle)
     p.wrap(0.5*cm, 0.5*cm)
     p.drawOn(c, 0.2*cm, 0.1*cm)
@@ -176,7 +176,7 @@ def draw_story_back(c, story, positions, position=0):
     normalStyle = stylesheet['Normal']
 
      # Code
-    p = Paragraph("<font size=15>{0}</font>".format(story.code), normalStyle)
+    p = Paragraph(u"<font size=15>{0}</font>".format(story.code), normalStyle)
     p.wrap(5*cm, 2*cm)
     p.drawOn(c, 1.1*cm, (SIZE[1]-TOP_HEIGHT+1.5)*cm)
 
