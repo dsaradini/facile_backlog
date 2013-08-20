@@ -92,7 +92,7 @@ var get_story = function(src, story_id) {
 		data: JSON.stringify({
 			"target_backlog": {{ organization.main_backlog.pk }},
 			"moved_story": story_id,
-			"order": [story_id]
+			"order": []  // last
 		}),
 		error: function( jqXHR, textStatus, errorThrown ){
 			$.show_error('{% trans "Server return an error."%}', jqXHR)
@@ -100,7 +100,7 @@ var get_story = function(src, story_id) {
 		},
 		success: function() {
 			var $story = $("article[story-id="+story_id+"]");
-			$(".stories[story-backlog-id={{ organization.main_backlog.pk }}]").prepend($story)
+			$(".stories[story-backlog-id={{ organization.main_backlog.pk }}]").append($story)
 		},
 		complete: function(){
 			$('.backlog-list').sortable("enable");

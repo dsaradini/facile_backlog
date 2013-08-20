@@ -79,7 +79,15 @@
 						{% endif %}
 					</td>
 					<td class="story-backlog">
-						<a href="{% url "project_backlogs" project.pk %}">{{story.backlog.name }}</a>
+						{% if story.backlog.is_archive %}
+							<span class="muted"><i class="icon-archive"></i> {{ story.backlog.name }}</span>
+						{% else %}
+							{% if story.backlog.project_id %}
+								<a href="{% url "project_backlogs" story.backlog.project_id %}">{{story.backlog.name }}</a>
+							{% elif story.backlog.org_id %}
+								<a href="{% url "org_sprint_planning" story.backlog.org_id %}">{{story.backlog.name }}</a>
+							{% endif %}
+						{% endif %}
 					</td>
 					<td class="story-status">
 						<span class="label" status="{{ story.status }}">{{ story.get_status_display }}</span>
@@ -99,13 +107,13 @@
 	<div>
 		<div class="pagination pagination-centered">
 		  	<ul>
-				<li class="{% if not page_obj.has_previous %}disabled{% endif %}"><a href="?page=1&{{ current_sort }}&{{ current.query }}"><i class="icon-double-angle-left"></i></a>
-				<li class="{% if not page_obj.has_previous %}disabled{% endif %}"><a href="?page=1&{{ current_sort }}&{{ current.query }}"><i class="icon-angle-left"></i></a>
+				<li class="{% if not page_obj.has_previous %}disabled{% endif %}"><a href="?page=1&{{ current_sort }}&{{ current_query }}"><i class="icon-double-angle-left"></i></a>
+				<li class="{% if not page_obj.has_previous %}disabled{% endif %}"><a href="?page=1&{{ current_sort }}&{{ current_query }}"><i class="icon-angle-left"></i></a>
 				{% for p in page_obj.paginator.page_range %}
-					<li class="{% if page_obj.number == p %}active{% endif %}"><a href="?page={{ p }}&{{ current_sort }}&{{ current.query }}">{{ p }}</a>
+					<li class="{% if page_obj.number == p %}active{% endif %}"><a href="?page={{ p }}&{{ current_sort }}&{{ current_query }}">{{ p }}</a>
 				{% endfor %}
-				<li class="{% if not page_obj.has_next %}disabled{% endif %}"><a href="?page={{ page_obj.number|add:1 }}&{{ current_sort }}&{{ current.query }}"><i class="icon-angle-right"></i></a>
-				<li class="{% if not page_obj.has_next %}disabled{% endif %}"><a href="?page=last&{{ current_sort }}&{{ current.query }}"><i class="icon-double-angle-right"></i></a>
+				<li class="{% if not page_obj.has_next %}disabled{% endif %}"><a href="?page={{ page_obj.number|add:1 }}&{{ current_sort }}&{{ current_query }}"><i class="icon-angle-right"></i></a>
+				<li class="{% if not page_obj.has_next %}disabled{% endif %}"><a href="?page=last&{{ current_sort }}&{{ current_query }}"><i class="icon-double-angle-right"></i></a>
 		  	</ul>
 		</div>
 	</div>
