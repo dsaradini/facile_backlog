@@ -1014,8 +1014,8 @@ msgid ""
 "Invitation to project '%(project)s' has been accepted. You can access it "
 "using the url below.\" "
 msgstr ""
-"L'invitation au projet '%(project)s' à été acceptée. Vous pouvez y accéder "
-"en cliquant sur le lien ci-dessous."
+"L'invitation a rejoindre le projet '%(project)s' à été acceptée. Vous pouvez "
+"y accéder en cliquant sur le lien ci-dessous."
 
 #: backlog/templates/users/invitation_completed.html:8
 msgid "Project:"
@@ -1048,7 +1048,7 @@ msgid ""
 "You have been invited to join the project '%(project)s', to accept the "
 "invitation, please navigate the URL below:"
 msgstr ""
-"Vous avez été invité a vous joindre au projet '%(project)s', pour accepter "
+"Vous avez été invité a rejoindre le projet '%(project)s', pour accepter "
 "cette invitation, cliquez sur le lien ci-dessous:"
 
 #: backlog/templates/users/invitation_email.txt:6
@@ -1057,7 +1057,7 @@ msgid ""
 "You have been invited to join the organization '%(org)s', to accept the "
 "invitation, please navigate the URL below:"
 msgstr ""
-"Vous avez été invité a vous joindre a l'organisation '%(org)s', pour "
+"Vous avez été invité a rejoindre l'organisation '%(org)s', pour "
 "accepter cette invitation, cliquez sur le lien ci-dessous:"
 
 #: backlog/templates/users/invitation_email_subject.txt:2
@@ -1087,7 +1087,7 @@ msgid ""
 "Enter user email yout want to invite, and click the checkbox if you want to "
 "inivite the user as an administrator."
 msgstr ""
-"Saisissez l'adresse email du correspondant à inviter et sélectioner la case "
+"Saisissez l'adresse email du correspondant à inviter. Cliquez sur la case "
 "a cocher si vous désirer l'inviter en tant qu'administrateur."
 
 #: backlog/templates/users/invite_user.html:25
