@@ -41,6 +41,10 @@ class Story(models.Model):
     title = models.TextField(_("Title"), blank=True)
     phase = models.ForeignKey(Phase, related_name="stories")
     theme = models.ForeignKey(Theme, related_name="stories")
+    order = models.PositiveIntegerField(default=0)
 
     def __unicode__(self):
         return self.title
+
+    class Meta:
+        ordering = ("order",)

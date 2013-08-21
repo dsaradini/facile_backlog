@@ -3,8 +3,7 @@ from django.conf.urls import url, patterns
 from .views import (home_view, project_list, project_detail,
                     backlog_detail, story_list, story_detail,
                     project_move_backlog, org_move_backlog,
-                    move_story, org_list, org_detail, story_change_status,
-                    story_map_action)
+                    move_story, org_list, org_detail, story_change_status)
 
 urlpatterns = patterns(
     '',
@@ -48,6 +47,4 @@ urlpatterns = patterns(
     url(r'^stories/(?P<story_id>[\w]+)/status/$',
         story_change_status, name="api_story_status"),
 
-    url(r'^story_maps/(?P<story_map_id>[\w]+)/_action/$',
-        story_map_action, name="api_story_map_action"),
 )

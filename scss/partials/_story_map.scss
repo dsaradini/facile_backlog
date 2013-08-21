@@ -80,3 +80,24 @@ textarea.fit {
 	height: 100%;
 }
 
+.theme-cell, .phase-cell {
+	position: relative;
+	.cell-content {
+		position: abolute;
+		left: 0px;
+		top: 0px;
+		bottom:0px;
+		right: 1em;
+		padding-right: 1em;
+	}
+	.remover {
+		text-align: center;
+		position: absolute;
+		width: 1em;
+		top: 0px;
+		height:1em;
+		right: 0px;
+		line-height: 1em;
+	}
+}
+

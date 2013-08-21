@@ -22,8 +22,6 @@ from .serializers import (ProjectSerializer, ProjectListSerializer,
 from ..backlog.models import (Project, Backlog, UserStory, Organization,
                               create_event, STATUS_CHOICE)
 
-from ..storymap.models import (StoryMap, Story)
-
 
 def get_or_errors(dic, value, errors=[]):
     if value not in dic:
@@ -411,58 +409,5 @@ def story_change_status(request, story_id):
         story=story,
     )
     return Response({
-        'ok': True
-    }, content_type="application/json", status=200)
-
-
-
-TARGETS = {
-    'story': Story,
-}
-CREATE = "create"
-DELETE = "delete"
-UPDATE = "update"
-
-@api_view(["POST"])
-@parser_classes((JSONParser,))
-@throttle_classes([GeneralUserThrottle])
-@transaction.commit_on_success
-def story_map_action(request, story_map_id):
-    story_map = get_object_or_404(StoryMap, pk=story_map_id)
-    if not story_map.can_read(request.user):
-        if story_map.can_write(request.user):
-            return Response("You are not admin of this story map", status=403)
-        # verify access rights on story project
-        raise Http404
-    errors = []
-    target = get_or_errors(request.DATA, 'target', errors)
-    action = get_or_errors(request.DATA, 'action', errors)
-    content = request.DATA.get('content', dict())
-    target_id = request.DATA.get('id', None)
-
-    if errors:
-        return Response({
-            'errors': errors
-        }, content_type="application/json", status=400)
-    try:
-        if action == CREATE:
-            obj = TARGETS[target].objects.create(**content)
-            target_id = obj.pk
-        elif action == UPDATE:
-            obj = TARGETS[target].objects.get(pk=target_id)
-            for k, v in content.items():
-                setattr(obj, k, v)
-            obj.save()
-        elif action == DELETE:
-            obj = TARGETS[target].objects.get(pk=target_id)
-            obj.delete()
-    except ObjectDoesNotExist:
-        return Response({
-            'errors': [
-                'Unable to find {0} with id {1}'.format(target, target_id)
-            ]
-        }, content_type="application/json", status=400)
-    return Response({
-        'id': target_id,
         'ok': True
     }, content_type="application/json", status=200)

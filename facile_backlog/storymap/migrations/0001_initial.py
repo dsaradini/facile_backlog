@@ -38,8 +38,9 @@ class Migration(SchemaMigration):
         db.create_table(u'storymap_story', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('title', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('phase', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['storymap.Phase'])),
-            ('theme', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['storymap.Theme'])),
+            ('phase', self.gf('django.db.models.fields.related.ForeignKey')(related_name='stories', to=orm['storymap.Phase'])),
+            ('theme', self.gf('django.db.models.fields.related.ForeignKey')(related_name='stories', to=orm['storymap.Theme'])),
+            ('order', self.gf('django.db.models.fields.PositiveIntegerField')(default=0)),
         ))
         db.send_create_signal(u'storymap', ['Story'])
 
@@ -60,17 +61,18 @@ class Migration(SchemaMigration):
 
     models = {
         u'storymap.phase': {
-            'Meta': {'object_name': 'Phase'},
+            'Meta': {'ordering': "('order',)", 'object_name': 'Phase'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'order': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
             'story_map': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'phases'", 'to': u"orm['storymap.StoryMap']"})
         },
         u'storymap.story': {
-            'Meta': {'object_name': 'Story'},
+            'Meta': {'ordering': "('order',)", 'object_name': 'Story'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'phase': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['storymap.Phase']"}),
-            'theme': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['storymap.Theme']"}),
+            'order': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
+            'phase': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'stories'", 'to': u"orm['storymap.Phase']"}),
+            'theme': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'stories'", 'to': u"orm['storymap.Theme']"}),
             'title': ('django.db.models.fields.TextField', [], {'blank': 'True'})
         },
         u'storymap.storymap': {
@@ -80,7 +82,7 @@ class Migration(SchemaMigration):
             'title': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },
         u'storymap.theme': {
-            'Meta': {'object_name': 'Theme'},
+            'Meta': {'ordering': "('order',)", 'object_name': 'Theme'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'order': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),

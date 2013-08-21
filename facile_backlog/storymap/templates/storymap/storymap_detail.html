@@ -40,48 +40,16 @@
 					{% endif %}
 				</th>
 			{% for theme in themes.all %}
-				<th theme-id="{{ theme.pk }}">
-					{{ theme.name }}
-					{% if storymap|can_admin:request.user %}
-						<small class="muted">[
-						<a class="btn-link edit_theme" href="#">
-							{% trans "edit" %}
-						</a>|
-						<a class="btn-link delete_theme" href="#">
-							{% trans "delete" %}
-						</a>
-						]</small>
-					{% endif %}
-				</th>
+				{% include "storymap/_theme_cell.html" %}
 			{% endfor %}
 			</tr>
 		</thead>
 		<tbody>
 			{% for phase in phases.all %}
 				<tr>
-					<td>
-						<span class="phase">{{ phase.name }}</span><br>
-						{% if storymap|can_admin:request.user %}
-						<small class="muted">[
-						<a class="btn-link edit_phase" href="#">
-							{% trans "edit" %}
-						</a>|
-						<a class="btn-link delete_phase" href="#">
-							{% trans "delete" %}
-						</a>
-						]</small>
-						{% endif %}
-					</td>
+					{% include "storymap/_phase_cell.html" %}
 					{% for theme in themes.all %}
-						<td class="story-cell" theme-id="{{ theme.pk }}" phase-id="{{ phase.pk }}">
-							<div class="plus">
-								<a class="btn btn-link btn-small create_story" href="#">{% trans "New story" %}</a>
-							</div>
-							<!-- All stories in theme and phase -->
-							{% for story in theme|story_in:phase %}
-								<div story-id="{{ story.pk }}" class="story">{{ story.title }}</div>
-							{% endfor %}
-						</td>
+						{% include "storymap/_story_cell.html" %}
 					{% endfor %}
 				</tr>
 			{% endfor %}
@@ -145,12 +113,31 @@
 		}
 		setup_sortable($('.story-cell'));
 
+		var ajax_action = function(ajax_data, callback) {
+			$.ajax({
+				url: '{% url "api_story_map_action" storymap.pk %}',
+				type: "POST",
+				contentType:"application/json; charset=utf-8",
+				dataType: "json",
+				data: JSON.stringify(ajax_data),
+				error: function( jqXHR, textStatus, errorThrown ){
+					$.show_error( '{% trans "Server return an error."%}', jqXHR);
+					callback && callback(errorThrown);
+				},
+				success: function(data) {
+					callback && callback(null,data);
+				},
+				complete: function(data){
+				}
+			});
+		}
+
 		$(".create_story").live("click", function() {
 			var $this = $(this);
 			var $target = $this.closest(".story-cell");
 			var $story = $('<div class="story"></div>');
 			$target.append($story);
-			set_edit_story($story, true);
+			edit_story($story, true);
 		});
 
 		var ajax_story_action = function(action, story_pk, content, callback) {
@@ -160,26 +147,33 @@
 				action: action,
 				content: content
 			};
-			$.ajax({
-				url: '{% url "api_story_map_action" storymap.pk %}',
-				type: "POST",
-				contentType:"application/json; charset=utf-8",
-				dataType: "json",
-				data: JSON.stringify(ajax_data),
-				error: function( jqXHR, textStatus, errorThrown ){
-					$.show_error( '{% trans "Server return an error."%}', jqXHR);
+			ajax_action(ajax_data, function(err, data) {
+				if (err) {
 					$('.stories').sortable( "cancel" );
-					callback && callback(errorThrown);
-				},
-				success: function(data) {
+				} else {
 					callback && callback(null,data);
-				},
-				complete: function(data){
 				}
 			});
 		};
 
-		var set_edit_story = function($this, new_story) {
+		var ajax_theme_action = function(action, theme_id, content, callback) {
+			var ajax_data = {
+				target: "theme",
+				id: theme_id,
+				action: action,
+				content: content
+			};
+			ajax_action(ajax_data, function(err, data) {
+				if (err) {
+					$('.themes').sortable( "cancel" );
+				} else {
+					callback && callback(null,data);
+				}
+			});
+		};
+
+		$.fn.edit_element_text = function(done) {
+			var $this = $(this);
 			if ($this.attr("editing")) {
 				return
 			}
@@ -189,41 +183,108 @@
 			$this.append($text);
 			$text.blur(function() {
 				var txt = $text.val().trim();
-				var theme_id = $this.closest("[theme-id]").attr("theme-id");
-			    var phase_id = $this.closest("[phase-id]").attr("phase-id");
-				var content = {
-					'title': txt,
-					'theme_id': theme_id,
-					'phase_id': phase_id
-				}
 				$this.empty();
 				if (txt) {
 					$this.append(txt);
 					$this.attr("editing", null);
+					done(txt);
+				} else {
+					$this.remove();
+					done(null);
+				}
+			});
+			setTimeout(function() {
+				$text.focus();
+			}, 10);
+		}
+
+		var edit_story = function($this, new_story) {
+			$this.edit_element_text(function(text) {
+				var theme_id = $this.closest("[theme-id]").attr("theme-id");
+			    var phase_id = $this.closest("[phase-id]").attr("phase-id");
+				var content = {
+					'title': text,
+					'theme_id': theme_id,
+					'phase_id': phase_id
+				}
+				if (text) {
 					ajax_story_action(new_story?"create":"update", $this.attr("story-id"), content, function(err, data) {
 						if (data) {
 							$this.attr("story-id", data.id);
 						}
 					});
 				} else {
-					$this.remove();
 					if (!new_story) {
 						ajax_story_action("delete", $this.attr("story-id"), content);
 					}
 				}
 			});
-			setTimeout(function() {
-				$text.focus();
-			}, 10);
 		};
 
 		$(".story").live("dblclick", function() {
 			var $this = $(this);
-			set_edit_story($this, false);
+			edit_story($this, false);
 		});
 
 
-		var get_story_cell = function(theme_id, phase_id) {
+		// THEME
+		var edit_theme = function($this) {
+			$this.edit_element_text(function(text) {
+				if (text) {
+					var theme_id = $this.closest("[theme-id]").attr("theme-id");
+					var ajax_data = {
+						target: "theme",
+						id: theme_id,
+						action: "update",
+						content: {
+							name: text
+						}
+					};
+					ajax_action(ajax_data);
+				}
+			});
+		};
+
+		var delete_theme = function($this) {
+
+			var theme_id = $this.closest("[theme-id]").attr("theme-id");
+			var ajax_data = {
+				target: "theme",
+				id: theme_id,
+				action: "delete",
+				content: {}
+			};
+			ajax_action(ajax_data, function(err) {
+				if (!err) {
+					$("[theme-id="+theme_id+"]").remove()
+				}
+			});
+		};
+
+		$(".theme").live("dblclick", function() {
+			var $this = $(this);
+			edit_theme($this);
+		});
+
+		$(".delete_theme").live("click", function() {
+			var $this = $(this);
+			delete_theme($this);
+		});
+
+		// PHASE
+		var edit_phase = function($this, new_phase) {
+			$this.edit_element_text(function(text) {
+
+			});
+		};
+
+		$(".phase").live("dblclick", function() {
+			var $this = $(this);
+			edit_phase($this, false);
+		});
+
+		// Create a story cell
+		var create_story_cell = function(theme_id, phase_id) {
 			var $cell =  $('<td class="story-cell ui-sortable">').append(
 				$('<div class="plus">').append(
 					$('<a class="btn btn-link btn-small create_story" href="#">{% trans "New story" %}</a>')
@@ -231,7 +292,7 @@
 			).attr("theme-id", theme_id).attr("phase-id", phase_id)
 			setup_sortable($cell);
 			return $cell;
-		}
+		};
 
 		$("#theme-create-panel").on("shown", function() {
 			$(this).find("textarea").focus()
@@ -239,28 +300,39 @@
 		$(".create_theme").click( function() {
 			$("#theme-create-panel").modal('show');
 		});
-		$("#create-theme-btn").click(function() {
-			var text = $("#theme-create-panel").find("textarea").val();
-			console.log("Create new theme: ", text);
-			$("#theme-create-panel").find("a").attr("disabled", "");
-			$(this).button('loading');
-			setTimeout(function() {
-				// ajax stuff here
-				var theme_id = 100;
-				$("#theme-create-panel").modal('hide');
-				var $td = $("<th>").text(text).attr("theme-id", theme_id);
-				{% if storymap|can_admin:request.user %}
-					$td.append($('<small class="muted"> [ <a class="btn-link edit_theme" href="#">{% trans "edit" %}</a> | <a class="btn-link delete_theme" href="#">{% trans "delete" %}</a> ]</small>'));
-				{% endif %}
-				$("thead tr").append($td);
 
-				$("tbody tr").each(function() {
-					var phase_id = $(this).find("[phase-id]").attr("phase-id");
-					$(this).append(
-						get_story_cell(theme_id, phase_id)
-					)
-				})
-			}, 1000);
+		$("#create-theme-btn").click(function() {
+			var $this = $(this);
+			var $panel = $("#theme-create-panel");
+			var text = $panel.find("textarea").val();
+			$panel.find("a").attr("disabled", "");
+			$this.button('loading');
+			var ajax_data = {
+				target: "theme",
+				action: "create",
+				content: {
+					name: text
+				}
+			};
+			ajax_action(ajax_data, function(err, data) {
+				if (!err) {
+					var theme_id = data.id;
+					var $td = $("<th>").text(text).attr("theme-id", theme_id);
+					{% if storymap|can_admin:request.user %}
+						$td.append($('<small class="muted"> [ <a class="btn-link edit_theme" href="#">{% trans "edit" %}</a> | <a class="btn-link delete_theme" href="#">{% trans "delete" %}</a> ]</small>'));
+					{% endif %}
+					$("thead tr").append($td);
+
+					$("tbody tr").each(function() {
+						var phase_id = $(this).find("[phase-id]").attr("phase-id");
+						$(this).append(
+							create_story_cell(theme_id, phase_id)
+						)
+					})
+				}
+				$panel.modal('hide');
+				$this.button('reset');
+			});
 		});
 
 		$("#phase-create-panel").on("shown", function() {
@@ -270,30 +342,40 @@
 			$("#phase-create-panel").modal('show');
 		});
 		$("#create-phase-btn").click(function() {
-			var text = $("#phase-create-panel").find("textarea").val();
-			console.log("Create new phase: ", text);
-			$("#phase-create-panel").find("a").attr("disabled", "");
-			$(this).button('loading');
-			setTimeout(function() {
-				// ajax stuff here
-				$("#phase-create-panel").modal('hide');
-				var phase_id = 100;
-				var $tr = $("<tr>");
-				var $td = $("<td>").append($('<span class="phase">').append(text))
-				{% if storymap|can_admin:request.user %}
-					$td.append($("<br>"))
-					$td.append($('<small class="muted"> [ <a class="btn-link edit_phase" href="#">{% trans "edit" %}</a> | <a class="btn-link delete_phase" href="#">{% trans "delete" %}</a> ]</small>'));
-				{% endif %}
-				$tr.append($td);
-				$("tbody").append($tr);
-				$tr = $("tbody tr:last-child");
-				$("thead th[theme-id]").each(function() {
-					var theme_id = $(this).attr("theme-id");
-					$tr.append(
-						get_story_cell(theme_id, phase_id)
-					)
-				});
-			}, 1000);
+			var $this = $(this);
+			var $panel = $("#phase-create-panel");
+			var text = $panel.find("textarea").val();
+			$panel.find("a").attr("disabled", "");
+			$this.button('loading');
+			var ajax_data = {
+				target: "phase",
+				action: "create",
+				content: {
+					name: text
+				}
+			};
+			ajax_action(ajax_data, function(err, data) {
+				if (!err) {
+					var phase_id = data.id;
+					var $tr = $("<tr>");
+					var $td = $("<td>").append($('<span class="phase">').append(text))
+					{% if storymap|can_admin:request.user %}
+						$td.append($("<br>"))
+						$td.append($('<small class="muted"> [ <a class="btn-link edit_phase" href="#">{% trans "edit" %}</a> | <a class="btn-link delete_phase" href="#">{% trans "delete" %}</a> ]</small>'));
+					{% endif %}
+					$tr.append($td);
+					$("tbody").append($tr);
+					$tr = $("tbody tr:last-child");
+					$("thead th[theme-id]").each(function() {
+						var theme_id = $(this).attr("theme-id");
+						$tr.append(
+							create_story_cell(theme_id, phase_id)
+						)
+					});
+				}
+				$panel.modal('hide');
+				$this.button('reset');
+			});
 
 		});
 	});
