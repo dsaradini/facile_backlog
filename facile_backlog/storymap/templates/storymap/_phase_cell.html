@@ -4,7 +4,7 @@
 	<div class="phase cell-content">{{ phase.name }}</div>
 	<div class="remover">
 		{% if storymap|can_admin:request.user %}
-			<a class="btn-link delete_phase" href="#"><i class="icon-remove"></i></a>
+			<button class="delete_phase"><i class="icon-remove"></i></button>
 		{% endif %}
 	</div>
 </td>

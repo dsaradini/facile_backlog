@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.http.response import (HttpResponseForbidden)
 from django.shortcuts import get_object_or_404
+from django.template import RequestContext, loader
 from django.utils.translation import ugettext_lazy as _
 from django.views import generic
 
@@ -66,9 +67,9 @@ def get_or_errors(dic, value, errors=[]):
 
 
 TARGETS = {
-    'story': (Story, False),
-    'theme': (Theme, True),
-    'phase': (Phase, True),
+    'story': (Story, False, "storymap/_story_cell.html"),
+    'theme': (Theme, True, "storymap/_theme_col.html"),
+    'phase': (Phase, True, "storymap/_phase_row.html"),
 }
 
 CREATE = "create"
@@ -91,6 +92,7 @@ def story_map_action(request, story_map_id):
     content = request.DATA.get('content', dict())
     target_id = request.DATA.get('id', None)
     model_class = TARGETS[target][0]
+    html = None
     if TARGETS[target][1]:
         content['story_map'] = story_map
     if errors:
@@ -101,6 +103,16 @@ def story_map_action(request, story_map_id):
         if action == CREATE:
             obj = model_class.objects.create(**content)
             target_id = obj.pk
+            template_name = TARGETS[target][2]
+            if template_name:
+                t = loader.get_template(template_name)
+                c = RequestContext(request, {
+                    'object': obj,
+                    'storymap': story_map,
+                    'themes': story_map.themes,
+                    'phases': story_map.phases
+                })
+                html = t.render(c)
         elif action == UPDATE:
             obj = model_class.objects.get(pk=target_id)
             for k, v in content.items():
@@ -117,5 +129,6 @@ def story_map_action(request, story_map_id):
         }, content_type="application/json", status=400)
     return Response({
         'id': target_id,
+        'html': html,
         'ok': True
     }, content_type="application/json", status=200)

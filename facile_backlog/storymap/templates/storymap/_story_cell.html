@@ -1,11 +1,3 @@
-{% load staticfiles story_in acl%}
-
-<td class="story-cell" theme-id="{{ theme.pk }}" phase-id="{{ phase.pk }}">
-	<div class="plus">
-		<a class="btn btn-link btn-small create_story" href="#">{% trans "New story" %}</a>
-	</div>
-	<!-- All stories in theme and phase -->
-	{% for story in theme|story_in:phase %}
-		<div story-id="{{ story.pk }}" class="story">{{ story.title }}</div>
-	{% endfor %}
-</td>
+{% with story=object %}
+	{% include "storymap/_story.html" %}
+{% endwith %}

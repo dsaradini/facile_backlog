@@ -1,0 +1,9 @@
+{% load staticfiles story_in acl%}
+<div story-id="{{ story.pk }}" class="story-cell">
+	<div story-id="{{ story.pk }}" class="story cell-content">{{ story.title }}</div>
+	<div class="remover">
+		{% if storymap|can_admin:request.user %}
+			<button class="delete_story"><i class="icon-remove"></i></button>
+		{% endif %}
+	</div>
+</div>

@@ -49,7 +49,7 @@
 				<tr>
 					{% include "storymap/_phase_cell.html" %}
 					{% for theme in themes.all %}
-						{% include "storymap/_story_cell.html" %}
+						{% include "storymap/_story_td.html" %}
 					{% endfor %}
 				</tr>
 			{% endfor %}
@@ -88,9 +88,9 @@
 {% addtoblock "js" %}
 <script type="text/javascript">
 	$(function() {
-		var setup_sortable = function($item) {
+		var setup_story_move = function($item) {
 			$item.sortable({
-				connectWith: ".story-cell",
+				connectWith: ".story-td",
 				placeholder: "story-placeholder",
 				forcePlaceholderSize: true,
 				distance: 3,
@@ -111,8 +111,24 @@
 				}
 			});
 		}
-		setup_sortable($('.story-cell'));
+		setup_story_move($('.story-td'));
 
+		$("tbody").sortable({
+			distance: 3,
+			cursor: "move",
+			revert: 100,
+			forceHelperSize: true,
+			opacity: 0.5,
+			placeholder: "phase-placeholder"
+		});
+		$("thead tr").sortable({
+			distance: 3,
+			cursor: "move",
+			forceHelperSize: false,
+			placeholder: "theme-placeholder",
+			helper: "clone",
+			items: "> .theme-cell"
+		});
 		var ajax_action = function(ajax_data, callback) {
 			$.ajax({
 				url: '{% url "api_story_map_action" storymap.pk %}',
@@ -134,7 +150,7 @@
 
 		$(".create_story").live("click", function() {
 			var $this = $(this);
-			var $target = $this.closest(".story-cell");
+			var $target = $this.closest(".story-td");
 			var $story = $('<div class="story"></div>');
 			$target.append($story);
 			edit_story($story, true);
@@ -196,8 +212,15 @@
 			setTimeout(function() {
 				$text.focus();
 			}, 10);
-		}
+		};
 
+		$.fn.fade_remove = function() {
+			$(this).fadeOut(function() {
+				$(this).remove();
+			})
+		};
+
+		// Story
 		var edit_story = function($this, new_story) {
 			$this.edit_element_text(function(text) {
 				var theme_id = $this.closest("[theme-id]").attr("theme-id");
@@ -209,8 +232,9 @@
 				}
 				if (text) {
 					ajax_story_action(new_story?"create":"update", $this.attr("story-id"), content, function(err, data) {
-						if (data) {
-							$this.attr("story-id", data.id);
+						if (data.html) {
+							$this.parent().append(data.html);
+							$this.remove();
 						}
 					});
 				} else {
@@ -221,11 +245,30 @@
 			});
 		};
 
+		var delete_story = function($this) {
+			var story_id = $this.closest("[story-id]").attr("story-id");
+			var ajax_data = {
+				target: "story",
+				id: story_id,
+				action: "delete",
+				content: {}
+			};
+			ajax_action(ajax_data, function(err) {
+				if (!err) {
+					$("[story-id="+story_id+"]").fade_remove()
+				}
+			});
+		};
+
 		$(".story").live("dblclick", function() {
 			var $this = $(this);
 			edit_story($this, false);
 		});
 
+		$(".delete_story").live("click", function() {
+			var $this = $(this);
+			delete_story($this);
+		});
 
 		// THEME
 		var edit_theme = function($this) {
@@ -246,7 +289,6 @@
 		};
 
 		var delete_theme = function($this) {
-
 			var theme_id = $this.closest("[theme-id]").attr("theme-id");
 			var ajax_data = {
 				target: "theme",
@@ -256,7 +298,7 @@
 			};
 			ajax_action(ajax_data, function(err) {
 				if (!err) {
-					$("[theme-id="+theme_id+"]").remove()
+					$("[theme-id="+theme_id+"]").fade_remove()
 				}
 			});
 		};
@@ -274,7 +316,33 @@
 		// PHASE
 		var edit_phase = function($this, new_phase) {
 			$this.edit_element_text(function(text) {
+				if (text) {
+					var theme_id = $this.closest("[phase-id]").attr("phase-id");
+					var ajax_data = {
+						target: "phase",
+						id: theme_id,
+						action: "update",
+						content: {
+							name: text
+						}
+					};
+					ajax_action(ajax_data);
+				}
+			});
+		};
 
+		var delete_phase = function($this) {
+			var phase_id = $this.closest("[phase-id]").attr("phase-id");
+			var ajax_data = {
+				target: "phase",
+				id: phase_id,
+				action: "delete",
+				content: {}
+			};
+			ajax_action(ajax_data, function(err) {
+				if (!err) {
+					$("[phase-id="+phase_id+"]").fade_remove()
+				}
 			});
 		};
 
@@ -283,16 +351,10 @@
 			edit_phase($this, false);
 		});
 
-		// Create a story cell
-		var create_story_cell = function(theme_id, phase_id) {
-			var $cell =  $('<td class="story-cell ui-sortable">').append(
-				$('<div class="plus">').append(
-					$('<a class="btn btn-link btn-small create_story" href="#">{% trans "New story" %}</a>')
-				)
-			).attr("theme-id", theme_id).attr("phase-id", phase_id)
-			setup_sortable($cell);
-			return $cell;
-		};
+		$(".delete_phase").live("click", function() {
+			var $this = $(this);
+			delete_phase($this);
+		});
 
 		$("#theme-create-panel").on("shown", function() {
 			$(this).find("textarea").focus()
@@ -316,19 +378,14 @@
 			};
 			ajax_action(ajax_data, function(err, data) {
 				if (!err) {
-					var theme_id = data.id;
-					var $td = $("<th>").text(text).attr("theme-id", theme_id);
-					{% if storymap|can_admin:request.user %}
-						$td.append($('<small class="muted"> [ <a class="btn-link edit_theme" href="#">{% trans "edit" %}</a> | <a class="btn-link delete_theme" href="#">{% trans "delete" %}</a> ]</small>'));
-					{% endif %}
-					$("thead tr").append($td);
-
+					var $html = $("<div>").append(data.html);
+					$("thead tr").append($html.find("th.theme-cell"));
 					$("tbody tr").each(function() {
 						var phase_id = $(this).find("[phase-id]").attr("phase-id");
-						$(this).append(
-							create_story_cell(theme_id, phase_id)
-						)
-					})
+						var $td = $html.find("td[phase-id="+phase_id+"]");
+						$(this).append($td);
+					});
+					setup_story_move($('.story-td'));
 				}
 				$panel.modal('hide');
 				$this.button('reset');
@@ -356,22 +413,8 @@
 			};
 			ajax_action(ajax_data, function(err, data) {
 				if (!err) {
-					var phase_id = data.id;
-					var $tr = $("<tr>");
-					var $td = $("<td>").append($('<span class="phase">').append(text))
-					{% if storymap|can_admin:request.user %}
-						$td.append($("<br>"))
-						$td.append($('<small class="muted"> [ <a class="btn-link edit_phase" href="#">{% trans "edit" %}</a> | <a class="btn-link delete_phase" href="#">{% trans "delete" %}</a> ]</small>'));
-					{% endif %}
-					$tr.append($td);
-					$("tbody").append($tr);
-					$tr = $("tbody tr:last-child");
-					$("thead th[theme-id]").each(function() {
-						var theme_id = $(this).attr("theme-id");
-						$tr.append(
-							create_story_cell(theme_id, phase_id)
-						)
-					});
+					$("tbody").append(data.html);
+					setup_story_move($('.story-td'));
 				}
 				$panel.modal('hide');
 				$this.button('reset');
