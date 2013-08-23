@@ -10,33 +10,12 @@
 		<li class="active"><a href="{% url "storymap_detail" storymap.pk %}">{% trans "General" %}</a></li>
 	</ul>
 
-	<div class="storymap-head">
-		<h1 class="inline-title"><i class="icon-table"></i> {{ storymap.title }}</h1>
-		{% if storymap|can_admin:request.user %}
-			<small class="muted">[
-			<a class="btn-link" href="#">
-				{% trans "edit" %}
-			</a>|
-			<a class="btn-link" href="#">
-				{% trans "delete" %}
-			</a>
-			]</small>
-		{% endif %}
-	</div>
-
-	<div class="description span12">
-		{% if storymap.description %}
-			{{ storymap.description|markdown }}
-		{% endif %}
-	</div>
-
 	<table class="story-map">
 		<thead>
 			<tr>
 				<th class="table-corner">
 					{% if storymap|can_admin:request.user %}
-						<a class="btn btn-primary btn-mini create_theme" href="#">{% trans "Add theme" %}</a>
-						<a class="btn btn-primary btn-mini create_phase" href="#">{% trans "Add phase" %}</a>
+						<a class="btn btn-primary btn-mini create_theme" href="#">{% trans "Add theme" %} <i class="icon-arrow-right"></i></a>
 					{% endif %}
 				</th>
 			{% for theme in themes.all %}
@@ -44,6 +23,9 @@
 			{% endfor %}
 			</tr>
 		</thead>
+		<caption class="text-left caption-bottom">
+			<a class="btn btn-primary btn-mini create_phase" href="#">{% trans "Add phase" %}</a>
+		</caption>
 		<tbody>
 			{% for phase in phases.all %}
 				<tr>
@@ -65,7 +47,7 @@
 		</div>
 		<div class="modal-footer">
 			<a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Close</a>
-			<a id="create-theme-btn" data-loading-text="{% trans "Creating..." %}" href="#" class="btn btn-primary">{% trans "Create" %}</a>
+			<a id="create-theme-btn" data-loading-text="{% trans "Creating..." %}" href="#" class="btn btn-success">{% trans "Create" %}</a>
 		</div>
 	</div>
 
@@ -79,7 +61,21 @@
 		</div>
 		<div class="modal-footer">
 			<a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Close</a>
-			<a id="create-phase-btn" data-loading-text="{% trans "Creating..." %}" href="#" class="btn btn-primary">{% trans "Create" %}</a>
+			<a id="create-phase-btn" data-loading-text="{% trans "Creating..." %}" href="#" class="btn btn-success">{% trans "Create" %}</a>
+		</div>
+	</div>
+
+	<div id="confirm-delete-panel" class="modal hide fade">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>{% trans "Delete" %}</h3>
+		</div>
+		<div class="modal-body">
+			<p class="alert alert-danger">{% blocktrans %} Are you sure you want to delete this element?{% endblocktrans %}</p>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Close</a>
+			<a id="confirm-delete-btn" data-loading-text="{% trans "Deleting..." %}" href="#" class="btn btn-danger">{% trans "Delete" %}</a>
 		</div>
 	</div>
 
@@ -96,6 +92,7 @@
 				distance: 3,
 				cursor: "move",
 				revert: 100,
+				opacity: 0.9,
 				update: function(event, ui) {
 					var $this = $(this);
 					var story_pk = ui.item.attr("story-id");
@@ -106,29 +103,83 @@
 							phase_id: phase_id,
 							theme_id: theme_id
 						};
-						ajax_story_action("update", story_pk, content)
+						ajax_story_action("update", story_pk, content);
+						var order = [];
+						$(this).find(".story-cell").each(function() {
+							order.push($(this).attr("story-id"));
+						});
+						ajax_story_action("order", story_pk, {
+							order: order
+						})
 					}
 				}
 			});
-		}
+		};
 		setup_story_move($('.story-td'));
 
 		$("tbody").sortable({
 			distance: 3,
 			cursor: "move",
 			revert: 100,
-			forceHelperSize: true,
-			opacity: 0.5,
-			placeholder: "phase-placeholder"
+			forceHelperSize: false,
+			opacity: 0.6,
+			placeholder: "phase-placeholder",
+			handle: ".phase-cell",
+			update: function(event, ui) {
+				var order = [];
+				$(this).find(".phase-cell").each(function() {
+					order.push($(this).attr("phase-id"));
+				});
+				ajax_action({
+					action: "order",
+					target: "phase",
+					content: {
+						order: order
+					}
+				}, function(err) {
+					if (err) {
+						$('tbody').sortable( "cancel" );
+					}
+				})
+			}
 		});
+
+		//Theme re-order
 		$("thead tr").sortable({
 			distance: 3,
 			cursor: "move",
 			forceHelperSize: false,
 			placeholder: "theme-placeholder",
 			helper: "clone",
-			items: "> .theme-cell"
+			items: "> .theme-cell",
+			update: function(event, ui) {
+				var order = [];
+				$(this).find(".theme-cell").each(function() {
+					order.push($(this).attr("theme-id"));
+				});
+				ajax_action({
+					action: "order",
+					target: "theme",
+					content: {
+						order: order
+					}
+				}, function(err) {
+					if (err) {
+						$('thead tr').sortable( "cancel" );
+					} else {
+						// let's re-order cells in all rows
+						$("tbody tr").each(function() {
+							var i = 0;
+							for (i=0; i < order.length ; i++) {
+								var id = order[i];
+								$(this).append($(this).find("td[theme-id="+id+"]"));
+							}
+						})
+					}
+				})
+			}
 		});
+
 		var ajax_action = function(ajax_data, callback) {
 			$.ajax({
 				url: '{% url "api_story_map_action" storymap.pk %}',
@@ -146,14 +197,18 @@
 				complete: function(data){
 				}
 			});
-		}
+		};
+
+		var create_story = function($this) {
+			var $target = $this.closest(".story-td");
+			var $story = $('<div class="story cell-content"></div>');
+			var $storycell = $('<div class="story-cell"></div>').append($story);
+			$target.append($storycell);
+			edit_story($story, true);
+		};
 
 		$(".create_story").live("click", function() {
-			var $this = $(this);
-			var $target = $this.closest(".story-td");
-			var $story = $('<div class="story"></div>');
-			$target.append($story);
-			edit_story($story, true);
+			create_story($(this));
 		});
 
 		var ajax_story_action = function(action, story_pk, content, callback) {
@@ -172,22 +227,6 @@
 			});
 		};
 
-		var ajax_theme_action = function(action, theme_id, content, callback) {
-			var ajax_data = {
-				target: "theme",
-				id: theme_id,
-				action: action,
-				content: content
-			};
-			ajax_action(ajax_data, function(err, data) {
-				if (err) {
-					$('.themes').sortable( "cancel" );
-				} else {
-					callback && callback(null,data);
-				}
-			});
-		};
-
 		$.fn.edit_element_text = function(done) {
 			var $this = $(this);
 			if ($this.attr("editing")) {
@@ -195,6 +234,12 @@
 			}
 			$this.attr("editing", "true");
 			var $text = $('<textarea class="fit">'+$this.text()+'</textarea>');
+			$text.keypress(function(event) {
+				if ( event.which == 13 ) {
+					event.preventDefault();
+					$text.blur();
+				}
+			});
 			$this.empty();
 			$this.append($text);
 			$text.blur(function() {
@@ -205,7 +250,6 @@
 					$this.attr("editing", null);
 					done(txt);
 				} else {
-					$this.remove();
 					done(null);
 				}
 			});
@@ -220,49 +264,73 @@
 			})
 		};
 
+		var confirm_delete = function(next) {
+			$("#confirm-delete-btn").unbind("click").click(function() {
+				$(this).unbind("click");
+				$("#confirm-delete-panel").modal('hide');
+				next();
+			});
+			$("#confirm-delete-panel").modal('show');
+		};
+
 		// Story
 		var edit_story = function($this, new_story) {
 			$this.edit_element_text(function(text) {
+				var $to_remove = $this.closest(".story-cell");
 				var theme_id = $this.closest("[theme-id]").attr("theme-id");
 			    var phase_id = $this.closest("[phase-id]").attr("phase-id");
 				var content = {
 					'title': text,
 					'theme_id': theme_id,
 					'phase_id': phase_id
-				}
+				};
 				if (text) {
 					ajax_story_action(new_story?"create":"update", $this.attr("story-id"), content, function(err, data) {
 						if (data.html) {
-							$this.parent().append(data.html);
-							$this.remove();
+							$this.closest(".cell-td").append(data.html);
 						}
 					});
 				} else {
 					if (!new_story) {
-						ajax_story_action("delete", $this.attr("story-id"), content);
+						ajax_story_action("delete", $this.attr("story-id"), content, function(err) {
+							if (!err) {
+								$to_remove.fade_remove();
+							}
+						});
+					} else {
+						$to_remove.fade_remove();
 					}
 				}
 			});
 		};
 
 		var delete_story = function($this) {
-			var story_id = $this.closest("[story-id]").attr("story-id");
-			var ajax_data = {
-				target: "story",
-				id: story_id,
-				action: "delete",
-				content: {}
-			};
-			ajax_action(ajax_data, function(err) {
-				if (!err) {
-					$("[story-id="+story_id+"]").fade_remove()
-				}
-			});
+			confirm_delete(function() {
+				var story_id = $this.closest("[story-id]").attr("story-id");
+				var ajax_data = {
+					target: "story",
+					id: story_id,
+					action: "delete",
+					content: {}
+				};
+				ajax_action(ajax_data, function(err) {
+					if (!err) {
+						$("[story-id="+story_id+"]").fade_remove()
+					}
+				});
+			})
+
 		};
 
-		$(".story").live("dblclick", function() {
+		$(".story").live("dblclick", function(event) {
 			var $this = $(this);
+			event.preventDefault();
+			event.stopPropagation();
 			edit_story($this, false);
+		});
+
+		$(".story-td").live("dblclick", function(event) {
+			create_story($(this));
 		});
 
 		$(".delete_story").live("click", function() {
@@ -289,18 +357,20 @@
 		};
 
 		var delete_theme = function($this) {
-			var theme_id = $this.closest("[theme-id]").attr("theme-id");
-			var ajax_data = {
-				target: "theme",
-				id: theme_id,
-				action: "delete",
-				content: {}
-			};
-			ajax_action(ajax_data, function(err) {
-				if (!err) {
-					$("[theme-id="+theme_id+"]").fade_remove()
-				}
-			});
+			confirm_delete(function() {
+				var theme_id = $this.closest("[theme-id]").attr("theme-id");
+				var ajax_data = {
+					target: "theme",
+					id: theme_id,
+					action: "delete",
+					content: {}
+				};
+				ajax_action(ajax_data, function(err) {
+					if (!err) {
+						$("[theme-id="+theme_id+"]").fade_remove()
+					}
+				});
+			})
 		};
 
 		$(".theme").live("dblclick", function() {
@@ -332,17 +402,19 @@
 		};
 
 		var delete_phase = function($this) {
-			var phase_id = $this.closest("[phase-id]").attr("phase-id");
-			var ajax_data = {
-				target: "phase",
-				id: phase_id,
-				action: "delete",
-				content: {}
-			};
-			ajax_action(ajax_data, function(err) {
-				if (!err) {
-					$("[phase-id="+phase_id+"]").fade_remove()
-				}
+			confirm_delete(function() {
+				var phase_id = $this.closest("[phase-id]").attr("phase-id");
+				var ajax_data = {
+					target: "phase",
+					id: phase_id,
+					action: "delete",
+					content: {}
+				};
+				ajax_action(ajax_data, function(err) {
+					if (!err) {
+						$("[phase-id="+phase_id+"]").fade_remove()
+					}
+				});
 			});
 		};
 

@@ -8,7 +8,6 @@ from rest_framework.permissions import BasePermission
 from rest_framework.throttling import UserRateThrottle
 
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.http import Http404
 from django.shortcuts import redirect

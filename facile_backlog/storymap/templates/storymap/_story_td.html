@@ -2,7 +2,7 @@
 
 <td class="story-td" theme-id="{{ theme.pk }}" phase-id="{{ phase.pk }}">
 	<div class="plus">
-		<a class="btn btn-link btn-small create_story" href="#">{% trans "New story" %}</a>
+		<a class="btn btn-success btn-mini create_story" href="#">{% trans "New story" %}</a>
 	</div>
 	<!-- All stories in theme and phase -->
 	{% for story in theme|story_in:phase %}

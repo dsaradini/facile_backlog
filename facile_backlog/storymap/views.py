@@ -9,8 +9,7 @@ from django.views import generic
 
 
 from rest_framework.response import Response
-from rest_framework.decorators import (api_view, throttle_classes,
-                                       parser_classes)
+from rest_framework.decorators import (api_view, parser_classes)
 from rest_framework.parsers import JSONParser
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -75,6 +74,8 @@ TARGETS = {
 CREATE = "create"
 DELETE = "delete"
 UPDATE = "update"
+ORDER = "order"
+
 
 @api_view(["POST"])
 @parser_classes((JSONParser,))
@@ -121,6 +122,19 @@ def story_map_action(request, story_map_id):
         elif action == DELETE:
             obj = model_class.objects.get(pk=target_id)
             obj.delete()
+        elif action == ORDER:
+            order = [int(x) for x in content['order']]
+            for item in model_class.objects.filter(pk__in=order).all():
+                index = order.index(item.pk)
+                if item.order != index:
+                    item.order = index
+                    item.save()
+        else:
+            return Response({
+                'errors': [
+                    'Unknown commend: {0}'.format(action)
+                ]
+            }, content_type="application/json", status=400)
     except ObjectDoesNotExist:
         return Response({
             'errors': [
