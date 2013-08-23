@@ -1,5 +1,6 @@
 
 from django.contrib.auth.decorators import login_required
+from django.db.models import Max
 from django.http import Http404
 from django.http.response import (HttpResponseForbidden)
 from django.shortcuts import get_object_or_404
@@ -102,6 +103,18 @@ def story_map_action(request, story_map_id):
         }, content_type="application/json", status=400)
     try:
         if action == CREATE:
+            # should place it at the end ( order == max(order) )
+            max_filter = {
+                k: content[k]
+                for k in ('theme_id', 'phase_id', 'story_map')
+                if k in content
+            }
+            max_order = model_class.objects.filter(
+                **max_filter).aggregate(Max('order'))
+            if max_order['order__max']:
+                content['order'] = max_order['order__max'] + 1
+            else:
+                content['order'] = 0
             obj = model_class.objects.create(**content)
             target_id = obj.pk
             template_name = TARGETS[target][2]

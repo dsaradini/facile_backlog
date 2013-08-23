@@ -3,7 +3,7 @@
 	border-spacing: 10px 0px;
 	caption {
 		background-color: #ddd;
-		margin-left: 10px;
+		margin:0 10px;
 		padding: 10px;
 	}
 	td, th {
@@ -143,7 +143,7 @@ $graber-size: 12px;
 		bottom:0px;
 		width: $graber-size;
 		border-right:1px solid rgba(black, 0.2);
-		cursore: pointer;
+		cursor: pointer;
 		background-image: url('../img/grab.png');
 	}
 	.cell-content {
