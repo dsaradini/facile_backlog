@@ -103,14 +103,20 @@
 							phase_id: phase_id,
 							theme_id: theme_id
 						};
-						ajax_story_action("update", story_pk, content);
-						var order = [];
-						$(this).find(".story-cell").each(function() {
-							order.push($(this).attr("story-id"));
+						ajax_story_action("update", story_pk, content, function(err) {
+							if (err) {
+								$item.sortable( "cancel" );
+							} else {
+								var order = [];
+								$(this).find(".story-cell").each(function() {
+									order.push($(this).attr("story-id"));
+								});
+								ajax_story_action("order", story_pk, {
+									order: order
+								})
+							}
 						});
-						ajax_story_action("order", story_pk, {
-							order: order
-						})
+
 					}
 				}
 			});
@@ -189,7 +195,7 @@
 				data: JSON.stringify(ajax_data),
 				error: function( jqXHR, textStatus, errorThrown ){
 					$.show_error( '{% trans "Server return an error."%}', jqXHR);
-					callback && callback(errorThrown);
+					callback && callback(errorThrown||textStatus);
 				},
 				success: function(data) {
 					callback && callback(null,data);
@@ -220,7 +226,7 @@
 			};
 			ajax_action(ajax_data, function(err, data) {
 				if (err) {
-					$('.stories').sortable( "cancel" );
+					callback && callback(err);
 				} else {
 					callback && callback(null,data);
 				}
