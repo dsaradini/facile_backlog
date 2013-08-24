@@ -1,0 +1,10 @@
+{% load acl %}
+
+<td phase-id="{{ phase.pk }}" class="phase-cell">
+	<div class="phase cell-content">{{ phase.name }}</div>
+	<div class="remover">
+		{% if storymap|can_admin:request.user %}
+			<button class="remove delete_phase"><i class="icon-remove"></i></button>
+		{% endif %}
+	</div>
+</td>

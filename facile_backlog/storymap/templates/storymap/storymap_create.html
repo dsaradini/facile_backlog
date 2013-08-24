@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}{% trans "Create story map" %}{% endblock %}
+
+{% block content %}
+	<ul class="breadcrumb">
+		<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a><span class="divider">/</span></li>
+		{% if project.org_id %}
+			<li><a href="{% url "org_detail" project.org.pk %}">{{ project.org.get_mini_logo }} {{ project.org.name }}</a><span class="divider">/</span></li>
+		{% endif %}
+		<li><a href="{% url "project_detail" project.pk %}"><i class="icon-book"></i> {{ project.name }}</a><span class="divider">/</span></li>
+		<li class="active"><i>{% trans "Create story map" %}</i><span class="divider"></span></li>
+	</ul>
+
+<div class="row-fluid">
+	<div class="span6 offset3 base-form">
+		{% if not object %}<h1>{% trans "Create story map" %}</h1>{% endif %}
+		<form method="post" id="edit_story_map_form" action="{% url "storymap_create" project.pk %}">
+
+			{% include "form.html" %}
+			<div class="alert alert-info">
+				<p>{% blocktrans %}Your project does not have a story map yet, do you want to create it?{% endblocktrans %}</p>
+			</div>
+			<div class="submit">
+				<input class="btn btn-success" type="submit" value="{% trans "Yes, create story map" %}">
+				<a class="btn btn-link" href="{% url "project_detail" project.pk %}">{% trans "No thanks" %}</a>
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock %}

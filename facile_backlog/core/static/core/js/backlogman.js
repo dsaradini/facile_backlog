@@ -42,7 +42,7 @@
 		}
 	}
 
-	 $.get_gravatar_url = function(email, size) {
+	$.get_gravatar_url = function(email, size) {
 
 		// MD5 (Message-Digest Algorithm) by WebToolkit
 		//
@@ -54,6 +54,28 @@
 		return 'https://www.gravatar.com/avatar/' + MD5(email) + '.jpg?s=' + size;
 	}
 
+	 var waiting_to = null;
+	 var in_waiting = false;
+	 $.show_waiting = function() {
+		 if (in_waiting) {
+			 throw "Already waiting"
+		 }
+		 in_waiting = true;
+		 waiting_to = setTimeout(function() {
+			 $('.progress-indicator').show();
+			 waiting_to = null;
+		 }, 200);
+
+	 };
+
+	 $.hide_waiting = function() {
+		 if (waiting_to) {
+		 	 clearTimeout(waiting_to);
+			 waiting_to = null;
+		 }
+		 in_waiting = false;
+		 $('.progress-indicator').hide();
+	 };
 
 	if(typeof $.fn.flash == "undefined"){
 		$.fn.flash = function(color, delay) {

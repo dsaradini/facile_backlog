@@ -46,4 +46,5 @@ urlpatterns = patterns(
 
     url(r'^stories/(?P<story_id>[\w]+)/status/$',
         story_change_status, name="api_story_status"),
+
 )

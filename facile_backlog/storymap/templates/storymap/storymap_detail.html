@@ -1,0 +1,563 @@
+{% extends "base.html" %}
+{% load staticfiles sekizai_tags markup acl humanize story_in %}
+
+{% block title %}{% trans "Story Map" %} &mdash; {{ storymap.title }}{% endblock %}
+{% block content %}
+
+	{% include "backlog/_project_head.html" %}
+	{% include "backlog/_project_tabs.html" %}
+
+	<table class="story-map">
+		<thead>
+			<tr>
+				<th class="table-corner">
+					{% if storymap|can_admin:request.user %}
+						<a class="btn btn-primary btn-mini create_theme" href="#">{% trans "Add theme" %} &nbsp;<i class="icon-arrow-right"></i></a>
+					{% endif %}
+				</th>
+			{% for theme in themes.all %}
+				{% include "storymap/_theme_cell.html" %}
+			{% endfor %}
+			</tr>
+		</thead>
+		<caption class="text-left caption-bottom">
+			{% if storymap|can_admin:request.user %}
+				<a class="btn btn-primary btn-mini create_phase" href="#">{% trans "Add phase" %} &nbsp;<i class="icon-arrow-up"></i></a>
+			{% endif %}
+		</caption>
+		<tbody>
+			{% for phase in phases.all %}
+				<tr>
+					{% include "storymap/_phase_cell.html" %}
+					{% for theme in themes.all %}
+						{% include "storymap/_story_td.html" %}
+					{% endfor %}
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<div id="theme-create-panel" class="modal hide fade">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>{% trans "Create theme" %}</h3>
+		</div>
+		<div class="modal-body">
+			<textarea class="fit" placeholder="{% trans "Theme name" %}"></textarea>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Close</a>
+			<a id="create-theme-btn" data-loading-text="{% trans "Creating..." %}" href="#" class="btn btn-success">{% trans "Create" %}</a>
+		</div>
+	</div>
+
+	<div id="phase-create-panel" class="modal hide fade">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>{% trans "Create phase" %}</h3>
+		</div>
+		<div class="modal-body">
+			<textarea class="fit" placeholder="{% trans "Phase name" %}"></textarea>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Close</a>
+			<a id="create-phase-btn" data-loading-text="{% trans "Creating..." %}" href="#" class="btn btn-success">{% trans "Create" %}</a>
+		</div>
+	</div>
+
+	<div id="confirm-delete-panel" class="modal hide fade">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>{% trans "Delete" %}</h3>
+		</div>
+		<div class="modal-body">
+			<p class="alert alert-danger">{% blocktrans %} Are you sure you want to delete this element?{% endblocktrans %}</p>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Close</a>
+			<a id="confirm-delete-btn" data-loading-text="{% trans "Deleting..." %}" href="#" class="btn btn-danger">{% trans "Delete" %}</a>
+		</div>
+	</div>
+
+{% include "backlog/_script_show_errors.html" %}
+
+{% addtoblock "js" %}
+<script type="text/javascript">
+	$(function() {
+		var wait_start = function() {
+			$.show_waiting();
+		};
+
+		var wait_end = function() {
+			$.hide_waiting();
+		};
+
+		var setup_story_move = function($item) {
+			$item.sortable({
+				connectWith: ".stories-zone",
+				placeholder: "story-placeholder",
+				forcePlaceholderSize: true,
+				distance: 3,
+				cursor: "move",
+				revert: 100,
+				opacity: 0.9,
+				update: function(event, ui) {
+					var $this = $(this);
+					var story_pk = ui.item.attr("story-id");
+					var phase_id =  $this.attr("phase-id");
+					var theme_id = $this.attr("theme-id");
+					if ( $this.find("[story-id="+story_pk+"]").length ) {
+						var content = {
+							phase_id: phase_id,
+							theme_id: theme_id
+						};
+						ajax_story_action("update", story_pk, content, function(err) {
+							if (err) {
+								$item.sortable( "cancel" );
+							} else {
+								var order = [];
+								$this.find(".story-cell").each(function() {
+									order.push($(this).attr("story-id"));
+								});
+								ajax_story_action("order", story_pk, {
+									order: order
+								})
+							}
+						});
+
+					}
+				}
+			});
+		};
+
+		{% if storymap|can_admin:request.user %}
+			setup_story_move($('.stories-zone'));
+		{% endif %}
+
+		{% if storymap|can_admin:request.user %}
+			$("tbody").sortable({
+				distance: 3,
+				cursor: "move",
+				revert: 100,
+				forceHelperSize: false,
+				opacity: 0.6,
+				placeholder: "phase-placeholder",
+				handle: ".phase-cell",
+				update: function(event, ui) {
+					var order = [];
+					$(this).find(".phase-cell").each(function() {
+						order.push($(this).attr("phase-id"));
+					});
+					ajax_action({
+						action: "order",
+						target: "phase",
+						content: {
+							order: order
+						}
+					}, function(err) {
+						if (err) {
+							$('tbody').sortable( "cancel" );
+						}
+					})
+				}
+			});
+		{% endif %}
+
+		//Theme re-order
+		{% if storymap|can_admin:request.user %}
+			$("thead tr").sortable({
+				distance: 3,
+				cursor: "move",
+				forceHelperSize: false,
+				placeholder: "theme-placeholder",
+				helper: "clone",
+				items: "> .theme-cell",
+				update: function(event, ui) {
+					wait_start();
+					var order = [];
+					$(this).find(".theme-cell").each(function() {
+						order.push($(this).attr("theme-id"));
+					});
+					ajax_action({
+						action: "order",
+						target: "theme",
+						content: {
+							order: order
+						}
+					}, function(err) {
+						if (err) {
+							$('thead tr').sortable( "cancel" );
+						} else {
+							// let's re-order cells in all rows
+							$("tbody tr").each(function() {
+								var i = 0;
+								for (i=0; i < order.length ; i++) {
+									var id = order[i];
+									$(this).append($(this).find(".stories-zone[theme-id="+id+"]").closest("td"));
+								}
+							})
+						}
+						wait_end();
+					})
+				}
+			});
+		{% endif %}
+
+		var ajax_action = function(ajax_data, callback) {
+			$.ajax({
+				url: '{% url "api_story_map_action" storymap.pk %}',
+				type: "POST",
+				contentType:"application/json; charset=utf-8",
+				dataType: "json",
+				data: JSON.stringify(ajax_data),
+				error: function( jqXHR, textStatus, errorThrown ){
+					$.show_error( '{% trans "Server return an error."%}', jqXHR);
+					callback && callback(errorThrown||textStatus);
+				},
+				success: function(data) {
+					callback && callback(null,data);
+				},
+				complete: function(data){
+				}
+			});
+		};
+
+		var create_story = function($this) {
+			var $target = $this.closest(".stories-zone");
+			var $story = $('<div class="story cell-content"></div>');
+			var $storycell = $('<div class="story-cell" style="background-color:rgba(0,0,0,0.1);"></div>').append($story);
+			$target.append($storycell);
+			edit_story($story, true);
+		};
+
+		{% if storymap|can_admin:request.user %}
+			$(".create_story").live("click", function() {
+				create_story($(this));
+			});
+		{% endif %}
+
+		var ajax_story_action = function(action, story_pk, content, callback) {
+			var ajax_data = {
+				target: "story",
+				id: story_pk,
+				action: action,
+				content: content
+			};
+			ajax_action(ajax_data, function(err, data) {
+				if (err) {
+					callback && callback(err);
+				} else {
+					callback && callback(null,data);
+				}
+			});
+		};
+
+		$.fn.resize_textarea = function() {
+			var $this = $(this);
+			var str = $this.val();
+			if (!str) {
+				return;
+			}
+			var cols = this.cols || 30;
+			var linecount = 0;
+			str.split("\n").forEach( function(l) {
+				linecount += Math.ceil( l.length / cols ); // take into account long lines
+			});
+			this.rows = linecount;
+			$this.height((this.rows * 22)+"px");
+		};
+
+		$.fn.edit_element_text = function(done) {
+			var $this = $(this);
+			if ($this.attr("editing")) {
+				return
+			}
+			$this.attr("editing", "true");
+			var $text = $('<textarea class="fit">'+$this.text()+'</textarea>');
+			$text.resize_textarea();
+			$text.keypress(function(event) {
+				if ( event.which == 13 ) {
+					event.preventDefault();
+					$text.blur();
+				}
+			});
+			$this.empty();
+			$this.append($text);
+			$text.blur(function() {
+				var txt = $text.val().trim();
+				$this.empty();
+				if (txt) {
+					$this.append(txt);
+					$this.attr("editing", null);
+					done(txt);
+				} else {
+					done(null);
+				}
+			});
+			setTimeout(function() {
+				$text.focus();
+			}, 10);
+		};
+
+		$.fn.fade_remove = function() {
+			$(this).fadeOut(function() {
+				$(this).remove();
+			})
+		};
+
+		var confirm_delete = function(next) {
+			$("#confirm-delete-btn").unbind("click").click(function() {
+				$(this).unbind("click");
+				$("#confirm-delete-panel").modal('hide');
+				next();
+			});
+			$("#confirm-delete-panel").modal('show');
+		};
+
+		// Story
+		var edit_story = function($this, new_story) {
+			$this.edit_element_text(function(text) {
+				var $to_remove = $this.closest(".story-cell");
+				var theme_id = $this.closest("[theme-id]").attr("theme-id");
+			    var phase_id = $this.closest("[phase-id]").attr("phase-id");
+				var content = {
+					'title': text,
+					'theme_id': theme_id,
+					'phase_id': phase_id
+				};
+				if (text) {
+					ajax_story_action(new_story?"create":"update", $this.attr("story-id"), content, function(err, data) {
+						if (!err) {
+							if (data.html) {
+								$to_remove.closest(".stories-zone").append(data.html);
+								$to_remove.remove()
+							}
+						}
+					});
+				} else {
+					if (!new_story) {
+						ajax_story_action("delete", $this.attr("story-id"), content, function(err) {
+							if (!err) {
+								$to_remove.fade_remove();
+							}
+						});
+					} else {
+						$to_remove.remove();
+					}
+				}
+			});
+		};
+
+		var delete_story = function($this) {
+			confirm_delete(function() {
+				var story_id = $this.closest("[story-id]").attr("story-id");
+				var ajax_data = {
+					target: "story",
+					id: story_id,
+					action: "delete",
+					content: {}
+				};
+				ajax_action(ajax_data, function(err) {
+					if (!err) {
+						$("[story-id="+story_id+"]").fade_remove()
+					}
+				});
+			})
+
+		};
+
+		{% if storymap|can_admin:request.user %}
+			$(".story").live("dblclick", function(event) {
+				var $this = $(this);
+				event.preventDefault();
+				event.stopPropagation();
+				edit_story($this, false);
+			});
+
+			$(".stories-zone").live("dblclick", function(event) {
+				create_story($(this));
+			});
+
+			$(".delete_story").live("click", function() {
+				var $this = $(this);
+				delete_story($this);
+			});
+		{% endif %}
+
+		// THEME
+		var edit_theme = function($this) {
+			$this.edit_element_text(function(text) {
+				if (text) {
+					var theme_id = $this.closest("[theme-id]").attr("theme-id");
+					var ajax_data = {
+						target: "theme",
+						id: theme_id,
+						action: "update",
+						content: {
+							name: text
+						}
+					};
+					ajax_action(ajax_data);
+				}
+			});
+		};
+
+		var delete_theme = function($this) {
+			confirm_delete(function() {
+				var theme_id = $this.closest("[theme-id]").attr("theme-id");
+				var ajax_data = {
+					target: "theme",
+					id: theme_id,
+					action: "delete",
+					content: {}
+				};
+				ajax_action(ajax_data, function(err) {
+					if (!err) {
+						$("[theme-id="+theme_id+"]").closest("td, th").fade_remove()
+					}
+				});
+			})
+		};
+
+		{% if storymap|can_admin:request.user %}
+			$(".theme").live("dblclick", function() {
+				var $this = $(this);
+				edit_theme($this);
+			});
+
+			$(".delete_theme").live("click", function() {
+				var $this = $(this);
+				delete_theme($this);
+			});
+		{% endif %}
+
+		// PHASE
+		var edit_phase = function($this, new_phase) {
+			$this.edit_element_text(function(text) {
+				if (text) {
+					var theme_id = $this.closest("[phase-id]").attr("phase-id");
+					var ajax_data = {
+						target: "phase",
+						id: theme_id,
+						action: "update",
+						content: {
+							name: text
+						}
+					};
+					ajax_action(ajax_data);
+				}
+			});
+		};
+
+		var delete_phase = function($this) {
+			confirm_delete(function() {
+				var phase_id = $this.closest("[phase-id]").attr("phase-id");
+				var ajax_data = {
+					target: "phase",
+					id: phase_id,
+					action: "delete",
+					content: {}
+				};
+				ajax_action(ajax_data, function(err) {
+					if (!err) {
+						$("[phase-id="+phase_id+"]").closest("td, th").fade_remove()
+					}
+				});
+			});
+		};
+
+		{% if storymap|can_admin:request.user %}
+			$(".phase").live("dblclick", function() {
+				var $this = $(this);
+				edit_phase($this, false);
+			});
+
+			$(".delete_phase").live("click", function() {
+				var $this = $(this);
+				delete_phase($this);
+			});
+		{% endif %}
+
+		$("#theme-create-panel").on("shown", function() {
+			$(this).find("textarea").focus()
+		});
+		$(".create_theme").click( function() {
+			$("#theme-create-panel").modal('show');
+		});
+
+		$("#create-theme-btn").click(function() {
+			var $this = $(this);
+			var $panel = $("#theme-create-panel");
+			var text = $panel.find("textarea").val();
+			$panel.find("textarea").val("");
+			$panel.find("a").attr("disabled", "");
+			$this.button('loading');
+			var ajax_data = {
+				target: "theme",
+				action: "create",
+				content: {
+					name: text
+				}
+			};
+			ajax_action(ajax_data, function(err, data) {
+				if (!err) {
+					var $html = $("<div>").append(data.html);
+					$("thead tr").append($html.find("th.theme-cell"));
+					$("tbody tr").each(function() {
+						var phase_id = $(this).find("[phase-id]").attr("phase-id");
+						var $td = $html.find(".stories-zone[phase-id="+phase_id+"]").closest("td");
+						$(this).append($td);
+					});
+					setup_story_move($('.stories-zone'));
+				}
+				$panel.modal('hide');
+				$this.button('reset');
+			});
+		});
+
+		$("#phase-create-panel").on("shown", function() {
+			$(this).find("textarea").focus()
+		});
+		$(".create_phase").click( function() {
+			$("#phase-create-panel").modal('show');
+		});
+		$("#create-phase-btn").click(function() {
+			var $this = $(this);
+			var $panel = $("#phase-create-panel");
+			var text = $panel.find("textarea").val();
+			$panel.find("textarea").val("");
+			$panel.find("a").attr("disabled", "");
+			$this.button('loading');
+			var ajax_data = {
+				target: "phase",
+				action: "create",
+				content: {
+					name: text
+				}
+			};
+			ajax_action(ajax_data, function(err, data) {
+				if (!err) {
+					$("tbody").append(data.html);
+					setup_story_move($('.stories-zone'));
+				}
+				$panel.modal('hide');
+				$this.button('reset');
+			});
+
+		});
+
+		$('.story-color-set').live("click", function() {
+			var c = $(this).attr("data-color");
+			var $story_cell = $(this).closest(".story-cell");
+			var story_id = $story_cell.attr("story-id");
+			ajax_story_action("update", story_id, {
+				color: c
+			}, function(err) {
+				if (!err) {
+					$story_cell.css("background-color", c);
+				}
+			})
+		})
+	});
+</script>
+{% endaddtoblock %}
+{% endblock %}

@@ -1,0 +1,8 @@
+{% with phase=object %}
+	<tr>
+		{% include "storymap/_phase_cell.html" %}
+		{% for theme in themes.all %}
+			{% include "storymap/_story_td.html" %}
+		{% endfor %}
+	</tr>
+{% endwith %}

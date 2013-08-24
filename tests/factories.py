@@ -10,6 +10,9 @@ from facile_backlog.blog.models import BlogPost
 
 from facile_backlog.core.models import User
 
+from facile_backlog.storymap.models import StoryMap, Phase, Theme, Story
+from facile_backlog.storymap.views import STORY_COLORS
+
 from tests import rand_lorem_phrase, rand_email
 
 
@@ -195,3 +198,61 @@ def create_org_sample_story(user, org=None, story_kwargs={}, org_kwargs={},
     _story_kwargs['project'] = project
     _story_kwargs['backlog'] = backlog
     return UserStoryFactory.create(**_story_kwargs)
+
+
+class StoryMapFactory(Factory):
+    FACTORY_FOR = StoryMap
+
+
+class PhaseFactory(Factory):
+    FACTORY_FOR = Phase
+    order = Sequence(lambda n: n, type=int)
+
+    @lazy_attribute
+    def name(self):
+        return rand_lorem_phrase(3, 8)
+
+
+class ThemeFactory(Factory):
+    FACTORY_FOR = Theme
+    order = Sequence(lambda n: n, type=int)
+
+    @lazy_attribute
+    def name(self):
+        return rand_lorem_phrase(3, 8)
+
+
+class StoryFactory(Factory):
+    FACTORY_FOR = Story
+    order = Sequence(lambda n: n, type=int)
+
+    @lazy_attribute
+    def title(self):
+        return rand_lorem_phrase(3, 8)
+
+    @lazy_attribute
+    def color(self):
+        return random.choice(STORY_COLORS)
+
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        story_map = kwargs.get("story_map", None)
+        if "phase" not in kwargs:
+            if "theme" in kwargs:
+                story_map = kwargs['theme'].story_map
+            else:
+                story_map = StoryMapFactory.create() \
+                    if not story_map else story_map
+            kwargs['phase'] = PhaseFactory.create(
+                story_map=story_map
+            )
+        if "theme" not in kwargs:
+            if "phase" in kwargs:
+                story_map = kwargs['phase'].story_map
+            else:
+                story_map = StoryMapFactory.create() \
+                    if not story_map else story_map
+            kwargs['theme'] = ThemeFactory.create(
+                story_map=story_map
+            )
+        return super(StoryFactory, cls)._prepare(create, **kwargs)

@@ -6,8 +6,12 @@ import json
 
 from rest_framework.authtoken.models import Token
 
+from django.core.urlresolvers import reverse
 from django.test.client import FakePayload, urlparse, force_str
-from django.test import TestCase, Client
+from django.test import TestCase, Client, LiveServerTestCase
+
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 
 
 TEST_DATA = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data')
@@ -134,3 +138,27 @@ class JsonTestCase(TestCase):
 
 def api_token_auth(token):
     return {'HTTP_AUTHORIZATION': 'Token {0}'.format(token)}
+
+
+class SeleniumTestCase(LiveServerTestCase):
+    def get_webdriver(self):
+        return webdriver.Firefox()
+
+    def setUp(self):  # noqa
+        self.browser = self.get_webdriver()
+
+    def tearDown(self):  # noqa
+        self.browser.close()
+
+    def assetElementByXPath(self, xpath):
+        try:
+            return self.browser.find_element_by_xpath(xpath)
+        except NoSuchElementException:
+            assert 0, "can't find selenium xpath: {0}".format(xpath)
+
+    def live_reverse(self, name, args=None):
+        url = reverse(name, args=args)
+        return "{0}{1}".format(self.live_server_url, url)
+
+    def sel_query(self, selector):
+        return self.browser.find_element_by_css_selector(selector)

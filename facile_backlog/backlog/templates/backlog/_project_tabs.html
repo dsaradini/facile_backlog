@@ -4,4 +4,9 @@
 	<li class="{% if active == 'users' %}active{% endif %}"><a href="{% url "project_users" project.pk %}">{% trans "Members" %} </a>
 	<li class="{% if active == 'stories' %}active{% endif %}"><a href="{% url "project_stories" project.pk %}">{% trans "Stories" %}</a></li>
 	<li class="{% if active == 'stats' %}active{% endif %}"><a href="{% url "project_stats" project.pk %}">{% trans "Statistics" %}</a></li>
+	{% if project.story_map %}
+		<li class="{% if active == 'story_map' %}active{% endif %}"><a href="{% url "storymap_detail" project.story_map.pk %}">{% trans "Story map" %}</a></li>
+	{% else %}
+		<li class="{% if active == 'story_map' %}active{% endif %}"><a href="{% url "storymap_create" project.pk %}">{% trans "Story map" %} <span class="small label label-warning" style="line-height:11px; font-size:12px;">{% trans "new" %}</span></a></li>
+	{% endif %}
 </ul>

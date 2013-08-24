@@ -1,0 +1,16 @@
+{% load staticfiles story_in acl%}
+
+<td class="story-td">
+	<div class="stories-zone" theme-id="{{ theme.pk }}" phase-id="{{ phase.pk }}">
+		<!-- All stories in theme and phase -->
+		{% for story in theme|story_in:phase %}
+			{% include "storymap/_story.html" %}
+		{% endfor %}
+
+		<div class="plus">
+			{% if storymap|can_admin:request.user %}
+				<a class="btn btn-success btn-mini create_story" href="#">{% trans "New story" %}</a>
+			{% endif %}
+		</div>
+	</div>
+</td>

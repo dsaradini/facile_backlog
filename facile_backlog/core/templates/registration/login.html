@@ -12,8 +12,10 @@
 	{% endif %}
 	<div class="span6 offset3 base-form">
 		<form class="home-login" id="login_form" method="POST" action="{% url "auth_login" %}">
-			{% csrf_token %}
 			{% include "form.html" %}
+			{% if next %}
+				<input type="hidden" name="next" value="{{ next }}">
+			{% endif %}
 			<button class="btn btn-primary pull-right" type="submit">{% trans "Login" %}</button>
 			<div>
 				<a class="btn btn-link" href="{% url "password_reset_recover" %}">{% trans "Forgot your password?" %}</a>
