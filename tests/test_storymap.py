@@ -62,12 +62,12 @@ class ProjectTest(WebTest):
             name="Theme 2",
             story_map=story_map
         )
-        story1 = factories.StoryFactory.create(
+        factories.StoryFactory.create(
             phase=phase1,
             theme=theme1,
             title="My first story"
         )
-        story2 = factories.StoryFactory.create(
+        factories.StoryFactory.create(
             phase=phase2,
             theme=theme2,
             title="My second story"
@@ -163,7 +163,8 @@ class StoryMapLiveTest(SeleniumTestCase):
 
         # move theme
         actionChains = ActionChains(self.browser)
-        actionChains.click_and_hold(self.sel_query('.phase-cell[phase-id="1"]'))
+        actionChains.click_and_hold(self.sel_query(
+            '.phase-cell[phase-id="1"]'))
         actionChains.move_by_offset(3, 200)
         actionChains.release()
         actionChains.perform()
