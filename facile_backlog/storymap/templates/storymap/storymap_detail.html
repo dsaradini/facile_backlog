@@ -401,7 +401,7 @@
 				};
 				ajax_action(ajax_data, function(err) {
 					if (!err) {
-						$("[theme-id="+theme_id+"]").fade_remove()
+						$("[theme-id="+theme_id+"]").closest("td, th").fade_remove()
 					}
 				});
 			})
@@ -446,7 +446,7 @@
 				};
 				ajax_action(ajax_data, function(err) {
 					if (!err) {
-						$("[phase-id="+phase_id+"]").fade_remove()
+						$("[phase-id="+phase_id+"]").closest("td, th").fade_remove()
 					}
 				});
 			});
@@ -489,7 +489,7 @@
 					$("thead tr").append($html.find("th.theme-cell"));
 					$("tbody tr").each(function() {
 						var phase_id = $(this).find("[phase-id]").attr("phase-id");
-						var $td = $html.find("td[phase-id="+phase_id+"]");
+						var $td = $html.find(".stories-zone[phase-id="+phase_id+"]").closest("td");
 						$(this).append($td);
 					});
 					setup_story_move($('.stories-zone'));
@@ -522,7 +522,7 @@
 			ajax_action(ajax_data, function(err, data) {
 				if (!err) {
 					$("tbody").append(data.html);
-					setup_story_move($('stories-zone'));
+					setup_story_move($('.stories-zone'));
 				}
 				$panel.modal('hide');
 				$this.button('reset');
