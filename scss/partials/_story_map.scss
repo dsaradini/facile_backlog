@@ -25,9 +25,9 @@
 		width: 220px;
 	}
 	td:first-child {
-		min-width: 100px;
-		width:100px;
-		border-right: 1px solid #888;
+		min-width: 150px;
+		width:150px;
+		border-right: 1px solid #CCC;
 	}
 	th {
 		border-bottom: 2px solid #444;
@@ -37,12 +37,13 @@
 	tr {
 		border-bottom: 1px solid #888;
 		td:first-child {
-			border-bottom: 1px solid rgba(black, 0.2);
+			border-bottom: 1px solid rgba(black, 0.1);
 			border-top:1px solid rgba(white, 0.5);
 		}
 	}
 	.table-corner {
 		border: none;
+		border-bottom: 1px solid #CCC;
 	}
 	.story-td {
 		border-top: 1px solid #bbb;
@@ -95,6 +96,7 @@
 		text-align: left;
 		min-height: 50px;
 		border-radius: 5px;
+		font-family: fantasy;
 	}
 	.story-placeholder {
 		box-sizing: border-box;
@@ -146,6 +148,9 @@ $graber-size: 0px;
 .theme-cell, .phase-cell, .story-cell {
 	position: relative;
 	box-sizing: border-box;
+	*:focus{
+		outline: 0;
+	}
 	/*
 	&:before {
 		content: " ";
@@ -167,6 +172,22 @@ $graber-size: 0px;
 			margin: 0px !important;
 			min-height: 12px;
 			resize: vertical;
+		}
+	}
+	.drop-action {
+		position: absolute;
+		height: $remover-size;
+		width: $remover-size;
+		text-align: center;
+		bottom: 1px;
+		right: 1px;
+		a {
+			color: rgba(black ,0.3);
+			text-shadow: 0 1px 0 rgba(white, 0.6);
+			&:hover {
+				color: rgba(black ,0.6);
+				text-decoration: none !important;
+			}
 		}
 	}
 	.remover {

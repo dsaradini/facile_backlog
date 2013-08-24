@@ -4,18 +4,20 @@
 	<div class="remover">
 		{% if storymap|can_admin:request.user %}
 			<button class="remove delete_story" title="{% trans "Delete" %}"><i class="icon-remove"></i></button>
-			<div class="dropdown adjust">
-				<a class="dropdown-toggle" id="color_set_{{ story.pk }}" role="button" data-toggle="dropdown" data-target="#" href="#">
-					<i class="icon-tint"></i>
-			  	</a>
-			  	<ul class="dropdown-menu dropdown-menu-color" role="menu" aria-labelledby="color_set_{{ story.pk }}">
-					{% for color in story_colors %}
-						<li><a href="#" class="story-color-set" data-color="{{ color }}">
-							<span class="color-cell" style="background-color:{{ color }};">&nbsp;</span>
-						</a></li>
-					{% endfor %}
-			  	</ul>
-			</div>
 		{% endif %}
+	</div>
+	<div class="drop-action">
+		<div class="dropdown adjust">
+			<a class="dropdown-toggle" title="{% trans "Set color" %}" id="color_set_{{ story.pk }}" role="button" data-toggle="dropdown" data-target="#" href="#">
+				<i class="icon-tint"></i>
+			</a>
+			<ul class="dropdown-menu dropdown-menu-color" role="menu" aria-labelledby="color_set_{{ story.pk }}">
+				{% for color in story_colors %}
+					<li><a href="#" class="story-color-set" data-color="{{ color }}">
+						<span class="color-cell" style="background-color:{{ color }};">&nbsp;</span>
+					</a></li>
+				{% endfor %}
+			</ul>
+		</div>
 	</div>
 </div>

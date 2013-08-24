@@ -4,8 +4,9 @@ from .models import (StoryMap, Phase, Theme, Story)
 
 
 class StoryMapAdmin(admin.ModelAdmin):
-    list_display = ("title",)
-    search_fields = ("title",)
+    list_display = ("project",)
+    search_fields = ("project__name",)
+    raw_id_fields = ("project", )
 
 
 class PhaseAdmin(admin.ModelAdmin):

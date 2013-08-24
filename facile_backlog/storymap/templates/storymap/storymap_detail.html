@@ -4,11 +4,8 @@
 {% block title %}{% trans "Story Map" %} &mdash; {{ storymap.title }}{% endblock %}
 {% block content %}
 
-	{% include "storymap/_storymap_head.html" %}
-
-	<ul class="nav nav-pills">
-		<li class="active"><a href="{% url "storymap_detail" storymap.pk %}">{% trans "General" %}</a></li>
-	</ul>
+	{% include "backlog/_project_head.html" %}
+	{% include "backlog/_project_tabs.html" %}
 
 	<table class="story-map">
 		<thead>
@@ -24,7 +21,9 @@
 			</tr>
 		</thead>
 		<caption class="text-left caption-bottom">
-			<a class="btn btn-primary btn-mini create_phase" href="#">{% trans "Add phase" %} &nbsp;<i class="icon-arrow-up"></i></a>
+			{% if storymap|can_admin:request.user %}
+				<a class="btn btn-primary btn-mini create_phase" href="#">{% trans "Add phase" %} &nbsp;<i class="icon-arrow-up"></i></a>
+			{% endif %}
 		</caption>
 		<tbody>
 			{% for phase in phases.all %}
@@ -129,72 +128,79 @@
 				}
 			});
 		};
-		setup_story_move($('.stories-zone'));
 
-		$("tbody").sortable({
-			distance: 3,
-			cursor: "move",
-			revert: 100,
-			forceHelperSize: false,
-			opacity: 0.6,
-			placeholder: "phase-placeholder",
-			handle: ".phase-cell",
-			update: function(event, ui) {
-				var order = [];
-				$(this).find(".phase-cell").each(function() {
-					order.push($(this).attr("phase-id"));
-				});
-				ajax_action({
-					action: "order",
-					target: "phase",
-					content: {
-						order: order
-					}
-				}, function(err) {
-					if (err) {
-						$('tbody').sortable( "cancel" );
-					}
-				})
-			}
-		});
+		{% if storymap|can_admin:request.user %}
+			setup_story_move($('.stories-zone'));
+		{% endif %}
+
+		{% if storymap|can_admin:request.user %}
+			$("tbody").sortable({
+				distance: 3,
+				cursor: "move",
+				revert: 100,
+				forceHelperSize: false,
+				opacity: 0.6,
+				placeholder: "phase-placeholder",
+				handle: ".phase-cell",
+				update: function(event, ui) {
+					var order = [];
+					$(this).find(".phase-cell").each(function() {
+						order.push($(this).attr("phase-id"));
+					});
+					ajax_action({
+						action: "order",
+						target: "phase",
+						content: {
+							order: order
+						}
+					}, function(err) {
+						if (err) {
+							$('tbody').sortable( "cancel" );
+						}
+					})
+				}
+			});
+		{% endif %}
 
 		//Theme re-order
-		$("thead tr").sortable({
-			distance: 3,
-			cursor: "move",
-			forceHelperSize: false,
-			placeholder: "theme-placeholder",
-			helper: "clone",
-			items: "> .theme-cell",
-			update: function(event, ui) {
-				wait_start();
-				var order = [];
-				$(this).find(".theme-cell").each(function() {
-					order.push($(this).attr("theme-id"));
-				});
-				ajax_action({
-					action: "order",
-					target: "theme",
-					content: {
-						order: order
-					}
-				}, function(err) {
-					if (err) {
-						$('thead tr').sortable( "cancel" );
-					} else {
-						// let's re-order cells in all rows
-						$("tbody tr").each(function() {
-							var i = 0;
-							for (i=0; i < order.length ; i++) {
-								var id = order[i];
-								$(this).append($(this).find(".stories-zone[theme-id="+id+"]").closest("td"));
-							}
-						})
-					}
-					wait_end();
-				})
-			}
-		});
+		{% if storymap|can_admin:request.user %}
+			$("thead tr").sortable({
+				distance: 3,
+				cursor: "move",
+				forceHelperSize: false,
+				placeholder: "theme-placeholder",
+				helper: "clone",
+				items: "> .theme-cell",
+				update: function(event, ui) {
+					wait_start();
+					var order = [];
+					$(this).find(".theme-cell").each(function() {
+						order.push($(this).attr("theme-id"));
+					});
+					ajax_action({
+						action: "order",
+						target: "theme",
+						content: {
+							order: order
+						}
+					}, function(err) {
+						if (err) {
+							$('thead tr').sortable( "cancel" );
+						} else {
+							// let's re-order cells in all rows
+							$("tbody tr").each(function() {
+								var i = 0;
+								for (i=0; i < order.length ; i++) {
+									var id = order[i];
+									$(this).append($(this).find(".stories-zone[theme-id="+id+"]").closest("td"));
+								}
+							})
+						}
+						wait_end();
+					})
+				}
+			});
+		{% endif %}
 
 		var ajax_action = function(ajax_data, callback) {
 			$.ajax({
@@ -218,14 +224,16 @@
 		var create_story = function($this) {
 			var $target = $this.closest(".stories-zone");
 			var $story = $('<div class="story cell-content"></div>');
-			var $storycell = $('<div class="story-cell"></div>').append($story);
+			var $storycell = $('<div class="story-cell" style="background-color:rgba(0,0,0,0.1);"></div>').append($story);
 			$target.append($storycell);
 			edit_story($story, true);
 		};
 
-		$(".create_story").live("click", function() {
-			create_story($(this));
-		});
+		{% if storymap|can_admin:request.user %}
+			$(".create_story").live("click", function() {
+				create_story($(this));
+			});
+		{% endif %}
 
 		var ajax_story_action = function(action, story_pk, content, callback) {
 			var ajax_data = {
@@ -242,6 +250,7 @@
 				}
 			});
 		};
+
 		$.fn.resize_textarea = function() {
 			var $this = $(this);
 			var str = $this.val();
@@ -356,21 +365,23 @@
 
 		};
 
-		$(".story").live("dblclick", function(event) {
-			var $this = $(this);
-			event.preventDefault();
-			event.stopPropagation();
-			edit_story($this, false);
-		});
+		{% if storymap|can_admin:request.user %}
+			$(".story").live("dblclick", function(event) {
+				var $this = $(this);
+				event.preventDefault();
+				event.stopPropagation();
+				edit_story($this, false);
+			});
 
-		$(".stories-zone").live("dblclick", function(event) {
-			create_story($(this));
-		});
+			$(".stories-zone").live("dblclick", function(event) {
+				create_story($(this));
+			});
 
-		$(".delete_story").live("click", function() {
-			var $this = $(this);
-			delete_story($this);
-		});
+			$(".delete_story").live("click", function() {
+				var $this = $(this);
+				delete_story($this);
+			});
+		{% endif %}
 
 		// THEME
 		var edit_theme = function($this) {
@@ -407,15 +418,17 @@
 			})
 		};
 
-		$(".theme").live("dblclick", function() {
-			var $this = $(this);
-			edit_theme($this);
-		});
+		{% if storymap|can_admin:request.user %}
+			$(".theme").live("dblclick", function() {
+				var $this = $(this);
+				edit_theme($this);
+			});
 
-		$(".delete_theme").live("click", function() {
-			var $this = $(this);
-			delete_theme($this);
-		});
+			$(".delete_theme").live("click", function() {
+				var $this = $(this);
+				delete_theme($this);
+			});
+		{% endif %}
 
 		// PHASE
 		var edit_phase = function($this, new_phase) {
@@ -452,15 +465,17 @@
 			});
 		};
 
-		$(".phase").live("dblclick", function() {
-			var $this = $(this);
-			edit_phase($this, false);
-		});
+		{% if storymap|can_admin:request.user %}
+			$(".phase").live("dblclick", function() {
+				var $this = $(this);
+				edit_phase($this, false);
+			});
 
-		$(".delete_phase").live("click", function() {
-			var $this = $(this);
-			delete_phase($this);
-		});
+			$(".delete_phase").live("click", function() {
+				var $this = $(this);
+				delete_phase($this);
+			});
+		{% endif %}
 
 		$("#theme-create-panel").on("shown", function() {
 			$(this).find("textarea").focus()

@@ -1,16 +1,23 @@
-
 from django.db import models
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from ..backlog.models import AclMixin
+from ..backlog.models import AclMixin, Project
 
 
 class StoryMap(AclMixin, models.Model):
-    title = models.CharField(_("Title"), max_length=128)
-    description = models.TextField(_("Description"), blank=True)
+    authorization_association_field = "project"
+    project = models.OneToOneField(Project, related_name="story_map",
+                                   null=True)
+
+    def get_acl_owner(self):
+        return self.project if self.project else Project.objects.none()
 
     def __unicode__(self):
-        return self.title
+        return "Story map for project [{0}]".format(self.project_id)
+
+    def get_absolute_url(self):
+        return reverse("storymap_detail", args=(self.pk,))
 
 
 class Theme(models.Model):

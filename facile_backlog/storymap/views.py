@@ -1,9 +1,10 @@
-
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
 from django.db.models import Max
 from django.http import Http404
 from django.http.response import (HttpResponseForbidden)
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.template import RequestContext, loader
 from django.utils.translation import ugettext_lazy as _
 from django.views import generic
@@ -17,9 +18,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 
 
-from ..backlog.views import NoCacheMixin
+from ..backlog.views import NoCacheMixin, ProjectMixin
 
 from models import (StoryMap, Story, Theme, Phase)
+from forms import StoryMapCreationForm
 
 
 class StoryMapMixin(NoCacheMixin):
@@ -36,6 +38,10 @@ class StoryMapMixin(NoCacheMixin):
                 return HttpResponseForbidden(_("Not authorized"))
             else:
                 raise Http404
+        else:
+            if not self.story_map.can_read(request.user):
+                raise Http404
+
         self.request = request
         self.pre_dispatch()
         return super(StoryMapMixin, self).dispatch(request, *args, **kwargs)
@@ -53,11 +59,44 @@ class StoryMapDetail(StoryMapMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super(StoryMapDetail, self).get_context_data(**kwargs)
         context['storymap'] = self.story_map
+        context['project'] = self.story_map.project
+        context['active'] = "story_map"
         context['themes'] = self.story_map.themes.all()
         context['phases'] = self.story_map.phases.all()
         context['story_colors'] = STORY_COLORS
         return context
 storymap_detail = login_required(StoryMapDetail.as_view())
+
+
+class StoryMapCreate(ProjectMixin, generic.CreateView):
+    admin_only = True
+    template_name = "storymap/storymap_create.html"
+    form_class = StoryMapCreationForm
+
+    def get_form_kwargs(self):
+        kwargs = super(StoryMapCreate, self).get_form_kwargs()
+        kwargs['project'] = self.project
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super(StoryMapCreate, self).get_context_data(**kwargs)
+        context['project'] = self.project
+        return context
+
+    def form_valid(self, form):
+        super(StoryMapCreate, self).form_valid(form)
+        Phase.objects.create(
+            name=_("MVP"),
+            story_map=self.object
+        )
+        Theme.objects.create(
+            name=_("General"),
+            story_map=self.object
+        )
+        messages.success(self.request,
+                         _("Story map successfully created."))
+        return redirect(reverse("storymap_detail", args=(self.object.pk,)))
+storymap_create = login_required(StoryMapCreate.as_view())
 
 
 def get_or_errors(dic, value, errors=[]):
@@ -133,7 +172,8 @@ def story_map_action(request, story_map_id):
                     'object': obj,
                     'storymap': story_map,
                     'themes': story_map.themes,
-                    'phases': story_map.phases
+                    'phases': story_map.phases,
+                    'story_colors': STORY_COLORS,
                 })
                 html = t.render(c)
         elif action == UPDATE:

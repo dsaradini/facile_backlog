@@ -8,7 +8,9 @@
 		{% endfor %}
 
 		<div class="plus">
-			<a class="btn btn-success btn-mini create_story" href="#">{% trans "New story" %}</a>
+			{% if storymap|can_admin:request.user %}
+				<a class="btn btn-success btn-mini create_story" href="#">{% trans "New story" %}</a>
+			{% endif %}
 		</div>
 	</div>
 </td>

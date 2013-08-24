@@ -1,13 +1,98 @@
 import time
+import os
 
 from django.core.urlresolvers import reverse
+from django.utils.unittest import skipUnless
 from selenium.webdriver import ActionChains
+
+from django_webtest import WebTest
 
 from . import SeleniumTestCase
 from . import factories
 
 
-class StoryMapText(SeleniumTestCase):
+class ProjectTest(WebTest):
+
+    def test_create_story_map(self):
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        user_no = factories.UserFactory.create()
+        user_simple = factories.UserFactory.create()
+        project = factories.create_sample_project(user, project_kwargs={
+            'active': True,
+        })
+        project.add_user(user_simple)
+
+        url = reverse("storymap_create", args=(project.pk,))
+        self.app.get(url, status=302)
+        self.app.get(url, user=user_no, status=404)
+        self.app.get(url, user=user_simple, status=403)
+
+        response = self.app.get(url, user=user)
+        form = response.forms['edit_story_map_form']
+        form.submit().follow()
+
+        self.assertTrue(project.story_map)
+
+    def test_story_map_display_guest(self):
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        user_no = factories.UserFactory.create()
+        user_guest = factories.UserFactory.create()
+        project = factories.create_sample_project(user, project_kwargs={
+            'active': True,
+        })
+        project.add_user(user_guest)
+        story_map = factories.StoryMapFactory.create(
+            project=project
+        )
+        phase1 = factories.PhaseFactory.create(
+            name="Phase 1",
+            story_map=story_map
+        )
+        phase2 = factories.PhaseFactory.create(
+            name="Phase 2",
+            story_map=story_map
+        )
+        theme1 = factories.ThemeFactory.create(
+            name="Theme 1",
+            story_map=story_map
+        )
+        theme2 = factories.ThemeFactory.create(
+            name="Theme 2",
+            story_map=story_map
+        )
+        story1 = factories.StoryFactory.create(
+            phase=phase1,
+            theme=theme1,
+            title="My first story"
+        )
+        story2 = factories.StoryFactory.create(
+            phase=phase2,
+            theme=theme2,
+            title="My second story"
+        )
+        url = reverse("storymap_detail", args=(story_map.pk,))
+        self.app.get(url, user=user_no, status=404)
+        response = self.app.get(url, user=user)
+
+        self.assertContains(response, "Phase 1")
+        self.assertContains(response, "Phase 2")
+        self.assertContains(response, "Theme 1")
+        self.assertContains(response, "Theme 2")
+        self.assertContains(response, "My first story")
+        self.assertContains(response, "My second story")
+        self.assertContains(response, "Add theme")
+        self.assertContains(response, "Add phase")
+        self.assertContains(response, "New story")
+
+        response = self.app.get(url, user=user_guest)
+        self.assertNotContains(response, "Add theme")
+        self.assertNotContains(response, "Add phase")
+        self.assertNotContains(response, "New story")
+
+
+class StoryMapLiveTest(SeleniumTestCase):
 
     def _login(self, user_name, password):
         self.browser.get(self.live_reverse("auth_login"))
@@ -83,4 +168,5 @@ class StoryMapText(SeleniumTestCase):
         actionChains.release()
         actionChains.perform()
 
-        time.sleep(1000.2)
+StoryMapLiveTest = skipUnless(
+    'SELENIUM' in os.environ, "SELENIUM not enabled")(StoryMapLiveTest)
