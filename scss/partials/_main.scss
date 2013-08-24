@@ -887,3 +887,23 @@ article.backlog.org-backlog {
 	}
 }
 
+.progress-indicator {
+	top:0;
+	right:0;
+	width:100%;
+	height:100%;
+	position:fixed;
+	text-align:center;
+	/* IE filter */
+	filter: progid:DXImageTransform.Microsoft.Alpha(opacity=50);
+	-moz-opacity:0.5;    /* Mozilla extension */
+	-khtml-opacity:0.5;  /* Safari/Conqueror extension */
+	opacity:0.5; /* CSS3 */
+	z-index:1000;
+	background-color:white;
+	display:none;
+	img {
+   		margin-top: 55px;
+ 	}
+ }
+

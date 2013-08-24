@@ -55,6 +55,7 @@ class StoryMapDetail(StoryMapMixin, generic.DetailView):
         context['storymap'] = self.story_map
         context['themes'] = self.story_map.themes.all()
         context['phases'] = self.story_map.phases.all()
+        context['story_colors'] = STORY_COLORS
         return context
 storymap_detail = login_required(StoryMapDetail.as_view())
 
@@ -66,6 +67,14 @@ def get_or_errors(dic, value, errors=[]):
     return dic.get(value)
 
 
+STORY_COLORS = (
+    "#ffc",
+    "#cff",
+    "#fcf",
+    "#fdd",
+    "#cdf",
+    "#dfd",
+)
 TARGETS = {
     'story': (Story, False, "storymap/_story_cell.html"),
     'theme': (Theme, True, "storymap/_theme_col.html"),

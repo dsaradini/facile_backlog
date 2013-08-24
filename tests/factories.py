@@ -10,6 +10,9 @@ from facile_backlog.blog.models import BlogPost
 
 from facile_backlog.core.models import User
 
+from facile_backlog.storymap.models import StoryMap
+
+
 from tests import rand_lorem_phrase, rand_email
 
 
@@ -195,3 +198,11 @@ def create_org_sample_story(user, org=None, story_kwargs={}, org_kwargs={},
     _story_kwargs['project'] = project
     _story_kwargs['backlog'] = backlog
     return UserStoryFactory.create(**_story_kwargs)
+
+
+class StoryMapFactory(Factory):
+    FACTORY_FOR = StoryMap
+
+    @lazy_attribute
+    def title(self):
+        return rand_lorem_phrase(3, 8)

@@ -42,6 +42,8 @@ class Story(models.Model):
     phase = models.ForeignKey(Phase, related_name="stories")
     theme = models.ForeignKey(Theme, related_name="stories")
     order = models.PositiveIntegerField(default=0)
+    color = models.CharField(_("Color"), max_length=7, blank=True,
+                             default="#ffc")
 
     def __unicode__(self):
         return self.title

@@ -22,7 +22,7 @@ class ThemeAdmin(admin.ModelAdmin):
 
 class StoryAdmin(admin.ModelAdmin):
     list_display = ("title", "theme", "phase")
-    search_fields = ("title", "theme", "phase")
+    search_fields = ("title", "theme__name", "phase__name")
     raw_id_fields = ("theme", "phase")
 
 

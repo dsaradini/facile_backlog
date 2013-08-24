@@ -1,6 +1,9 @@
 .story-map {
 	border-collapse:separate;
 	border-spacing: 10px 0px;
+	tr , td {
+		height: 100%;
+	}
 	caption {
 		background-color: #ddd;
 		margin:0 10px;
@@ -42,29 +45,38 @@
 		border: none;
 	}
 	.story-td {
-		border-top: 1px solid #aaa;
+		border-top: 1px solid #bbb;
+		vertical-align: top;
+		position:relative;
+	}
+	.stories-zone {
 		position: relative;
-		padding: 5px;
-		padding-bottom: 30px;
+		margin-bottom: 30px;
 		text-align: center;
 		vertical-align: top;
 		min-height:60px;
-		height: 60px;
+		height: 100%;
+		display: inline-block;
+		width: 100%;
 		.plus {
+			position: absolute;
 			opacity: 0;
 			-webkit-transition: opacity 0.2s ease-in;
-			position: absolute;
 			bottom:2px;
 			left: 2px;
 			right: 2px;
 			height: 22px;
+			text-align: center;
+			display: block;
+
 			& > * {
-				position: absolute;
+				position: relative;
 				left: 7px;
 				right: 7px;
 				height: 20px;
 				bottom: 2px;
 			}
+
 		}
 	}
 	.story-td:hover {
@@ -78,8 +90,8 @@
 		padding: 5px;
 		margin: 5px;
 		box-sizing: border-box;
-		border: 1px solid darken(yellow, 20%);
-		background-color: lighten(yellow, 40%);
+		border: 1px solid rgba(black, 0.15);
+		background-color: white;
 		text-align: left;
 		min-height: 50px;
 		border-radius: 5px;
@@ -118,7 +130,6 @@
 		font-weight: bold;
 	}
 	.textarea {
-		padding: 0px;
 		box-sizing: border-box;
 	}
 }
@@ -130,11 +141,12 @@ textarea.fit {
 }
 
 $remover-size: 16px;
-$graber-size: 12px;
+$graber-size: 0px;
 
 .theme-cell, .phase-cell, .story-cell {
 	position: relative;
 	box-sizing: border-box;
+	/*
 	&:before {
 		content: " ";
 		position:absolute;
@@ -146,11 +158,15 @@ $graber-size: 12px;
 		cursor: pointer;
 		background-image: url('../img/grab.png');
 	}
+	*/
 	.cell-content {
 		margin-left: $graber-size + 3px;
 		padding-right: $remover-size;
 		textarea {
-			height:100%;
+			padding: 0px !important;
+			margin: 0px !important;
+			min-height: 12px;
+			resize: vertical;
 		}
 	}
 	.remover {
@@ -172,6 +188,18 @@ $graber-size: 12px;
 			width: $remover-size;
 			box-sizing: border-box;
 			background-color: transparent;
+		}
+		.adjust {
+			margin-top: 5px;
+			color: #444;
+			&:hover {
+				color: darkgray;
+			}
+			a {
+				text-decoration: none;
+			}
+		}
+		.remove {
 			color: darkred;
 			&:hover {
 				color: red;
@@ -190,4 +218,21 @@ $graber-size: 12px;
 
 .caption-bottom {
 	caption-side:bottom;
+}
+
+.dropdown-menu-color {
+	z-index: 10;
+	min-width: 0px;
+	.color-cell {
+		margin: 3px;
+		width: 15px;
+		height: 15px;
+		display: inline-block;
+	}
+	a {
+		padding: 0px 5px !important;
+		&:hover {
+			background: #eee !important;
+		}
+	}
 }

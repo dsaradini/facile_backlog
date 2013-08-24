@@ -186,6 +186,9 @@ class AuthorizationAssociation(models.Model):
 class AclMixin(object):
     authorization_association_field = None
 
+    def get_acl_owner(self):
+        return self
+
     def get_acl(self):
         if not hasattr(self, '__acl__'):
             self.__acl__ = {
@@ -194,7 +197,7 @@ class AclMixin(object):
             }
             kwargs = dict()
             kwargs['is_active'] = True
-            kwargs[self.authorization_association_field] = self
+            kwargs[self.authorization_association_field] = self.get_acl_owner()
             for auth in AuthorizationAssociation.objects.filter(
                     **kwargs
             ).prefetch_related():
