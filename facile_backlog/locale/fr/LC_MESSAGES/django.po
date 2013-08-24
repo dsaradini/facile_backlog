@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-24 16:18+0200\n"
-"PO-Revision-Date: 2013-08-24 16:30+0100\n"
+"POT-Creation-Date: 2013-08-24 17:35+0200\n"
+"PO-Revision-Date: 2013-08-24 17:35+0100\n"
 "Last-Translator: David Saradini <david@saradini.com>\n"
 "Language-Team: fr <info@backlogman.com>\n"
 "MIME-Version: 1.0\n"
@@ -139,7 +139,7 @@ msgstr "Dernière modification"
 #: backlog/templates/backlog/org_detail.html:10
 #: backlog/templates/backlog/org_sprint_planning.html:21
 #: backlog/templates/backlog/org_stories.html:10
-#: backlog/templates/backlog/org_users.html:10 storymap/views.py:88
+#: backlog/templates/backlog/org_users.html:10 storymap/views.py:93
 msgid "General"
 msgstr "Général"
 
@@ -413,8 +413,8 @@ msgstr "Editer"
 #: backlog/templates/backlog/project_users.html:48
 #: backlog/templates/backlog/story_detail.html:42
 #: storymap/templates/storymap/_story.html:6
-#: storymap/templates/storymap/storymap_detail.html:68
-#: storymap/templates/storymap/storymap_detail.html:75
+#: storymap/templates/storymap/storymap_detail.html:70
+#: storymap/templates/storymap/storymap_detail.html:77
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -430,7 +430,7 @@ msgstr "courant "
 #: backlog/templates/backlog/org_sprint_planning.html:186
 #: backlog/templates/backlog/project_backlogs.html:114
 #: backlog/templates/backlog/project_backlogs.html:170
-#: storymap/templates/storymap/storymap_detail.html:204
+#: storymap/templates/storymap/storymap_detail.html:213
 msgid "Server return an error."
 msgstr "Le serveur à retourné une erreur"
 
@@ -469,6 +469,10 @@ msgstr "Statistiques"
 #: backlog/templates/backlog/_project_tabs.html:10
 msgid "Story map"
 msgstr "\"Story map\""
+
+#: backlog/templates/backlog/_project_tabs.html:10
+msgid "new"
+msgstr "nouveau"
 
 #: backlog/templates/backlog/_story_big_cell.html:10
 #: backlog/templates/backlog/dashboard.html:29
@@ -1603,19 +1607,19 @@ msgstr ""
 msgid "Title"
 msgstr "Titre"
 
-#: storymap/views.py:84
+#: storymap/views.py:89
 msgid "MVP"
 msgstr "PMV"
 
-#: storymap/views.py:92
+#: storymap/views.py:97
 msgid "Story map successfully created."
 msgstr "\"Story map\" créée avec succès"
 
-#: storymap/templates/storymap/_story.html:8
+#: storymap/templates/storymap/_story.html:11
 msgid "Set color"
 msgstr "Assigner une couleur"
 
-#: storymap/templates/storymap/_story_td.html:11
+#: storymap/templates/storymap/_story_td.html:12
 msgid "New story"
 msgstr "Ajouter un scénario"
 
@@ -1646,41 +1650,41 @@ msgstr "\"Story map\""
 msgid "Add theme"
 msgstr "Ajouter un theme"
 
-#: storymap/templates/storymap/storymap_detail.html:24
+#: storymap/templates/storymap/storymap_detail.html:25
 msgid "Add phase"
 msgstr "Ajouter une phase"
 
-#: storymap/templates/storymap/storymap_detail.html:40
+#: storymap/templates/storymap/storymap_detail.html:42
 msgid "Create theme"
 msgstr "Créer un thème"
 
-#: storymap/templates/storymap/storymap_detail.html:43
+#: storymap/templates/storymap/storymap_detail.html:45
 msgid "Theme name"
 msgstr "Nom du thème"
 
-#: storymap/templates/storymap/storymap_detail.html:47
-#: storymap/templates/storymap/storymap_detail.html:61
+#: storymap/templates/storymap/storymap_detail.html:49
+#: storymap/templates/storymap/storymap_detail.html:63
 msgid "Creating..."
 msgstr "En creation…"
 
-#: storymap/templates/storymap/storymap_detail.html:47
-#: storymap/templates/storymap/storymap_detail.html:61
+#: storymap/templates/storymap/storymap_detail.html:49
+#: storymap/templates/storymap/storymap_detail.html:63
 msgid "Create"
 msgstr "Créer"
 
-#: storymap/templates/storymap/storymap_detail.html:54
+#: storymap/templates/storymap/storymap_detail.html:56
 msgid "Create phase"
 msgstr "Créer une phase"
 
-#: storymap/templates/storymap/storymap_detail.html:57
+#: storymap/templates/storymap/storymap_detail.html:59
 msgid "Phase name"
 msgstr "Nom de la phase"
 
-#: storymap/templates/storymap/storymap_detail.html:71
+#: storymap/templates/storymap/storymap_detail.html:73
 msgid " Are you sure you want to delete this element?"
 msgstr "Etes vous sure de vouloir supprimer cet élément ?"
 
-#: storymap/templates/storymap/storymap_detail.html:75
+#: storymap/templates/storymap/storymap_detail.html:77
 msgid "Deleting..."
 msgstr "Suppression…"
 
@@ -1774,9 +1778,6 @@ msgstr "Backlogman REST API"
 
 #~ msgid "You have no stand-alone project that is not part of an organization"
 #~ msgstr "Vous n'avez pas de projet n'appartenant pas à une organisation"
-
-#~ msgid "New"
-#~ msgstr "Nouveau"
 
 #~ msgid "Project List"
 #~ msgstr "List des projets"
