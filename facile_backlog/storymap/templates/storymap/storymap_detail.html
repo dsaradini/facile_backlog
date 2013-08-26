@@ -2,6 +2,16 @@
 {% load staticfiles sekizai_tags markup acl humanize story_in %}
 
 {% block title %}{% trans "Story Map" %} &mdash; {{ storymap.title }}{% endblock %}
+
+{% block navbar %}
+	{{ block.super }}
+	<li>
+		<p class="navbar-text" id="ws-status">
+			<span class="status label"></span>
+		</p>
+	</li>
+{% endblock %}
+
 {% block content %}
 	{% if project %}
 		{% include "backlog/_project_head.html" %}
@@ -110,19 +120,17 @@
 							phase_id: phase_id,
 							theme_id: theme_id
 						};
+						var order = [];
+						$this.find(".story-cell").each(function() {
+							order.push($(this).attr("story-id"));
+						});
+						content.order = order;
 						ajax_story_action("update", story_pk, content, function(err) {
 							if (err) {
 								$item.sortable( "cancel" );
-							} else {
-								var order = [];
-								$this.find(".story-cell").each(function() {
-									order.push($(this).attr("story-id"));
-								});
-								ajax_story_action("order", story_pk, {
-									order: order
-								})
 							}
 						});
+
 					}
 					fix_z_index()
 				}
@@ -566,7 +574,66 @@
 					$story_cell.css("background-color", c);
 				}
 			})
-		})
+		});
+
+		// WEB SOCKETS
+		$.ws_sbscribe({
+			url: '{{ ws_url }}storymap/{{ storymap.pk }}/',
+			on_message: function(message) {
+				$("#ws-status .status").flash("white", 500);
+				if (message.type == "storymap_update") {
+					if (message.target == "story") {
+						var $cell = $(".story-cell[story-id="+message.id+"]");
+						if ( message.action == 'update') {
+							var text = message.content.title;
+							if (text) {
+								$cell.find(".story").text(text)
+							}
+							var phase_id = message.content.phase_id;
+							var theme_id = message.content.theme_id;
+							var order = message.content.order;
+							if (phase_id) {
+								var $slot = $(".stories-zone[theme-id="+theme_id+"][phase-id="+phase_id+"]");
+								order && $slot.append($cell)
+							}
+							if (order) {
+								order.forEach(function(sid) {
+									var $s_cell = $(".story-cell[story-id="+sid+"]");
+									$s_cell.closest(".stories-zone").append($s_cell);
+								})
+							}
+						}
+						$cell.flash("green", 500);
+					}
+				} else if (message.type == "user_join" || message.type == "user_leave") {
+					var $users = $("#ws-users").empty();
+					$users.text(message.users.length);
+					generate_ws_tooltip(message.users);
+				}
+			},
+			on_connect: function() {
+				$("#ws-status .status").empty().attr("status","connected").append("<i class='icon-signal'></i> {% trans "online" %} <span id='ws-users'></span>")
+			},
+			on_disconnect: function() {
+				$("#ws-status .status").empty().attr("status","disconnected").append("<i class='icon-signal'></i> {% trans "offline" %}")
+			}
+		});
+
+		var WS_TOOLTIP = "";
+		var generate_ws_tooltip = function(users) {
+			var ret = '<h5>{% trans "Online users" %}</h5>';
+			users.forEach(function(u){
+				ret += ("<div class='tt-user'><img src='"+$.get_gravatar_url(u, 16)+"'><span>"+u+"</span></div>");
+			});
+			WS_TOOLTIP = ret;
+		}
+		$("#ws-status").tooltip({
+			html : true,
+			placement: "bottom",
+			title: function() {
+				return WS_TOOLTIP;
+			}
+		});
 	});
 </script>
 {% endaddtoblock %}

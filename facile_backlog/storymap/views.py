@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
@@ -20,6 +21,7 @@ from django.db import transaction
 
 from ..backlog.views import NoCacheMixin, ProjectMixin
 from ..backlog.models import create_event
+from ..api.notify import notify_changes
 
 from models import (StoryMap, Story, Theme, Phase)
 from forms import StoryMapCreationForm
@@ -65,6 +67,7 @@ class StoryMapDetail(StoryMapMixin, generic.DetailView):
         context['themes'] = self.story_map.themes.all()
         context['phases'] = self.story_map.phases.all()
         context['story_colors'] = STORY_COLORS
+        context['ws_url'] = settings.WEBSOCKET_URL
         return context
 storymap_detail = login_required(StoryMapDetail.as_view())
 
@@ -142,7 +145,8 @@ def story_map_action(request, story_map_id):
     errors = []
     target = get_or_errors(request.DATA, 'target', errors)
     action = get_or_errors(request.DATA, 'action', errors)
-    content = request.DATA.get('content', dict())
+    content_ori = request.DATA.get('content', dict())
+    content = dict(content_ori)
     target_id = request.DATA.get('id', None)
     model_class = TARGETS[target][0]
     html = None
@@ -181,11 +185,20 @@ def story_map_action(request, story_map_id):
                 html = t.render(c)
             event_text = _("created story map's '%s'") % (target,)
         elif action == UPDATE:
+            order = content.pop('order', None)
             obj = model_class.objects.get(pk=target_id)
             for k, v in content.items():
                 setattr(obj, k, v)
             obj.save()
             event_text = _("updated story map's '%s'") % (target,)
+            if order:
+                order = [int(x) for x in order]
+                for item in model_class.objects.filter(pk__in=order).all():
+                    index = order.index(item.pk)
+                    if item.order != index:
+                        item.order = index
+                        item.save()
+                event_text = _("re-order story map's '%s'") % (target,)
         elif action == DELETE:
             obj = model_class.objects.get(pk=target_id)
             obj.delete()
@@ -211,6 +224,13 @@ def story_map_action(request, story_map_id):
             ]
         }, content_type="application/json", status=400)
     create_event(request.user, event_text, project=story_map.project)
+    notify_changes("storymap", story_map.pk, {
+        'type': "storymap_update",
+        'target': target,
+        'id': target_id,
+        'action': action,
+        'content': content_ori
+    })
     return Response({
         'id': target_id,
         'html': html,
