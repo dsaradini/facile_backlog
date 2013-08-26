@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-24 17:35+0200\n"
+"POT-Creation-Date: 2013-08-26 08:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -137,7 +137,7 @@ msgstr ""
 #: backlog/templates/backlog/org_detail.html:10
 #: backlog/templates/backlog/org_sprint_planning.html:21
 #: backlog/templates/backlog/org_stories.html:10
-#: backlog/templates/backlog/org_users.html:10 storymap/views.py:93
+#: backlog/templates/backlog/org_users.html:10 storymap/views.py:94
 msgid "General"
 msgstr ""
 
@@ -263,7 +263,7 @@ msgstr ""
 
 #: backlog/views.py:141 backlog/views.py:230 backlog/views.py:595
 #: backlog/views.py:644 backlog/views.py:899 backlog/views.py:1045
-#: storymap/views.py:38
+#: storymap/views.py:39
 msgid "Not authorized"
 msgstr ""
 
@@ -808,8 +808,8 @@ msgstr ""
 msgid "reset filters"
 msgstr ""
 
-#: backlog/templates/backlog/org_stories.html:106
-#: backlog/templates/backlog/project_stories.html:92
+#: backlog/templates/backlog/org_stories.html:110
+#: backlog/templates/backlog/project_stories.html:100
 msgid "No story matching criterias"
 msgstr ""
 
@@ -1535,12 +1535,31 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: storymap/views.py:89
+#: storymap/views.py:90
 msgid "MVP"
 msgstr ""
 
 #: storymap/views.py:97
+msgid "created a story map"
+msgstr ""
+
+#: storymap/views.py:100
 msgid "Story map successfully created."
+msgstr ""
+
+#: storymap/views.py:182
+#, python-format
+msgid "created story map's '%s'"
+msgstr ""
+
+#: storymap/views.py:188
+#, python-format
+msgid "updated story map's '%s'"
+msgstr ""
+
+#: storymap/views.py:192
+#, python-format
+msgid "deleted story map's '%s'"
 msgstr ""
 
 #: storymap/templates/storymap/_story.html:11

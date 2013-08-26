@@ -7,10 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-24 17:35+0200\n"
+"POT-Creation-Date: 2013-08-26 08:52+0200\n"
 "PO-Revision-Date: 2013-08-24 17:35+0100\n"
 "Last-Translator: David Saradini <david@saradini.com>\n"
 "Language-Team: fr <info@backlogman.com>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -139,7 +140,7 @@ msgstr "Dernière modification"
 #: backlog/templates/backlog/org_detail.html:10
 #: backlog/templates/backlog/org_sprint_planning.html:21
 #: backlog/templates/backlog/org_stories.html:10
-#: backlog/templates/backlog/org_users.html:10 storymap/views.py:93
+#: backlog/templates/backlog/org_users.html:10 storymap/views.py:94
 msgid "General"
 msgstr "Général"
 
@@ -265,7 +266,7 @@ msgstr "Organisation créée avec succès"
 
 #: backlog/views.py:141 backlog/views.py:230 backlog/views.py:595
 #: backlog/views.py:644 backlog/views.py:899 backlog/views.py:1045
-#: storymap/views.py:38
+#: storymap/views.py:39
 msgid "Not authorized"
 msgstr "Non autorisé "
 
@@ -822,8 +823,8 @@ msgstr "appliquer le filtre"
 msgid "reset filters"
 msgstr "pas de filtre"
 
-#: backlog/templates/backlog/org_stories.html:106
-#: backlog/templates/backlog/project_stories.html:92
+#: backlog/templates/backlog/org_stories.html:110
+#: backlog/templates/backlog/project_stories.html:100
 msgid "No story matching criterias"
 msgstr "Aucun scénario ne correspond aux critères"
 
@@ -1103,8 +1104,8 @@ msgid ""
 "You have been invited to join the organization '%(org)s', to accept the "
 "invitation, please navigate the URL below:"
 msgstr ""
-"Vous avez été invité a rejoindre l'organisation '%(org)s', pour "
-"accepter cette invitation, cliquez sur le lien ci-dessous:"
+"Vous avez été invité a rejoindre l'organisation '%(org)s', pour accepter "
+"cette invitation, cliquez sur le lien ci-dessous:"
 
 #: backlog/templates/users/invitation_email_subject.txt:2
 #, python-format
@@ -1133,8 +1134,8 @@ msgid ""
 "Enter user email yout want to invite, and click the checkbox if you want to "
 "inivite the user as an administrator."
 msgstr ""
-"Saisissez l'adresse email du correspondant à inviter. Cliquez sur la case "
-"a cocher si vous désirer l'inviter en tant qu'administrateur."
+"Saisissez l'adresse email du correspondant à inviter. Cliquez sur la case a "
+"cocher si vous désirer l'inviter en tant qu'administrateur."
 
 #: backlog/templates/users/invite_user.html:25
 msgid "Invite"
@@ -1607,13 +1608,33 @@ msgstr ""
 msgid "Title"
 msgstr "Titre"
 
-#: storymap/views.py:89
+#: storymap/views.py:90
 msgid "MVP"
 msgstr "PMV"
 
 #: storymap/views.py:97
+#, fuzzy
+msgid "created a story map"
+msgstr "Créer une \"story map\""
+
+#: storymap/views.py:100
 msgid "Story map successfully created."
 msgstr "\"Story map\" créée avec succès"
+
+#: storymap/views.py:182
+#, fuzzy, python-format
+msgid "created story map's '%s'"
+msgstr "Créer une \"story map\""
+
+#: storymap/views.py:188
+#, fuzzy, python-format
+msgid "updated story map's '%s'"
+msgstr "Créer une \"story map\""
+
+#: storymap/views.py:192
+#, fuzzy, python-format
+msgid "deleted story map's '%s'"
+msgstr "Créer une \"story map\""
 
 #: storymap/templates/storymap/_story.html:11
 msgid "Set color"

@@ -225,7 +225,6 @@ class ThemeFactory(Factory):
 
 class StoryFactory(Factory):
     FACTORY_FOR = Story
-    order = Sequence(lambda n: n, type=int)
 
     @lazy_attribute
     def title(self):

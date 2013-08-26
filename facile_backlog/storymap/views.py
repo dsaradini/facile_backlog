@@ -19,6 +19,7 @@ from django.db import transaction
 
 
 from ..backlog.views import NoCacheMixin, ProjectMixin
+from ..backlog.models import create_event
 
 from models import (StoryMap, Story, Theme, Phase)
 from forms import StoryMapCreationForm
@@ -93,6 +94,8 @@ class StoryMapCreate(ProjectMixin, generic.CreateView):
             name=_("General"),
             story_map=self.object
         )
+        create_event(self.request.user, _("created a story map"),
+                     project=self.project)
         messages.success(self.request,
                          _("Story map successfully created."))
         return redirect(reverse("storymap_detail", args=(self.object.pk,)))
@@ -131,8 +134,8 @@ ORDER = "order"
 @transaction.commit_on_success
 def story_map_action(request, story_map_id):
     story_map = get_object_or_404(StoryMap, pk=story_map_id)
-    if not story_map.can_read(request.user):
-        if story_map.can_write(request.user):
+    if not story_map.can_admin(request.user):
+        if story_map.can_read(request.user):
             return Response("You are not admin of this story map", status=403)
         # verify access rights on story project
         raise Http404
@@ -159,7 +162,7 @@ def story_map_action(request, story_map_id):
             }
             max_order = model_class.objects.filter(
                 **max_filter).aggregate(Max('order'))
-            if max_order['order__max']:
+            if max_order['order__max'] is not None:
                 content['order'] = max_order['order__max'] + 1
             else:
                 content['order'] = 0
@@ -176,14 +179,17 @@ def story_map_action(request, story_map_id):
                     'story_colors': STORY_COLORS,
                 })
                 html = t.render(c)
+            event_text = _("created story map's '%s'") % (target,)
         elif action == UPDATE:
             obj = model_class.objects.get(pk=target_id)
             for k, v in content.items():
                 setattr(obj, k, v)
             obj.save()
+            event_text = _("updated story map's '%s'") % (target,)
         elif action == DELETE:
             obj = model_class.objects.get(pk=target_id)
             obj.delete()
+            event_text = _("deleted story map's '%s'") % (target,)
         elif action == ORDER:
             order = [int(x) for x in content['order']]
             for item in model_class.objects.filter(pk__in=order).all():
@@ -191,6 +197,7 @@ def story_map_action(request, story_map_id):
                 if item.order != index:
                     item.order = index
                     item.save()
+            event_text = _("re-order story map's '%s'") % (target,)
         else:
             return Response({
                 'errors': [
@@ -203,6 +210,7 @@ def story_map_action(request, story_map_id):
                 'Unable to find {0} with id {1}'.format(target, target_id)
             ]
         }, content_type="application/json", status=400)
+    create_event(request.user, event_text, project=story_map.project)
     return Response({
         'id': target_id,
         'html': html,
