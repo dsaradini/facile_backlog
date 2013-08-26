@@ -44,7 +44,7 @@ class UserStoryAdmin(admin.ModelAdmin):
     list_display = ("code", "text", "project", "theme", "backlog", "status")
     readonly_fields = ("number", )
     search_fields = ("project__name", "as_a", "i_want_to", "number", "theme",
-                     "project__code", "pk")
+                     "project__code")
     raw_id_fields = ("project", "backlog")
 
 
