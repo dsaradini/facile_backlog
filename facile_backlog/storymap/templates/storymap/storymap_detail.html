@@ -3,10 +3,10 @@
 
 {% block title %}{% trans "Story Map" %} &mdash; {{ storymap.title }}{% endblock %}
 {% block content %}
-
-	{% include "backlog/_project_head.html" %}
-	{% include "backlog/_project_tabs.html" %}
-
+	{% if project %}
+		{% include "backlog/_project_head.html" %}
+		{% include "backlog/_project_tabs.html" %}
+	{% endif %}
 	<table class="story-map">
 		<thead>
 			<tr>
