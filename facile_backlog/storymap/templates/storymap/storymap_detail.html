@@ -123,10 +123,20 @@
 								})
 							}
 						});
-
 					}
+					fix_z_index()
 				}
 			});
+		};
+
+		var fix_z_index = function() {
+			// To avoid dropdown menu under story cell, set z-index position
+			// to each stories in reverse order position.
+			var base_z = 11;
+			$($(".story-cell").get().reverse()).each(function() {
+				base_z++;
+				$(this).css("z-index", base_z);
+			})
 		};
 
 		{% if storymap|can_admin:request.user %}

@@ -868,8 +868,9 @@ class ProjectStats(ProjectMixin, generic.TemplateView):
                 'y': value['stories']
             }
         s = base[-1]
-        context['main_status_pie'] = [pie_element(k, v) for k, v in
-                                      s.data['main']['by_status'].items()]
+        if 'main' in s.data:
+            context['main_status_pie'] = [pie_element(k, v) for k, v in
+                                          s.data['main']['by_status'].items()]
         context['project_status_pie'] = [pie_element(k, v) for k, v in
                                          s.data['all']['by_status'].items()]
 
