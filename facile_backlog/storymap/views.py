@@ -237,6 +237,7 @@ def story_map_action(request, story_map_id):
         'ok': True
     }, content_type="application/json", status=200)
 
+
 @api_view(["GET"])
 def story_map_story(request, story_map_id):
     story_map = get_object_or_404(StoryMap, pk=story_map_id)
