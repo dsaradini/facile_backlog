@@ -16,7 +16,7 @@ $(function() {
 			title: {
 				enabled: false
 			},
-			tickInterval: 24 * 3600 * 1000, // one day
+			//tickInterval: 24 * 3600 * 1000, // one day
 			tickWidth: 0,
 			gridLineWidth: 1
 		},
@@ -42,9 +42,9 @@ $(function() {
 		tooltip: {
 			crosshairs: true,
 			formatter: function() {
-				return '<b>'+ this.x +'</b><br/>'+
+				return '<b>'+ new Date(this.x).toLocaleDateString() +'</b><br/>'+
 					this.series.name +': '+ this.y +'<br/>'+
-					'{% trans "Total:" %}'+ this.point.stackTotal;
+					'{% trans "Total:" %} '+ this.point.stackTotal;
 			}
 		},
 		series: {{ series | jsonify }}

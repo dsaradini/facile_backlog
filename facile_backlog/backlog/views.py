@@ -825,13 +825,19 @@ project_backlogs = login_required(ProjectBacklogs.as_view())
 
 
 class ProjectStats(ProjectMixin, generic.TemplateView):
+    DEFAULT_DAYS = 45
     template_name = "backlog/project_stats.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        days = request.GET.get('days', "")
+        self.days = int(days) if days.isdigit() else self.DEFAULT_DAYS
+        return super(ProjectStats, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(ProjectStats, self).get_context_data(**kwargs)
         context['project'] = self.project
 
-        base = list(self.project.statistics.all()[:60])
+        base = list(self.project.statistics.all()[:self.days])
         if not base:
             return context
 
