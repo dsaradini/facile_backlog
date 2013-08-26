@@ -589,6 +589,10 @@
 							if (text) {
 								$cell.find(".story").text(text)
 							}
+							var color = message.content.color;
+							if (color) {
+								$cell.css("background-color", color);
+							}
 							var phase_id = message.content.phase_id;
 							var theme_id = message.content.theme_id;
 							var order = message.content.order;
@@ -602,6 +606,22 @@
 									$s_cell.closest(".stories-zone").append($s_cell);
 								})
 							}
+						} else if ( message.action == 'delete') {
+							$cell.remove();
+						} else if ( message.action == 'create') {
+							var id = message.id;
+							var data = $.get('{% url "api_story_map_story" storymap.pk %}?story_id='+id, function(data){
+								console.log("data", data);
+								var $s_cell = $(".story-cell[story-id="+data.id+"]");
+								if ($s_cell.length == 0) {
+									// not yet on board
+									var $html = $(data.html);
+									var phase_id = data.phase_id;
+									var theme_id = data.theme_id;
+									var $slot = $(".stories-zone[theme-id="+theme_id+"][phase-id="+phase_id+"]");
+									$slot.append($html)
+								}
+							});
 						}
 						$cell.flash("green", 500);
 					}

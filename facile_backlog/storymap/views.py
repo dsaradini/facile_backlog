@@ -236,3 +236,34 @@ def story_map_action(request, story_map_id):
         'html': html,
         'ok': True
     }, content_type="application/json", status=200)
+
+@api_view(["GET"])
+def story_map_story(request, story_map_id):
+    story_map = get_object_or_404(StoryMap, pk=story_map_id)
+    if not story_map.can_read(request.user):
+        raise Http404
+    story_id = request.GET.get("story_id", 0)
+    try:
+        story = Story.objects.get(pk=story_id)
+        template_name = TARGETS['story'][2]
+        t = loader.get_template(template_name)
+        c = RequestContext(request, {
+            'object': story,
+            'storymap': story_map,
+            'themes': story_map.themes,
+            'phases': story_map.phases,
+            'story_colors': STORY_COLORS,
+        })
+        html = t.render(c)
+    except Story.DoesNotExist:
+        return Response({
+            'errors': [
+                'Unable to find story with id {0}'.format(story_id)
+            ]
+        }, content_type="application/json", status=400)
+    return Response({
+        'id': story_id,
+        'phase_id': story.phase_id,
+        'theme_id': story.theme_id,
+        'html': html,
+    }, content_type="application/json", status=200)

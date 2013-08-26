@@ -6,6 +6,7 @@
 			<button class="remove delete_story" title="{% trans "Delete" %}"><i class="icon-remove"></i></button>
 		{% endif %}
 	</div>
+	{% if storymap|can_admin:request.user %}
 	<div class="drop-action">
 		<div class="dropdown adjust">
 			<a class="dropdown-toggle" title="{% trans "Set color" %}" id="color_set_{{ story.pk }}" role="button" data-toggle="dropdown" data-target="#" href="#">
@@ -20,4 +21,5 @@
 			</ul>
 		</div>
 	</div>
+	{% endif %}
 </div>

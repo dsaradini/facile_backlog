@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, url
 
-from .views import storymap_detail, story_map_action, storymap_create
+from .views import (storymap_detail, story_map_action, storymap_create,
+                    story_map_story)
 
 # root
 urlpatterns = patterns(
@@ -15,4 +16,7 @@ urlpatterns = patterns(
 
     url(r'^story_maps/(?P<story_map_id>[\w]+)/_action/$',
         story_map_action, name="api_story_map_action"),
+
+    url(r'^story_maps/(?P<story_map_id>[\w]+)/story/$',
+        story_map_story, name="api_story_map_story"),
 )
