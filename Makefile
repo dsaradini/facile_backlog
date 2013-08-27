@@ -27,3 +27,6 @@ coverage:
 showcover: coverage
 	coverage html
 	open htmlcov/index.html
+
+selenium:
+	SELENIUM=Firefox envdir tests/envdir python manage.py test tests.test_storymap --traceback --failfast --noinput

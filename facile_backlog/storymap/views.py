@@ -238,18 +238,17 @@ def story_map_action(request, story_map_id):
     }, content_type="application/json", status=200)
 
 
-@api_view(["GET"])
-def story_map_story(request, story_map_id):
-    story_map = get_object_or_404(StoryMap, pk=story_map_id)
+def get_story_map_element(request, map_pk, element_type, element_pk):
+    story_map = get_object_or_404(StoryMap, pk=map_pk)
     if not story_map.can_read(request.user):
         raise Http404
-    story_id = request.GET.get("story_id", 0)
+    model_class = TARGETS[element_type][0]
     try:
-        story = Story.objects.get(pk=story_id)
-        template_name = TARGETS['story'][2]
+        obj = model_class.objects.get(pk=element_pk)
+        template_name = TARGETS[element_type][2]
         t = loader.get_template(template_name)
         c = RequestContext(request, {
-            'object': story,
+            'object': obj,
             'storymap': story_map,
             'themes': story_map.themes,
             'phases': story_map.phases,
@@ -259,12 +258,31 @@ def story_map_story(request, story_map_id):
     except Story.DoesNotExist:
         return Response({
             'errors': [
-                'Unable to find story with id {0}'.format(story_id)
+                'Unable to find {0} with id {1}'.format(element_type,
+                                                        element_pk)
             ]
         }, content_type="application/json", status=400)
     return Response({
-        'id': story_id,
-        'phase_id': story.phase_id,
-        'theme_id': story.theme_id,
+        'id': element_pk,
+        'phase_id': getattr(obj, "phase_id", None),
+        'theme_id': getattr(obj, "theme_id", None),
         'html': html,
     }, content_type="application/json", status=200)
+
+
+@api_view(["GET"])
+def story_map_story(request, story_map_id):
+    story_id = request.GET.get("story_id", 0)
+    return get_story_map_element(request, story_map_id, "story", story_id)
+
+
+@api_view(["GET"])
+def story_map_phase(request, story_map_id):
+    phase_id = request.GET.get("phase_id", 0)
+    return get_story_map_element(request, story_map_id, "phase", phase_id)
+
+
+@api_view(["GET"])
+def story_map_theme(request, story_map_id):
+    theme_id = request.GET.get("theme_id", 0)
+    return get_story_map_element(request, story_map_id, "theme", theme_id)

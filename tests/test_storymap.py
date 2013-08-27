@@ -9,7 +9,7 @@ from selenium.webdriver import ActionChains
 from django_webtest import WebTest
 
 from facile_backlog.backlog.models import Event
-from facile_backlog.storymap.models import Story
+from facile_backlog.storymap.models import Story, StoryMap, Theme, Phase
 
 from . import SeleniumTestCase
 from . import factories
@@ -257,6 +257,87 @@ class StoryMapAPITest(WebTest):
         self.app.post(url, data,  user=user,
                       content_type="application/json", status=400)
 
+    def test_story_html(self):
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        user_no = factories.UserFactory.create()
+        user_guest = factories.UserFactory.create()
+        project = factories.create_sample_project(user, project_kwargs={
+            'active': True,
+        })
+        project.add_user(user_guest)
+        story_map = factories.StoryMapFactory.create(
+            project=project
+        )
+        phase1 = factories.PhaseFactory.create(
+            name="Phase 1",
+            story_map=story_map
+        )
+        theme1 = factories.ThemeFactory.create(
+            name="Theme 1",
+            story_map=story_map
+        )
+        story1 = factories.StoryFactory.create(
+            phase=phase1,
+            theme=theme1,
+            title="My first story"
+        )
+        url = reverse("api_story_map_story", args=(story_map.pk,))
+        url = "{0}?story_id={1}".format(url, story1.pk)
+        self.app.get(url, status=401)
+        self.app.get(url, user=user_no, status=404)
+        response = self.app.get(url, user=user_guest)
+        html = response.json['html']
+        self.assertTrue(html.find(story1.title) != -1)
+
+    def test_phase_html(self):
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        user_no = factories.UserFactory.create()
+        user_guest = factories.UserFactory.create()
+        project = factories.create_sample_project(user, project_kwargs={
+            'active': True,
+        })
+        project.add_user(user_guest)
+        story_map = factories.StoryMapFactory.create(
+            project=project
+        )
+        phase1 = factories.PhaseFactory.create(
+            name="Phase 1",
+            story_map=story_map
+        )
+        url = reverse("api_story_map_phase", args=(story_map.pk,))
+        url = "{0}?phase_id={1}".format(url, phase1.pk)
+        self.app.get(url, status=401)
+        self.app.get(url, user=user_no, status=404)
+        response = self.app.get(url, user=user_guest)
+        html = response.json['html']
+        self.assertTrue(html.find(phase1.name) != -1)
+
+    def test_theme_html(self):
+        user = factories.UserFactory.create(
+            email='test@epyx.ch', password='pass')
+        user_no = factories.UserFactory.create()
+        user_guest = factories.UserFactory.create()
+        project = factories.create_sample_project(user, project_kwargs={
+            'active': True,
+        })
+        project.add_user(user_guest)
+        story_map = factories.StoryMapFactory.create(
+            project=project
+        )
+        theme1 = factories.ThemeFactory.create(
+            name="Theme 1",
+            story_map=story_map
+        )
+        url = reverse("api_story_map_theme", args=(story_map.pk,))
+        url = "{0}?theme_id={1}".format(url, theme1.pk)
+        self.app.get(url, status=401)
+        self.app.get(url, user=user_no, status=404)
+        response = self.app.get(url, user=user_guest)
+        html = response.json['html']
+        self.assertTrue(html.find(theme1.name) != -1)
+
 
 class StoryMapLiveTest(SeleniumTestCase):
 
@@ -310,30 +391,85 @@ class StoryMapLiveTest(SeleniumTestCase):
         actionChains.send_keys("My second story\n")
         actionChains.perform()
 
+        story = Story.objects.get(title="My first story")
+        phase_1 = Phase.objects.get(name="Phase 1")
+        theme_0 = Theme.objects.get(name="Theme 0")
+
         # move story to another phase
         actionChains = ActionChains(self.browser)
         actionChains.drag_and_drop(
-            self.sel_query('.story-cell[story-id="1"]'),
-            self.sel_query('.stories-zone[phase-id="2"]'),
+            self.sel_query('.story-cell[story-id="{0}"]'.format(story.pk)),
+            self.sel_query('.stories-zone[phase-id="{0}"]'.format(phase_1.pk)),
         )
         actionChains.perform()
+        time.sleep(0.2)
 
-        # move theme
+        storymap = StoryMap.objects.get(pk=storymap.pk)
+        self.assertEqual(storymap.themes.all()[0].name, "Theme 0")
+        self.assertEqual(storymap.themes.all()[1].name, "Theme 1")
+        self.assertEqual(storymap.phases.all()[0].name, "Phase 0")
+        self.assertEqual(storymap.phases.all()[1].name, "Phase 1")
+        story = Story.objects.get(title="My first story")
+        self.assertEqual(story.phase_id, phase_1.pk)
+        self.assertEqual(story.theme_id, theme_0.pk)
+
+        # Edit story
         actionChains = ActionChains(self.browser)
-        actionChains.click_and_hold(self.sel_query('th[theme-id="1"]'))
-        actionChains.move_by_offset(300, 0)
-        actionChains.release()
+        actionChains.double_click(self.sel_query(
+            '.story-cell[story-id="{0}"] .story'.format(
+                story.pk
+            )
+        ))
         actionChains.perform()
+        self.sel_query('.story-cell[story-id="{0}"] textarea'.format(
+            story.pk
+        )).send_keys(
+            "Edited \n"
+        )
+        time.sleep(0.2)
+        print Story.objects.get(pk=story.pk).title
+        self.assertTrue(Story.objects.get(title="Edited My first story"))
 
-        time.sleep(1)
-
-        # move theme
+        # delete theme 1
+        theme = Theme.objects.get(name="Theme 1")
         actionChains = ActionChains(self.browser)
-        actionChains.click_and_hold(self.sel_query(
-            '.phase-cell[phase-id="1"]'))
-        actionChains.move_by_offset(3, 200)
-        actionChains.release()
+        actionChains.move_to_element(self.sel_query(
+            '.theme-cell[theme-id="{0}"]'.format(theme.pk)))
+        actionChains.click(self.sel_query(
+            '.theme-cell[theme-id="{0}"] .delete_theme'.format(theme.pk)))
         actionChains.perform()
+        time.sleep(0.2)
+        self.sel_query("#confirm-delete-btn").click()
+        time.sleep(0.5)
+
+        # delete phase 0
+        phase = Phase.objects.get(name="Phase 0")
+        actionChains = ActionChains(self.browser)
+        actionChains.move_to_element(self.sel_query(
+            '.phase-cell[phase-id="{0}"]'.format(phase.pk)))
+        actionChains.click(self.sel_query(
+            '.phase-cell[phase-id="{0}"] .delete_phase'.format(phase.pk)))
+        actionChains.perform()
+        time.sleep(0.2)
+        self.sel_query("#confirm-delete-btn").click()
+        time.sleep(0.5)
+
+        # delete last story
+        actionChains = ActionChains(self.browser)
+        actionChains.move_to_element(self.sel_query(
+            '.story-cell[story-id="{0}"]'.format(story.pk)))
+        actionChains.click(self.sel_query(
+            '.story-cell[story-id="{0}"] .delete_story'.format(story.pk)))
+        actionChains.perform()
+        time.sleep(0.2)
+        self.sel_query("#confirm-delete-btn").click()
+        time.sleep(0.5)
+
+        # Only one story theme and phase should exists
+        self.assertFalse(Story.objects.exists())
+        self.assertTrue(Theme.objects.get())
+        self.assertTrue(Theme.objects.get())
+
 
 StoryMapLiveTest = skipUnless(
     'SELENIUM' in os.environ, "SELENIUM not enabled")(StoryMapLiveTest)

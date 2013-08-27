@@ -518,14 +518,7 @@
 			};
 			ajax_action(ajax_data, function(err, data) {
 				if (!err) {
-					var $html = $("<div>").append(data.html);
-					$("thead tr").append($html.find("th.theme-cell"));
-					$("tbody tr").each(function() {
-						var phase_id = $(this).find("[phase-id]").attr("phase-id");
-						var $td = $html.find(".stories-zone[phase-id="+phase_id+"]").closest("td");
-						$(this).append($td);
-					});
-					setup_story_move($('.stories-zone'));
+					insert_theme_html(data.html);
 				}
 				$panel.modal('hide');
 				$this.button('reset');
@@ -576,6 +569,17 @@
 			})
 		});
 
+		var insert_theme_html = function(html) {
+			var $html = $("<div>").append(html);
+			$("thead tr").append($html.find("th.theme-cell"));
+			$("tbody tr").each(function() {
+				var phase_id = $(this).find("[phase-id]").attr("phase-id");
+				var $td = $html.find(".stories-zone[phase-id="+phase_id+"]").closest("td");
+				$(this).append($td);
+			});
+			setup_story_move($('.stories-zone'));
+		};
+
 		// WEB SOCKETS
 		$.ws_sbscribe({
 			url: '{{ ws_url }}storymap/{{ storymap.pk }}/',
@@ -607,11 +611,10 @@
 								})
 							}
 						} else if ( message.action == 'delete') {
-							$cell.remove();
+							$cell.fade_remove();
 						} else if ( message.action == 'create') {
 							var id = message.id;
-							var data = $.get('{% url "api_story_map_story" storymap.pk %}?story_id='+id, function(data){
-								console.log("data", data);
+							$.get('{% url "api_story_map_story" storymap.pk %}?story_id='+id, function(data){
 								var $s_cell = $(".story-cell[story-id="+data.id+"]");
 								if ($s_cell.length == 0) {
 									// not yet on board
@@ -619,7 +622,48 @@
 									var phase_id = data.phase_id;
 									var theme_id = data.theme_id;
 									var $slot = $(".stories-zone[theme-id="+theme_id+"][phase-id="+phase_id+"]");
-									$slot.append($html)
+									$slot.append($html);
+								}
+							});
+						}
+						$cell.flash("green", 500);
+					} else if (message.target == "phase") {
+						var $cell = $(".phase-cell[phase-id="+message.id+"]");
+						if ( message.action == 'update') {
+							var text = message.content.name;
+							if (text) {
+								$cell.find(".phase").text(text)
+							}
+						} else if ( message.action == 'delete') {
+							$cell.closest("tr").fade_remove();
+						}  else if ( message.action == 'create') {
+							var id = message.id;
+							$.get('{% url "api_story_map_phase" storymap.pk %}?phase_id='+id, function(data){
+								var $s_cell = $(".phase-cell[phase-id="+data.id+"]");
+								if ($s_cell.length == 0) {
+									// not yet on board
+									$("tbody").append(data.html);
+									setup_story_move($('.stories-zone'));
+								}
+							});
+						}
+						$cell.flash("green", 500);
+					}  else if (message.target == "theme") {
+						var $cell = $(".theme-cell[theme-id="+message.id+"]");
+						if ( message.action == 'update') {
+							var text = message.content.name;
+							if (text) {
+								$cell.find(".theme").text(text)
+							}
+						} else if ( message.action == 'delete') {
+							$("[theme-id="+message.id+"]").closest("td, th").fade_remove()
+						}  else if ( message.action == 'create') {
+							var id = message.id;
+							$.get('{% url "api_story_map_theme" storymap.pk %}?theme_id='+id, function(data){
+								var $s_cell = $(".theme-cell[theme-id="+data.id+"]");
+								if ($s_cell.length == 0) {
+									// not yet on board
+									insert_theme_html(data.html);
 								}
 							});
 						}

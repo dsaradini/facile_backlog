@@ -3,6 +3,7 @@ import random
 import re
 import string
 import json
+import inspect
 
 from rest_framework.authtoken.models import Token
 
@@ -12,7 +13,7 @@ from django.test import TestCase, Client, LiveServerTestCase
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
-
+from selenium.webdriver.remote.webdriver import WebDriver as RemoteWebDriver
 
 TEST_DATA = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data')
 
@@ -142,7 +143,17 @@ def api_token_auth(token):
 
 class SeleniumTestCase(LiveServerTestCase):
     def get_webdriver(self):
-        return webdriver.Firefox()
+        driver = os.environ["SELENIUM"]
+        if not hasattr(webdriver, driver):
+            available = []
+            for att in dir(webdriver):
+                val = getattr(webdriver, att)
+                if inspect.isclass(val) and issubclass(val, RemoteWebDriver):
+                    available.append(att)
+            raise ValueError(
+                "No such selenium driver '{0}', "
+                "available drivers: {1}".format(driver, available))
+        return getattr(webdriver, driver)()
 
     def setUp(self):  # noqa
         self.browser = self.get_webdriver()
