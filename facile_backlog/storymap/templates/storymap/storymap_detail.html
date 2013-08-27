@@ -102,6 +102,7 @@
 		};
 
 		var setup_story_move = function($item) {
+			{% if storymap|can_admin:request.user %}
 			$item.sortable({
 				connectWith: ".stories-zone",
 				placeholder: "story-placeholder",
@@ -135,6 +136,7 @@
 					fix_z_index()
 				}
 			});
+			{% endif %}
 		};
 
 		var fix_z_index = function() {
@@ -147,9 +149,7 @@
 			})
 		};
 
-		{% if storymap|can_admin:request.user %}
-			setup_story_move($('.stories-zone'));
-		{% endif %}
+		setup_story_move($('.stories-zone'));
 
 		{% if storymap|can_admin:request.user %}
 			$("tbody").sortable({
