@@ -142,6 +142,12 @@ def api_token_auth(token):
 
 
 class SeleniumTestCase(LiveServerTestCase):
+    screenshot_on_error = False
+
+    def run(self, result=None):
+        self.current_result = result
+        super(SeleniumTestCase, self).run(result)
+
     def get_webdriver(self):
         driver = os.environ["SELENIUM"]
         if not hasattr(webdriver, driver):
@@ -159,6 +165,11 @@ class SeleniumTestCase(LiveServerTestCase):
         self.browser = self.get_webdriver()
 
     def tearDown(self):  # noqa
+        if self.screenshot_on_error and \
+                self.current_result.errors and self.browser:
+            f = 'error_{0}.png'.format(self._testMethodName)
+            self.browser.save_screenshot(f)
+            print "Error screenshot generated: {0}".format(f)
         self.browser.close()
 
     def assetElementByXPath(self, xpath):
@@ -173,3 +184,10 @@ class SeleniumTestCase(LiveServerTestCase):
 
     def sel_query(self, selector):
         return self.browser.find_element_by_css_selector(selector)
+
+    def wait_for(self, selector, timeout=1):
+        from selenium.webdriver.support.wait import WebDriverWait
+        # Wait until the response is received
+        WebDriverWait(self.browser, timeout, poll_frequency=0.2).until(
+            lambda driver: driver.find_element_by_css_selector(selector)
+        )

@@ -340,6 +340,7 @@ class StoryMapAPITest(WebTest):
 
 
 class StoryMapLiveTest(SeleniumTestCase):
+    screenshot_on_error = True
 
     def _login(self, user_name, password):
         self.browser.get(self.live_reverse("auth_login"))
@@ -381,15 +382,24 @@ class StoryMapLiveTest(SeleniumTestCase):
         # let's move to the theme and phase to display the "new story" button
         actionChains = ActionChains(self.browser)
         actionChains.move_to_element(self.sel_query(".stories-zone"))
-        actionChains.click(self.sel_query(".create_story"))
+        actionChains.perform()
+        time.sleep(0.2)
+        self.sel_query(".create_story").click()
+        time.sleep(0.2)
+        actionChains = ActionChains(self.browser)
         actionChains.send_keys("My first story\n")
         actionChains.perform()
+        time.sleep(0.2)
 
         actionChains = ActionChains(self.browser)
         actionChains.move_to_element(self.sel_query(".stories-zone"))
-        actionChains.click(self.sel_query(".create_story"))
+        actionChains.perform()
+        time.sleep(0.2)
+        self.sel_query(".create_story").click()
+        actionChains = ActionChains(self.browser)
         actionChains.send_keys("My second story\n")
         actionChains.perform()
+        time.sleep(0.2)
 
         story = Story.objects.get(title="My first story")
         phase_1 = Phase.objects.get(name="Phase 1")
@@ -421,13 +431,11 @@ class StoryMapLiveTest(SeleniumTestCase):
             )
         ))
         actionChains.perform()
-        self.sel_query('.story-cell[story-id="{0}"] textarea'.format(
-            story.pk
-        )).send_keys(
-            "Edited \n"
-        )
-        time.sleep(0.2)
-        print Story.objects.get(pk=story.pk).title
+        actionChains = ActionChains(self.browser)
+        actionChains.send_keys("Edited \n")
+        actionChains.perform()
+        time.sleep(1)
+
         self.assertTrue(Story.objects.get(title="Edited My first story"))
 
         # delete theme 1
