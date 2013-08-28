@@ -211,3 +211,57 @@ class OrganizationTest(WebTest):
         response = self.app.get(url, user=user)
         elms = response.pyquery("tbody tr")
         self.assertEqual(elms.length, 6)
+
+    def test_org_backlogs_projets(self):
+        # Test that the project used in "preferred" project is stored in
+        # session
+        user = factories.UserFactory.create()
+        org = factories.create_sample_organization(user)
+        project1 = factories.create_sample_project(user, project_kwargs={
+            'name': "Project one",
+            'code': "PJ-1",
+            'org': org
+        })
+        factories.BacklogFactory.create(
+            project=project1,
+            name="Backlog One",
+            is_main=True,
+        )
+        project2 = factories.create_sample_project(user, project_kwargs={
+            'name': "Project two",
+            'code': "PJ-2",
+            'org': org
+        })
+        factories.BacklogFactory.create(
+            project=project2,
+            name="Backlog Two",
+            is_main=True,
+        )
+        project3 = factories.create_sample_project(user, project_kwargs={
+            'name': "Project three",
+            'code': "PJ-3",
+            'org': org
+        })
+        factories.BacklogFactory.create(
+            project=project3,
+            name="Backlog Three",
+            is_main=True,
+        )
+        base_url = reverse("org_sprint_planning", args=(org.pk,))
+        response = self.app.get(base_url, user=user)
+        self.assertEqual(
+            response.pyquery(".project-chooser").text().strip(),
+            "Project one [PJ-1]"
+        )
+        url = "{0}?project_id={1}".format(base_url, project2.pk)
+        response = self.app.get(url, user=user)
+        self.assertEqual(
+            response.pyquery(".project-chooser").text().strip(),
+            "Project two [PJ-2]"
+        )
+        # Last used project should be stored in session
+        response = self.app.get(base_url, user=user)
+        self.assertEqual(
+            response.pyquery(".project-chooser").text().strip(),
+            "Project two [PJ-2]"
+        )

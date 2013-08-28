@@ -305,28 +305,44 @@ org_backlog_edit = login_required(OrgBacklogEdit.as_view())
 
 
 class OrgBacklogs(OrgMixin, generic.TemplateView):
+    SESSION_PREF_KEY = 'org_pref_proj'
     template_name = "backlog/org_sprint_planning.html"
     no_cache = True
 
+    def store_preferred_project(self, project_id):
+        preferred = self.request.session.get(self.SESSION_PREF_KEY, dict())
+        preferred[self.organization.pk] = project_id
+        self.request.session[self.SESSION_PREF_KEY] = preferred
+
+    def load_preferred_project(self):
+        preferred = self.request.session.get(self.SESSION_PREF_KEY, dict())
+        return preferred.get(self.organization.pk, None)
+
     def pre_dispatch(self):
         self.project_id = self.request.GET.get("project_id", None)
+        if self.project_id:
+            self.store_preferred_project(self.project_id)
+        else:
+            self.project_id = self.load_preferred_project()
 
     def get_context_data(self, **kwargs):
         context = super(OrgBacklogs, self).get_context_data(**kwargs)
         context['organization'] = self.organization
+        backlog = None
         if self.project_id:
-            context['backlog_of_interest'] = self.organization.projects.get(
-                pk=self.project_id
-            ).main_backlog
+            try:
+                backlog = self.organization.projects.get(
+                    pk=self.project_id
+                ).main_backlog
+            except Project.DoesNotExist:
+                backlog = None
         else:
             first = self.organization.projects.filter(
                 backlogs__is_main=True
             ).all()[:1]
             if first:
-                context['backlog_of_interest'] = first[0].main_backlog
-        #context['projects_with_main'] = [p for p in
-        #                                 self.organization.projects.all()
-        #                                 if p.main_backlog]
+                backlog = first[0].main_backlog
+        context['backlog_of_interest'] = backlog
         backlogs = Backlog.objects.filter(
             is_main=True,
             project__org=self.organization

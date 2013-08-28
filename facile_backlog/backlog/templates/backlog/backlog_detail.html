@@ -39,6 +39,16 @@
 			</div>
         {% endfor %}
     </div>
+	<div class="alert alert-info">
+		<p>{% blocktrans with view_url=view_url %}This view is targeted for backlog prioritization.{% endblocktrans %}
+		{% if backlog.project %}
+			{% url "project_backlogs" backlog.project.pk as view_url %}
+			{% blocktrans with view_url=view_url %}To add a new story, please use <a href="{{ view_url }}">the project backlogs view</a>{% endblocktrans %}
+		{% else %}
+			{% blocktrans %}Stories can only be created on a project backlogs view, <b>not on organization backlogs</b>{% endblocktrans %}
+		{% endif %}
+		</p>
+	</div>
 {% include "backlog/_script_status_change.html" %}
 {% include "backlog/_script_show_errors.html" %}
 
