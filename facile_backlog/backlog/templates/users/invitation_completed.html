@@ -4,10 +4,10 @@
 {% block content %}
 	<h1>{% trans "Invitation accepted" %}</h1>
 	{% if project %}
-		<p>{% blocktrans with project=project.name %}Invitation to project '{{ project }}' has been accepted. You can access it using the url below." {% endblocktrans %}</p>
+		<p>{% blocktrans with project=project.name %}Invitation to project '{{ project }}' has been accepted. You can access it using the url below. {% endblocktrans %}</p>
 		<p><a href="{% url "project_backlogs" project.pk %}">{% trans "Project:" %} {{ project.name }}</a></p>
 	{% elif organization %}
-		<p>{% blocktrans with org=organization.name %}Invitation to organization '{{ org }}' has been accepted. You can access it using the url below." {% endblocktrans %}</p>
+		<p>{% blocktrans with org=organization.name %}Invitation to organization '{{ org }}' has been accepted. You can access it using the url below. {% endblocktrans %}</p>
 		<p><a href="{% url "org_detail" organization.pk %}">{% trans "Organization:" %} {{ organization.name }}</a></p>
 	{% endif %}
 

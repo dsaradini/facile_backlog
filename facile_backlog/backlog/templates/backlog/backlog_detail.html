@@ -32,7 +32,7 @@
 	</form>
     <div class="stories">
         {% for story in stories %}
-            {% include "backlog/_story_big_cell.html" %}
+            {% include "backlog/_story_big_cell.html" with show_comments=True %}
         {% empty %}
 			<div class="text-warning alert">
             	{% trans "No story in this backlog" %}

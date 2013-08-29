@@ -269,7 +269,7 @@
 
 		var WS_TOOLTIP = "";
 		var generate_ws_tooltip = function(users) {
-			var ret = "<h5>{% trans "Online users" %}</h5>";
+			var ret = '<h5>{% trans "Online users" %}</h5>';
 			users.forEach(function(u){
 				ret += ("<div class='tt-user'><img src='"+$.get_gravatar_url(u, 16)+"'><span>"+u+"</span></div>");
 			});

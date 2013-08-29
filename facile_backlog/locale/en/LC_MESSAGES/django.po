@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-27 19:50+0200\n"
+"POT-Creation-Date: 2013-08-29 08:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: backlog/forms.py:107 backlog/models.py:564
+#: backlog/forms.py:107 backlog/models.py:584
 #: backlog/templates/backlog/org_detail.html:81
 #: backlog/templates/backlog/project_detail.html:75
 #: backlog/templates/graph/_stack_status.html:28
@@ -58,7 +58,7 @@ msgstr ""
 msgid "Administrator"
 msgstr ""
 
-#: backlog/models.py:40 backlog/models.py:450
+#: backlog/models.py:40 backlog/models.py:470
 msgid "To do"
 msgstr ""
 
@@ -75,7 +75,7 @@ msgstr ""
 msgid "Rejected"
 msgstr ""
 
-#: backlog/models.py:44 backlog/models.py:451
+#: backlog/models.py:44 backlog/models.py:471
 msgid "Completed"
 msgstr ""
 
@@ -83,12 +83,12 @@ msgstr ""
 msgid "Team member"
 msgstr ""
 
-#: backlog/models.py:219 backlog/models.py:318 backlog/models.py:459
+#: backlog/models.py:219 backlog/models.py:318 backlog/models.py:479
 #: storymap/models.py:24 storymap/models.py:36
 msgid "Name"
 msgstr ""
 
-#: backlog/models.py:220 backlog/models.py:319 backlog/models.py:460
+#: backlog/models.py:220 backlog/models.py:319 backlog/models.py:480
 #: backlog/templates/backlog/org_stories.html:51
 #: backlog/templates/backlog/print_stories.html:29
 #: backlog/templates/backlog/project_stories.html:47
@@ -123,17 +123,21 @@ msgstr ""
 msgid "Prefix for all stories (maximum 5 characters)"
 msgstr ""
 
-#: backlog/models.py:324 backlog/models.py:457 backlog/models.py:678
+#: backlog/models.py:324 backlog/models.py:477 backlog/models.py:698
 #: backlog/templates/backlog/org_sprint_planning.html:3
 #: backlog/templates/backlog/org_stories.html:4
 msgid "Organization"
 msgstr ""
 
-#: backlog/models.py:326 backlog/models.py:463
+#: backlog/models.py:326 backlog/models.py:483
 msgid "Last modified"
 msgstr ""
 
-#: backlog/models.py:452 backlog/templates/backlog/_project_tabs.html:2
+#: backlog/models.py:334
+msgid "Slug"
+msgstr ""
+
+#: backlog/models.py:472 backlog/templates/backlog/_project_tabs.html:2
 #: backlog/templates/backlog/org_detail.html:10
 #: backlog/templates/backlog/org_sprint_planning.html:21
 #: backlog/templates/backlog/org_stories.html:10
@@ -141,106 +145,107 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: backlog/models.py:455 backlog/models.py:555 backlog/models.py:668
-#: backlog/models.py:692 backlog/templates/backlog/org_detail.html:4
+#: backlog/models.py:475 backlog/models.py:575 backlog/models.py:688
+#: backlog/models.py:712 backlog/templates/backlog/org_detail.html:4
 #: backlog/templates/backlog/org_users.html:4
 #: backlog/templates/backlog/project_backlogs.html:3
 #: backlog/templates/backlog/project_detail.html:4
 #: backlog/templates/backlog/project_stats.html:4
 #: backlog/templates/backlog/project_stories.html:4
 #: backlog/templates/backlog/project_users.html:4
+#: backlog/templates/live/project_dashboard.html:3
 msgid "Project"
 msgstr ""
 
-#: backlog/models.py:461
+#: backlog/models.py:481
 msgid "Kind"
 msgstr ""
 
-#: backlog/models.py:465
+#: backlog/models.py:485
 msgid "Archived"
 msgstr ""
 
-#: backlog/models.py:466
+#: backlog/models.py:486
 msgid "Auto status"
 msgstr ""
 
-#: backlog/models.py:468
+#: backlog/models.py:488
 msgid "Main"
 msgstr ""
 
-#: backlog/models.py:543
+#: backlog/models.py:563
 msgid "Not set"
 msgstr ""
 
-#: backlog/models.py:558 backlog/models.py:604
+#: backlog/models.py:578 backlog/models.py:624
 #: backlog/templates/backlog/user_story_text.html:2
 msgid "As"
 msgstr ""
 
-#: backlog/models.py:559 backlog/models.py:605
+#: backlog/models.py:579 backlog/models.py:625
 #: backlog/templates/backlog/user_story_text.html:6
 msgid "I want to"
 msgstr ""
 
-#: backlog/models.py:560 backlog/models.py:606
+#: backlog/models.py:580 backlog/models.py:626
 #: backlog/templates/backlog/user_story_text.html:11
 msgid "so I can"
 msgstr ""
 
-#: backlog/models.py:561 storymap/models.py:52
+#: backlog/models.py:581 storymap/models.py:52
 msgid "Color"
 msgstr ""
 
-#: backlog/models.py:562 backlog/templates/backlog/story_detail.html:34
+#: backlog/models.py:582 backlog/templates/backlog/story_detail.html:34
 msgid "Comments"
 msgstr ""
 
-#: backlog/models.py:563
+#: backlog/models.py:583
 msgid "acceptances"
 msgstr ""
 
-#: backlog/models.py:565
+#: backlog/models.py:585
 msgid "Created at"
 msgstr ""
 
-#: backlog/models.py:567 backlog/templates/backlog/print_stories.html:38
+#: backlog/models.py:587 backlog/templates/backlog/print_stories.html:38
 msgid "Theme"
 msgstr ""
 
-#: backlog/models.py:569 backlog/models.py:674
+#: backlog/models.py:589 backlog/models.py:694
 #: backlog/templates/backlog/backlog_detail.html:4
 #: backlog/templates/backlog/print_stories.html:32
 msgid "Backlog"
 msgstr ""
 
-#: backlog/models.py:572 backlog/templates/backlog/org_stories.html:28
+#: backlog/models.py:592 backlog/templates/backlog/org_stories.html:28
 #: backlog/templates/backlog/print_stories.html:35
 #: backlog/templates/backlog/project_stories.html:23
 msgid "Status"
 msgstr ""
 
-#: backlog/models.py:665 backlog/templates/backlog/org_users.html:46
+#: backlog/models.py:685 backlog/templates/backlog/org_users.html:46
 #: backlog/templates/backlog/project_users.html:45
 msgid "User"
 msgstr ""
 
-#: backlog/models.py:667
+#: backlog/models.py:687
 msgid "When"
 msgstr ""
 
-#: backlog/models.py:671
+#: backlog/models.py:691
 msgid "Story"
 msgstr ""
 
-#: backlog/models.py:682
+#: backlog/models.py:702
 msgid "Text"
 msgstr ""
 
-#: backlog/models.py:694
+#: backlog/models.py:714
 msgid "Day"
 msgstr ""
 
-#: backlog/models.py:695
+#: backlog/models.py:715
 msgid "Data"
 msgstr ""
 
@@ -248,7 +253,7 @@ msgstr ""
 msgid "n/a"
 msgstr ""
 
-#: backlog/views.py:113 backlog/views.py:666
+#: backlog/views.py:113 backlog/views.py:682
 #: backlog/management/commands/easy_import.py:114
 msgid "Main backlog"
 msgstr ""
@@ -261,8 +266,8 @@ msgstr ""
 msgid "Organization successfully created."
 msgstr ""
 
-#: backlog/views.py:141 backlog/views.py:230 backlog/views.py:595
-#: backlog/views.py:644 backlog/views.py:906 backlog/views.py:1052
+#: backlog/views.py:141 backlog/views.py:230 backlog/views.py:611
+#: backlog/views.py:660 backlog/views.py:922 backlog/views.py:1107
 #: storymap/views.py:41
 msgid "Not authorized"
 msgstr ""
@@ -275,83 +280,83 @@ msgstr ""
 msgid "Organization successfully deleted."
 msgstr ""
 
-#: backlog/views.py:273 backlog/views.py:954
+#: backlog/views.py:273 backlog/views.py:970
 msgid "Backlog successfully created."
 msgstr ""
 
-#: backlog/views.py:296 backlog/views.py:989
+#: backlog/views.py:296 backlog/views.py:1005
 msgid "Backlog successfully updated."
 msgstr ""
 
-#: backlog/views.py:353
+#: backlog/views.py:369
 msgid "Backlog is not empty, unable to delete."
 msgstr ""
 
-#: backlog/views.py:367 backlog/views.py:1013
+#: backlog/views.py:383 backlog/views.py:1029
 msgid "Backlog successfully deleted."
 msgstr ""
 
-#: backlog/views.py:387 backlog/views.py:1032
+#: backlog/views.py:403 backlog/views.py:1048
 msgid "Backlog successfully archived."
 msgstr ""
 
-#: backlog/views.py:520 backlog/views.py:1419
+#: backlog/views.py:536 backlog/views.py:1474
 msgid "Invitation has been sent to {0}."
 msgstr ""
 
-#: backlog/views.py:574 backlog/views.py:1510
+#: backlog/views.py:590 backlog/views.py:1565
 msgid "User {0} has been revoked."
 msgstr ""
 
-#: backlog/views.py:667
+#: backlog/views.py:683
 msgid "This is the main backlog for the project."
 msgstr ""
 
-#: backlog/views.py:674
+#: backlog/views.py:690
 msgid "Completed stories"
 msgstr ""
 
-#: backlog/views.py:675
+#: backlog/views.py:691
 msgid "This is the backlog to hold completed stories."
 msgstr ""
 
-#: backlog/views.py:706
+#: backlog/views.py:722
 msgid "Project successfully created."
 msgstr ""
 
-#: backlog/views.py:726
+#: backlog/views.py:742
 msgid "Project successfully updated."
 msgstr ""
 
-#: backlog/views.py:741
+#: backlog/views.py:757
 msgid "Project successfully deleted."
 msgstr ""
 
-#: backlog/views.py:1099
+#: backlog/views.py:1154
 msgid "Backlog successfully set as main."
 msgstr ""
 
-#: backlog/views.py:1214
+#: backlog/views.py:1269
 msgid "Story successfully created."
 msgstr ""
 
-#: backlog/views.py:1268
+#: backlog/views.py:1323
 msgid "Story successfully updated."
 msgstr ""
 
-#: backlog/views.py:1288
+#: backlog/views.py:1343
 msgid "Story successfully deleted."
 msgstr ""
 
-#: backlog/views.py:1538
+#: backlog/views.py:1593
 msgid "You are now a member of this project"
 msgstr ""
 
-#: backlog/views.py:1541
+#: backlog/views.py:1596
 msgid "You are now a member of this organization"
 msgstr ""
 
-#: backlog/views.py:1555
+#: backlog/views.py:1610
 msgid "Invitation has been declined"
 msgstr ""
 
@@ -377,6 +382,9 @@ msgstr ""
 #: backlog/templates/backlog/org_form.html:7
 #: backlog/templates/backlog/project_form.html:7
 #: backlog/templates/backlog/story_form.html:10
+#: backlog/templates/live/project_dashboard.html:3
+#: backlog/templates/live/project_dashboard.html:6
+#: backlog/templates/live/project_dashboard.html:15
 #: blog/templates/blog/blog.html:6 docs/templates/docs/docs.html:8
 #: storymap/templates/storymap/storymap_create.html:7 templates/base.html:30
 msgid "Dashboard"
@@ -481,11 +489,12 @@ msgstr ""
 msgid "edit"
 msgstr ""
 
-#: backlog/templates/backlog/_story_big_cell.html:21
+#: backlog/templates/backlog/_story_big_cell.html:22
+#: backlog/templates/backlog/_story_big_cell.html:37
 msgid "No acceptance criterias"
 msgstr ""
 
-#: backlog/templates/backlog/_story_big_cell.html:28
+#: backlog/templates/backlog/_story_big_cell.html:29
 msgid "No comments"
 msgstr ""
 
@@ -1014,6 +1023,36 @@ msgstr ""
 msgid "Total:"
 msgstr ""
 
+#: backlog/templates/live/project_dashboard.html:8
+#: blog/templates/blog/blog.html:8 docs/templates/docs/docs.html:10
+#: templates/base.html:32 templates/home.html:3
+msgid "Home"
+msgstr ""
+
+#: backlog/templates/live/project_dashboard.html:10
+#: blog/templates/blog/blog.html:10 docs/templates/docs/docs.html:12
+#: templates/base.html:34
+msgid "Documentation"
+msgstr ""
+
+#: backlog/templates/live/project_dashboard.html:11
+#: blog/templates/blog/blog.html:11 docs/templates/docs/docs.html:13
+#: templates/base.html:35
+msgid "News"
+msgstr ""
+
+#: backlog/templates/live/project_dashboard.html:17
+msgid "In progress stories"
+msgstr ""
+
+#: backlog/templates/live/project_dashboard.html:27
+msgid "Next stories in this iteration"
+msgstr ""
+
+#: backlog/templates/live/project_dashboard.html:36
+msgid "Scheduled stories"
+msgstr ""
+
 #: backlog/templates/users/auth_confirm_delete.html:5
 #: backlog/templates/users/auth_confirm_delete.html:30
 msgid "Revoke user"
@@ -1054,7 +1093,7 @@ msgstr ""
 #, python-format
 msgid ""
 "Invitation to project '%(project)s' has been accepted. You can access it "
-"using the url below.\" "
+"using the url below. "
 msgstr ""
 
 #: backlog/templates/users/invitation_completed.html:8
@@ -1065,7 +1104,7 @@ msgstr ""
 #, python-format
 msgid ""
 "Invitation to organization '%(org)s' has been accepted. You can access it "
-"using the url below.\" "
+"using the url below. "
 msgstr ""
 
 #: backlog/templates/users/invitation_completed.html:11
@@ -1190,21 +1229,6 @@ msgstr ""
 
 #: blog/templates/blog/blog.html:3
 msgid "Blog"
-msgstr ""
-
-#: blog/templates/blog/blog.html:8 docs/templates/docs/docs.html:10
-#: templates/base.html:32 templates/home.html:3
-msgid "Home"
-msgstr ""
-
-#: blog/templates/blog/blog.html:10 docs/templates/docs/docs.html:12
-#: templates/base.html:34
-msgid "Documentation"
-msgstr ""
-
-#: blog/templates/blog/blog.html:11 docs/templates/docs/docs.html:13
-#: templates/base.html:35
-msgid "News"
 msgstr ""
 
 #: core/admin.py:18

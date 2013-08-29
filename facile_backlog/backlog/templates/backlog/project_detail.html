@@ -27,6 +27,16 @@
 		{% endif %}
 	</div>
 
+	{% if dashboard_url %}
+		<h4>
+			{% blocktrans %}Public dashboard URL{% endblocktrans %}
+		</h4>
+			<pre>{{ dashboard_url }}</pre>
+	{% else %}
+		<div class="alert">
+		</div>
+	{% endif %}
+
 <div class="row-fluid">
 
 	<div class="span6">

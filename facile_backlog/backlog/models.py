@@ -331,6 +331,14 @@ class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
         related_name='projects',
         through='AuthorizationAssociation'
     )
+    slug = models.SlugField(
+        _("Public name"), max_length=128, blank=True, help_text=_(
+            """
+            This field is used to publish a public read-only dashboard for
+            this project. Let this field blank to disable this dashboard.
+            This field can only contains alphanumeric characters and _ . or -
+            """
+    ))
 
     class Meta:
         ordering = ("name",)
@@ -439,6 +447,25 @@ class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
         statistics.data = data
         statistics.save()
         return statistics, create
+
+    def unique_slugify(self, name):
+        ok = False
+        slug_name = name
+        index = 1
+        while not ok:
+            ok = not Project.objects.filter(
+                slug=slug_name
+            ).exclude(pk=self.pk).exists()
+            if ok:
+                self.slug = slug_name
+            else:
+                slug_name = "{0}-{1}".format(name, index)
+                index += 1
+
+    def save(self, **kwargs):
+        if self.slug:
+            self.unique_slugify(self.slug)
+        super(Project, self).save(**kwargs)
 
 
 class Backlog(StatsMixin, WithThemeMixin, models.Model):

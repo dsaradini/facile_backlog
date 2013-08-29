@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}{% trans "Project" %} - {{ project.name }} - {% trans "Dashboard" %}{% endblock %}
+{% block navbar %}
+	{% if request.user.is_authenticated %}
+		<li><a href="{% url "dashboard" %}">{% trans "Dashboard" %}</a></li>
+	{% else %}
+		<li><a href="{% url "home" %}">{% trans "Home" %}</a></li>
+	{% endif %}
+		<li><a href="{% url "docs_index" %}">{% trans "Documentation" %}</a></li>
+	<li><a href="{% url "blog_index" %}">{% trans "News" %}</a></li>
+{% endblock %}
+
+{% block content %}
+	<h1><span class="small muted">{% trans "Dashboard" %}</span> {{ project.name }}</h1>
+	<h2>{% trans "In progress stories" %}</h2>
+	<div class="dashboard-stories-list">
+		<div>
+			{% for story in current_stories %}
+				{% include "backlog/_story_big_cell.html" %}
+			{% empty %}
+				<p class="alert">
+					{% trans "There is currently no story in progress for this sprint" %}
+				</p>
+			{% endfor %}
+		</div>
+	</div>
+
+	{% if project.org_id %}
+	<h2>{% trans "Next stories in this iteration" %}</h2>
+	<div class="dashboard-stories-list">
+		<div>
+			{% for story in next_stories %}
+				{% include "backlog/_story_big_cell.html" %}
+			{% empty %}
+				<p class="alert">
+					{% trans "There is no story scheduled for this sprint" %}
+				</p>
+			{% endfor %}
+		</div>
+	</div>
+	{% endif %}
+
+	<h2>{% trans "Scheduled stories" %}</h2>
+	<div class="dashboard-stories-list">
+		<div>
+			{% for story in scheduled_stories %}
+				{% include "backlog/_story_big_cell.html" %}
+			{% empty %}
+				<p class="alert">
+					{% trans "There is no story scheduled" %}
+				</p>
+			{% endfor %}
+		</div>
+	</div>
+
+{% endblock %}

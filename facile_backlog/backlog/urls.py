@@ -12,7 +12,8 @@ from .views import (project_detail, project_create, project_edit,
                     org_create, org_edit, org_detail, org_delete, org_users,
                     org_backlog_edit, org_backlog_create, org_backlogs,
                     org_backlog_delete, org_stories, project_backlog_archive,
-                    org_backlog_archive, org_invite_user, org_auth_delete)
+                    org_backlog_archive, org_invite_user, org_auth_delete,
+                    project_dashboard)
 
 # root
 urlpatterns = patterns(
@@ -128,6 +129,10 @@ urlpatterns += patterns(
     url(r'^projects/(?P<project_id>[\d]+)/backlogs/new/$',
         project_backlog_create,
         name='project_backlog_create'),
+
+    url(r'^project/(?P<project_slug>[\w:@\.-]+)/dashboard.html$',
+        project_dashboard,
+        name='project_dashboard'),
 )
 
 
