@@ -1065,7 +1065,7 @@ msgstr ""
 #, python-format
 msgid ""
 "Invitation to organization '%(org)s' has been accepted. You can access it "
-"using the url below.\" "
+"using the url below."
 msgstr ""
 
 #: backlog/templates/users/invitation_completed.html:11

@@ -660,7 +660,7 @@ msgstr "déconnecté"
 #: backlog/templates/backlog/project_backlogs.html:258
 #: storymap/templates/storymap/storymap_detail.html:688
 msgid "Online users"
-msgstr "Utilisateurs \"online\""
+msgstr "Utilisateurs online"
 
 #: backlog/templates/backlog/backlog_form.html:3
 #: backlog/templates/backlog/backlog_form.html:14
@@ -1081,7 +1081,7 @@ msgstr "Invitation acceptée"
 #, python-format
 msgid ""
 "Invitation to project '%(project)s' has been accepted. You can access it "
-"using the url below.\" "
+"using the url below."
 msgstr ""
 "L'invitation a rejoindre le projet '%(project)s' à été acceptée. Vous pouvez "
 "y accéder en cliquant sur le lien ci-dessous."
@@ -1094,7 +1094,7 @@ msgstr "Projet:"
 #, python-format
 msgid ""
 "Invitation to organization '%(org)s' has been accepted. You can access it "
-"using the url below.\" "
+"using the url below."
 msgstr ""
 "L'invitation a l'organisation '%(org)s' à été acceptée. Vous pouvez y "
 "accéder en cliquant sur le lien ci-dessous."
@@ -1636,31 +1636,31 @@ msgstr "PMV"
 
 #: storymap/views.py:100
 msgid "created a story map"
-msgstr "a crée une \"story map\""
+msgstr "a crée une story map"
 
 #: storymap/views.py:103
 msgid "Story map successfully created."
-msgstr "\"Story map\" créée avec succès"
+msgstr "Story map créée avec succès"
 
 #: storymap/views.py:186
 #, python-format
 msgid "created story map's '%s'"
-msgstr "a créé un element de \"story map\" de type %s"
+msgstr "a créé un element de story map de type %s"
 
 #: storymap/views.py:193
 #, python-format
 msgid "updated story map's '%s'"
-msgstr "a modifié un element de \"story map\" de type %s"
+msgstr "a modifié un element de story map de type %s"
 
 #: storymap/views.py:201 storymap/views.py:213
 #, python-format
 msgid "re-order story map's '%s'"
-msgstr "a re-ordonné un element de \"story map\" de type %s"
+msgstr "a re-ordonné un element de story map de type %s"
 
 #: storymap/views.py:205
 #, python-format
 msgid "deleted story map's '%s'"
-msgstr "a supprimé un element de \"story map\" de type %s"
+msgstr "a supprimé un element de story map de type %s"
 
 #: storymap/templates/storymap/_story.html:12
 msgid "Set color"
@@ -1674,12 +1674,12 @@ msgstr "Ajouter un scénario"
 #: storymap/templates/storymap/storymap_create.html:12
 #: storymap/templates/storymap/storymap_create.html:17
 msgid "Create story map"
-msgstr "Créer une \"story map\""
+msgstr "Créer une story map"
 
 #: storymap/templates/storymap/storymap_create.html:22
 msgid "Your project does not have a story map yet, do you want to create it?"
 msgstr ""
-"Votre projet n'a pas encore de \"story map\", voulez-vous en créer une?"
+"Votre projet n'a pas encore de story map, voulez-vous en créer une?"
 
 #: storymap/templates/storymap/storymap_create.html:25
 msgid "Yes, create story map"
@@ -1691,7 +1691,7 @@ msgstr "Non, merci."
 
 #: storymap/templates/storymap/storymap_detail.html:4
 msgid "Story Map"
-msgstr "\"Story map\""
+msgstr "Story map"
 
 #: storymap/templates/storymap/storymap_detail.html:25
 msgid "Add theme"
