@@ -87,15 +87,19 @@ class APITest_Story(JsonTestCase):
     def test_story_detail(self):
         user = UserFactory.create(email="test@test.ch")
         wrong_user = UserFactory.create()
+        read_only_user = UserFactory.create()
         story = create_sample_story(user, story_kwargs={
             'as_a': "Test writer",
             'i_want_to': "be able to run test",
             'so_i_can': "know if my tests pass"
         })
+        story.project.add_user(read_only_user)
         url = reverse("api_story_detail", args=(
             story.backlog_id, story.pk))
         self.client.get(url, status=401)
         self.client.get(url, status=404, user=wrong_user)
+        response = self.client.get(url, user=read_only_user)
+        self.assertJsonKeyEqual(response, 'as_a', "Test writer")
         response = self.client.get(url, user=user)
         self.assertJsonKeyEqual(response, 'as_a', "Test writer")
         self.assertJsonKeyEqual(response, 'id', story.pk)

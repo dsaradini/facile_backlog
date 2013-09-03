@@ -25,7 +25,7 @@ class InnerProjectSerializer(serializers.ModelSerializer):
 
 class StorySerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField('_url')
-    code = serializers.FloatField(read_only=True, source='code')
+    code = serializers.CharField(read_only=True, source='code')
     backlog_id = serializers.SerializerMethodField('_backlog_id')
     project_id = serializers.SerializerMethodField('_proj_id')
 
