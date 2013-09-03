@@ -49,6 +49,8 @@ class StoryTest(WebTest):
         self.assertContains(response, u"Story successfully created.")
         self.assertContains(response, u"maintain my code")
         story = UserStory.objects.get()
+        self.assertEqual(story.code, u"{0}-{1}".format(backlog.project.code,
+                                                       story.number))
         self.assertTrue(UserStory.objects.exists())
         event = Event.objects.get(
             project=backlog.project,
@@ -85,6 +87,7 @@ class StoryTest(WebTest):
             'status': 'accepted',
             'theme': 'Main theme',
             'color': '#7bd148',
+            'code': 'BROUSOUF-01'
         }.iteritems():
             form[key] = value
         response = form.submit().follow()
@@ -100,6 +103,7 @@ class StoryTest(WebTest):
         self.assertEqual(story.status, "accepted")
         self.assertEqual(story.theme, "Main theme")
         self.assertEqual(story.color, "#7bd148")
+        self.assertEqual(story.code, "BROUSOUF-01")
         events = Event.objects.filter(
             story=story
         )

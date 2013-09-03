@@ -112,7 +112,6 @@ class StoryEditionForm(BackMixin, ModelForm):
         self.fields['as_a'].widget = TextInput()
         self.fields['as_a'].widget.attrs['autofocus'] = ''
         self.fields['color'].widget.attrs['colorpicker'] = 'true'
-
         self.fields['as_a'].widget.attrs['placeholder'] = _("a user")
         self.fields['i_want_to'].widget.attrs['placeholder'] = _(
             "be able to input text here")
@@ -132,7 +131,7 @@ class StoryEditionForm(BackMixin, ModelForm):
     class Meta:
         model = UserStory
         fields = ("as_a", "i_want_to", "so_i_can", "acceptances", "points",
-                  "status", "theme", "color", "comments")
+                  "status", "code", "theme", "color", "comments")
 
     def clean_points(self):
         value = self.cleaned_data['points']
@@ -143,6 +142,10 @@ class StoryEditionForm(BackMixin, ModelForm):
 
 
 class StoryCreationForm(StoryEditionForm):
+
+    class Meta(StoryEditionForm.Meta):
+        fields = ("as_a", "i_want_to", "so_i_can", "acceptances", "points",
+                  "status", "theme", "color", "comments")
 
     def __init__(self, project, backlog=None, *args, **kwargs):
         super(StoryCreationForm, self).__init__(*args, **kwargs)

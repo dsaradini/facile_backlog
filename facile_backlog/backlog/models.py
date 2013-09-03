@@ -571,7 +571,7 @@ class UserStory(models.Model):
     order = models.PositiveIntegerField()
     status = models.CharField(_("Status"), max_length=20, default=Status.TODO,
                               choices=STATUS_CHOICE)
-
+    code = models.CharField(_("Code"), max_length=20, null=False, blank=False)
     # DOT NOT PUT META ORDERING HERE it will break the distinct theme
     # fetching !
 
@@ -589,14 +589,15 @@ class UserStory(models.Model):
                 'story_counter', flat=True
             )[0]
             self.number = self.project.story_counter
+            if not self.code:
+                self.code = self.get_initial_code()
+
+    def get_initial_code(self):
+        return u"{0}-{1}".format(self.project.code, self.number)
 
     def save(self, *args, **kwargs):
         self.setup_number()
         return super(UserStory, self).save(*args, **kwargs)
-
-    @property
-    def code(self):
-        return u"{0}-{1}".format(self.project.code, self.number)
 
     @property
     def text(self):
