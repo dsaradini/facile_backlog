@@ -228,7 +228,7 @@ Response
 ]
 </code>
 
-`/api/projects/[project-id]/backlogs/[backlog-id]/stories/[story-id]/`
+`/api/backlogs/[backlog-id]/stories/[story-id]/`
 ====================================================================
 **Details on a given story**
 
