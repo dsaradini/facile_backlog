@@ -1,0 +1,98 @@
+# -*- coding: utf-8 -*-
+import datetime
+from south.db import db
+from south.v2 import SchemaMigration
+from django.db import models
+
+
+class Migration(SchemaMigration):
+
+    def forwards(self, orm):
+        # Adding model 'Dashboard'
+        db.create_table(u'dashboard_dashboard', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('project', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['backlog.Project'])),
+            ('mode', self.gf('django.db.models.fields.CharField')(max_length=16)),
+            ('show_in_progress', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('show_next', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('show_scheduled', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('slug', self.gf('django.db.models.fields.SlugField')(max_length=128, blank=True)),
+        ))
+        db.send_create_signal(u'dashboard', ['Dashboard'])
+
+        # Adding M2M table for field authorizations on 'Dashboard'
+        m2m_table_name = db.shorten_name(u'dashboard_dashboard_authorizations')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('dashboard', models.ForeignKey(orm[u'dashboard.dashboard'], null=False)),
+            ('user', models.ForeignKey(orm[u'core.user'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['dashboard_id', 'user_id'])
+
+
+    def backwards(self, orm):
+        # Deleting model 'Dashboard'
+        db.delete_table(u'dashboard_dashboard')
+
+        # Removing M2M table for field authorizations on 'Dashboard'
+        db.delete_table(db.shorten_name(u'dashboard_dashboard_authorizations'))
+
+
+    models = {
+        u'backlog.authorizationassociation': {
+            'Meta': {'unique_together': "(('user', 'project'), ('user', 'org'))", 'object_name': 'AuthorizationAssociation'},
+            'date_joined': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_admin': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'org': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'authorizations'", 'null': 'True', 'to': u"orm['backlog.Organization']"}),
+            'project': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'authorizations'", 'null': 'True', 'to': u"orm['backlog.Project']"}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['core.User']"})
+        },
+        u'backlog.organization': {
+            'Meta': {'ordering': "('name',)", 'object_name': 'Organization'},
+            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'email': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
+            'users': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'organizations'", 'symmetrical': 'False', 'through': u"orm['backlog.AuthorizationAssociation']", 'to': u"orm['core.User']"}),
+            'web_site': ('django.db.models.fields.CharField', [], {'max_length': '256', 'blank': 'True'})
+        },
+        u'backlog.project': {
+            'Meta': {'ordering': "('name',)", 'object_name': 'Project'},
+            'active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'code': ('django.db.models.fields.CharField', [], {'max_length': '5'}),
+            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'last_modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'auto_now': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
+            'org': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'projects'", 'null': 'True', 'to': u"orm['backlog.Organization']"}),
+            'story_counter': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'blank': 'True'}),
+            'users': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'projects'", 'symmetrical': 'False', 'through': u"orm['backlog.AuthorizationAssociation']", 'to': u"orm['core.User']"})
+        },
+        u'core.user': {
+            'Meta': {'object_name': 'User'},
+            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'email': ('django.db.models.fields.EmailField', [], {'unique': 'True', 'max_length': '255', 'db_index': 'True'}),
+            'full_name': ('django.db.models.fields.CharField', [], {'max_length': '1023', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'})
+        },
+        u'dashboard.dashboard': {
+            'Meta': {'object_name': 'Dashboard'},
+            'authorizations': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'dashboards'", 'symmetrical': 'False', 'to': u"orm['core.User']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'mode': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
+            'project': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['backlog.Project']"}),
+            'show_in_progress': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'show_next': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'show_scheduled': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '128', 'blank': 'True'})
+        }
+    }
+
+    complete_apps = ['dashboard']

@@ -36,6 +36,8 @@ urlpatterns = patterns(
 
     url(r'^storymap/', include('facile_backlog.storymap.urls')),
 
+    url(r'^', include('facile_backlog.dashboard.urls')),
+
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^404$', page_404),

@@ -43,11 +43,10 @@ class ProjectEditionForm(ModelForm):
         super(ProjectEditionForm, self).__init__(*args, **kwargs)
         self.fields['name'].widget.attrs['autofocus'] = ''
         self.fields['name'].widget.attrs["autocomplete"] = 'off'
-        self.fields['slug'].widget.attrs["autocomplete"] = 'off'
 
     class Meta:
         model = Project
-        fields = ["name", "code", "slug",  "description"]
+        fields = ["name", "code",  "description"]
 
 
 class ProjectCreationForm(ProjectEditionForm):

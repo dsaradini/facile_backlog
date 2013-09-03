@@ -1055,63 +1055,6 @@ class ProjectBacklogArchive(ProjectBacklogMixin, generic.DeleteView):
 project_backlog_archive = login_required(ProjectBacklogArchive.as_view())
 
 
-class ProjectDashboard(generic.TemplateView):
-    template_name = "live/project_dashboard.html"
-
-    def dispatch(self, request, *args, **kwargs):
-        project_slug = kwargs['project_slug']
-        self.project = get_object_or_404(Project, slug=project_slug)
-        self.request = request
-        response = super(ProjectDashboard,
-                         self).dispatch(request, *args, **kwargs)
-        return response
-
-    def get_context_data(self, **kwargs):
-        context = super(ProjectDashboard, self).get_context_data(**kwargs)
-        context['project'] = self.project
-        if self.project.org_id:
-            main_backlog = self.project.org.main_backlog
-        else:
-            main_backlog = self.project.main_backlog
-        if main_backlog:
-            context['current_stories'] = main_backlog.stories.filter(
-                status=Status.IN_PROGRESS,
-                project=self.project,
-            ).order_by("order").all()
-            if self.project.org_id:
-                context['next_stories'] = main_backlog.stories.filter(
-                    status=Status.TODO,
-                    project=self.project,
-                ).order_by("order").all()
-
-        if self.project.org_id:
-            # this is tricky as stories can be in the organization backlog
-            # (futur sprints )
-            # or in project main backlog
-            org_stories = self.project.org.stories.filter(
-                status=Status.TODO,
-                backlog__org=self.project.org,
-                backlog__is_archive=False,
-                backlog__is_main=False,
-            )
-            if main_backlog:
-                org_stories.exclude(backlog=main_backlog)
-            org_stories = org_stories.order_by("order").all()
-            if self.project.main_backlog:
-                plus_stories = self.project.main_backlog.stories.filter(
-                    status=Status.TODO
-                ).order_by("order").all()
-                all_stories = list(itertools.chain(org_stories, plus_stories))
-                org_stories = all_stories
-            context['scheduled_stories'] = org_stories
-        else:
-            context['scheduled_stories'] = \
-                self.project.main_backlog.stories.filter(
-                    status=Status.TODO
-                ).order_by("order").all()
-        return context
-project_dashboard = ProjectDashboard.as_view()
-
 #############
 # Backlogs #
 ###########
