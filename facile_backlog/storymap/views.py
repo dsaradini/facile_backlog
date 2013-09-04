@@ -119,6 +119,7 @@ STORY_COLORS = (
     "#fdd",
     "#cdf",
     "#dfd",
+    "#ffdead"
 )
 TARGETS = {
     'story': (Story, False, "storymap/_story_cell.html"),

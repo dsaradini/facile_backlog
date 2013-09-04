@@ -145,33 +145,31 @@ textarea.fit {
 $remover-size: 16px;
 $graber-size: 0px;
 
+.story-cell {
+	textarea {
+		min-height: 36px !important;
+	}
+}
 .theme-cell, .phase-cell, .story-cell {
 	position: relative;
 	box-sizing: border-box;
 	*:focus{
 		outline: 0;
 	}
-	/*
-	&:before {
-		content: " ";
-		position:absolute;
-		left:0px;
-		top:0px;
-		bottom:0px;
-		width: $graber-size;
-		border-right:1px solid rgba(black, 0.2);
-		cursor: pointer;
-		background-image: url('../img/grab.png');
+	.cell-container {
+		position:relative;
+		height: 100%;
 	}
-	*/
 	.cell-content {
 		margin-left: $graber-size + 3px;
 		padding-right: $remover-size;
+		text-align: center;
 		textarea {
 			padding: 0px !important;
 			margin: 0px !important;
 			min-height: 12px;
 			resize: vertical;
+			text-align: center;
 		}
 	}
 	.drop-action {
