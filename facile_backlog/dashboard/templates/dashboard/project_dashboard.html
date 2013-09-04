@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load sekizai_tags static %}
 
 {% block title %}{% trans "Project" %} - {{ project.name }} - {% trans "Dashboard" %}{% endblock %}
 {% block navbar %}
@@ -12,10 +13,15 @@
 {% endblock %}
 
 {% block content %}
-<div class="row-fluid">
-	<div>
-		<h1><span class="small muted">{% trans "Project status" %}</span> {{ project.name }}</h1>
-	</div>
+{% addtoblock "js" %}
+<script src="{% static "core/js/highcharts.js" %}"></script>
+{% include "graph/_pie_status.html" with graph_title=" " series=project_status_pie element_id="#graph-project-pie" %}
+{% endaddtoblock %}
+
+<h1><span class="small muted">{% trans "Project status" %}</span> {{ project.name }}</h1>
+
+<div class="row row-fluid">
+
 	<div class="span8">
 	{% if dashboard.show_in_progress %}
 		<h2>{% trans "In progress stories" %}</h2>
@@ -64,8 +70,7 @@
 		</div>
 	{% endif %}
 	</div>
-	<div class="span4">
-		Bla bla
+	<div class="span4 graph400" id="graph-project-pie">
 	</div>
 </div>
 {% endblock %}

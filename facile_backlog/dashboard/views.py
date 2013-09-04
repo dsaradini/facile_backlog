@@ -5,9 +5,16 @@ from django.shortcuts import get_object_or_404
 from django.views import generic
 
 
-from ..backlog.models import Status
+from ..backlog.models import Status, status_for, STATUS_COLORS, STATUS_CHOICE
 from models import Dashboard
 
+
+def pie_element(name, value):
+    return {
+        'name': status_for(name),
+        'color': STATUS_COLORS[name],
+        'y': value['stories']
+    }
 
 class ProjectDashboard(generic.TemplateView):
     template_name = "dashboard/project_dashboard.html"
@@ -71,5 +78,16 @@ class ProjectDashboard(generic.TemplateView):
                     self.project.main_backlog.stories.filter(
                         status=Status.TODO
                     ).order_by("order").all()
+
+        if True:
+            l = list(self.project.statistics.all()[:1])
+            if l:
+                info = l[0].data['all']
+                context['project_points'] = info['points']
+                context['project_stories'] = info['stories']
+                context['project_status_pie'] = \
+                    [pie_element(k, v) for k, v in info['by_status'].items()]
+            else:
+                context['project_status_pie'] = []
         return context
 project_dashboard = ProjectDashboard.as_view()
