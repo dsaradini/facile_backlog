@@ -160,6 +160,9 @@ class OrgDetail(OrgMixin, generic.DetailView):
         context['organization'] = self.organization
         context['projects'] = self.organization.projects.order_by(
             "-last_modified")
+        context['backlogs'] = self.organization.backlogs.order_by(
+            "-is_main", "is_archive", "order"
+        ).all()
         return context
 org_detail = login_required(OrgDetail.as_view())
 
