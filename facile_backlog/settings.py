@@ -30,7 +30,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASES = {'default': dj_database_url.config(
-    default="postgresql://backlogman:back01@localhost:5432/backlogman"
+    default="postgresql://postgres@localhost:5432/backlogman"
 )}
 
 AUTH_USER_MODEL = 'core.User'
