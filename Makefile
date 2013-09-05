@@ -13,16 +13,20 @@ test:
 travistest:
 	python manage.py test --traceback --noinput
 
+syncdb:
+	envdir envdir python manage.py syncdb --noinput
+	envdir envdir python manage.py migrate
+
 freshdb:
 	envdir envdir python manage.py reset_db --router=default --noinput
 	envdir envdir python manage.py syncdb --noinput
 	envdir envdir python manage.py migrate
+
 gunicorn:
 	envdir envdir gunicorn facile_backlog.wsgi -b 0.0.0.0:8000
 
 coverage:
-	envdir tests/envdir coverage run --source=facile_backlog manage.py test  --noinput
-
+	envdir tests/envdir coverage run --source=facile_backlog manage.py test --noinput
 
 showcover: coverage
 	coverage html
