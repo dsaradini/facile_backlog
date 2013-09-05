@@ -32,12 +32,17 @@ How to install
 - Install dependencies using **pip**
 	- ``pip install -r requirements.txt``
 
-- Create SQLlite database ( will be changed to Postgress soon... )
-	- ``python manage.py synchdb``
-	- Create the admin user
+- Create Postgres database
+    - ``createdb backlogman``
+    - ``make syncdb``
+
+- Create the admin user
+    - ``envdir envdir python manage.py createsuperuser``
 
 - (optional) Configure mail service in ``envdir/SMTP_URL`` and ``envdir/FROM_EMAIL``
 	- If you have no mail, you will have to copy the invitation and registration URLs in your console log.
+
+- Start your redis server
 
 - Start the server
 	- ``make start``
