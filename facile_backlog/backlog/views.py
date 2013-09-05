@@ -1,5 +1,4 @@
 import urllib
-import itertools
 
 from django.conf import settings
 from django.contrib import messages
@@ -637,10 +636,12 @@ class ProjectDetail(ProjectMixin, generic.DetailView):
         context['events'] = self.project.events.select_related(
             "backlog", "backlog__project", "project", "org", "story",
             "user", "story__project")[:10]
-        if self.project.slug:
-            context['dashboard_url'] = self.request.build_absolute_uri(
-                reverse("project_dashboard", args=(self.project.slug,))
-            )
+        if self.project.dashboards:
+            dashboards = self.project.dashboards.all()
+            for d in dashboards:
+                d.absolute_url = self.request.build_absolute_uri(
+                    reverse("project_dashboard", args=(d.slug,)))
+            context['dashboards'] = dashboards
         return context
 project_detail = login_required(ProjectDetail.as_view())
 

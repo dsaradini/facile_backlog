@@ -13,7 +13,7 @@ import factories
 class StatisticsTest(WebTest):
     def test_generate(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         project = factories.create_sample_project(user)
         backlog = factories.create_org_sample_backlog(user, backlog_kwargs={
             'project': project
@@ -77,7 +77,7 @@ class StatisticsTest(WebTest):
 
     def test_view(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         project = factories.create_sample_project(user)
         backlog = factories.create_org_sample_backlog(user, backlog_kwargs={
             'project': project
@@ -121,7 +121,7 @@ class StatisticsTest(WebTest):
 
     def test_command(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         project = factories.create_sample_project(user)
         self.assertFalse(project.statistics.exists())
         Command().handle()

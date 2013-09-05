@@ -21,21 +21,42 @@
 		{% endif %}
 	</div>
 
-	<div class="description span12">
+	<div class="description">
 		{% if project.description %}
 			{{ project.description|markdown }}
 		{% endif %}
 	</div>
 
-	{% if dashboard_url %}
-		<h4>
-			{% blocktrans %}Public dashboard URL{% endblocktrans %}
-		</h4>
-			<pre>{{ dashboard_url }}</pre>
-	{% else %}
-		<div class="alert">
-		</div>
-	{% endif %}
+	<div class="alert alert-block alert-neutral">
+
+		{% if dashboards %}
+			<strong>{% trans "Status dashboard:" %}</strong>&nbsp;
+			{% for dashboard in dashboards %}
+				{% if dashboard.mode == "public" %}
+					<span class="label label-success">{% trans "public" %}</span>
+				{% elif dashboard.mode == "private" %}
+					<span class="label label-inverse">{% trans "private" %}</span>
+				{% endif %}
+				<a target="backlogman_dash_{{ project.pk }}" href="{% url "project_dashboard" dashboard.slug %}" class="btn btn-mini muted"><i class="icon-eye-open"></i></a>
+				<code>{{ dashboard.absolute_url }}</code>
+					{% if project|can_admin:request.user %}
+						<small class="muted">[
+						<a class="btn-link" href="{% url "dashboard_edit" project.pk dashboard.pk %}">
+							{% trans "edit" %}
+						</a>|
+						<a class="btn-link" href="{% url "dashboard_delete" project.pk dashboard.pk %}">
+							{% trans "delete" %}
+						</a>
+						]</small>
+					{% endif %}
+			{% endfor %}
+		{% else %}
+			<span>{% trans "This project has currently no status dashboard" %}</span>
+			{% if project|can_admin:request.user %}
+				<a class="btn btn-small" href="{% url "dashboard_create" project.pk %}">{% trans "Create a status dashboard" %}</a>
+			{% endif %}
+		{% endif %}
+	</div>
 
 <div class="row-fluid">
 

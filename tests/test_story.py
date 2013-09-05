@@ -11,7 +11,7 @@ from . import factories
 class StoryTest(WebTest):
     def test_stories_list(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         backlog = factories.create_project_sample_backlog(user)
         story = factories.UserStoryFactory.create(backlog=backlog)
 
@@ -23,7 +23,7 @@ class StoryTest(WebTest):
 
     def test_story_create(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         backlog = factories.create_project_sample_backlog(user)
 
         url = reverse('story_create', args=(backlog.project.pk, backlog.pk))
@@ -62,7 +62,7 @@ class StoryTest(WebTest):
 
     def test_story_edit(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         story = factories.create_sample_story(user, story_kwargs={
             'points': 10,
             'status': 'to_do'
@@ -227,7 +227,7 @@ class AjaxTest(WebTest):
 
     def test_project_story_move(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         user_2 = factories.UserFactory.create(
             email='test_2@epyx.ch', password='pass')
         backlog = factories.create_project_sample_backlog(
@@ -271,7 +271,7 @@ class AjaxTest(WebTest):
 
     def test_org_story_move(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         user_2 = factories.UserFactory.create(
             email='test_2@epyx.ch', password='pass')
         backlog = factories.create_org_sample_backlog(user, backlog_kwargs={
@@ -325,7 +325,7 @@ class AjaxTest(WebTest):
 
     def test_story_move_back_to_main(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         org = factories.OrganizationFactory.create(
             owner=user
         )
@@ -363,7 +363,7 @@ class AjaxTest(WebTest):
 
     def test_project_to_org_story_move(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         org1 = factories.OrganizationFactory.create(
             owner=user
         )
@@ -401,7 +401,7 @@ class AjaxTest(WebTest):
 
     def test_org_to_project_story_move(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         org1 = factories.OrganizationFactory.create(
             owner=user
         )

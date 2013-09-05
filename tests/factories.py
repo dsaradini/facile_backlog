@@ -13,6 +13,8 @@ from facile_backlog.core.models import User
 from facile_backlog.storymap.models import StoryMap, Phase, Theme, Story
 from facile_backlog.storymap.views import STORY_COLORS
 
+from facile_backlog.dashboard.models import Dashboard
+
 from tests import rand_lorem_phrase, rand_email
 
 
@@ -256,3 +258,17 @@ class StoryFactory(Factory):
                 story_map=story_map
             )
         return super(StoryFactory, cls)._prepare(create, **kwargs)
+
+
+class DashboardFactory(Factory):
+    FACTORY_FOR = Dashboard
+
+    slug = Sequence(lambda n: "slug-{0}".format(n), type=str)
+
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        project = kwargs.get("project", None)
+        if not project:
+            user = kwargs.pop('user')
+            kwargs['project'] = create_sample_project(user)
+        return super(DashboardFactory, cls)._prepare(create, **kwargs)

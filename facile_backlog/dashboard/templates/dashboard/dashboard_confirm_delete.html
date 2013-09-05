@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}{% trans "Delete dashboard" %}{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+	<h1>{% blocktrans with project_name=dashboard.project.name %} "Delete dashboard for project {{project_name}}" {% endblocktrans %}</h1>
+	<div class="alert alert-danger">
+		{% trans "Are you sure you want to delete this dashboard?" %}
+		<h4>{% trans "This operation cannot be undone" %}</h4>
+	</div>
+	<form method="post" id="delete_form" action="{% url "dashboard_delete" dashboard.project_id dashboard.pk %}">
+		{% csrf_token %}
+		{{ form }}
+		<div class="submit-delete actions">
+			<button class="btn btn-danger" type="submit">{% trans "Delete this dashboard" %}</button>
+			<a class="btn btn-link" href="{% url "project_detail" dashboard.project.pk %}">{% trans "Cancel" %}</a>
+		</div>
+	</form>
+</div>
+{% endblock %}

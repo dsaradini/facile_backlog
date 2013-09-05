@@ -28,7 +28,7 @@
 		<div class="dashboard-stories-list">
 			<div>
 				{% for story in current_stories %}
-					{% include "backlog/_story_big_cell.html" %}
+					{% include "backlog/_story_big_cell.html" with disable_status_change=True %}
 				{% empty %}
 					<p class="alert">
 						{% trans "There is currently no story in progress for this sprint" %}
@@ -44,7 +44,7 @@
 		<div class="dashboard-stories-list">
 			<div>
 				{% for story in next_stories %}
-					{% include "backlog/_story_big_cell.html" %}
+					{% include "backlog/_story_big_cell.html" with disable_status_change=True %}
 				{% empty %}
 					<p class="alert">
 						{% trans "There is no story scheduled for this sprint" %}
@@ -60,7 +60,7 @@
 		<div class="dashboard-stories-list">
 			<div>
 				{% for story in scheduled_stories %}
-					{% include "backlog/_story_big_cell.html" %}
+					{% include "backlog/_story_big_cell.html" with disable_status_change=True %}
 				{% empty %}
 					<p class="alert">
 						{% trans "There is no story scheduled" %}
@@ -70,7 +70,11 @@
 		</div>
 	{% endif %}
 	</div>
-	<div class="span4 graph400" id="graph-project-pie">
-	</div>
+	{% if dashboard.show_story_status %}
+		<h2>{% trans "Stories status" %}</h2>
+		<div class="span4">
+			<div class="graph400" id="graph-project-pie"></div>
+		</div>
+	{% endif %}
 </div>
 {% endblock %}

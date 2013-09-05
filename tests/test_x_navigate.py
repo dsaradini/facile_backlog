@@ -12,7 +12,7 @@ class HomeTest(WebTest):
 
     def test_navigate(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         user_2 = factories.UserFactory.create()
         user_3 = factories.UserFactory.create()
         factories.create_sample_story(user)
@@ -48,7 +48,7 @@ class HomeTest(WebTest):
 
     def test_navigate_admin(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass', is_staff=True,
+            email='test@fake.ch', password='pass', is_staff=True,
             is_superuser=True)
 
         factories.create_sample_story(user)

@@ -14,12 +14,18 @@ class Dashboard(models.Model):
     MODE_CHOICE = (
         (DISABLED, _("Disabled")),
         (PUBLIC, _("Public")),
-        (PRIVATE,_("Private"))
+        (PRIVATE, _("Private"))
     )
 
-    project = models.ForeignKey(Project)
-    authorizations = models.ManyToManyField(
-        User, related_name="dashboards", blank=True)
+    project = models.ForeignKey(Project, related_name="dashboards",
+                                unique=True)
+    authorizations = models.TextField(
+        help_text=_(
+            "Comma separated list of user email authorized to see this "
+            "dashboard. Effective only if the dashboard is 'private'.",
+        ),
+        blank=True,
+    )
 
     mode = models.CharField(
         verbose_name=_("Mode"), max_length=16, choices=MODE_CHOICE,
@@ -38,21 +44,41 @@ class Dashboard(models.Model):
         default=True
     )
 
+    show_story_status = models.BooleanField(
+        help_text=_("Display stories status graphs"),
+        default=True
+    )
+
     slug = models.SlugField(
         _("URL name"), max_length=128, blank=True, help_text=_(
-            """
-            This field is used to publish a public read-only dashboard for
-            a project. This field can only contains alphanumeric
-            characters and _ . or -
-            """.strip()
+            "This is the dashboard URL extension path used to publish the "
+            "dashboard. /dashboard/[THIS FIELD]. "
+            "It can only contains alphanumeric "
+            "characters and _ . or -"
         ))
+
+    def is_authorized(self, user):
+        if user.is_anonymous():
+            return False
+        if self.project.can_read(user):
+            return True
+        emails = self.authorizations.lower().split(",")
+        for email in emails:
+            if email:
+                if '@' in email:
+                    if email == user.email:
+                        return True
+                else:
+                    if user.email.endswith(email):
+                        return True
+        return False
 
     def can_read(self, user):
         if self.mode == self.DISABLED:
             return False
         if self.mode == self.PUBLIC:
             return True
-        return user in self.authorizations
+        return self.is_authorized(user)
 
     def unique_slugify(self, name):
         ok = False

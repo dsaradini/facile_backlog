@@ -10,7 +10,7 @@ from . import factories
 class BacklogTest(WebTest):
     def test_backlog_list(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         backlog = factories.create_project_sample_backlog(user)
         for i in range(0, 10):
             factories.create_sample_story(user, backlog=backlog)
@@ -58,7 +58,7 @@ class BacklogTest(WebTest):
 
     def test_project_list(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         backlog = factories.create_project_sample_backlog(user)
         for i in range(0, 10):
             factories.create_sample_story(user, backlog=backlog)
@@ -74,7 +74,7 @@ class BacklogTest(WebTest):
 
     def test_org_list(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         org = factories.create_sample_organization(user)
         project = factories.create_sample_project(user, project_kwargs={
             'org': org

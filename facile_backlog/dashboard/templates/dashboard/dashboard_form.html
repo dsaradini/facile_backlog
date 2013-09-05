@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load sekizai_tags %}
+{% block title %}{% if object %}{% trans "Edit dashboard" %}{% else %}{% trans "Create status dashboard" %}{% endif %}{% endblock %}
+
+{% block content %}
+	<ul class="breadcrumb">
+		<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a><span class="divider">/</span></li>
+		{% if project %}
+			<li><a href="{% url "project_detail" project.pk %}"><i class="icon-book"></i> {{ project.name }}</a><span class="divider">/</span></li>
+		{% endif %}
+		{% if object %}
+			<li class="active"><i class="icon-book"></i> {% trans "Edit dashboard" %}<span class="divider"></span></li>
+		{% else %}
+			<li class="active"><i>{% trans "Create dashboard" %}</i><span class="divider"></span></li>
+		{% endif %}
+	</ul>
+
+<div class="row-fluid">
+	<div class="span6 offset3 base-form">
+		{% if not object %}
+			<h1>{% trans "Create status dashboard" %}</h1>
+			<div class="alert alert-info">
+				{% blocktrans %}A status dashboard is used to publish project information to users who are not members of the project; usually external customers or TV screen displays.{% endblocktrans %}
+			</div>
+		{% endif %}
+		<form method="post" id="edit_dashboard_form" action="{% if object %}{% url "dashboard_edit" project.pk object.pk %}{% else %}{% url "dashboard_create" project.pk %}{% endif %}">
+
+			{% include "form.html" %}
+			<div class="submit">
+				<input class="btn btn-success" type="submit" value="{% if object %}{% trans "Save changes" %}{% else %}{% trans "Create dashboard" %}{% endif %}">
+				<a class="btn btn-link" href="{% url "project_detail" project.pk %}">{% trans "Cancel" %}</a>
+			</div>
+		</form>
+	</div>
+</div>
+
+{% addtoblock "js" %}
+<script type="text/javascript">
+	$(function() {
+		var $auth_field = $("#id_authorizations").closest(".field");
+		var mode_changed = function() {
+			var mode = $(this).val();
+
+			if (mode=='private') {
+				$auth_field.show()
+			} else {
+				$auth_field.hide()
+			}
+		}
+		mode_changed.call($("#id_mode"));
+		$("#id_mode").change(mode_changed);
+	})
+</script>
+{% endaddtoblock %}
+{% endblock %}

@@ -440,25 +440,6 @@ class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
         statistics.save()
         return statistics, create
 
-    def unique_slugify(self, name):
-        ok = False
-        slug_name = name
-        index = 1
-        while not ok:
-            ok = not Project.objects.filter(
-                slug=slug_name
-            ).exclude(pk=self.pk).exists()
-            if ok:
-                self.slug = slug_name
-            else:
-                slug_name = "{0}-{1}".format(name, index)
-                index += 1
-
-    def save(self, **kwargs):
-        if self.slug:
-            self.unique_slugify(self.slug)
-        super(Project, self).save(**kwargs)
-
 
 class Backlog(StatsMixin, WithThemeMixin, models.Model):
     TODO = "todo"

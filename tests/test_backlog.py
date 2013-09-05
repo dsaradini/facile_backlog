@@ -10,7 +10,7 @@ from . import factories
 class BacklogTest(WebTest):
     def test_backlog_list(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         backlog = factories.create_project_sample_backlog(user)
         url = reverse("project_detail", args=(backlog.project.pk,))
         self.app.get(url, status=302)
@@ -19,7 +19,7 @@ class BacklogTest(WebTest):
 
     def test_project_backlog_create(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         project = factories.create_sample_project(user)
 
         url = reverse('project_backlog_create', args=(project.pk,))
@@ -55,7 +55,7 @@ class BacklogTest(WebTest):
 
     def test_org_backlog_create(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         org = factories.create_sample_organization(user)
 
         url = reverse('org_backlog_create', args=(org.pk,))
@@ -91,7 +91,7 @@ class BacklogTest(WebTest):
 
     def test_project_backlog_edit(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         wrong_user = factories.UserFactory.create()
         team_user = factories.UserFactory.create()
         backlog = factories.create_project_sample_backlog(
@@ -131,7 +131,7 @@ class BacklogTest(WebTest):
 
     def test_org_backlog_edit(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         wrong_user = factories.UserFactory.create()
         team_user = factories.UserFactory.create()
         backlog = factories.create_org_sample_backlog(
@@ -171,7 +171,7 @@ class BacklogTest(WebTest):
 
     def test_project_backlog_delete(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         backlog = factories.create_project_sample_backlog(
             user, backlog_kwargs={
                 'name': "My backlog"
@@ -195,7 +195,7 @@ class BacklogTest(WebTest):
 
     def test_org_backlog_delete(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         user_2 = factories.UserFactory.create()
         backlog = factories.create_org_sample_backlog(
             user, backlog_kwargs={
@@ -298,7 +298,7 @@ class BacklogTest(WebTest):
 
     def test_project_backlog_archive(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         user_2 = factories.UserFactory.create()
         backlog = factories.create_project_sample_backlog(
             user, backlog_kwargs={
@@ -327,7 +327,7 @@ class BacklogTest(WebTest):
 
     def test_org_backlog_archive(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         user_2 = factories.UserFactory.create()
         backlog = factories.create_org_sample_backlog(
             user, backlog_kwargs={

@@ -51,6 +51,7 @@
 						&nbsp;
 						{% endif %}
 					</div>
+					{% if not disable_status_change %}
 					<div class="status">
 						<div class="btn-group dropdown-right">
 							<a class="btn btn-link dropdown-toggle padding-reset" href="#" data-toggle="dropdown">
@@ -58,6 +59,7 @@
 									<i class="icon icon-circle"></i> <i class="icon-caret-down"></i>
 								</span>
 							</a>
+
 							<ul class="dropdown-menu">
 								{% for s in story.project.all_status %}
 									<li><a onclick="javascript:set_story_status(this, {{ story.pk }}, '{{ s.0 }}')">{{ s.1 }}</a></li>
@@ -65,6 +67,7 @@
 							</ul>
 						</div>
 					</div>
+					{% endif %}
 				</div>
 			</div>
     </div>

@@ -18,7 +18,7 @@ class ProjectTest(WebTest):
 
     def test_project_list(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         user_no = factories.UserFactory.create()
         factories.create_sample_project(user, project_kwargs={
             'active': False,
@@ -34,13 +34,13 @@ class ProjectTest(WebTest):
         })
 
         url = reverse("dashboard")
-        response = self.app.get(url, user="test@epyx.ch")
+        response = self.app.get(url, user="test@fake.ch")
         self.assertNotContains(response, 'WRONG NAME')
         self.assertContains(response, 'Good name')
 
     def test_project_create(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         url = reverse('project_create')
         # login redirect
         self.app.get(url, status=302)
@@ -68,7 +68,7 @@ class ProjectTest(WebTest):
 
     def test_org_project_create(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         user_2 = factories.UserFactory.create()
         user_3 = factories.UserFactory.create()
         org_ok = factories.create_sample_organization(user, org_kwargs={
@@ -122,7 +122,7 @@ class ProjectTest(WebTest):
 
     def test_project_edit(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         project = factories.create_sample_project(user, project_kwargs={
             'name': "My project",
             'description': "Project desc.",
@@ -155,7 +155,7 @@ class ProjectTest(WebTest):
 
     def test_project_delete(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         project = factories.create_sample_project(user)
         url = reverse('project_delete', args=(project.pk,))
         # login redirect

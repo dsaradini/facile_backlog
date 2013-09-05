@@ -11,31 +11,21 @@ class Migration(SchemaMigration):
         # Adding model 'Dashboard'
         db.create_table(u'dashboard_dashboard', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('project', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['backlog.Project'])),
-            ('mode', self.gf('django.db.models.fields.CharField')(max_length=16)),
+            ('project', self.gf('django.db.models.fields.related.ForeignKey')(related_name='dashboards', unique=True, to=orm['backlog.Project'])),
+            ('authorizations', self.gf('django.db.models.fields.TextField')(blank=True)),
+            ('mode', self.gf('django.db.models.fields.CharField')(default='public', max_length=16)),
             ('show_in_progress', self.gf('django.db.models.fields.BooleanField')(default=True)),
             ('show_next', self.gf('django.db.models.fields.BooleanField')(default=True)),
             ('show_scheduled', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('show_story_status', self.gf('django.db.models.fields.BooleanField')(default=True)),
             ('slug', self.gf('django.db.models.fields.SlugField')(max_length=128, blank=True)),
         ))
         db.send_create_signal(u'dashboard', ['Dashboard'])
-
-        # Adding M2M table for field authorizations on 'Dashboard'
-        m2m_table_name = db.shorten_name(u'dashboard_dashboard_authorizations')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('dashboard', models.ForeignKey(orm[u'dashboard.dashboard'], null=False)),
-            ('user', models.ForeignKey(orm[u'core.user'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['dashboard_id', 'user_id'])
 
 
     def backwards(self, orm):
         # Deleting model 'Dashboard'
         db.delete_table(u'dashboard_dashboard')
-
-        # Removing M2M table for field authorizations on 'Dashboard'
-        db.delete_table(db.shorten_name(u'dashboard_dashboard_authorizations'))
 
 
     models = {
@@ -84,13 +74,14 @@ class Migration(SchemaMigration):
         },
         u'dashboard.dashboard': {
             'Meta': {'object_name': 'Dashboard'},
-            'authorizations': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'dashboards'", 'symmetrical': 'False', 'to': u"orm['core.User']"}),
+            'authorizations': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'mode': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
-            'project': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['backlog.Project']"}),
+            'mode': ('django.db.models.fields.CharField', [], {'default': "'public'", 'max_length': '16'}),
+            'project': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'dashboards'", 'unique': 'True', 'to': u"orm['backlog.Project']"}),
             'show_in_progress': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'show_next': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'show_scheduled': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'show_story_status': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '128', 'blank': 'True'})
         }
     }

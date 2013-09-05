@@ -19,7 +19,7 @@ class StoryMapTest(WebTest):
 
     def test_create_story_map(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         user_no = factories.UserFactory.create()
         user_simple = factories.UserFactory.create()
         project = factories.create_sample_project(user, project_kwargs={
@@ -45,7 +45,7 @@ class StoryMapTest(WebTest):
 
     def test_story_map_display_guest(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         user_no = factories.UserFactory.create()
         user_guest = factories.UserFactory.create()
         project = factories.create_sample_project(user, project_kwargs={
@@ -106,7 +106,7 @@ class StoryMapAPITest(WebTest):
 
     def test_story_map_ajax(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         user_no = factories.UserFactory.create()
         user_guest = factories.UserFactory.create()
         project = factories.create_sample_project(user, project_kwargs={
@@ -259,7 +259,7 @@ class StoryMapAPITest(WebTest):
 
     def test_story_html(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         user_no = factories.UserFactory.create()
         user_guest = factories.UserFactory.create()
         project = factories.create_sample_project(user, project_kwargs={
@@ -292,7 +292,7 @@ class StoryMapAPITest(WebTest):
 
     def test_phase_html(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         user_no = factories.UserFactory.create()
         user_guest = factories.UserFactory.create()
         project = factories.create_sample_project(user, project_kwargs={
@@ -316,7 +316,7 @@ class StoryMapAPITest(WebTest):
 
     def test_theme_html(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         user_no = factories.UserFactory.create()
         user_guest = factories.UserFactory.create()
         project = factories.create_sample_project(user, project_kwargs={

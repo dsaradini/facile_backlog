@@ -7,12 +7,12 @@ import factories
 class LoginTest(WebTest):
     def test_login(self):
         factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         url = reverse('auth_login')
         response = self.app.get(url)
         self.assertContains(response, 'Login')
         form = response.form
-        form['username'] = 'test@epyx.ch'
+        form['username'] = 'test@fake.ch'
         form['password'] = 'lol'
         response = form.submit()
         self.assertFormError(response, 'form', None, [
@@ -26,14 +26,14 @@ class LoginTest(WebTest):
 
     def test_logout(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         url = reverse('auth_logout')
 
         self.app.get(url, user=user, status=405)
 
     def test_login_again(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         url = reverse('auth_login')
         response = self.app.get(url, user=user).follow()
         self.assertContains(response, 'You have no active stand-alone project')

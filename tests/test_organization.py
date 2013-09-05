@@ -11,7 +11,7 @@ from . import factories
 class OrganizationTest(WebTest):
     def test_dashboard(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         user_no = factories.UserFactory.create()
         factories.create_sample_organization(user_no, org_kwargs={
             'name': u'WRONG NAME',
@@ -21,14 +21,14 @@ class OrganizationTest(WebTest):
         })
 
         url = reverse("dashboard")
-        response = self.app.get(url, user="test@epyx.ch")
+        response = self.app.get(url, user="test@fake.ch")
         self.assertNotContains(response, 'You have no active organization')
         self.assertNotContains(response, 'WRONG NAME')
         self.assertContains(response, 'Good name')
 
     def test_org_detail(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         user_2 = factories.UserFactory.create()
         org = factories.create_sample_organization(user, org_kwargs={
             'name': u'Good name',
@@ -42,7 +42,7 @@ class OrganizationTest(WebTest):
 
     def test_org_create(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         url = reverse('org_create')
         # login redirect
         self.app.get(url, status=302)
@@ -75,7 +75,7 @@ class OrganizationTest(WebTest):
 
     def test_org_edit(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         org = factories.create_sample_organization(user, org_kwargs={
             'name': "My org",
             'description': "Org desc.",
@@ -110,7 +110,7 @@ class OrganizationTest(WebTest):
 
     def test_org_delete(self):
         user = factories.UserFactory.create(
-            email='test@epyx.ch', password='pass')
+            email='test@fake.ch', password='pass')
         org = factories.create_sample_organization(user)
         url = reverse('org_delete', args=(org.pk,))
         # login redirect
