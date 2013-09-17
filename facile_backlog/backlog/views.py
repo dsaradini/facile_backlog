@@ -752,7 +752,7 @@ class ProjectEdit(ProjectMixin, generic.UpdateView):
         )
         messages.success(self.request,
                          _("Project successfully updated."))
-        return redirect(reverse("dashboard"))
+        return redirect(reverse("project_detail", args=(self.object.pk,)))
 project_edit = login_required(ProjectEdit.as_view())
 
 
