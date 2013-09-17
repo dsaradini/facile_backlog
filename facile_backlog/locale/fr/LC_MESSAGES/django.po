@@ -386,7 +386,7 @@ msgstr "Ceci est le backlog principal du projet"
 #: docs/templates/docs/docs.html:8
 #: storymap/templates/storymap/storymap_create.html:7 templates/base.html:30
 msgid "Dashboard"
-msgstr "Tableau de bord"
+msgstr "Cockpite"
 
 #: backlog/templates/backlog/_backlog_lane.html:25
 #: backlog/templates/backlog/backlog_detail.html:31

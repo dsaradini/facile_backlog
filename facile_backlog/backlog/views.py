@@ -645,6 +645,9 @@ class ProjectDetail(ProjectMixin, generic.DetailView):
                 d.absolute_url = self.request.build_absolute_uri(
                     reverse("project_dashboard", args=(d.slug,)))
             context['dashboards'] = dashboards
+        context['backlogs'] = self.project.backlogs.order_by(
+            "-is_main", "is_archive", "order"
+        ).all()
         return context
 project_detail = login_required(ProjectDetail.as_view())
 
