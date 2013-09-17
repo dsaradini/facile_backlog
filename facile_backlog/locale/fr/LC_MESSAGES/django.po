@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-27 19:50+0200\n"
-"PO-Revision-Date: 2013-08-28 09:02+0100\n"
+"POT-Creation-Date: 2013-09-17 09:37+0200\n"
+"PO-Revision-Date: 2013-09-17 20:05+0100\n"
 "Last-Translator: David Saradini <david@saradini.com>\n"
 "Language-Team: fr <info@backlogman.com>\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: backlog/forms.py:107 backlog/models.py:564
 #: backlog/templates/backlog/org_detail.html:81
-#: backlog/templates/backlog/project_detail.html:75
+#: backlog/templates/backlog/project_detail.html:106
 #: backlog/templates/graph/_stack_status.html:28
 msgid "Points"
 msgstr "Points"
@@ -28,31 +28,31 @@ msgstr "Points"
 msgid "Estimated points"
 msgstr "Estimation en points"
 
-#: backlog/forms.py:116
+#: backlog/forms.py:115
 msgid "a user"
 msgstr "utilisateur"
 
-#: backlog/forms.py:118
+#: backlog/forms.py:117
 msgid "be able to input text here"
 msgstr "pouvoir saisir du texte ici"
 
-#: backlog/forms.py:120
+#: backlog/forms.py:119
 msgid "write user stories"
 msgstr "écrire des scénarios utilisateurs"
 
-#: backlog/forms.py:122
+#: backlog/forms.py:121
 msgid "- user story readable by human"
 msgstr "- scénarios utilisateurs lisible par des humains"
 
-#: backlog/forms.py:124
+#: backlog/forms.py:123
 msgid "Use markdown list format: line with '-' in front"
 msgstr "Utilisez le format 'markdown': lignes avec un '-' au début"
 
-#: backlog/forms.py:163 core/forms.py:53 core/models.py:39
+#: backlog/forms.py:166 core/forms.py:53 core/models.py:39
 msgid "Email address"
 msgstr "Adresse email"
 
-#: backlog/forms.py:164 backlog/models.py:139
+#: backlog/forms.py:167 backlog/models.py:139
 #: backlog/templates/backlog/org_users.html:46
 #: backlog/templates/backlog/project_users.html:45
 msgid "Administrator"
@@ -117,7 +117,7 @@ msgstr "Autorisation"
 msgid "Active"
 msgstr "Actif"
 
-#: backlog/models.py:321
+#: backlog/models.py:321 backlog/models.py:574
 msgid "Code"
 msgstr "Code"
 
@@ -125,7 +125,7 @@ msgstr "Code"
 msgid "Prefix for all stories (maximum 5 characters)"
 msgstr "Préfix pour tous les scénarios utilisateurs (maximum 5 caractères)"
 
-#: backlog/models.py:324 backlog/models.py:457 backlog/models.py:678
+#: backlog/models.py:324 backlog/models.py:457 backlog/models.py:679
 #: backlog/templates/backlog/org_sprint_planning.html:3
 #: backlog/templates/backlog/org_stories.html:4
 msgid "Organization"
@@ -143,14 +143,15 @@ msgstr "Dernière modification"
 msgid "General"
 msgstr "Général"
 
-#: backlog/models.py:455 backlog/models.py:555 backlog/models.py:668
-#: backlog/models.py:692 backlog/templates/backlog/org_detail.html:4
+#: backlog/models.py:455 backlog/models.py:555 backlog/models.py:669
+#: backlog/models.py:693 backlog/templates/backlog/org_detail.html:4
 #: backlog/templates/backlog/org_users.html:4
 #: backlog/templates/backlog/project_backlogs.html:3
 #: backlog/templates/backlog/project_detail.html:4
 #: backlog/templates/backlog/project_stats.html:4
 #: backlog/templates/backlog/project_stories.html:4
 #: backlog/templates/backlog/project_users.html:4
+#: dashboard/templates/dashboard/project_dashboard.html:4
 msgid "Project"
 msgstr "Projet"
 
@@ -174,17 +175,17 @@ msgstr "Principal"
 msgid "Not set"
 msgstr "Non défini"
 
-#: backlog/models.py:558 backlog/models.py:604
+#: backlog/models.py:558 backlog/models.py:605
 #: backlog/templates/backlog/user_story_text.html:2
 msgid "As"
 msgstr "En tant que"
 
-#: backlog/models.py:559 backlog/models.py:605
+#: backlog/models.py:559 backlog/models.py:606
 #: backlog/templates/backlog/user_story_text.html:6
 msgid "I want to"
 msgstr "Je veux"
 
-#: backlog/models.py:560 backlog/models.py:606
+#: backlog/models.py:560 backlog/models.py:607
 #: backlog/templates/backlog/user_story_text.html:11
 msgid "so I can"
 msgstr "Pour pouvoir"
@@ -209,7 +210,7 @@ msgstr "Créé a"
 msgid "Theme"
 msgstr "Thème"
 
-#: backlog/models.py:569 backlog/models.py:674
+#: backlog/models.py:569 backlog/models.py:675
 #: backlog/templates/backlog/backlog_detail.html:4
 #: backlog/templates/backlog/print_stories.html:32
 msgid "Backlog"
@@ -221,28 +222,28 @@ msgstr "Backlog"
 msgid "Status"
 msgstr "Etat"
 
-#: backlog/models.py:665 backlog/templates/backlog/org_users.html:46
+#: backlog/models.py:666 backlog/templates/backlog/org_users.html:46
 #: backlog/templates/backlog/project_users.html:45
 msgid "User"
 msgstr "Utilisateur"
 
-#: backlog/models.py:667
+#: backlog/models.py:668
 msgid "When"
 msgstr "Quand"
 
-#: backlog/models.py:671
+#: backlog/models.py:672
 msgid "Story"
 msgstr "Scénario"
 
-#: backlog/models.py:682
+#: backlog/models.py:683
 msgid "Text"
 msgstr "Texte"
 
-#: backlog/models.py:694
+#: backlog/models.py:695
 msgid "Day"
 msgstr "Jour"
 
-#: backlog/models.py:695
+#: backlog/models.py:696
 msgid "Data"
 msgstr "Données"
 
@@ -250,7 +251,7 @@ msgstr "Données"
 msgid "n/a"
 msgstr "n/d"
 
-#: backlog/views.py:113 backlog/views.py:666
+#: backlog/views.py:113 backlog/views.py:691
 #: backlog/management/commands/easy_import.py:114
 msgid "Main backlog"
 msgstr "Backlog principal"
@@ -263,97 +264,97 @@ msgstr "Ceci est le backlog principal de l'organisation"
 msgid "Organization successfully created."
 msgstr "Organisation créée avec succès"
 
-#: backlog/views.py:141 backlog/views.py:230 backlog/views.py:595
-#: backlog/views.py:644 backlog/views.py:906 backlog/views.py:1052
-#: storymap/views.py:41
+#: backlog/views.py:141 backlog/views.py:233 backlog/views.py:614
+#: backlog/views.py:669 backlog/views.py:931 backlog/views.py:1077
+#: dashboard/views.py:159 storymap/views.py:41
 msgid "Not authorized"
 msgstr "Non autorisé "
 
-#: backlog/views.py:182
+#: backlog/views.py:185
 msgid "Organization successfully updated."
 msgstr "Organisation modifiée avec succès"
 
-#: backlog/views.py:197
+#: backlog/views.py:200
 msgid "Organization successfully deleted."
 msgstr "Organisation supprimée avec succès"
 
-#: backlog/views.py:273 backlog/views.py:954
+#: backlog/views.py:276 backlog/views.py:979
 msgid "Backlog successfully created."
 msgstr "Backlog créé avec succès"
 
-#: backlog/views.py:296 backlog/views.py:989
+#: backlog/views.py:299 backlog/views.py:1014
 msgid "Backlog successfully updated."
 msgstr "Backlog modifié avec succès"
 
-#: backlog/views.py:353
+#: backlog/views.py:372
 msgid "Backlog is not empty, unable to delete."
 msgstr "Ce backlog n'est pas vide, impossible de l'effacer"
 
-#: backlog/views.py:367 backlog/views.py:1013
+#: backlog/views.py:386 backlog/views.py:1038
 msgid "Backlog successfully deleted."
 msgstr "Backlog supprimé avec succès"
 
-#: backlog/views.py:387 backlog/views.py:1032
+#: backlog/views.py:406 backlog/views.py:1057
 msgid "Backlog successfully archived."
 msgstr "Backlog archivé avec succès"
 
-#: backlog/views.py:520 backlog/views.py:1419
+#: backlog/views.py:539 backlog/views.py:1444
 msgid "Invitation has been sent to {0}."
 msgstr "Un invitation à été envoyée a {0}"
 
-#: backlog/views.py:574 backlog/views.py:1510
+#: backlog/views.py:593 backlog/views.py:1535
 msgid "User {0} has been revoked."
 msgstr "L'utilisateur {0} à été révoqué"
 
-#: backlog/views.py:667
+#: backlog/views.py:692
 msgid "This is the main backlog for the project."
 msgstr "Ceci est le backlog principal du projet"
 
-#: backlog/views.py:674
+#: backlog/views.py:699
 msgid "Completed stories"
 msgstr "Scénarios complétés"
 
-#: backlog/views.py:675
+#: backlog/views.py:700
 msgid "This is the backlog to hold completed stories."
 msgstr "Ceci est le backlog qui contient des scénarios complétés"
 
-#: backlog/views.py:706
+#: backlog/views.py:731
 msgid "Project successfully created."
 msgstr "Projet créé avec succès"
 
-#: backlog/views.py:726
+#: backlog/views.py:751
 msgid "Project successfully updated."
 msgstr "Projet modifié avec succès"
 
-#: backlog/views.py:741
+#: backlog/views.py:766
 msgid "Project successfully deleted."
 msgstr "Projet supprimé avec succès"
 
-#: backlog/views.py:1099
+#: backlog/views.py:1124
 msgid "Backlog successfully set as main."
 msgstr "Backlog assigné avec succès"
 
-#: backlog/views.py:1214
+#: backlog/views.py:1239
 msgid "Story successfully created."
 msgstr "Scénario créé avec succès"
 
-#: backlog/views.py:1268
+#: backlog/views.py:1293
 msgid "Story successfully updated."
 msgstr "Scénario modifié avec succès"
 
-#: backlog/views.py:1288
+#: backlog/views.py:1313
 msgid "Story successfully deleted."
 msgstr "Scénario supprimé avec succès"
 
-#: backlog/views.py:1538
+#: backlog/views.py:1563
 msgid "You are now a member of this project"
 msgstr "Vous êtes maintenant un membre de ce projet"
 
-#: backlog/views.py:1541
+#: backlog/views.py:1566
 msgid "You are now a member of this organization"
 msgstr "Vous êtes maintenant un membre de cette organisation"
 
-#: backlog/views.py:1555
+#: backlog/views.py:1580
 msgid "Invitation has been declined"
 msgstr "L'invitation à été déclinée"
 
@@ -379,10 +380,13 @@ msgstr "Ceci est le backlog principal du projet"
 #: backlog/templates/backlog/org_form.html:7
 #: backlog/templates/backlog/project_form.html:7
 #: backlog/templates/backlog/story_form.html:10
-#: blog/templates/blog/blog.html:6 docs/templates/docs/docs.html:8
+#: blog/templates/blog/blog.html:6
+#: dashboard/templates/dashboard/dashboard_form.html:7
+#: dashboard/templates/dashboard/project_dashboard.html:4
+#: docs/templates/docs/docs.html:8
 #: storymap/templates/storymap/storymap_create.html:7 templates/base.html:30
 msgid "Dashboard"
-msgstr "Tableau de bord"
+msgstr "Cockpite"
 
 #: backlog/templates/backlog/_backlog_lane.html:25
 #: backlog/templates/backlog/backlog_detail.html:31
@@ -413,8 +417,8 @@ msgstr "Editer"
 #: backlog/templates/backlog/project_users.html:48
 #: backlog/templates/backlog/story_detail.html:42
 #: storymap/templates/storymap/_story.html:6
-#: storymap/templates/storymap/storymap_detail.html:80
-#: storymap/templates/storymap/storymap_detail.html:87
+#: storymap/templates/storymap/storymap_detail.html:82
+#: storymap/templates/storymap/storymap_detail.html:89
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -430,13 +434,13 @@ msgstr "courant "
 #: backlog/templates/backlog/org_sprint_planning.html:186
 #: backlog/templates/backlog/project_backlogs.html:114
 #: backlog/templates/backlog/project_backlogs.html:170
-#: storymap/templates/storymap/storymap_detail.html:231
+#: storymap/templates/storymap/storymap_detail.html:233
 msgid "Server return an error."
 msgstr "Le serveur à retourné une erreur"
 
 #: backlog/templates/backlog/_project_tabs.html:3
 #: backlog/templates/backlog/org_detail.html:39
-#: backlog/templates/backlog/project_detail.html:33
+#: backlog/templates/backlog/project_detail.html:64
 msgid "Backlogs"
 msgstr "Backlogs"
 
@@ -455,7 +459,7 @@ msgstr "Membres"
 #: backlog/templates/backlog/org_stories.html:13
 #: backlog/templates/backlog/org_stories.html:16
 #: backlog/templates/backlog/org_users.html:13
-#: backlog/templates/backlog/project_detail.html:72
+#: backlog/templates/backlog/project_detail.html:103
 #: backlog/templates/backlog/project_stories.html:11
 #: backlog/templates/graph/_pie_status.html:16
 msgid "Stories"
@@ -468,26 +472,32 @@ msgstr "Statistiques"
 #: backlog/templates/backlog/_project_tabs.html:8
 #: backlog/templates/backlog/_project_tabs.html:10
 msgid "Story map"
-msgstr "\"Story map\""
+msgstr "Story map"
 
 #: backlog/templates/backlog/_project_tabs.html:10
 msgid "new"
 msgstr "nouveau"
 
-#: backlog/templates/backlog/_story_big_cell.html:10
+#: backlog/templates/backlog/_story_big_cell.html:12
 #: backlog/templates/backlog/dashboard.html:29
 #: backlog/templates/backlog/dashboard.html:78
 #: backlog/templates/backlog/org_detail.html:21
 #: backlog/templates/backlog/org_detail.html:120
 #: backlog/templates/backlog/project_detail.html:15
+#: backlog/templates/backlog/project_detail.html:45
+#: dashboard/templates/dashboard/_story_big_cell.html:12
 msgid "edit"
 msgstr "éditer"
 
-#: backlog/templates/backlog/_story_big_cell.html:21
+#: backlog/templates/backlog/_story_big_cell.html:25
+#: backlog/templates/backlog/_story_big_cell.html:40
+#: dashboard/templates/dashboard/_story_big_cell.html:25
+#: dashboard/templates/dashboard/_story_big_cell.html:40
 msgid "No acceptance criterias"
 msgstr "Aucun critères d'acceptation "
 
-#: backlog/templates/backlog/_story_big_cell.html:28
+#: backlog/templates/backlog/_story_big_cell.html:32
+#: dashboard/templates/dashboard/_story_big_cell.html:32
 msgid "No comments"
 msgstr "Aucun commentaire"
 
@@ -532,6 +542,8 @@ msgstr "Archiver ce backlog"
 #: backlog/templates/backlog/story_form.html:45
 #: backlog/templates/users/auth_confirm_delete.html:31
 #: backlog/templates/users/invite_user.html:26
+#: dashboard/templates/dashboard/dashboard_confirm_delete.html:16
+#: dashboard/templates/dashboard/dashboard_form.html:31
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -547,6 +559,7 @@ msgstr "Etes vous sure de vouloir supprimer ce backlog et tous ses scénarios ?"
 #: backlog/templates/backlog/backlog_confirm_delete.html:10
 #: backlog/templates/backlog/org_confirm_delete.html:10
 #: backlog/templates/backlog/project_confirm_delete.html:10
+#: dashboard/templates/dashboard/dashboard_confirm_delete.html:9
 msgid "This operation cannot be undone"
 msgstr "Cette opération ne peut pas être défaite"
 
@@ -562,9 +575,7 @@ msgstr "Assigné comme backlog principal"
 #: backlog/templates/backlog/backlog_confirm_main.html:7
 #, python-format
 msgid "Set backlog \"<span class=\"text-info\">%(name)s</span>\" as main"
-msgstr ""
-"Définir le backlog \"<span class=\"text-info\">%(name)s</span>\" comme "
-"principal"
+msgstr "Définir le backlog %(name)s comme principal"
 
 #: backlog/templates/backlog/backlog_confirm_main.html:10
 msgid "Are you sure you want to set this backlog as the main backlog?"
@@ -577,13 +588,13 @@ msgid ""
 "stories for sprint planning "
 msgstr ""
 "Dans un organisation, le backlog principal d'un project et celui utilisé "
-"lors de la plannification des \"sprints\""
+"lors de la plannification des itérations"
 
 #: backlog/templates/backlog/backlog_confirm_main.html:15
 msgid "Main organization backlog is generally the current sprint backlog"
 msgstr ""
-"Le backlog principal d'un organisation est généralement celui du \"sprint\" "
-"courant"
+"Le backlog principal d'un organisation est généralement celui de l'iteration "
+"courante"
 
 #: backlog/templates/backlog/backlog_confirm_main.html:29
 msgid "Set as main"
@@ -644,23 +655,23 @@ msgstr ""
 #: backlog/templates/backlog/backlog_detail.html:161
 #: backlog/templates/backlog/org_sprint_planning.html:263
 #: backlog/templates/backlog/project_backlogs.html:249
-#: storymap/templates/storymap/storymap_detail.html:679
+#: storymap/templates/storymap/storymap_detail.html:681
 msgid "online"
 msgstr "connecté"
 
 #: backlog/templates/backlog/backlog_detail.html:164
 #: backlog/templates/backlog/org_sprint_planning.html:266
 #: backlog/templates/backlog/project_backlogs.html:252
-#: storymap/templates/storymap/storymap_detail.html:682
+#: storymap/templates/storymap/storymap_detail.html:684
 msgid "offline"
 msgstr "déconnecté"
 
 #: backlog/templates/backlog/backlog_detail.html:170
 #: backlog/templates/backlog/org_sprint_planning.html:272
 #: backlog/templates/backlog/project_backlogs.html:258
-#: storymap/templates/storymap/storymap_detail.html:688
+#: storymap/templates/storymap/storymap_detail.html:690
 msgid "Online users"
-msgstr "Utilisateurs online"
+msgstr "Utilisateurs connectés"
 
 #: backlog/templates/backlog/backlog_form.html:3
 #: backlog/templates/backlog/backlog_form.html:14
@@ -677,7 +688,7 @@ msgstr "Ajouter un nouveau backlog"
 #: backlog/templates/backlog/org_detail.html:42
 #: backlog/templates/backlog/org_sprint_planning.html:43
 #: backlog/templates/backlog/project_backlogs.html:36
-#: backlog/templates/backlog/project_detail.html:37
+#: backlog/templates/backlog/project_detail.html:68
 msgid "Create backlog"
 msgstr "Créer un backlog"
 
@@ -685,6 +696,7 @@ msgstr "Créer un backlog"
 #: backlog/templates/backlog/org_form.html:18
 #: backlog/templates/backlog/project_form.html:25
 #: backlog/templates/backlog/story_form.html:44
+#: dashboard/templates/dashboard/dashboard_form.html:30
 msgid "Save changes"
 msgstr "Sauver les changements"
 
@@ -705,6 +717,7 @@ msgstr "Créer une organisation"
 #: backlog/templates/backlog/org_detail.html:24
 #: backlog/templates/backlog/org_detail.html:122
 #: backlog/templates/backlog/project_detail.html:18
+#: backlog/templates/backlog/project_detail.html:48
 msgid "delete"
 msgstr "supprimer"
 
@@ -767,31 +780,31 @@ msgstr "Supprimer cette organisation"
 #: backlog/templates/backlog/org_stories.html:11
 #: backlog/templates/backlog/org_users.html:11
 msgid "Sprint planning"
-msgstr "Planification de \"sprint\""
+msgstr "Planification d'itérations"
 
 #: backlog/templates/backlog/org_detail.html:59
-#: backlog/templates/backlog/project_detail.html:53
+#: backlog/templates/backlog/project_detail.html:84
 msgid "set main"
 msgstr "définir comme principal"
 
 #: backlog/templates/backlog/org_detail.html:61
-#: backlog/templates/backlog/project_detail.html:55
+#: backlog/templates/backlog/project_detail.html:86
 msgid "archive"
 msgstr "archive"
 
 #: backlog/templates/backlog/org_detail.html:66
-#: backlog/templates/backlog/project_detail.html:60
+#: backlog/templates/backlog/project_detail.html:91
 msgid "archived"
 msgstr "archivé"
 
 #: backlog/templates/backlog/org_detail.html:69
 #: backlog/templates/backlog/project_backlogs.html:64
-#: backlog/templates/backlog/project_detail.html:63
+#: backlog/templates/backlog/project_detail.html:94
 msgid "main"
 msgstr "principal"
 
 #: backlog/templates/backlog/org_detail.html:99
-#: backlog/templates/backlog/project_detail.html:92
+#: backlog/templates/backlog/project_detail.html:123
 msgid "No backlog"
 msgstr "Pas de backlog"
 
@@ -805,6 +818,7 @@ msgstr "Mis en avant du projet"
 
 #: backlog/templates/backlog/org_sprint_planning.html:41
 #: backlog/templates/backlog/project_backlogs.html:34
+#: dashboard/templates/dashboard/project_dashboard.html:6
 msgid "Refresh"
 msgstr "Rafraichir"
 
@@ -957,7 +971,27 @@ msgstr ""
 msgid "Delete this project"
 msgstr "Supprimer ce projet"
 
-#: backlog/templates/backlog/project_detail.html:97
+#: backlog/templates/backlog/project_detail.html:33
+msgid "Status dashboard:"
+msgstr "Tableau de bord:"
+
+#: backlog/templates/backlog/project_detail.html:36
+msgid "public"
+msgstr "public"
+
+#: backlog/templates/backlog/project_detail.html:38
+msgid "private"
+msgstr "privé"
+
+#: backlog/templates/backlog/project_detail.html:54
+msgid "This project has currently no status dashboard"
+msgstr "Ce projet n'a pas de tableau de bord"
+
+#: backlog/templates/backlog/project_detail.html:56
+msgid "Create a status dashboard"
+msgstr "Créer un tableau de bord"
+
+#: backlog/templates/backlog/project_detail.html:128
 msgid "Last activities"
 msgstr "Dernières activités"
 
@@ -1034,6 +1068,10 @@ msgstr "Ajouter un nouveau scénario"
 msgid "Create story"
 msgstr "Créer un scénario"
 
+#: backlog/templates/graph/_pie_status.html:16
+msgid "points"
+msgstr "points"
+
 #: backlog/templates/graph/_stack_status.html:47
 msgid "Total:"
 msgstr "Totale:"
@@ -1081,7 +1119,7 @@ msgstr "Invitation acceptée"
 #, python-format
 msgid ""
 "Invitation to project '%(project)s' has been accepted. You can access it "
-"using the url below."
+"using the url below. "
 msgstr ""
 "L'invitation a rejoindre le projet '%(project)s' à été acceptée. Vous pouvez "
 "y accéder en cliquant sur le lien ci-dessous."
@@ -1094,7 +1132,7 @@ msgstr "Projet:"
 #, python-format
 msgid ""
 "Invitation to organization '%(org)s' has been accepted. You can access it "
-"using the url below."
+"using the url below. "
 msgstr ""
 "L'invitation a l'organisation '%(org)s' à été acceptée. Vous pouvez y "
 "accéder en cliquant sur le lien ci-dessous."
@@ -1626,6 +1664,158 @@ msgstr ""
 "pouvoir vérifier votre adresse email.Vérifié votre boite mail, et cliquez "
 "sur le lien d'activation."
 
+#: dashboard/models.py:15
+msgid "Disabled"
+msgstr "Desactivé"
+
+#: dashboard/models.py:16
+msgid "Public"
+msgstr "Public"
+
+#: dashboard/models.py:17
+msgid "Private"
+msgstr "Privé"
+
+#: dashboard/models.py:24
+msgid ""
+"Comma separated list of user email authorized to see this dashboard. "
+"Effective only if the dashboard is 'private'."
+msgstr ""
+"List d'adresses email d'utilisateurs, séparées par une virgule, eyant le "
+"droit de voir ce tableau de bord. Effectif uniquement pour des tableaux de "
+"bord privés."
+
+#: dashboard/models.py:31
+msgid "Mode"
+msgstr "Mode"
+
+#: dashboard/models.py:34
+msgid "Display stories currently in progress"
+msgstr "Affiche les scénarios en cours de progression"
+
+#: dashboard/models.py:38
+msgid ""
+"Display stories next in current iteration. Only for project in an "
+"organization"
+msgstr ""
+"Affiche les prochains scénarios dans l'itération courrante. Uniquenemnt pour "
+"les projets dans une organization."
+
+#: dashboard/models.py:43
+msgid "Display scheduled and estimated stories in main backlog"
+msgstr "Affiche les scénarios estimés et planifiés dans le backlog principal"
+
+#: dashboard/models.py:48
+msgid "Display stories status graphs"
+msgstr "Affiche le graph du status des scénarios."
+
+#: dashboard/models.py:53
+msgid "Display stories points"
+msgstr "Affiche les points de scénarios"
+
+#: dashboard/models.py:58
+msgid "URL name"
+msgstr "Nom de l'URL"
+
+#: dashboard/models.py:59
+msgid ""
+"This is the dashboard URL extension path used to publish the dashboard. /"
+"dashboard/[THIS FIELD]. It can only contains alphanumeric characters and _ . "
+"or -"
+msgstr ""
+"Ceci est l'url utilisée pour publier le tableau de bord. /dashboard/[CE "
+"CHAMP]. Il peut contenir uniquement des charactères alphanumerique ainsi que "
+"_ . ou -"
+
+#: dashboard/views.py:114
+msgid "Dashboard already exist"
+msgstr "Ce tableau de bord existe déjà"
+
+#: dashboard/views.py:139
+msgid "Dashboard successfully created."
+msgstr "Tableau de bord créé avec succès"
+
+#: dashboard/views.py:198
+msgid "Dashboard successfully updated."
+msgstr "Tableau de bord modifié avec succès"
+
+#: dashboard/views.py:217
+msgid "Dashboard successfully deleted."
+msgstr "Tableau de bord supprimé avec succès"
+
+#: dashboard/templates/dashboard/dashboard_confirm_delete.html:2
+msgid "Delete dashboard"
+msgstr "Supprimer le tableau de bord"
+
+#: dashboard/templates/dashboard/dashboard_confirm_delete.html:6
+#, python-format
+msgid " \"Delete dashboard for project %(project_name)s\" "
+msgstr "Supprimer le tableau de bord du projet %(project_name)s"
+
+#: dashboard/templates/dashboard/dashboard_confirm_delete.html:8
+msgid "Are you sure you want to delete this dashboard?"
+msgstr "Etes vous sure de vouloir supprimer ce tableau de bord ?"
+
+#: dashboard/templates/dashboard/dashboard_confirm_delete.html:15
+msgid "Delete this dashboard"
+msgstr "Supprimer ce tableau de bord"
+
+#: dashboard/templates/dashboard/dashboard_form.html:3
+#: dashboard/templates/dashboard/dashboard_form.html:12
+msgid "Edit dashboard"
+msgstr "Editer le tableau de bord"
+
+#: dashboard/templates/dashboard/dashboard_form.html:3
+#: dashboard/templates/dashboard/dashboard_form.html:21
+msgid "Create status dashboard"
+msgstr "Créer un tableau de bord"
+
+#: dashboard/templates/dashboard/dashboard_form.html:14
+#: dashboard/templates/dashboard/dashboard_form.html:30
+msgid "Create dashboard"
+msgstr "Créer un tableau de bord"
+
+#: dashboard/templates/dashboard/dashboard_form.html:23
+msgid ""
+"A status dashboard is used to publish project information to users who are "
+"not members of the project; usually external customers or TV screen displays."
+msgstr ""
+"Le tableau de bord est utilisé pour publier des infromation sur le projet à "
+"des utilisateurs qui ne son pas membre du projet, en générale, des clients "
+"externes ou écrans TV."
+
+#: dashboard/templates/dashboard/project_dashboard.html:16
+msgid "Project status"
+msgstr "Status du projet"
+
+#: dashboard/templates/dashboard/project_dashboard.html:25
+msgid "In progress stories"
+msgstr "Scénarios en cours"
+
+#: dashboard/templates/dashboard/project_dashboard.html:32
+msgid "There is currently no story in progress for this sprint"
+msgstr "Il n'y a aucun scénario en cours pour cette itération"
+
+#: dashboard/templates/dashboard/project_dashboard.html:43
+msgid "Next stories in this iteration"
+msgstr "Prochains scénarios dans cette itération"
+
+#: dashboard/templates/dashboard/project_dashboard.html:50
+msgid "There is no story scheduled for this sprint"
+msgstr "Il n'y a aucun scénario plannifié pour cette itération"
+
+#: dashboard/templates/dashboard/project_dashboard.html:61
+msgid "Scheduled stories"
+msgstr "Scénarios plannifiés"
+
+#: dashboard/templates/dashboard/project_dashboard.html:68
+msgid "There is no story scheduled"
+msgstr "Il n'y a aucun scénario plannifié"
+
+#: dashboard/templates/dashboard/project_dashboard.html:78
+msgid "Stories status"
+msgstr "Status des scénarios utilisateur"
+
 #: storymap/models.py:48
 msgid "Title"
 msgstr "Titre"
@@ -1642,22 +1832,22 @@ msgstr "a crée une story map"
 msgid "Story map successfully created."
 msgstr "Story map créée avec succès"
 
-#: storymap/views.py:186
+#: storymap/views.py:187
 #, python-format
 msgid "created story map's '%s'"
 msgstr "a créé un element de story map de type %s"
 
-#: storymap/views.py:193
+#: storymap/views.py:194
 #, python-format
 msgid "updated story map's '%s'"
 msgstr "a modifié un element de story map de type %s"
 
-#: storymap/views.py:201 storymap/views.py:213
+#: storymap/views.py:202 storymap/views.py:214
 #, python-format
 msgid "re-order story map's '%s'"
 msgstr "a re-ordonné un element de story map de type %s"
 
-#: storymap/views.py:205
+#: storymap/views.py:206
 #, python-format
 msgid "deleted story map's '%s'"
 msgstr "a supprimé un element de story map de type %s"
@@ -1678,8 +1868,7 @@ msgstr "Créer une story map"
 
 #: storymap/templates/storymap/storymap_create.html:22
 msgid "Your project does not have a story map yet, do you want to create it?"
-msgstr ""
-"Votre projet n'a pas encore de story map, voulez-vous en créer une?"
+msgstr "Votre projet n'a pas encore de story map, voulez-vous en créer une?"
 
 #: storymap/templates/storymap/storymap_create.html:25
 msgid "Yes, create story map"
@@ -1693,45 +1882,45 @@ msgstr "Non, merci."
 msgid "Story Map"
 msgstr "Story map"
 
-#: storymap/templates/storymap/storymap_detail.html:25
+#: storymap/templates/storymap/storymap_detail.html:27
 msgid "Add theme"
 msgstr "Ajouter un theme"
 
-#: storymap/templates/storymap/storymap_detail.html:35
+#: storymap/templates/storymap/storymap_detail.html:37
 msgid "Add phase"
 msgstr "Ajouter une phase"
 
-#: storymap/templates/storymap/storymap_detail.html:52
+#: storymap/templates/storymap/storymap_detail.html:54
 msgid "Create theme"
 msgstr "Créer un thème"
 
-#: storymap/templates/storymap/storymap_detail.html:55
+#: storymap/templates/storymap/storymap_detail.html:57
 msgid "Theme name"
 msgstr "Nom du thème"
 
-#: storymap/templates/storymap/storymap_detail.html:59
-#: storymap/templates/storymap/storymap_detail.html:73
+#: storymap/templates/storymap/storymap_detail.html:61
+#: storymap/templates/storymap/storymap_detail.html:75
 msgid "Creating..."
 msgstr "En creation…"
 
-#: storymap/templates/storymap/storymap_detail.html:59
-#: storymap/templates/storymap/storymap_detail.html:73
+#: storymap/templates/storymap/storymap_detail.html:61
+#: storymap/templates/storymap/storymap_detail.html:75
 msgid "Create"
 msgstr "Créer"
 
-#: storymap/templates/storymap/storymap_detail.html:66
+#: storymap/templates/storymap/storymap_detail.html:68
 msgid "Create phase"
 msgstr "Créer une phase"
 
-#: storymap/templates/storymap/storymap_detail.html:69
+#: storymap/templates/storymap/storymap_detail.html:71
 msgid "Phase name"
 msgstr "Nom de la phase"
 
-#: storymap/templates/storymap/storymap_detail.html:83
+#: storymap/templates/storymap/storymap_detail.html:85
 msgid " Are you sure you want to delete this element?"
 msgstr "Etes vous sure de vouloir supprimer cet élément ?"
 
-#: storymap/templates/storymap/storymap_detail.html:87
+#: storymap/templates/storymap/storymap_detail.html:89
 msgid "Deleting..."
 msgstr "Suppression…"
 
@@ -1825,9 +2014,6 @@ msgstr "Backlogman REST API"
 
 #~ msgid "You have no stand-alone project that is not part of an organization"
 #~ msgstr "Vous n'avez pas de projet n'appartenant pas à une organisation"
-
-#~ msgid "Project List"
-#~ msgstr "List des projets"
 
 #~ msgid "See all projects"
 #~ msgstr "Voir tous les projets"
