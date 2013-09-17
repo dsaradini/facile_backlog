@@ -7,6 +7,6 @@
 	{% if project.story_map %}
 		<li class="{% if active == 'story_map' %}active{% endif %}"><a href="{% url "storymap_detail" project.story_map.pk %}">{% trans "Story map" %}</a></li>
 	{% else %}
-		<li class="{% if active == 'story_map' %}active{% endif %}"><a href="{% url "storymap_create" project.pk %}">{% trans "Story map" %} <span class="small label label-warning" style="line-height:11px; font-size:12px;">{% trans "new" %}</span></a></li>
+		<li class="{% if active == 'story_map' %}active{% endif %}"><a href="{% url "storymap_create" project.pk %}">{% trans "Story map" %}</a></li>
 	{% endif %}
 </ul>

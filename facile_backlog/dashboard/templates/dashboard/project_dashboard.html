@@ -3,78 +3,86 @@
 
 {% block title %}{% trans "Project" %} - {{ project.name }} - {% trans "Dashboard" %}{% endblock %}
 {% block navbar %}
-	{% if request.user.is_authenticated %}
-		<li><a href="{% url "dashboard" %}">{% trans "Dashboard" %}</a></li>
-	{% else %}
-		<li><a href="{% url "home" %}">{% trans "Home" %}</a></li>
-	{% endif %}
-		<li><a href="{% url "docs_index" %}">{% trans "Documentation" %}</a></li>
-	<li><a href="{% url "blog_index" %}">{% trans "News" %}</a></li>
+	<li><a href=".">{% trans "Refresh" %}</a></li>
 {% endblock %}
 
 {% block content %}
+
+{% addtoblock "meta" %}
+<meta http-equiv="refresh" content="600">
+{% endaddtoblock %}
+
 {% addtoblock "js" %}
 <script src="{% static "core/js/highcharts.js" %}"></script>
 {% include "graph/_pie_status.html" with graph_title=" " series=project_status_pie element_id="#graph-project-pie" %}
 {% endaddtoblock %}
 
-<h1><span class="small muted">{% trans "Project status" %}</span> {{ project.name }}</h1>
+<div class="row row-fluid">
+	<h1><span class="small muted">{% trans "Project status" %}</span> {{ project.name }}</h1>
+	<div class="small muted">{% now "SHORT_DATETIME_FORMAT" %}</div>
+</div>
 
 <div class="row row-fluid">
 
-	<div class="span8">
+	<div class="span7">
 	{% if dashboard.show_in_progress %}
-		<h2>{% trans "In progress stories" %}</h2>
-		<div class="dashboard-stories-list">
-			<div>
-				{% for story in current_stories %}
-					{% include "backlog/_story_big_cell.html" with disable_status_change=True %}
-				{% empty %}
-					<p class="alert">
-						{% trans "There is currently no story in progress for this sprint" %}
-					</p>
-				{% endfor %}
+		<div>
+			<h3>{% trans "In progress stories" %}</h3>
+			<div class="dashboard-stories-list">
+				<div>
+					{% for story in current_stories %}
+						{% include "dashboard/_story_big_cell.html" with show_points=dashboard.show_points %}
+					{% empty %}
+						<p class="alert">
+							{% trans "There is currently no story in progress for this sprint" %}
+						</p>
+					{% endfor %}
+				</div>
 			</div>
 		</div>
 	{% endif %}
 
 	{% if dashboard.show_next %}
 		{% if project.org_id %}
-		<h2>{% trans "Next stories in this iteration" %}</h2>
-		<div class="dashboard-stories-list">
-			<div>
-				{% for story in next_stories %}
-					{% include "backlog/_story_big_cell.html" with disable_status_change=True %}
-				{% empty %}
-					<p class="alert">
-						{% trans "There is no story scheduled for this sprint" %}
-					</p>
-				{% endfor %}
+		<div>
+			<h3>{% trans "Next stories in this iteration" %}</h3>
+			<div class="dashboard-stories-list">
+				<div>
+					{% for story in next_stories %}
+						{% include "dashboard/_story_big_cell.html" with show_points=dashboard.show_points %}
+					{% empty %}
+						<p class="alert">
+							{% trans "There is no story scheduled for this sprint" %}
+						</p>
+					{% endfor %}
+				</div>
 			</div>
 		</div>
 		{% endif %}
 	{% endif %}
 
 	{% if dashboard.show_scheduled %}
-		<h2>{% trans "Scheduled stories" %}</h2>
-		<div class="dashboard-stories-list">
-			<div>
-				{% for story in scheduled_stories %}
-					{% include "backlog/_story_big_cell.html" with disable_status_change=True %}
-				{% empty %}
-					<p class="alert">
-						{% trans "There is no story scheduled" %}
-					</p>
-				{% endfor %}
+		<div>
+			<h3>{% trans "Scheduled stories" %}</h3>
+			<div class="dashboard-stories-list">
+				<div>
+					{% for story in scheduled_stories %}
+						{% include "dashboard/_story_big_cell.html" with show_points=dashboard.show_points %}
+					{% empty %}
+						<p class="alert">
+							{% trans "There is no story scheduled" %}
+						</p>
+					{% endfor %}
+				</div>
 			</div>
 		</div>
 	{% endif %}
 	</div>
+	<div class="span5">
 	{% if dashboard.show_story_status %}
-		<h2>{% trans "Stories status" %}</h2>
-		<div class="span4">
-			<div class="graph400" id="graph-project-pie"></div>
-		</div>
+		<h3>{% trans "Stories status" %}</h3>
+		<div class="graph400" id="graph-project-pie"></div>
 	{% endif %}
+	</div>
 </div>
 {% endblock %}

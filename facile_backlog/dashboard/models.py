@@ -49,6 +49,11 @@ class Dashboard(models.Model):
         default=True
     )
 
+    show_points = models.BooleanField(
+        help_text=_("Display stories points"),
+        default=True
+    )
+
     slug = models.SlugField(
         _("URL name"), max_length=128, blank=True, help_text=_(
             "This is the dashboard URL extension path used to publish the "

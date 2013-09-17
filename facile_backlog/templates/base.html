@@ -8,6 +8,7 @@
 		<meta name="apple-mobile-web-app-title" content="Facile Backlog">
 		<meta name="keywords" content="backlog, agile, SCRUM, lean, software">
 		<meta name="description" content="Agile backlog management for software development">
+		{% render_block "meta" %}
 		<title>{% block title %}{% trans "Welcome" %}{% endblock %} &mdash; Backlogman</title>
 	</head>
 	<body class="{% block content_class %}{% endblock %}">

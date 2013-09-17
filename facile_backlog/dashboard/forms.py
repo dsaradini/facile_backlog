@@ -18,7 +18,7 @@ class DashboardEditionForm(BackMixin, ModelForm):
         model = Dashboard
         fields = [
             "slug", "mode", "authorizations", "show_in_progress",
-            "show_next", "show_scheduled", "show_story_status"
+            "show_next", "show_scheduled", "show_points", "show_story_status"
         ]
 
     def clean_authorizations(self):
