@@ -39,7 +39,7 @@
 					<div class="margin-left">
 						<div>
 						{% for project in org.ordered_projects %}
-								<div class="span4"><i class="icon-book"></i> <a href="{% url "project_backlogs" project.pk %}">{{ project.name }}</a></div>
+								<div class="span4"><i class="icon-book"></i> <a href="{% url "project_detail" project.pk %}">{{ project.name }}</a></div>
 							{% if forloop.counter|divisibleby:3 %}
 								</div><div>
 							{% endif %}

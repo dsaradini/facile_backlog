@@ -8,7 +8,7 @@
 	{% include "backlog/_project_tabs.html" with active="detail" %}
 
 	<div class="project-head">
-		<h1 class="inline-title">{{ project.name }}</h1>
+		<h1 class="inline-title"><i class="icon-book"></i> {{ project.name }}</h1>
 		{% if project|can_admin:request.user %}
 			<small class="muted">[
 			<a class="btn-link" href="{% url "project_edit" project.pk %}">
@@ -39,7 +39,7 @@
 			{% endif %}
 		</div>
 		<ul class="backlog-list">
-			{% for backlog in project.backlogs.all %}
+			{% for backlog in backlogs %}
 				<li>
 					<div class="title">
 						<H4>

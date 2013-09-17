@@ -639,6 +639,9 @@ class ProjectDetail(ProjectMixin, generic.DetailView):
         context['events'] = self.project.events.select_related(
             "backlog", "backlog__project", "project", "org", "story",
             "user", "story__project")[:10]
+        context['backlogs'] = self.project.backlogs.order_by(
+            "-is_main", "is_archive", "order"
+        ).all()
         return context
 project_detail = login_required(ProjectDetail.as_view())
 

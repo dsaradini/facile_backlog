@@ -1,7 +1,7 @@
 -r requirements.txt
 coverage
 django-debug-toolbar==0.9.4
-django-debug-toolbar-template-timings==0.3
+django-debug-toolbar-template-timings==0.5.1
 django-discover-runner==0.3
 django-webtest==1.6
 factory-boy==1.2.0
