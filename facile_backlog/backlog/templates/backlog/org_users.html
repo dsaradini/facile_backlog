@@ -6,7 +6,7 @@
 
 	{% include "backlog/_org_head.html" %}
 
-	<ul class="nav nav-pills">
+	<ul class="nav nav-pills nav-crumb">
 		<li><a href="{% url "org_detail" organization.pk %}">{% trans "General" %}</a></li>
 		<li><a href="{% url "org_sprint_planning" organization.pk %}">{% trans "Sprint planning" %} </a></li>
 		<li class="active"><a href="{% url "org_users" organization.pk %}">{% trans "Members" %} </a>

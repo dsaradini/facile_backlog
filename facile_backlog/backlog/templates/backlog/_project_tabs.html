@@ -1,4 +1,4 @@
-<ul class="nav nav-pills">
+<ul class="nav nav-pills nav-crumb">
 	<li class="{% if active == 'detail' %}active{% endif %}"><a href="{% url "project_detail" project.pk %}">{% trans "General" %}</a></li>
 	<li class="{% if active == 'backlogs' %}active{% endif %}"><a href="{% url "project_backlogs" project.pk %}">{% trans "Backlogs" %} </a></li>
 	<li class="{% if active == 'users' %}active{% endif %}"><a href="{% url "project_users" project.pk %}">{% trans "Members" %} </a>
