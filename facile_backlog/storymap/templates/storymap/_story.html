@@ -13,10 +13,19 @@
 				<i class="icon-tint"></i>
 			</a>
 			<ul class="dropdown-menu dropdown-menu-color" role="menu" aria-labelledby="color_set_{{ story.pk }}">
+				<li>
 				{% for color in story_colors %}
-					<li><a href="#" class="story-color-set" data-color="{{ color }}">
+						<a href="#" class="story-color-set" data-color="{{ color }}">
 						<span class="color-cell" style="background-color:{{ color }};">&nbsp;</span>
-					</a></li>
+						</a>
+					{% if forloop.last %}
+						</li>
+					{% else %}
+						{% if forloop.counter|divisibleby:"4" %}
+							</li>
+							<li>
+						{% endif %}
+					{% endif %}
 				{% endfor %}
 			</ul>
 		</div>

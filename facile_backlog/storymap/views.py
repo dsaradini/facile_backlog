@@ -115,11 +115,16 @@ def get_or_errors(dic, value, errors=[]):
 STORY_COLORS = (
     "#ffc",
     "#cff",
-    "#fcf",
-    "#fdd",
     "#cdf",
+    "#aaf",
+    "#fcf",
+    "#fcd",
+    "#fbb",
     "#dfd",
-    "#ffdead"
+    "#afa",
+    "#ffdead",
+    "#ddd",
+    "#fff",
 )
 TARGETS = {
     'story': (Story, False, "storymap/_story_cell.html"),
