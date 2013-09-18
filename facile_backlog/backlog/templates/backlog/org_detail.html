@@ -56,10 +56,11 @@
 							{% endif %}
 						{% if organization|can_admin:request.user and backlog.can_modify%}
 							<small class="muted">[
-								<a href="{% url "backlog_set_main" backlog.pk %}">{% trans "set main" %}</a>
+								<a class="muted" href="{% url "backlog_set_main" backlog.pk %}">{% trans "set main" %}</a>
 								{% if not main.is_archive %}
-									| <a href="{% url "org_backlog_archive" organization.pk backlog.pk %}">{% trans "archive" %}</a>
+									| <a class="muted" href="{% url "org_backlog_archive" organization.pk backlog.pk %}">{% trans "archive" %}</a>
 								{% endif %}
+								| <a class="muted" href="{% url "org_backlog_delete" organization.pk backlog.pk %}">{% trans "delete" %}</a>
 							]</small>
 						{% endif %}
 						{% if backlog.is_archive %}

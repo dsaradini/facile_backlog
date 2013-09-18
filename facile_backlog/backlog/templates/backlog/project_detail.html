@@ -81,10 +81,11 @@
 						{% endif %}
 						{% if project|can_admin:request.user and backlog.can_modify %}
 							<small class="muted">[
-								<a href="{% url "backlog_set_main" backlog.pk %}">{% trans "set main" %}</a>
+								<a class="muted" href="{% url "backlog_set_main" backlog.pk %}">{% trans "set main" %}</a>
 								{% if not backlog.is_archive %}
-									| <a href="{% url "project_backlog_archive" project.pk backlog.pk %}">{% trans "archive" %}</a>
+									| <a class="muted" href="{% url "project_backlog_archive" project.pk backlog.pk %}">{% trans "archive" %}</a>
 								{% endif %}
+								| <a class="muted" href="{% url "project_backlog_delete" project.pk backlog.pk %}">{% trans "delete" %}</a>
 							]</small>
 						{% endif %}
 						{% if backlog.is_archive %}
