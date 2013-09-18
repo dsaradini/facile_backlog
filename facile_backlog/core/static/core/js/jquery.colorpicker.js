@@ -51,9 +51,11 @@ $.fn.simpleColorPicker = function(options) {
             if (txt.is('input')) {
               txt.val(opts.colors[this.id.substr(this.id.indexOf('-') + 1)]);
               txt.blur();
+			  chooser_color()
             }
+			var color = opts.colors[this.id.substr(this.id.indexOf('-') + 1)];
             if ($.isFunction(defaults.onChangeColor)) {
-              defaults.onChangeColor.call(txt, opts.colors[this.id.substr(this.id.indexOf('-') + 1)]);
+              defaults.onChangeColor.call(txt, color);
             }
             hideBox(box);
         });
@@ -72,7 +74,13 @@ $.fn.simpleColorPicker = function(options) {
           if (left < pos.left) left = pos.left;
           box.css({ left: left, top: (pos.top + txt.outerHeight()) });
           showBox(box);
-        }
+        };
+
+		var chooser_color = function() {
+			var color = txt.val();
+			txt.css("border-right", "10px solid "+color);
+		};
+		chooser_color();
 
         txt.click(function(event) {
           event.stopPropagation();
