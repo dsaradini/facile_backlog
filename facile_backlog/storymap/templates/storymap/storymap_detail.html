@@ -93,8 +93,14 @@
 {% include "backlog/_script_show_errors.html" %}
 
 {% addtoblock "js" %}
+<script type="text/javascript" src="{% static "core/js/jquery.stickytableheaders.js" %}"></script>
+{% endaddtoblock %}
+
+{% addtoblock "js" %}
 <script type="text/javascript">
 	$(function() {
+		$('table').stickyTableHeaders();
+
 		var wait_start = function() {
 			$.show_waiting();
 		};
