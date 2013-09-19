@@ -15,7 +15,7 @@
 			<ul class="dropdown-menu dropdown-menu-color" role="menu" aria-labelledby="color_set_{{ story.pk }}">
 				<li>
 				{% for color in story_colors %}
-						<a href="#" class="story-color-set" data-color="{{ color }}">
+						<a href="javascript: void(0)" class="story-color-set" data-color="{{ color }}">
 						<span class="color-cell" style="background-color:{{ color }};">&nbsp;</span>
 						</a>
 					{% if forloop.last %}

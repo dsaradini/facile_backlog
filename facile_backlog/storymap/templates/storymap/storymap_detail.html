@@ -562,11 +562,12 @@
 			var c = $(this).attr("data-color");
 			var $story_cell = $(this).closest(".story-cell");
 			var story_id = $story_cell.attr("story-id");
+			// let the update web-socket do its job
 			ajax_story_action("update", story_id, {
 				color: c
 			}, function(err) {
 				if (!err) {
-					$story_cell.css("background-color", c);
+					$story_cell.attr('style', 'background-color: '+c+' !important');
 				}
 			})
 		});
