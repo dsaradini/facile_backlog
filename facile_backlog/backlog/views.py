@@ -899,7 +899,8 @@ class ProjectStats(ProjectMixin, generic.TemplateView):
             return {
                 'name': status_for(name),
                 'color': STATUS_COLORS[name],
-                'y': value['stories']
+                'count': value['stories'],
+                'y': value['points']
             }
         s = base[-1]
         if 'main' in s.data:
