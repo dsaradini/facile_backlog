@@ -46,7 +46,7 @@ class ProjectEditionForm(ModelForm):
 
     class Meta:
         model = Project
-        fields = ["name", "code",  "description"]
+        fields = ["name", "code", "lang",  "description"]
 
 
 class ProjectCreationForm(ProjectEditionForm):

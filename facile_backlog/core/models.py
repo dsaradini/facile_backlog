@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 from django.utils import timezone
@@ -43,6 +44,8 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(_('Active'), default=False)
     is_superuser = models.BooleanField(_('Superuser status'), default=False)
     date_joined = models.DateTimeField(_('Date joined'), default=timezone.now)
+    lang = models.CharField(_("Language"), max_length=3, blank=True,
+                            choices=settings.LANGUAGES)
     objects = UserManager()
 
     @property

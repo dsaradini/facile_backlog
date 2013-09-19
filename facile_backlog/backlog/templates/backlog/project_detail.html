@@ -9,6 +9,7 @@
 
 	<div class="project-head">
 		<h1 class="inline-title"><i class="icon-book"></i> {{ project.name }}</h1>
+
 		{% if project|can_admin:request.user %}
 			<small class="muted">[
 			<a class="btn-link" href="{% url "project_edit" project.pk %}">
@@ -20,7 +21,9 @@
 			]</small>
 		{% endif %}
 	</div>
-
+	{% if project.lang %}
+		<span class="pull-right label small muted">{{ project.get_lang_display }}</span>
+	{% endif %}
 	<div class="description">
 		{% if project.description %}
 			{{ project.description|markdown }}

@@ -1,14 +1,15 @@
-<div>
-	<span>{% trans "As" %}</span>
-	{{ story.as_a }},
-</div>
-<div>
-	<span>{% trans "I want to" %}</span>
-	<strong>{{ story.i_want_to }}</strong>
-</div>
-{% if story.so_i_can %}
-<div>
-	<span>{% trans "so I can" %}</span>
-	{{ story.so_i_can }}.
-</div>
-{% endif %}
+{% language story.project.lang|default:request.LANGUAGE_CODE %}
+	<div>
+		<span>{% trans "As" %}</span>&nbsp;{{ story.as_a }},
+	</div>
+	<div>
+		<span>{% trans "I want to" %}</span>
+		<strong>{{ story.i_want_to }}</strong>
+	</div>
+	{% if story.so_i_can %}
+	<div>
+		<span>{% trans "so I can" %}</span>
+		{{ story.so_i_can }}.
+	</div>
+	{% endif %}
+{% endlanguage %}
