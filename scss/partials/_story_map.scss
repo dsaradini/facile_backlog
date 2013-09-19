@@ -18,7 +18,7 @@
 		background: #EEE;
 	}
 	td:first-child {
-		background: #DDD;
+		background-color: #DDD !important;
 		text-align: center;
 	}
 	th:not(:first-child), td:not(:first-child) {
@@ -260,4 +260,20 @@ $graber-size: 0px;
 			background: #eee !important;
 		}
 	}
+}
+
+@media print
+{
+	.story-cell {
+		-webkit-print-color-adjust: exact;
+	}
+    .dropdown, .breadcrumb, .nav, .navbar, .backlog-action {
+        display: none !important;
+    }
+	.story-map {
+		.btn {
+        	display: none !important;
+    	}
+	}
+
 }
