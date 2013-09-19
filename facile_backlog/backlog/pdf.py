@@ -141,7 +141,10 @@ def draw_story_front(c, story, positions, position=0):
         # print the html version of the story text
         t = loader.get_template("backlog/user_story_text.html")
         text = t.render(Context({
-            'story': story
+            'story': story,
+            'request': {
+                'LANGUAGE_CODE': "en"
+            }
         }))
         p = Paragraph(text, style)
         aW = SIZE[0]*cm

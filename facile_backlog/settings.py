@@ -136,6 +136,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
+    'facile_backlog.middleware.LocaleMiddleware',
 )
 
 ROOT_URLCONF = 'facile_backlog.urls'

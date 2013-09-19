@@ -1,3 +1,5 @@
+# coding=utf-8
+
 import urllib
 from django.core.urlresolvers import reverse
 from django_webtest import WebTest
@@ -249,3 +251,60 @@ class ProjectTest(WebTest):
         response = self.app.get(url, user=user)
         elms = response.pyquery("tbody tr")
         self.assertEqual(elms.length, 6)
+
+    def test_project_language(self):
+        user = factories.UserFactory.create()
+        org = factories.create_sample_organization(user)
+        backlog = factories.BacklogFactory.create(
+            org=org,
+            is_main=True,
+        )
+        project = factories.create_sample_project(user, project_kwargs={
+            'org': org,
+            'lang': '',
+        })
+        project_en = factories.create_sample_project(user, project_kwargs={
+            'org': org,
+            'lang': 'en',
+        })
+        project_fr = factories.create_sample_project(user, project_kwargs={
+            'org': org,
+            'lang': 'fr',
+        })
+        factories.UserStoryFactory.create(
+            project=project,
+            backlog=backlog,
+            as_a="default lang story"
+        )
+        factories.UserStoryFactory.create(
+            project=project_en,
+            backlog=backlog,
+            as_a="english lang story"
+        )
+        factories.UserStoryFactory.create(
+            project=project_fr,
+            backlog=backlog,
+            as_a=u"scénario en francais"
+        )
+        url = reverse("org_sprint_planning", args=(org.pk,))
+        response = self.app.get(url, user=user)
+        self.assertContains(
+            response,
+            u"<span>As</span>&nbsp;default lang story"
+        )
+        self.assertContains(
+            response,
+            u"<span>As</span>&nbsp;english lang story"
+        )
+        self.assertContains(
+            response,
+            u"<span>En tant que</span>&nbsp;scénario en francais"
+        )
+
+        user.lang = "fr"
+        user.save()
+        response = self.app.get(url, user=user)
+        self.assertContains(
+            response,
+            u"<span>En tant que</span>&nbsp;default lang story"
+        )

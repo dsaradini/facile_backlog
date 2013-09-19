@@ -332,6 +332,9 @@ class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
         through='AuthorizationAssociation'
     )
 
+    lang = models.CharField(_("Language"), max_length=3, blank=True,
+                            choices=settings.LANGUAGES)
+
     class Meta:
         ordering = ("name",)
 

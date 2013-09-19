@@ -45,7 +45,7 @@ class UserChangeForm(forms.ModelForm):
 class ProfileEditionForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
-        fields = ['full_name']
+        fields = ['full_name', 'lang']
 
 
 class RegistrationForm(forms.Form):

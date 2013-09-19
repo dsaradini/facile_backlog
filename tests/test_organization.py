@@ -212,7 +212,7 @@ class OrganizationTest(WebTest):
         elms = response.pyquery("tbody tr")
         self.assertEqual(elms.length, 6)
 
-    def test_org_backlogs_projets(self):
+    def test_org_backlogs_projects(self):
         # Test that the project used in "preferred" project is stored in
         # session
         user = factories.UserFactory.create()

@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.http.response import HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, activate
 from django.views import generic
 
 
@@ -36,6 +36,8 @@ class ProjectDashboard(generic.TemplateView):
             raise Http404
         self.project = self.dashboard.project
         self.request = request
+        if self.project.lang:
+            activate(self.project.lang)
         response = super(ProjectDashboard,
                          self).dispatch(request, *args, **kwargs)
         return response
@@ -71,6 +73,7 @@ class ProjectDashboard(generic.TemplateView):
                     backlog__org=self.project.org,
                     backlog__is_archive=False,
                     backlog__is_main=False,
+                    project=self.project,
                 )
                 if main_backlog:
                     org_stories.exclude(backlog=main_backlog)
