@@ -48,28 +48,27 @@
 			{% for backlog in backlogs %}
 				<li>
 					<div class="title">
-						<H4>
-							{% if not backlog.is_archive %}
-								<a href="{% url "backlog_detail" backlog.pk %}"> <i class="icon-list-ul black"></i> {{ backlog.name }}</a>
-							{% else %}
-								<i class="icon-list-ul muted"></i> {{ backlog.name }}
-							{% endif %}
-						{% if organization|can_admin:request.user and backlog.can_modify%}
-							<small class="muted">[
-								<a class="muted" href="{% url "backlog_set_main" backlog.pk %}">{% trans "set main" %}</a>
-								{% if not main.is_archive %}
-									| <a class="muted" href="{% url "org_backlog_archive" organization.pk backlog.pk %}">{% trans "archive" %}</a>
-								{% endif %}
-								| <a class="muted" href="{% url "org_backlog_delete" organization.pk backlog.pk %}">{% trans "delete" %}</a>
-							]</small>
-						{% endif %}
 						{% if backlog.is_archive %}
-							<span class="muted small"><i class="muted icon-lock"></i> {% trans "archived" %}</span>
+							<h4 class="archived"><i class="icon-list-ul muted"></i> {{ backlog.name }}
+								<span class="muted small"><i class="muted icon-lock"></i> {% trans "archived" %}</span>
+							</h4>
+						{% else %}
+							<H4>
+							<a href="{% url "backlog_detail" backlog.pk %}"> <i class="icon-list-ul black"></i> {{ backlog.name }}</a>
+							{% if organization|can_admin:request.user and backlog.can_modify%}
+								<small class="muted">[
+									<a class="muted" href="{% url "backlog_set_main" backlog.pk %}">{% trans "set main" %}</a>
+									{% if not main.is_archive %}
+										| <a class="muted" href="{% url "org_backlog_archive" organization.pk backlog.pk %}">{% trans "archive" %}</a>
+									{% endif %}
+									| <a class="muted" href="{% url "org_backlog_delete" organization.pk backlog.pk %}">{% trans "delete" %}</a>
+								]</small>
+							{% endif %}
+							{% if backlog.is_main %}
+								<span class="label label-inverse">{% trans "main" %}</span>
+							{% endif %}
+							</H4>
 						{% endif %}
-						{% if backlog.is_main %}
-							<span class="label label-inverse">{% trans "main" %}</span>
-						{% endif %}
-						</H4>
 					</div>
 					{% if not backlog.is_archive %}
 						<div class="stats">

@@ -152,10 +152,6 @@ $tab-content-color: #eee;
 		overflow: hidden;
 		margin-bottom:1em;
 		clear: both;
-		.title {
-			padding: 0.2em 0;
-
-		}
 		.info {
 			color: $gray-text-color;
 		}
@@ -921,4 +917,8 @@ article.backlog.org-backlog {
 .nav-crumb {
 	border-radius: 0px;
 	border-color: $navbarBorder;
+}
+
+.archived {
+	margin:0px;
 }
