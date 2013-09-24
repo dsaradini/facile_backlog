@@ -9,8 +9,7 @@ from django.utils.translation import ugettext as _
 
 from optparse import make_option
 
-from ...models import (Project, Backlog, UserStory, create_event, Organization,
-                       Status)
+from ...models import (Project, Backlog, UserStory, create_event, Status)
 
 from ....core.models import User
 

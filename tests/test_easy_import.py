@@ -5,8 +5,7 @@ from django_webtest import WebTest
 from requests import Response
 
 from facile_backlog.backlog.management.commands.easy_import import Command
-from facile_backlog.backlog.models import (Project, UserStory, Organization,
-                                           Backlog)
+from facile_backlog.backlog.models import (Project, UserStory, Backlog)
 
 from . import factories
 

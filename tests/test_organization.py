@@ -280,5 +280,3 @@ class OrganizationTest(WebTest):
         project = Project.objects.get(pk=project.pk)
         self.assertTrue(project.can_admin(user_2))
         self.assertEqual(project.org, org2)
-
-
