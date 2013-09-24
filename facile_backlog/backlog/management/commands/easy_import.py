@@ -50,7 +50,7 @@ def get_user(name):
 
 
 class Command(BaseCommand):
-    args = '[<user_email> <company_id>]'
+    args = '<user_email> <eb_account_name> <eb_project_name> <project_name>'
     help = 'Imports easybacklog backlogs and stories'
     option_list = BaseCommand.option_list + (
         make_option('--ignore-errors', action='store_true', default=False,
@@ -58,13 +58,12 @@ class Command(BaseCommand):
     )
 
     def handle(self, *args, **options):
-        if not args:
-            raise CommandError("Need at less first argument <user_email>")
+        if not args or len(args) < 4:
+            raise CommandError("Need arguments: {0}".format(self.args))
         self.user = get_user(args[0])
-        if len(args) > 1:
-            self.lookup_company_id = args[1]
-        else:
-            self.lookup_company_id = None
+        self.eb_company_name = unicode(args[1], "utf-8")
+        self.eb_backlog_name = unicode(args[2], "utf-8")
+        self.project_name = unicode(args[3], "utf-8")
         self.fill_status()
         self.project_map = dict()  # Hold company_id-->project
 
@@ -72,33 +71,13 @@ class Command(BaseCommand):
         for account in accounts:
             self.handle_account(account)
 
-    def get_or_create_org(self, account):
-        account_id = account['id']
-        unique_key = "EASY_BACKLOG:account:{0}".format(account_id)
-        try:
-            org = Organization.objects.get(description=unique_key)
-        except Organization.DoesNotExist:
-            org = Organization(
-                name=account['name'],
-                description=unique_key,
-            )
-        org.name = account['name']
-        org.save()
-        org.add_user(self.user, is_admin=True)
-        return org
-
     def get_or_create_project(self, external_id, name):
-        unique_key = "EASY_BACKLOG:company:{0}".format(external_id)
-        try:
-            project = Project.objects.get(description=unique_key)
-        except Project.DoesNotExist:
-            project = Project(
-                name=name,
-                description=unique_key,
-                active=True,
-            )
-        project.name = name
-        project.org = self.organization
+        description = "Imported from easy backlog :{0}".format(external_id)
+        project = Project(
+            name=name,
+            description=description,
+            active=True,
+        )
         project.save()
         project.accepted_backlog = Backlog(
             project=project,
@@ -121,44 +100,55 @@ class Command(BaseCommand):
         self.project_map[external_id] = project
         return project
 
-    def handle_company(self, company):
-        project = self.get_or_create_project(company['id'], company['name'])
-        if self.user:
-            project.add_user(self.user, is_admin=True)
-
     def handle_account(self, account):
         account_id = account['id']
-        self.organization = self.get_or_create_org(account)
+        account_name = account['name']
+        if self.eb_company_name in [account_id, account_name]:
+            # trick case...
+            stand_alone = True
+        else:
+            stand_alone = False
         companies = self.get_companies(account_id)
 
-        for company in companies:
-            if not self.lookup_company_id:
-                self.handle_company(company)
-            elif self.lookup_company_id in (company['id'], company['name']):
-                self.handle_company(company)
+        self.eb_company = None
+        if not stand_alone:
+            for company in companies:
+                if self.eb_company_name in (company['id'], company['name']):
+                    self.eb_company = company
+            if not self.eb_company:
+                print u"No company found with name or id '{0}'".format(
+                    self.eb_company_name
+                )
+                return
+
         backlogs = easy_request(
             "accounts/{0}/backlogs".format(account_id)
         ).json()
+
+        found = 0
         for backlog in backlogs:
-            self.handle_backlog(backlog)
+            company_id = backlog.get('company_id', None)
+            if stand_alone and not company_id:
+                if self.handle_backlog(backlog):
+                    found += 1
+            elif self.eb_company and (company_id in [self.eb_company['id'],
+                                                     self.eb_company['name']]):
+                if self.handle_backlog(backlog):
+                    found += 1
+        if not found:
+            print u"No backlog found in company '{0}' " \
+                  u"with name or id '{1}'".format(self.eb_company_name,
+                                                  self.eb_backlog_name)
 
     def handle_backlog(self, easy_backlog):
         backlog_id = easy_backlog['id']
-        company_id = easy_backlog.get('company_id', None)
-        if company_id and company_id in self.project_map:
-            project = self.project_map[company_id]
-            backlog = Backlog.objects.create(
-                project=project,
-                name=easy_backlog['name'],
-                description="EASY_BACKLOG:backlog:{0}".format(backlog_id),
-                kind=Backlog.GENERAL,
-                is_archive=easy_backlog['archived'],
-                order=0,
-            )
-        else:
-            project = self.get_or_create_project(
-                "backlog:{0}".format(backlog_id), easy_backlog['name'])
-            backlog = project.main_backlog
+        backlog_name = easy_backlog['name']
+        if self.eb_backlog_name not in [backlog_id, backlog_name]:
+            return None
+        project = self.get_or_create_project(
+            "backlog:{0}".format(backlog_id),  self.project_name)
+
+        backlog = project.main_backlog
 
         if self.user:
             project.add_user(self.user, is_admin=True)
@@ -177,6 +167,7 @@ class Command(BaseCommand):
             if story.status == Status.ACCEPTED:
                 story.backlog = project.accepted_backlog
                 story.save()
+        return project
 
     def handle_theme(self, project, backlog, easy_theme, story_status):
         theme_id = easy_theme['id']

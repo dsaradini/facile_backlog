@@ -156,17 +156,14 @@ class HomeTest(WebTest):
     def test_doc_index(self, get):
         get.side_effect = request_get
         factories.UserFactory.create(email="test@test.com")
-        Command().handle("test@test.com")
-        org = Organization.objects.get()
-        self.assertEqual(org.name, "Sample account")
+        Command().handle('test@test.com', 'Test company',
+                         'Example corporate website backlog', 'My project')
         project = Project.objects.get()
-        self.assertEqual(project.name, "Test company")
-        self.assertEqual(org, project.org)
+        self.assertEqual(project.name, "My project")
         backlogs = Backlog.objects.all()
-        self.assertEqual(3, backlogs.count())
-        self.assertEqual(backlogs[0].name, "Example corporate website backlog")
-        self.assertEqual(backlogs[1].name, "Main backlog")
-        self.assertEqual(backlogs[2].name, "Accepted stories")
+        self.assertEqual(2, backlogs.count())
+        self.assertEqual(backlogs[0].name, "Main backlog")
+        self.assertEqual(backlogs[1].name, "Accepted stories")
         story = UserStory.objects.get()
         self.assertEqual(story.text, "As user, I want to view a set of simple "
                                      "screen shots, so I can understand how "

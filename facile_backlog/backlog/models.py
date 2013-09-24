@@ -311,6 +311,22 @@ class Organization(AclMixin, WithThemeMixin, models.Model):
         return self._get_logo(14)
     get_mini_logo.allow_tags = True
 
+    def insert_project(self, project):
+        """
+        Put project in this organization, by changing it's access rights
+        to match the organization one.
+        """
+        project.authorizations.all().delete()
+        project.org = self
+        for auth in self.authorizations.all():
+            AuthorizationAssociation.objects.create(
+                user=auth.user,
+                project=project,
+                is_admin=auth.is_admin,
+                is_active=auth.is_active,
+            )
+        project.save()
+
 
 class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
     authorization_association_field = "project"

@@ -2,7 +2,7 @@ import urllib
 from django.core.urlresolvers import reverse
 from django_webtest import WebTest
 
-from facile_backlog.backlog.models import (AuthorizationAssociation,
+from facile_backlog.backlog.models import (AuthorizationAssociation, Project,
                                            Event, Organization, UserStory)
 
 from . import factories
@@ -265,3 +265,20 @@ class OrganizationTest(WebTest):
             response.pyquery(".project-chooser").text().strip(),
             "Project two [PJ-2]"
         )
+
+    def test_insert_project(self):
+        user = factories.UserFactory.create()
+        user_2 = factories.UserFactory.create()
+        org1 = factories.create_sample_organization(user)
+        org2 = factories.create_sample_organization(user_2)
+        project = factories.create_sample_project(user, project_kwargs={
+            'name': "Project one",
+            'code': "PJ-1",
+            'org': org1
+        })
+        org2.insert_project(project)
+        project = Project.objects.get(pk=project.pk)
+        self.assertTrue(project.can_admin(user_2))
+        self.assertEqual(project.org, org2)
+
+
