@@ -416,7 +416,7 @@ class BacklogTest(WebTest):
         project = Project.objects.get(pk=project.pk)
         self.assertEqual(backlog, project.main_backlog)
 
-    def test_backlog_Detail(self):
+    def test_backlog_detail(self):
         user = factories.UserFactory.create()
         wrong_user = factories.UserFactory.create()
         backlog = factories.create_org_sample_backlog(user)
@@ -429,6 +429,26 @@ class BacklogTest(WebTest):
             backlog=backlog,
         )
         url = reverse("backlog_detail", args=(backlog.pk,))
+        self.app.get(url, status=302)
+        self.app.get(url, user=wrong_user, status=404)
+        response = self.app.get(url, user=user)
+        self.assertContains(response, us1.as_a)
+        self.assertContains(response, us2.as_a)
+
+    def test_backlog_detail_simple(self):
+        user = factories.UserFactory.create()
+        wrong_user = factories.UserFactory.create()
+        backlog = factories.create_org_sample_backlog(user)
+        us1 = factories.create_org_sample_story(
+            user,
+            backlog=backlog,
+        )
+        us2 = factories.create_org_sample_story(
+            user,
+            backlog=backlog,
+        )
+        url = reverse("backlog_detail", args=(backlog.pk,))
+        url = "{0}?simple=True".format(url)
         self.app.get(url, status=302)
         self.app.get(url, user=wrong_user, status=404)
         response = self.app.get(url, user=user)

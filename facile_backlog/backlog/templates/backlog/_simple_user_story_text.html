@@ -1,0 +1,9 @@
+{% language story.project.lang|default:request.LANGUAGE_CODE %}
+	{% trans "As" %}</span>&nbsp;{{ story.as_a }},
+	<span>{% trans "I want to" %}</span>
+	<strong>{{ story.i_want_to }}</strong>
+	{% if story.so_i_can %}
+		<span>{% trans "so I can" %}</span>
+		{{ story.so_i_can }}.
+	{% endif %}
+{% endlanguage %}

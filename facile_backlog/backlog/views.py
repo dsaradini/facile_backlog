@@ -1135,10 +1135,12 @@ class BacklogDetail(BacklogMixin, generic.TemplateView):
     no_cache = True
 
     def get_context_data(self, **kwargs):
+        simple = self.request.GET.get("simple", False)
         context = super(BacklogDetail, self).get_context_data(**kwargs)
         context['stories'] = self.backlog.ordered_stories.select_related(
             "project", "backlog")
         context['ws_url'] = settings.WEBSOCKET_URL
+        context['simple'] = simple
         return context
 
 backlog_detail = login_required(BacklogDetail.as_view())

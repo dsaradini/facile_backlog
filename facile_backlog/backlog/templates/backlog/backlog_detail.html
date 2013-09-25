@@ -28,11 +28,20 @@
 			<option value="color-story" selected>{% trans "Story color" %}</option>
 			<option value="color-theme">{% trans "Theme color" %}</option>
 		</select>
+		{% if simple %}
+			<a class="btn btn-link" href=".">{% trans "Full view" %}</a>
+		{% else %}
+			<a class="btn btn-link" href="./?simple=True">{% trans "Simple view" %}</a>
+		{% endif %}
 		<a class="btn btn-link" href="{% url "print_stories" %}?backlog_id={{ backlog.pk }}">{% trans "Print stories" %}</a>
 	</form>
     <div class="stories">
         {% for story in stories %}
-            {% include "backlog/_story_big_cell.html" with show_comments=True %}
+			{% if simple %}
+				{% include "backlog/_story_big_cell_simple.html" %}
+			{% else %}
+            	{% include "backlog/_story_big_cell.html" with show_comments=True %}
+			{% endif %}
         {% empty %}
 			<div class="text-warning alert">
             	{% trans "No story in this backlog" %}

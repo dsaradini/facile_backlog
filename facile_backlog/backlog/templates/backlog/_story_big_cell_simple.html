@@ -1,0 +1,48 @@
+{% load markup hashcolor acl%}
+<article class="story" id="story-{{ story.pk }}" story-id="{{ story.pk }}" theme-id="{{ story.theme }}" color-story="{{ story.color }}" color-theme="{{ story.theme|hashcolor }}">
+    <div class="handle" style="background-color:{{ story.color }}"></div>
+    <div class="handled">
+			<div class="row-fluid">
+				<div class="code span10">
+					<div class="row-fluid">
+						<div class="text span12">
+							<div>
+								<h4 class="inline-title">{{ story.code }}</h4>
+								{% if story|can_admin:request.user %}
+									<small class="muted">[ <a href="{% url "story_edit" story.project_id story.pk %}?_back=backlog">{% trans "edit" %}</a> ]</small>
+								{% endif %}
+								&nbsp;<span class="theme"><i style="color:{{ story.theme|hashcolor }};" class="icon-tag"></i> {{ story.theme }}</span>
+							</div>
+						{% include "backlog/_simple_user_story_text.html" %}
+						</div>
+					</div>
+				</div>
+				<div class="text-right span2">
+					{% if not hide_status_change %}
+					<div class="status">
+						<div class="btn-group dropdown-right">
+							<a class="btn btn-link dropdown-toggle padding-reset" href="#" data-toggle="dropdown">
+								<span class="story-status" status={{ story.status }}>
+									<i class="icon icon-circle"></i> <i class="icon-caret-down"></i>
+								</span>
+							</a>
+
+							<ul class="dropdown-menu">
+								{% for s in story.project.all_status %}
+									<li><a onclick="javascript:set_story_status(this, {{ story.pk }}, '{{ s.0 }}')">{{ s.1 }}</a></li>
+								{% endfor %}
+							</ul>
+						</div>
+					</div>
+					{% endif %}
+					<div class="points {% if story.points == -1 %}no-points{% endif %}">
+						{% if story.points >= 0%}
+							{{ story.points|floatformat:"0" }}
+						{% else %}
+						&nbsp;
+						{% endif %}
+					</div>
+				</div>
+			</div>
+    </div>
+</article>
