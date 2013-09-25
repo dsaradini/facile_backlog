@@ -1284,6 +1284,7 @@ class StoryEdit(StoryMixin, generic.UpdateView):
         context = super(StoryMixin, self).get_context_data(**kwargs)
         context['cancel_url'] = self.get_back_url()
         context['backlog'] = self.object.backlog
+        context['project'] = self.project
         return context
 
     def form_valid(self, form):
