@@ -70,7 +70,7 @@ class Command(BaseCommand):
         for account in accounts:
             self.handle_account(account)
 
-    def get_or_create_project(self, external_id, name):
+    def create_project(self, external_id, name):
         description = "Imported from easy backlog :{0}".format(external_id)
         project = Project(
             name=name,
@@ -144,7 +144,7 @@ class Command(BaseCommand):
         backlog_name = easy_backlog['name']
         if self.eb_backlog_name not in [backlog_id, backlog_name]:
             return None
-        project = self.get_or_create_project(
+        project = self.create_project(
             "backlog:{0}".format(backlog_id),  self.project_name)
 
         backlog = project.main_backlog

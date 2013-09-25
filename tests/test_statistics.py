@@ -42,7 +42,7 @@ class StatisticsTest(WebTest):
             points=10,
             status=Status.TODO,
         )
-        factories.UserStoryFactory.create(
+        story = factories.UserStoryFactory.create(
             project=project,
             backlog=backlog,
             points=-1,
@@ -55,6 +55,13 @@ class StatisticsTest(WebTest):
         self.assertEqual(project.statistics.count(), 1)
 
         project.generate_daily_statistics(timezone.now() - timedelta(days=1))
+        # Same statistics data, should not create element
+        self.assertEqual(project.statistics.count(), 1)
+
+        story.status=Status.ACCEPTED
+        story.save()
+        project.generate_daily_statistics(timezone.now() - timedelta(days=1))
+        # statistics have changed, should had been generated.
         self.assertEqual(project.statistics.count(), 2)
 
         today_stats = project.statistics.get(

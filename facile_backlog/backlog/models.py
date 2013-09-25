@@ -426,8 +426,7 @@ class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
     def generate_daily_statistics(self, day=None):
         if not day:
             day = timezone.now()
-        statistics, create = Statistic.objects.get_or_create(
-            project=self, day=day)
+
         data = dict()
 
         def constant_factory():
@@ -455,9 +454,26 @@ class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
         if self.main_backlog:
             data['main'] = populate(self.main_backlog.stories)
         data['backlogs'] = self.backlogs.count()
+        # check if statistics are the same as previous one
+        # if it is the case, do not create object
+        if self.statistics.exists():
+            prev = self.statistics.latest("day")
+            if prev.data == data:
+                return None, False
+            else:
+                print "GENERATE"
+        statistics, create = Statistic.objects.get_or_create(
+            project=self, day=day)
         statistics.data = data
         statistics.save()
         return statistics, create
+
+    def compact_statistics(self):
+        prev = None
+        for s in self.statistics.all():
+            if prev and prev.same_data(s):
+                s.delete()
+            prev = s
 
 
 class Backlog(StatsMixin, WithThemeMixin, models.Model):
@@ -738,6 +754,11 @@ class Statistic(models.Model):
                     return 0
 
         return [self.js_date, get_it(0, self.data)]
+
+    def same_data(self, other):
+        if other:
+            return other.data == self.data
+        return False
 
 
 def build_event_kwargs(values, **kwargs):
