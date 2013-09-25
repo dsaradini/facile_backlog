@@ -94,7 +94,8 @@ Response
 		{
 			"id": BACKLOG_ID,
 			"name": "backlog name",
-			"is_main": boolean, is main backlog
+			"is_main": boolean, is main backlog,
+			"is_archive": boolean, is archived backlog,
 			"url": "https://app.backlogman.com/api/backlogs/BACKLOG_ID/",
 		},
 		... list ...
@@ -148,7 +149,6 @@ Response
 			"email": "jdoe@backlogman.com"
 		}
 	],
-	"story_count": 10,
 	"available_themes": [
 		"theme one",
 		"theme two",

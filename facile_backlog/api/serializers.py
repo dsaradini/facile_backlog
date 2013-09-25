@@ -52,7 +52,7 @@ class InnerBacklogSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Backlog
-        fields = ('id', 'name', 'is_main', 'url')
+        fields = ('id', 'name', 'is_main', 'is_archive', 'url')
 
     def _url(self, obj):
         return reverse("api_backlog_detail", args=[obj.pk],
