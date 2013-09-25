@@ -58,7 +58,7 @@ class StatisticsTest(WebTest):
         # Same statistics data, should not create element
         self.assertEqual(project.statistics.count(), 1)
 
-        story.status=Status.ACCEPTED
+        story.status = Status.ACCEPTED
         story.save()
         project.generate_daily_statistics(timezone.now() - timedelta(days=1))
         # statistics have changed, should had been generated.
