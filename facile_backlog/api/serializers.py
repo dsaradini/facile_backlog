@@ -28,12 +28,13 @@ class StorySerializer(serializers.ModelSerializer):
     code = serializers.CharField(read_only=True, source='code')
     backlog_id = serializers.SerializerMethodField('_backlog_id')
     project_id = serializers.SerializerMethodField('_proj_id')
+    lang = serializers.SerializerMethodField('_proj_lang')
 
     class Meta:
         model = UserStory
         fields = ('id', 'url', 'code', 'as_a', 'i_want_to',
                   'so_i_can', 'color', 'comments', 'acceptances', 'points',
-                  'theme', 'status', 'backlog_id', 'project_id')
+                  'theme', 'status', 'backlog_id', 'project_id', 'lang')
 
     def _url(self, obj):
         return reverse("api_story_detail",
@@ -45,6 +46,9 @@ class StorySerializer(serializers.ModelSerializer):
 
     def _proj_id(self, obj):
         return obj.project_id
+
+    def _proj_lang(self, obj):
+        return obj.project.lang
 
 
 class InnerBacklogSerializer(serializers.ModelSerializer):
@@ -115,7 +119,7 @@ class ProjectSerializer(ProjectListSerializer):
         model = Project
         fields = ProjectListSerializer.Meta.fields + ('available_themes',
                                                       'stats',  'users',
-                                                      'backlogs')
+                                                      'backlogs', 'lang')
 
     def _stats(self, obj):
         return obj.stats

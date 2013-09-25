@@ -122,7 +122,8 @@ Response
 		"name": "PROJECT NAME",
 		"code": "PCODE",
 		"description": "PROJECT_DESCRIPTION",
-		"organization_id": ORG_ID ( if any )
+		"organization_id": ORG_ID ( if any ),
+		'lang': (optional) ISO 639-1 language code for this project
 	},
 	...list...
 ]
@@ -252,6 +253,7 @@ Response
 	"status": "to_do|in_progress|accepted|rejected",
 	"backlog_id": BACKLOG_ID
 	"project_id": PROJECT_ID
+	"lang": (optional) ISO 639-1 language code for this story ( same as project )
 }
 </code>
 

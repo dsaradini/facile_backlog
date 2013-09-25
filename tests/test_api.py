@@ -41,12 +41,14 @@ class APITestRead(JsonTestCase):
         user = UserFactory.create(email="test@test.ch")
         project = create_sample_project(user, project_kwargs={
             'name': "My project",
+            'lang': "fr"
         })
         url = reverse("api_project_detail", args=(project.pk,))
         self.client.get(url, status=401)
         response = self.client.get(url, user=user)
         self.assertJsonKeyEqual(response, 'name', "My project")
         self.assertJsonKeyEqual(response, 'id', project.pk)
+        self.assertJsonKeyEqual(response, 'lang', project.lang)
 
     def test_api_backlog_detail(self):
         user = UserFactory.create(email="test@test.ch")
@@ -94,6 +96,8 @@ class APITest_Story(JsonTestCase):
             'so_i_can': "know if my tests pass"
         })
         story.project.add_user(read_only_user)
+        story.project.lang = "de"
+        story.project.save()
         url = reverse("api_story_detail", args=(
             story.backlog_id, story.pk))
         self.client.get(url, status=401)
@@ -103,6 +107,7 @@ class APITest_Story(JsonTestCase):
         response = self.client.get(url, user=user)
         self.assertJsonKeyEqual(response, 'as_a', "Test writer")
         self.assertJsonKeyEqual(response, 'id', story.pk)
+        self.assertJsonKeyEqual(response, 'lang', 'de')
 
     def test_story_post(self):
         user = UserFactory.create(email="test@test.ch")
