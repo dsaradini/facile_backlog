@@ -1,7 +1,7 @@
 {% load staticfiles markup acl %}
 
 <ul class="breadcrumb">
-	<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a></li>
+	<li><a href="{% url "dashboard" %}"><i class="icon-home"></i></a>&nbsp;&nbsp;</li>
 	<li class="divider"><div class="inner"></div></li>
 	<li class="active">{{ organization.get_mini_logo }} {{ organization.name }}<span class="divider"></span></li>
 </ul>

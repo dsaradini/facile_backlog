@@ -1,11 +1,18 @@
 {% load staticfiles markup acl %}
 
 <ul class="breadcrumb">
-	<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a></li>
+	<li><a href="{% url "dashboard" %}"><i class="icon-home"></i></a>&nbsp;&nbsp;</li>
 	<li class="divider"><div class="inner"></div></li>
 	{% if project.org_id %}
 		<li><a href="{% url "org_detail" project.org_id %}">{{ project.org.get_mini_logo }} {{ project.org.name }}</a></li>
 		<li class="divider"><div class="inner"></div></li>
 	{% endif %}
-	<li class="active"><i class="icon-book"></i> {{ project.name }}<span class="divider"></span></li>
+
+	{% if crumb_action %}
+		<li> <a href="{% url "project_detail" project.pk %}"><i class="icon-book"></i> {{ project.name }}</a></li>
+		<li class="divider"><div class="inner"></div></li>
+		<li class="active"> {{ crumb_action }}</li>
+	{% else %}
+		<li class="active"><i class="icon-book"></i> {{ project.name }}</li>
+	{% endif %}
 </ul>

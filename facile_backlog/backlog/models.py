@@ -460,8 +460,6 @@ class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
             prev = self.statistics.latest("day")
             if prev.data == data:
                 return None, False
-            else:
-                print "GENERATE"
         statistics, create = Statistic.objects.get_or_create(
             project=self, day=day)
         statistics.data = data

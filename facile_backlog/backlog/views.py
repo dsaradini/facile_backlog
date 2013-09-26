@@ -626,6 +626,13 @@ class ProjectMixin(NoCacheMixin):
     def pre_dispatch(self):
         pass
 
+    def get_context_data(self, **kwargs):
+        context = super(ProjectMixin, self).get_context_data(**kwargs)
+        context['project'] = self.project
+        if self.project.org_id:
+            context['organization'] = self.project.org
+        return context
+
 
 class ProjectDetail(ProjectMixin, generic.DetailView):
     template_name = "backlog/project_detail.html"

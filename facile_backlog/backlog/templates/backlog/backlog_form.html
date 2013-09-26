@@ -3,15 +3,21 @@
 {% block title %}{% if object %}{% trans "Edit backlog" %}{% else %}{% trans "Add a new backlog" %}{% endif %}{% endblock %}
 
 {% block content %}
-
 	<ul class="breadcrumb">
-		<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a><span class="divider">/</span></li>
+		<li><a href="{% url "dashboard" %}"><i class="icon-home"></i></a>&nbsp;&nbsp;</li>
+		<li class="divider"><div class="inner"></div></li>
 		{% if project %}
-			<li> <i class="icon-book"></i><a href="{% url "project_backlogs" project.pk %}">{{ project.name }}</a><span class="divider">/</span></li>
+			{% if project.org_id %}
+				<li><a href="{% url "org_detail" project.org_id %}">{{ project.org.get_mini_logo }} {{ project.org.name }}</a></li>
+				<li class="divider"><div class="inner"></div></li>
+			{% endif %}
+			<li> <a href="{% url "project_detail" project.pk %}"><i class="icon-book"></i> {{ project.name }}</a></li>
+			<li class="divider"><div class="inner"></div></li>
 		{% elif organization %}
-			<li>{{ organization.get_mini_logo }} <a href="{% url "org_sprint_planning" organization.pk %}">{{ organization.name }}</a><span class="divider">/</span></li>
+			<li><a href="{% url "org_detail" organization.pk %}">{{ organization.get_mini_logo }} {{ organization.name }}</a></li>
+			<li class="divider"><div class="inner"></div></li>
 		{% endif %}
-		<li class="active">{% if object %}{% trans "Edit backlog" %}{% else %}{% trans "Create backlog" %}{% endif %}<span class="divider"></span>
+		<li class="active">{% if object %}{% trans "Edit backlog" %}{% else %}{% trans "Create backlog" %}{% endif %}
 		</li>
 	</ul>
 

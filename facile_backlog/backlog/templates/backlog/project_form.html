@@ -4,14 +4,16 @@
 
 {% block content %}
 	<ul class="breadcrumb">
-		<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a><span class="divider">/</span></li>
+		<li><a href="{% url "dashboard" %}"><i class="icon-home"></i></a>&nbsp;&nbsp;</li>
+		<li class="divider"><div class="inner"></div></li>
 		{% if organization %}
-			<li><a href="{% url "org_detail" organization.pk %}">{{ organization.get_mini_logo }} {{ organization.name }}</a><span class="divider">/</span></li>
+			<li><a href="{% url "org_detail" organization.pk %}">{{ organization.get_mini_logo }} {{ organization.name }}</a></li>
+			<li class="divider"><div class="inner"></div></li>
 		{% endif %}
 		{% if object %}
-			<li class="active"><i class="icon-book"></i> {% trans "Edit project" %}<span class="divider"></span></li>
+			<li class="active">{% trans "Edit project" %}</li>
 		{% else %}
-			<li class="active"><i>{% trans "Create project" %}</i><span class="divider"></span></li>
+			<li class="active">{% trans "Create project" %}</li>
 		{% endif %}
 	</ul>
 
