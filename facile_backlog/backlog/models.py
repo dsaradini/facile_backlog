@@ -39,9 +39,9 @@ class Status(object):
 STATUS_CHOICE = (
     (Status.TODO, _("To do")),
     (Status.IN_PROGRESS, _("In progress")),
+    (Status.COMPLETED, _("Completed")),
     (Status.ACCEPTED, _("Accepted")),
     (Status.REJECTED, _("Rejected")),
-    (Status.COMPLETED, _("Completed")),
 )
 
 STATUS_COLORS = {

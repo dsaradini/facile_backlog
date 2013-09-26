@@ -103,6 +103,10 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
+# Redis cache for statics
+#if not DEBUG:
+#    STATICFILES_STORAGE = ('django.contrib.staticfiles.storage.'
+#                           'CachedStaticFilesStorage')
 
 LANGUAGES = (
     ('fr', u'Français'),
