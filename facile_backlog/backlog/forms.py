@@ -6,7 +6,8 @@ from django.forms import EmailField, BooleanField
 from django.forms.widgets import TextInput
 from django.utils.translation import ugettext as _
 
-from .models import Project, Backlog, UserStory, Organization
+from .models import (Project, Backlog, UserStory, Organization,
+                     AuthorizationAssociation)
 
 
 class BackMixin(object):
@@ -166,3 +167,9 @@ class InviteUserForm(Form):
     email = EmailField(label=_('Email address'))
     admin = BooleanField(label=_('Administrator'),
                          initial=False, required=False)
+
+
+class AuthorizationAssociationForm(ModelForm):
+    class Meta:
+        model = AuthorizationAssociation
+        fields = ("is_admin", )

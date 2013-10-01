@@ -280,3 +280,27 @@ class OrganizationTest(WebTest):
         project = Project.objects.get(pk=project.pk)
         self.assertTrue(project.can_admin(user_2))
         self.assertEqual(project.org, org2)
+
+    def test_org_auth_edit(self):
+        user = factories.UserFactory.create()
+        user_2 = factories.UserFactory.create(
+            email="test@test.com"
+        )
+        org = factories.create_sample_organization(user)
+        org.add_user(user_2, is_admin=False)
+        auth = AuthorizationAssociation.objects.get(
+            user=user_2,
+            org=org
+        )
+        url = reverse("org_auth_edit", args=(org.pk, auth.pk))
+        self.app.get(url, status=302)
+        self.app.get(url, user=user_2, status=403)
+        response = self.app.get(url, user=user)
+        form = response.forms['edit_auth_form']
+        self.assertFalse(form['is_admin'].value)
+        form['is_admin'] = True
+        response = form.submit().follow()
+        self.assertContains(response, "Authorization for user "
+                                      "test@test.com has been changed")
+        auth = AuthorizationAssociation.objects.get(pk=auth.pk)
+        self.assertTrue(auth.is_admin)

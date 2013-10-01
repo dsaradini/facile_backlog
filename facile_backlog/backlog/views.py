@@ -25,7 +25,8 @@ from .models import (Project, Backlog, UserStory, AuthorizationAssociation,
 from .forms import (ProjectCreationForm, ProjectEditionForm,
                     BacklogCreationForm, BacklogEditionForm,
                     StoryEditionForm, StoryCreationForm, InviteUserForm,
-                    OrgCreationForm, OrgEditionForm)
+                    OrgCreationForm, OrgEditionForm,
+                    AuthorizationAssociationForm)
 
 
 from ..core.models import User
@@ -593,6 +594,43 @@ class OrgRevokeAuthorization(OrgMixin, generic.DeleteView):
                          _('User {0} has been revoked.'.format(user.email)))
         return redirect(reverse('org_users', args=(self.organization.pk,)))
 org_auth_delete = login_required(OrgRevokeAuthorization.as_view())
+
+
+class OrgEditAuthorization(OrgMixin, generic.UpdateView):
+    admin_only = True
+    template_name = "users/auth_edit.html"
+    form_class = AuthorizationAssociationForm
+
+    def get_success_url(self):
+        return reverse('org_users', args=(self.organization.pk,))
+
+    def dispatch(self, request, *args, **kwargs):
+        self.auth = get_object_or_404(AuthorizationAssociation,
+                                      pk=kwargs['auth_id'])
+        return super(OrgEditAuthorization, self).dispatch(request, *args,
+                                                          **kwargs)
+
+    def get_object(self, queryset=None):
+        return self.auth
+
+    def get_context_data(self, **kwargs):
+        data = super(OrgEditAuthorization, self).get_context_data(**kwargs)
+        data['organization'] = self.organization
+        data['auth'] = self.auth
+        return data
+
+    def form_valid(self, form):
+        super(OrgEditAuthorization, self).form_valid(form)
+        user = self.auth.user
+        create_event(self.request.user,
+                     _("Authorization changed for "
+                       "user {0}".format(user.email)),
+                     organization=self.organization)
+        messages.success(self.request,
+                         _('Authorization for user {0} has '
+                           'been changed.'.format(user.email)))
+        return redirect(reverse('org_users', args=(self.organization.pk,)))
+org_auth_edit = login_required(OrgEditAuthorization.as_view())
 
 
 #############

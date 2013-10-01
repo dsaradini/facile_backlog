@@ -12,7 +12,8 @@ from .views import (project_detail, project_create, project_edit,
                     org_create, org_edit, org_detail, org_delete, org_users,
                     org_backlog_edit, org_backlog_create, org_backlogs,
                     org_backlog_delete, org_stories, project_backlog_archive,
-                    org_backlog_archive, org_invite_user, org_auth_delete)
+                    org_backlog_archive, org_invite_user, org_auth_delete,
+                    org_auth_edit)
 
 # root
 urlpatterns = patterns(
@@ -52,6 +53,11 @@ urlpatterns += patterns(
     url(r'^orgs/(?P<org_id>[\d]+)/revoke/(?P<auth_id>[\d]+)/$',
         org_auth_delete,
         name='org_auth_delete'),
+
+    url(r'^orgs/(?P<org_id>[\d]+)/edit/(?P<auth_id>[\d]+)/$',
+        org_auth_edit,
+        name='org_auth_edit'),
+
 
     url(r'^orgs/(?P<org_id>[\d]+)/backlogs/(?P<backlog_id>[\d]+)/'
         r'edit/$',
