@@ -35,7 +35,7 @@ urlpatterns = patterns(
 
     url(r'^$', home_view, name="api_home"),
 
-    url(r'/_move_story/$',
+    url(r'_move_story/$',
         move_story, name="api_move_story"),
 
     url(r'^projects/(?P<project_id>[\w]+)/_order_backlog/$',

@@ -405,7 +405,7 @@ POST
 }
 </code>
 
-Backlogman WebSocker API
+Backlogman WebSocket API
 ========================
 
 2 web sockets are available to be notified of change on organization and project
