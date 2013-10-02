@@ -170,6 +170,11 @@ class InviteUserForm(Form):
 
 
 class AuthorizationAssociationForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(AuthorizationAssociationForm, self).__init__(*args, **kwargs)
+        self.fields['is_admin'].label = _("Grant administrator role")
+
     class Meta:
         model = AuthorizationAssociation
         fields = ("is_admin", )

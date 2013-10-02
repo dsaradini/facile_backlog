@@ -43,7 +43,7 @@ class HomeTest(WebTest):
         )
         url = reverse('home')
         self.visited = []
-        self.follow_href("ROOT", url, user=user)
+        self.follow_href("ROOT", url, user=user, anchor=None)
         # print "Site URLS:", len(self.visited)
 
     def test_navigate_admin(self):
@@ -77,10 +77,10 @@ class HomeTest(WebTest):
         )
         url = reverse('admin:index')
         self.visited = []
-        self.follow_href("ROOT", url, user=user)
+        self.follow_href("ROOT", url, user=user, anchor=None)
         # print "Admin URLS:", len(self.visited)
 
-    def follow_href(self, src_url, href, user):
+    def follow_href(self, src_url, href, user, anchor):
         if href in self.visited:
             return
         try:
@@ -92,7 +92,8 @@ class HomeTest(WebTest):
                 anchors = []
         except Exception:
             print "Exception when navigate to " \
-                  "href={0} from url={1}".format(href, src_url)
+                  "href={0} from url={1} on anchor={2}".format(
+                      href, src_url, anchor.outerHtml())
             raise
         finally:
             self.visited.append(href)
@@ -100,7 +101,7 @@ class HomeTest(WebTest):
         for a in anchors:
             url = self.should_follow(PyQuery(a).attr("href"))
             if url:
-                self.follow_href(href, url, user)
+                self.follow_href(href, url, user, PyQuery(a))
 
     def should_follow(self, url):
         if not url:

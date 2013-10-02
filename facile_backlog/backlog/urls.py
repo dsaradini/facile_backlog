@@ -54,7 +54,7 @@ urlpatterns += patterns(
         org_auth_delete,
         name='org_auth_delete'),
 
-    url(r'^orgs/(?P<org_id>[\d]+)/edit/(?P<auth_id>[\d]+)/$',
+    url(r'^orgs/(?P<org_id>[\d]+)/auth/(?P<auth_id>[\d]+)/edit/$',
         org_auth_edit,
         name='org_auth_edit'),
 

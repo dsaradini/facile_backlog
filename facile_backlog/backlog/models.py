@@ -114,7 +114,10 @@ class AuthorizationAssociation(models.Model):
                                 related_name="authorizations")
     user = models.ForeignKey(User)
     is_active = models.BooleanField(default=False)
-    is_admin = models.BooleanField(default=False, help_text=_("Ability to modify the projects in the organization"))
+    is_admin = models.BooleanField(
+        default=False,
+        help_text=_("Ability to modify the organization and its projects")
+    )
     date_joined = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
