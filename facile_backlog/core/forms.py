@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.validators import validate_email
 from django.utils.translation import ugettext_lazy as _
+from facile_backlog.core.models import UserManager
 
 from rest_framework.authtoken.models import Token
 
@@ -56,6 +57,7 @@ class RegistrationForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data['email']
+        email = UserManager.normalize_email(email)
         try:
             user = get_user_model().objects.get(email=email)
         except get_user_model().DoesNotExist:
