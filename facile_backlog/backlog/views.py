@@ -11,8 +11,9 @@ from django.db.models import Q
 from django.forms import forms
 from django.http import Http404
 from django.http.response import (HttpResponseForbidden)
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import loader
+from django.template.context import RequestContext
 from django.utils.cache import patch_cache_control
 from django.utils.translation import ugettext as _
 from django.views import generic
@@ -1528,9 +1529,16 @@ class InvitationActivate(generic.TemplateView):
         try:
             auth = AuthorizationAssociation.objects.get(**auth_kwargs)
         except AuthorizationAssociation.DoesNotExist:
-            raise Http404
+            return render_to_response('error_page.html', {
+                'error': _("This invitation does not match your current user "
+                           "(%s). Check that you're logged in with the same "
+                           "user as the email you "
+                           "received.") % request.user.email
+            }, context_instance=RequestContext(request))
         if auth.is_active:
-            raise Http404
+            return render_to_response('error_page.html', {
+                'error': _("You already accepted this invitation.")
+            }, context_instance=RequestContext(request))
         auth.activate(request.user)
         return super(InvitationActivate, self).dispatch(
             request, *args, **kwargs)

@@ -16,6 +16,7 @@ class RegistrationTest(WebTest):
     def test_project_registration_cycle(self):
         user_a = UserFactory.create(email="a@test.ch")
         user_b = UserFactory.create(email="b@test.ch")
+        user_c = UserFactory.create(email="c@test.ch")
         project = create_sample_project(user_a, project_kwargs={
             'name': u"My first project",
         })
@@ -42,8 +43,16 @@ class RegistrationTest(WebTest):
                 "You have been invited to join the project") != -1
         )
         answer_url = line_starting(message.body, u"http://localhost:80/")
-        self.app.get(answer_url, user=user_a, status=404)
-
+        response = self.app.get(answer_url, user=user_a, status=200)
+        self.assertContains(
+            response,
+            u"You already accepted this invitation."
+        )
+        response = self.app.get(answer_url, user=user_c, status=200)
+        self.assertContains(
+            response,
+            u"This invitation does not match your current user"
+        )
         response = self.app.get(answer_url, user=user_b)
         self.assertContains(
             response,
@@ -62,6 +71,7 @@ class RegistrationTest(WebTest):
     def test_org_registration_cycle(self):
         user_a = UserFactory.create(email="a@test.ch")
         user_b = UserFactory.create(email="b@test.ch")
+        user_c = UserFactory.create(email="c@test.ch")
         org = create_sample_organization(user_a, org_kwargs={
             'name': u"My first org",
         })
@@ -94,7 +104,16 @@ class RegistrationTest(WebTest):
                 "You have been invited to join the organization") != -1
         )
         answer_url = line_starting(message.body, u"http://localhost:80/")
-        self.app.get(answer_url, user=user_a, status=404)
+        response = self.app.get(answer_url, user=user_a, status=200)
+        self.assertContains(
+            response,
+            u"You already accepted this invitation."
+        )
+        response = self.app.get(answer_url, user=user_c, status=200)
+        self.assertContains(
+            response,
+            u"This invitation does not match your current user"
+        )
         response = self.app.get(answer_url, user=user_b)
         self.assertContains(
             response,
