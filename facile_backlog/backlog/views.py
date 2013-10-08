@@ -503,7 +503,7 @@ class OrgInviteUser(OrgMixin, generic.FormView):
 
     def form_valid(self, form):
         super(OrgInviteUser, self).form_valid(form)
-        email = form.cleaned_data['email']
+        email = form.cleaned_data['email'].lower()
         admin = form.cleaned_data['admin']
         try:
             user = User.objects.get(email=email)
@@ -1468,7 +1468,7 @@ class ProjectInviteUser(ProjectMixin, generic.FormView):
 
     def form_valid(self, form):
         super(ProjectInviteUser, self).form_valid(form)
-        email = form.cleaned_data['email']
+        email = form.cleaned_data['email'].lower()
         admin = form.cleaned_data['admin']
         try:
             user = User.objects.get(email=email)

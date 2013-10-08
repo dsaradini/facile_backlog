@@ -27,8 +27,9 @@ class RegistrationTest(WebTest):
         response = self.app.get(url, user=user_a)
         self.assertContains(response, 'Invite')
         form = response.forms['register_form']
+        # should handle uppercase email
         for key, value in {
-            'email': 'b@test.ch',
+            'email': 'b@TEST.ch',
         }.iteritems():
             form[key] = value
         response = form.submit().follow()
@@ -78,8 +79,9 @@ class RegistrationTest(WebTest):
         response = self.app.get(url, user=user_a)
         self.assertContains(response, 'Invite')
         form = response.forms['register_form']
+        # should handle uppercase email
         for key, value in {
-            'email': 'b@test.ch',
+            'email': 'b@TEST.ch',
         }.iteritems():
             form[key] = value
         response = form.submit().follow()
