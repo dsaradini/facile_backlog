@@ -134,7 +134,7 @@ class RegistrationTest(WebTest):
 
     def test_project_revoke_invitation(self):
         user_a = UserFactory.create(email="a@test.ch")
-        user_b = UserFactory.create(email="b@test.ch")
+        user_b = UserFactory.create(email="b@test.ch", full_name="User B")
         project = create_sample_project(user_a, project_kwargs={
             'name': u"My first project",
         })
@@ -151,6 +151,9 @@ class RegistrationTest(WebTest):
         url = reverse("project_auth_delete", args=(project.pk, auth.pk))
         self.app.get(url, user=user_b, status=403)
         response = self.app.get(url, user=user_a)
+        self.assertContains(response, u"Are you sure you want to revoke "
+                                      u"'User B' from the project "
+                                      u"'My first project'")
         form = response.forms['delete_form']
         response = form.submit().follow()
         self.assertContains(
@@ -163,7 +166,7 @@ class RegistrationTest(WebTest):
 
     def test_org_revoke_invitation(self):
         user_a = UserFactory.create(email="a@test.ch")
-        user_b = UserFactory.create(email="b@test.ch")
+        user_b = UserFactory.create(email="b@test.ch", full_name="User B")
         org = create_sample_organization(user_a, org_kwargs={
             'name': u"My first org",
         })
@@ -187,6 +190,9 @@ class RegistrationTest(WebTest):
         url = reverse("org_auth_delete", args=(org.pk, auth.pk))
         self.app.get(url, user=user_b, status=403)
         response = self.app.get(url, user=user_a)
+        self.assertContains(response, u"Are you sure you want to revoke "
+                                      u"'User B' from the organization "
+                                      u"'My first org'")
         form = response.forms['delete_form']
         response = form.submit().follow()
         self.assertContains(

@@ -14,11 +14,11 @@
 	{% else %}
 		<div class="alert alert-danger">
 		{% if project %}
-			{% blocktrans with user=user.full_name project=project.name %}Are you sure you want to revoke '{{ user }}' from the project '{{ project }}'?{% endblocktrans %}
+			{% blocktrans with user=object.user.full_name project=project.name %}Are you sure you want to revoke '{{ user }}' from the project '{{ project }}'?{% endblocktrans %}
 			{% url "project_auth_delete" project.pk object.pk as action_url %}
 			{% url "project_users" project.pk as cancel_url %}
 		{% elif organization %}
-			{% blocktrans with user=user.full_name org=organization.name %}Are you sure you want to revoke '{{ user }}' from the organization '{{ org }}' and all its projects?{% endblocktrans %}
+			{% blocktrans with user=object.user.full_name org=organization.name %}Are you sure you want to revoke '{{ user }}' from the organization '{{ org }}' and all its projects?{% endblocktrans %}
 			{% url "org_auth_delete" organization.pk object.pk as action_url %}
 			{% url "project_users" project.pk as cancel_url %}
 		{% endif %}
