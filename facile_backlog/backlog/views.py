@@ -38,6 +38,15 @@ AUTH_TYPE_PROJECT = "prj"
 AUTH_TYPE_ORG = "org"
 
 
+def pie_element(name, value):
+    return {
+        'name': status_for(name),
+        'color': STATUS_COLORS[name],
+        'count': value['stories'],
+        'y': value['points']
+    }
+
+
 def get_projects(user):
     return Project.my_recent_projects(user)
 
@@ -941,14 +950,7 @@ class ProjectStats(ProjectMixin, generic.TemplateView):
             compute_series(Status.ACCEPTED, "main.by_status.accepted.points"),
         ]
 
-        def pie_element(name, value):
-            return {
-                'name': status_for(name),
-                'color': STATUS_COLORS[name],
-                'count': value['stories'],
-                'y': value['points']
-            }
-        s = base[-1]
+        s = base[0]
         if 'main' in s.data:
             context['main_status_pie'] = [pie_element(k, v) for k, v in
                                           s.data['main']['by_status'].items()]

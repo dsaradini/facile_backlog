@@ -732,7 +732,7 @@ class Statistic(models.Model):
     data = JSONField(_("Data"))
 
     class Meta:
-        ordering = ("day",)
+        ordering = ("-day",)
 
     @property
     def js_date(self):

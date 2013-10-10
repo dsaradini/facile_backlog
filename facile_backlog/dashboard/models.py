@@ -45,7 +45,7 @@ class Dashboard(models.Model):
     )
 
     show_story_status = models.BooleanField(
-        help_text=_("Display stories status graphs"),
+        help_text=_("Display overall status graph"),
         default=True
     )
 

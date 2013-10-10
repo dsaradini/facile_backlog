@@ -12,18 +12,11 @@ from django.views import generic
 
 from ..backlog.models import (Status, status_for, STATUS_COLORS, create_event,
                               Project)
-from ..backlog.views import ProjectMixin, BackMixin, get_my_object_or_404
+from ..backlog.views import (ProjectMixin, BackMixin, get_my_object_or_404,
+                             pie_element)
 
 from models import Dashboard
 from forms import DashboardEditionForm, DashboardCreationForm
-
-
-def pie_element(name, value):
-    return {
-        'name': status_for(name),
-        'color': STATUS_COLORS[name],
-        'y': value['stories']
-    }
 
 
 class ProjectDashboard(generic.TemplateView):
@@ -92,7 +85,7 @@ class ProjectDashboard(generic.TemplateView):
                         status=Status.TODO
                     ).order_by("order").all()
 
-        if True:
+        if self.dashboard.show_story_status:
             l = list(self.project.statistics.all()[:1])
             if l:
                 info = l[0].data['all']
@@ -102,6 +95,8 @@ class ProjectDashboard(generic.TemplateView):
                     [pie_element(k, v) for k, v in info['by_status'].items()]
             else:
                 context['project_status_pie'] = []
+        else:
+            context['project_status_pie'] = []
         return context
 project_dashboard = ProjectDashboard.as_view()
 
