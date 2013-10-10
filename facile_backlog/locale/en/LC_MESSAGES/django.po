@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-02 09:34+0200\n"
+"POT-Creation-Date: 2013-10-10 11:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,7 +49,7 @@ msgstr ""
 msgid "Use markdown list format: line with '-' in front"
 msgstr ""
 
-#: backlog/forms.py:167 core/forms.py:53 core/models.py:40
+#: backlog/forms.py:167 core/forms.py:54 core/models.py:40
 msgid "Email address"
 msgstr ""
 
@@ -265,118 +265,129 @@ msgstr ""
 msgid "n/a"
 msgstr ""
 
-#: backlog/views.py:114 backlog/views.py:739
+#: backlog/views.py:124 backlog/views.py:749
 #: backlog/management/commands/easy_import.py:92
 msgid "Main backlog"
 msgstr ""
 
-#: backlog/views.py:115
+#: backlog/views.py:125
 msgid "This is the main backlog for the organization."
 msgstr ""
 
-#: backlog/views.py:126
+#: backlog/views.py:136
 msgid "Organization successfully created."
 msgstr ""
 
-#: backlog/views.py:142 backlog/views.py:234 backlog/views.py:652
-#: backlog/views.py:717 backlog/views.py:980 backlog/views.py:1126
-#: dashboard/views.py:162 storymap/views.py:41
+#: backlog/views.py:152 backlog/views.py:244 backlog/views.py:662
+#: backlog/views.py:727 backlog/views.py:983 backlog/views.py:1129
+#: dashboard/views.py:157 storymap/views.py:41
 msgid "Not authorized"
 msgstr ""
 
-#: backlog/views.py:186
+#: backlog/views.py:196
 msgid "Organization successfully updated."
 msgstr ""
 
-#: backlog/views.py:201
+#: backlog/views.py:211
 msgid "Organization successfully deleted."
 msgstr ""
 
-#: backlog/views.py:277 backlog/views.py:1028
+#: backlog/views.py:287 backlog/views.py:1031
 msgid "Backlog successfully created."
 msgstr ""
 
-#: backlog/views.py:300 backlog/views.py:1063
+#: backlog/views.py:310 backlog/views.py:1066
 msgid "Backlog successfully updated."
 msgstr ""
 
-#: backlog/views.py:373
+#: backlog/views.py:383
 msgid "Backlog is not empty, unable to delete."
 msgstr ""
 
-#: backlog/views.py:387 backlog/views.py:1087
+#: backlog/views.py:397 backlog/views.py:1090
 msgid "Backlog successfully deleted."
 msgstr ""
 
-#: backlog/views.py:407 backlog/views.py:1106
+#: backlog/views.py:417 backlog/views.py:1109
 msgid "Backlog successfully archived."
 msgstr ""
 
-#: backlog/views.py:540 backlog/views.py:1496
+#: backlog/views.py:550 backlog/views.py:1499
 msgid "Invitation has been sent to {0}."
 msgstr ""
 
-#: backlog/views.py:594 backlog/views.py:1587
+#: backlog/views.py:604 backlog/views.py:1597
 msgid "User {0} has been revoked."
 msgstr ""
 
-#: backlog/views.py:626
+#: backlog/views.py:636
 msgid "Authorization changed for user {0}"
 msgstr ""
 
-#: backlog/views.py:630
+#: backlog/views.py:640
 msgid "Authorization for user {0} has been changed."
 msgstr ""
 
-#: backlog/views.py:740
+#: backlog/views.py:750
 msgid "This is the main backlog for the project."
 msgstr ""
 
-#: backlog/views.py:747
+#: backlog/views.py:757
 msgid "Completed stories"
 msgstr ""
 
-#: backlog/views.py:748
+#: backlog/views.py:758
 msgid "This is the backlog to hold completed stories."
 msgstr ""
 
-#: backlog/views.py:779
+#: backlog/views.py:789
 msgid "Project successfully created."
 msgstr ""
 
-#: backlog/views.py:799
+#: backlog/views.py:809
 msgid "Project successfully updated."
 msgstr ""
 
-#: backlog/views.py:814
+#: backlog/views.py:824
 msgid "Project successfully deleted."
 msgstr ""
 
-#: backlog/views.py:1173
+#: backlog/views.py:1176
 msgid "Backlog successfully set as main."
 msgstr ""
 
-#: backlog/views.py:1290
+#: backlog/views.py:1293
 msgid "Story successfully created."
 msgstr ""
 
-#: backlog/views.py:1345
+#: backlog/views.py:1348
 msgid "Story successfully updated."
 msgstr ""
 
-#: backlog/views.py:1365
+#: backlog/views.py:1368
 msgid "Story successfully deleted."
 msgstr ""
 
-#: backlog/views.py:1615
+#: backlog/views.py:1535
+#, python-format
+msgid ""
+"This invitation does not match your current user (%s). Check that you're "
+"logged in with the same user as the email you received."
+msgstr ""
+
+#: backlog/views.py:1542
+msgid "You already accepted this invitation."
+msgstr ""
+
+#: backlog/views.py:1625
 msgid "You are now a member of this project"
 msgstr ""
 
-#: backlog/views.py:1618
+#: backlog/views.py:1628
 msgid "You are now a member of this organization"
 msgstr ""
 
-#: backlog/views.py:1632
+#: backlog/views.py:1642
 msgid "Invitation has been declined"
 msgstr ""
 
@@ -551,7 +562,7 @@ msgstr ""
 #: backlog/templates/backlog/project_confirm_delete.html:17
 #: backlog/templates/backlog/project_form.html:28
 #: backlog/templates/backlog/story_confirm_delete.html:18
-#: backlog/templates/backlog/story_form.html:45
+#: backlog/templates/backlog/story_form.html:47
 #: backlog/templates/users/auth_confirm_delete.html:31
 #: backlog/templates/users/auth_edit.html:24
 #: backlog/templates/users/invite_user.html:26
@@ -708,7 +719,7 @@ msgstr ""
 #: backlog/templates/backlog/backlog_form.html:48
 #: backlog/templates/backlog/org_form.html:23
 #: backlog/templates/backlog/project_form.html:27
-#: backlog/templates/backlog/story_form.html:44
+#: backlog/templates/backlog/story_form.html:46
 #: backlog/templates/users/auth_edit.html:23
 #: dashboard/templates/dashboard/dashboard_form.html:30
 msgid "Save changes"
@@ -1069,7 +1080,7 @@ msgstr ""
 msgid "Add a new story"
 msgstr ""
 
-#: backlog/templates/backlog/story_form.html:44
+#: backlog/templates/backlog/story_form.html:46
 msgid "Create story"
 msgstr ""
 
@@ -1308,27 +1319,27 @@ msgstr ""
 msgid "Change password: %s"
 msgstr ""
 
-#: core/forms.py:32 core/forms.py:54 templates/home.html:49
+#: core/forms.py:33 core/forms.py:55 templates/home.html:49
 #: templates/home.html.py:62
 msgid "Password"
 msgstr ""
 
-#: core/forms.py:33
+#: core/forms.py:34
 msgid ""
 "Raw passwords are not stored, so there is no way to see this user's "
 "password, but you can change the password using <a href=\"password/\">this "
 "form</a>."
 msgstr ""
 
-#: core/forms.py:52 core/models.py:42 templates/home.html:60
+#: core/forms.py:53 core/models.py:42 templates/home.html:60
 msgid "Full name"
 msgstr ""
 
-#: core/forms.py:66
+#: core/forms.py:68
 msgid "This email address is already registered."
 msgstr ""
 
-#: core/forms.py:94
+#: core/forms.py:96
 msgid "Sorry, this user isn't registered."
 msgstr ""
 
@@ -1660,7 +1671,7 @@ msgid "Display scheduled and estimated stories in main backlog"
 msgstr ""
 
 #: dashboard/models.py:48
-msgid "Display stories status graphs"
+msgid "Display overall status graph"
 msgstr ""
 
 #: dashboard/models.py:53
@@ -1678,19 +1689,19 @@ msgid ""
 "or -"
 msgstr ""
 
-#: dashboard/views.py:117
+#: dashboard/views.py:112
 msgid "Dashboard already exist"
 msgstr ""
 
-#: dashboard/views.py:142
+#: dashboard/views.py:137
 msgid "Dashboard successfully created."
 msgstr ""
 
-#: dashboard/views.py:201
+#: dashboard/views.py:196
 msgid "Dashboard successfully updated."
 msgstr ""
 
-#: dashboard/views.py:220
+#: dashboard/views.py:215
 msgid "Dashboard successfully deleted."
 msgstr ""
 
@@ -1880,7 +1891,7 @@ msgstr ""
 msgid "This page does not exist"
 msgstr ""
 
-#: templates/404.html:7
+#: templates/404.html:7 templates/error_page.html:9
 msgid "Get me back to home"
 msgstr ""
 
@@ -1910,6 +1921,10 @@ msgstr ""
 
 #: templates/base.html:70
 msgid "Sign in"
+msgstr ""
+
+#: templates/error_page.html:3
+msgid "Error"
 msgstr ""
 
 #: templates/form.html:5
