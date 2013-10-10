@@ -39,7 +39,9 @@
 		{% if direct %}
 			<input type="hidden" name="direct" value="true">
 		{% endif %}
-        {% include "form.html" %}
+		{% language project.lang|default:request.LANGUAGE_CODE %}
+        	{% include "form.html" %}
+		{% endlanguage %}
         <div class="submit">
 			<input class="btn btn-success" type="submit" value="{% if object %}{% trans "Save changes" %}{% else %}{% trans "Create story" %}{% endif %}">
 			<a class="btn btn-link" href="{{ cancel_url }}">{% trans "Cancel" %}</a>
