@@ -68,6 +68,7 @@ class Dashboard(models.Model):
         if self.project.can_read(user):
             return True
         emails = self.authorizations.lower().split(",")
+        emails = [e.strip() for e in emails]
         for email in emails:
             if email:
                 if '@' in email:

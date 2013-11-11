@@ -10,8 +10,7 @@ from django.utils.translation import ugettext as _, activate
 from django.views import generic
 
 
-from ..backlog.models import (Status, status_for, STATUS_COLORS, create_event,
-                              Project)
+from ..backlog.models import (Status, create_event, Project)
 from ..backlog.views import (ProjectMixin, BackMixin, get_my_object_or_404,
                              pie_element)
 

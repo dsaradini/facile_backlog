@@ -7,7 +7,7 @@ from facile_backlog.dashboard.models import Dashboard
 from . import factories
 
 
-class StoryMapTest(WebTest):
+class ProjectDashboardTest(WebTest):
 
     def test_no_dashboard(self):
         user = factories.UserFactory.create()
@@ -55,7 +55,8 @@ class StoryMapTest(WebTest):
         user_ok = factories.UserFactory.create()
         user_no = factories.UserFactory.create()
         dashboard = factories.DashboardFactory.create(
-            user=user, mode="private", authorizations=user_ok.email)
+            user=user, mode="private",
+            authorizations="other@test.com, {0}".format(user_ok.email))
         url = reverse("project_dashboard", args=(dashboard.slug,))
         self.app.get(url, status=404)
         self.app.get(url, user=user_no, status=404)
