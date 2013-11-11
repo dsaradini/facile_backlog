@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-10 11:08+0200\n"
-"PO-Revision-Date: 2013-10-10 11:10+0100\n"
+"POT-Creation-Date: 2013-11-11 09:09+0100\n"
+"PO-Revision-Date: 2013-11-11 09:11+0100\n"
 "Last-Translator: David Saradini <david@saradini.com>\n"
 "Language-Team: fr <info@backlogman.com>\n"
 "MIME-Version: 1.0\n"
@@ -282,7 +282,7 @@ msgstr "Organisation créée avec succès"
 
 #: backlog/views.py:152 backlog/views.py:244 backlog/views.py:662
 #: backlog/views.py:727 backlog/views.py:983 backlog/views.py:1129
-#: dashboard/views.py:157 storymap/views.py:41
+#: dashboard/views.py:163 storymap/views.py:41
 msgid "Not authorized"
 msgstr "Non autorisé "
 
@@ -622,8 +622,8 @@ msgstr ""
 #: backlog/templates/backlog/backlog_confirm_main.html:15
 msgid "Main organization backlog is generally the current sprint backlog"
 msgstr ""
-"Le backlog principal d'une organisation est généralement celui de l'iteration "
-"courante"
+"Le backlog principal d'une organisation est généralement celui de "
+"l'iteration courante"
 
 #: backlog/templates/backlog/backlog_confirm_main.html:29
 msgid "Set as main"
@@ -1135,8 +1135,7 @@ msgstr "Vous ne pouvez pas vous révoquer vous-même"
 #, python-format
 msgid ""
 "Are you sure you want to revoke '%(user)s' from the project '%(project)s'?"
-msgstr ""
-"Etes vous sûr de vouloir révoquer '%(user)s' du projet '%(project)s' ?"
+msgstr "Etes vous sûr de vouloir révoquer '%(user)s' du projet '%(project)s' ?"
 
 #: backlog/templates/users/auth_confirm_delete.html:21
 #, python-format
@@ -1144,8 +1143,8 @@ msgid ""
 "Are you sure you want to revoke '%(user)s' from the organization '%(org)s' "
 "and all its projects?"
 msgstr ""
-"Etes vous sûr de vouloir révoquer '%(user)s' de l'organisation '%(org)s'  "
-"et de tous ses projets?"
+"Etes vous sûr de vouloir révoquer '%(user)s' de l'organisation '%(org)s'  et "
+"de tous ses projets?"
 
 #: backlog/templates/users/auth_edit.html:3
 #: backlog/templates/users/auth_edit.html:13
@@ -1221,8 +1220,8 @@ msgstr "Vous avez été invité au projet '%(project)s' sur %(domain)s"
 #: backlog/templates/users/invitation_email_subject.txt:4
 #, python-format
 msgid "You have been invited to organization %(org)s on %(domain)s"
-msgstr "Vous avez été invité à rejoindre l'organisation '%(org)s' "
-"sur %(domain)s"
+msgstr ""
+"Vous avez été invité à rejoindre l'organisation '%(org)s' sur %(domain)s"
 
 #: backlog/templates/users/invite_user.html:8
 msgid "Send invitation"
@@ -1498,8 +1497,8 @@ msgid ""
 "Sorry, this password reset link is invalid. You can still <a href="
 "\"%(recovery_url)s\">request a new one</a>."
 msgstr ""
-"désolé, ce lien pour redefinir le mot de passe est invalide. Vous pouvez tout "
-"de même  <a href=\"%(recovery_url)s\">en demander un nouveau</a>."
+"désolé, ce lien pour redefinir le mot de passe est invalide. Vous pouvez "
+"tout de même  <a href=\"%(recovery_url)s\">en demander un nouveau</a>."
 
 #: core/templates/password_reset/reset.html:11
 #, python-format
@@ -1609,8 +1608,8 @@ msgid ""
 "your account is probably alread active. You may then try to <a href="
 "\"%(login_url)s\">login</a>."
 msgstr ""
-"Il y a eu un problème d'activation de votre compte. Vérifiez à nouveau "
-"votre lien d'activation. Si vous avez déjà cliqué sur le lien d'activation "
+"Il y a eu un problème d'activation de votre compte. Vérifiez à nouveau votre "
+"lien d'activation. Si vous avez déjà cliqué sur le lien d'activation "
 "auparavant, votre compte est probablement activé. Vous pouvez donc essayer "
 "de vous a href=\"%(login_url)s\">connecter</a>."
 
@@ -1753,7 +1752,6 @@ msgid "Display scheduled and estimated stories in main backlog"
 msgstr "Affiche les scénarios estimés et planifiés dans le backlog principal"
 
 #: dashboard/models.py:48
-#, fuzzy
 msgid "Display overall status graph"
 msgstr "Affiche le graphique du status des scénarios."
 
@@ -1775,19 +1773,19 @@ msgstr ""
 "CHAMP]. Il peut contenir uniquement des caractères alphanumeriques ainsi que "
 "_ . ou -"
 
-#: dashboard/views.py:112
+#: dashboard/views.py:118
 msgid "Dashboard already exist"
 msgstr "Ce tableau de bord existe déjà"
 
-#: dashboard/views.py:137
+#: dashboard/views.py:143
 msgid "Dashboard successfully created."
 msgstr "Tableau de bord créé avec succès"
 
-#: dashboard/views.py:196
+#: dashboard/views.py:202
 msgid "Dashboard successfully updated."
 msgstr "Tableau de bord modifié avec succès"
 
-#: dashboard/views.py:215
+#: dashboard/views.py:221
 msgid "Dashboard successfully deleted."
 msgstr "Tableau de bord supprimé avec succès"
 
@@ -1972,7 +1970,7 @@ msgstr "Etes-vous sûr de vouloir supprimer cet élément ?"
 msgid "Deleting..."
 msgstr "Suppression..."
 
-#: templates/404.html:3
+#: templates/404.html:3 templates/404_or_403.html:3
 msgid "Page not found"
 msgstr "Aucune page trouvée"
 
@@ -1980,9 +1978,21 @@ msgstr "Aucune page trouvée"
 msgid "This page does not exist"
 msgstr "Cette page n'existe pas"
 
-#: templates/404.html:7 templates/error_page.html:9
+#: templates/404.html:7 templates/404_or_403.html:12
+#: templates/error_page.html:9
 msgid "Get me back to home"
 msgstr "Retourner a l'accueil"
+
+#: templates/404_or_403.html:8
+msgid ""
+"This page does not exist or you do not have the appropriate rights to see it"
+msgstr ""
+"Cette page n'existe pas, ou vos autorisations ne vous permettent pas de la "
+"voir."
+
+#: templates/404_or_403.html:10
+msgid "Sign-in"
+msgstr "Connexion"
 
 #: templates/500.html:3
 msgid "Server error"

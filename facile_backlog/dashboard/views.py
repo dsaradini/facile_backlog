@@ -5,7 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.http.response import HttpResponseForbidden, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render_to_response
+from django.template.context import RequestContext
 from django.utils.translation import ugettext as _, activate
 from django.views import generic
 
@@ -25,7 +26,13 @@ class ProjectDashboard(generic.TemplateView):
         slug = kwargs['slug']
         self.dashboard = get_object_or_404(Dashboard, slug=slug)
         if not self.dashboard.can_read(request.user):
-            raise Http404
+            return render_to_response(
+                '404_or_403.html',
+                {
+                    'next': request.path
+                },
+                context_instance=RequestContext(request)
+            )
         self.project = self.dashboard.project
         self.request = request
         if self.project.lang:

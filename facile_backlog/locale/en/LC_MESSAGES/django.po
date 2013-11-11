@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-10 11:08+0200\n"
+"POT-Creation-Date: 2013-11-11 09:09+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -280,7 +280,7 @@ msgstr ""
 
 #: backlog/views.py:152 backlog/views.py:244 backlog/views.py:662
 #: backlog/views.py:727 backlog/views.py:983 backlog/views.py:1129
-#: dashboard/views.py:157 storymap/views.py:41
+#: dashboard/views.py:163 storymap/views.py:41
 msgid "Not authorized"
 msgstr ""
 
@@ -1689,19 +1689,19 @@ msgid ""
 "or -"
 msgstr ""
 
-#: dashboard/views.py:112
+#: dashboard/views.py:118
 msgid "Dashboard already exist"
 msgstr ""
 
-#: dashboard/views.py:137
+#: dashboard/views.py:143
 msgid "Dashboard successfully created."
 msgstr ""
 
-#: dashboard/views.py:196
+#: dashboard/views.py:202
 msgid "Dashboard successfully updated."
 msgstr ""
 
-#: dashboard/views.py:215
+#: dashboard/views.py:221
 msgid "Dashboard successfully deleted."
 msgstr ""
 
@@ -1883,7 +1883,7 @@ msgstr ""
 msgid "Deleting..."
 msgstr ""
 
-#: templates/404.html:3
+#: templates/404.html:3 templates/404_or_403.html:3
 msgid "Page not found"
 msgstr ""
 
@@ -1891,8 +1891,18 @@ msgstr ""
 msgid "This page does not exist"
 msgstr ""
 
-#: templates/404.html:7 templates/error_page.html:9
+#: templates/404.html:7 templates/404_or_403.html:12
+#: templates/error_page.html:9
 msgid "Get me back to home"
+msgstr ""
+
+#: templates/404_or_403.html:8
+msgid ""
+"This page does not exist or you do not have the appropriate rights to see it"
+msgstr ""
+
+#: templates/404_or_403.html:10
+msgid "Sign-in"
 msgstr ""
 
 #: templates/500.html:3

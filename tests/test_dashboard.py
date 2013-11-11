@@ -58,8 +58,14 @@ class ProjectDashboardTest(WebTest):
             user=user, mode="private",
             authorizations="other@test.com, {0}".format(user_ok.email))
         url = reverse("project_dashboard", args=(dashboard.slug,))
-        self.app.get(url, status=404)
-        self.app.get(url, user=user_no, status=404)
+        response = self.app.get(url)
+        self.assertContains(response,
+                            "This page does not exist or you do not have the "
+                            "appropriate rights to see it")
+        response = self.app.get(url, user=user_no)
+        self.assertContains(response,
+                            "This page does not exist or you do not have the "
+                            "appropriate rights to see it")
         self.app.get(url, user=user)
         response = self.app.get(url, user=user_ok)
         self.assertContains(response, "In progress stories")
