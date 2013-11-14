@@ -325,6 +325,36 @@ class BacklogTest(WebTest):
         self.assertEqual(event.text, "archived backlog My backlog")
         self.assertEqual(event.user, user)
 
+    def test_project_backlog_restore(self):
+        user = factories.UserFactory.create(
+            email='test@fake.ch', password='pass')
+        user_2 = factories.UserFactory.create()
+        backlog = factories.create_project_sample_backlog(
+            user, backlog_kwargs={
+                'name': "My backlog",
+                'is_archive': True
+            }
+        )
+        url = reverse('project_backlog_restore', args=(
+            backlog.project.pk, backlog.pk))
+
+        # login redirect
+        self.app.get(url, status=302)
+        self.app.get(url, user=user_2, status=404)
+        response = self.app.get(url, user=user)
+        self.assertContains(response, u"Restore backlog")
+        form = response.forms['restore_form']
+        response = form.submit().follow()
+
+        self.assertContains(response, u"Backlog successfully restored.")
+        backlog = Backlog.objects.get(pk=backlog.pk)
+        self.assertFalse(backlog.is_archive)
+        event = Event.objects.get(
+            project=backlog.project,
+        )
+        self.assertEqual(event.text, "restored backlog My backlog")
+        self.assertEqual(event.user, user)
+
     def test_org_backlog_archive(self):
         user = factories.UserFactory.create(
             email='test@fake.ch', password='pass')
@@ -352,6 +382,36 @@ class BacklogTest(WebTest):
             organization=backlog.org,
         )
         self.assertEqual(event.text, "archived backlog My backlog")
+        self.assertEqual(event.user, user)
+
+    def test_org_backlog_restore(self):
+        user = factories.UserFactory.create(
+            email='test@fake.ch', password='pass')
+        user_2 = factories.UserFactory.create()
+        backlog = factories.create_org_sample_backlog(
+            user, backlog_kwargs={
+                'name': "My backlog",
+                'is_archive': True
+            }
+        )
+        url = reverse('org_backlog_restore', args=(
+            backlog.org.pk, backlog.pk))
+
+        # login redirect
+        self.app.get(url, status=302)
+        self.app.get(url, user=user_2, status=404)
+        response = self.app.get(url, user=user)
+        self.assertContains(response, u"Restore backlog")
+        form = response.forms['restore_form']
+        response = form.submit().follow()
+
+        self.assertContains(response, u"Backlog successfully restored.")
+        backlog = Backlog.objects.get(pk=backlog.pk)
+        self.assertFalse(backlog.is_archive)
+        event = Event.objects.get(
+            organization=backlog.org,
+        )
+        self.assertEqual(event.text, "restored backlog My backlog")
         self.assertEqual(event.user, user)
 
     def test_org_backlog_set_main(self):

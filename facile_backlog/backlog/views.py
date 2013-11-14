@@ -171,9 +171,13 @@ class OrgDetail(OrgMixin, generic.DetailView):
         context['organization'] = self.organization
         context['projects'] = self.organization.projects.order_by(
             "-last_modified")
-        context['backlogs'] = self.organization.backlogs.order_by(
+        backlogs = self.organization.backlogs.order_by(
             "-is_main", "is_archive", "order"
         ).all()
+        context['backlogs'] = backlogs
+        context['archived_count'] = len(
+            [b for b in backlogs if b.is_archive]
+        )
         return context
 org_detail = login_required(OrgDetail.as_view())
 
@@ -418,6 +422,26 @@ class OrgBacklogArchive(OrgBacklogMixin, generic.DeleteView):
         return redirect(reverse('org_detail',
                                 args=(self.organization.pk,)))
 org_backlog_archive = login_required(OrgBacklogArchive.as_view())
+
+
+class OrgBacklogRestore(OrgBacklogMixin, generic.DeleteView):
+    admin_only = True
+    template_name = "backlog/backlog_confirm_restore.html"
+
+    def get_object(self):
+        return self.backlog
+
+    def post(self, request, *args, **kwargs):
+        self.backlog.restore()
+        create_event(
+            self.request.user, organization=self.organization,
+            text=u"restored backlog {0}".format(self.backlog.name),
+        )
+        messages.success(request,
+                         _("Backlog successfully restored."))
+        return redirect(reverse('org_detail',
+                                args=(self.organization.pk,)))
+org_backlog_restore = login_required(OrgBacklogRestore.as_view())
 
 
 class OrgStories(OrgMixin, generic.ListView):
@@ -700,9 +724,13 @@ class ProjectDetail(ProjectMixin, generic.DetailView):
                 d.absolute_url = self.request.build_absolute_uri(
                     reverse("project_dashboard", args=(d.slug,)))
             context['dashboards'] = dashboards
-        context['backlogs'] = self.project.backlogs.order_by(
+        backlogs = self.project.backlogs.order_by(
             "-is_main", "is_archive", "order"
         ).all()
+        context['backlogs'] = backlogs
+        context['archived_count'] = len(
+            [b for b in backlogs if b.is_archive]
+        )
         return context
 project_detail = login_required(ProjectDetail.as_view())
 
@@ -1107,8 +1135,27 @@ class ProjectBacklogArchive(ProjectBacklogMixin, generic.DeleteView):
         )
         messages.success(request,
                          _("Backlog successfully archived."))
-        return redirect(reverse('project_backlogs', args=(self.project.pk,)))
+        return redirect(reverse('project_detail', args=(self.project.pk,)))
 project_backlog_archive = login_required(ProjectBacklogArchive.as_view())
+
+
+class ProjectBacklogRestore(ProjectBacklogMixin, generic.DeleteView):
+    admin_only = True
+    template_name = "backlog/backlog_confirm_restore.html"
+
+    def get_object(self):
+        return self.backlog
+
+    def post(self, request, *args, **kwargs):
+        self.backlog.restore()
+        create_event(
+            self.request.user, project=self.project,
+            text=u"restored backlog {0}".format(self.backlog.name),
+        )
+        messages.success(request,
+                         _("Backlog successfully restored."))
+        return redirect(reverse('project_detail', args=(self.project.pk,)))
+project_backlog_restore = login_required(ProjectBacklogRestore.as_view())
 
 
 #############

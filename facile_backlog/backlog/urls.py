@@ -13,7 +13,8 @@ from .views import (project_detail, project_create, project_edit,
                     org_backlog_edit, org_backlog_create, org_backlogs,
                     org_backlog_delete, org_stories, project_backlog_archive,
                     org_backlog_archive, org_invite_user, org_auth_delete,
-                    org_auth_edit)
+                    org_auth_edit, org_backlog_restore,
+                    project_backlog_restore)
 
 # root
 urlpatterns = patterns(
@@ -74,6 +75,11 @@ urlpatterns += patterns(
         org_backlog_archive,
         name='org_backlog_archive'),
 
+    url(r'^orgs/(?P<org_id>[\d]+)/backlogs/(?P<backlog_id>[\d]+)/'
+        r'restore/$',
+        org_backlog_restore,
+        name='org_backlog_restore'),
+
     url(r'^orgs/(?P<org_id>[\d]+)/backlogs/new/$',
         org_backlog_create,
         name='org_backlog_create'),
@@ -130,6 +136,11 @@ urlpatterns += patterns(
         r'archive/$',
         project_backlog_archive,
         name='project_backlog_archive'),
+
+    url(r'^projects/(?P<project_id>[\d]+)/backlogs/(?P<backlog_id>[\d]+)/'
+        r'restore/$',
+        project_backlog_restore,
+        name='project_backlog_restore'),
 
     url(r'^projects/(?P<project_id>[\d]+)/backlogs/new/$',
         project_backlog_create,

@@ -3,7 +3,14 @@
 
 {% block title %}{% trans "Project" %} &mdash; {{ project.name }}{% endblock %}
 {% block content %}
-
+{% addtoblock "js" %}
+<script type="text/javascript">
+var show_archived = function(e) {
+	$(".archived").show("fast");
+	$("#show-archived").hide();
+}
+</script>
+{% endaddtoblock %}
 	{% include "backlog/_project_head.html" %}
 	{% include "backlog/_project_tabs.html" with active="detail" %}
 
@@ -74,7 +81,7 @@
 		</div>
 		<ul class="backlog-list">
 			{% for backlog in backlogs %}
-				<li>
+				<li {% if backlog.is_archive %}class="archived" style="display:none;"{% endif %}>
 					<div class="title">
 						<H4>
 						{% if not backlog.is_archive %}
@@ -93,6 +100,11 @@
 						{% endif %}
 						{% if backlog.is_archive %}
 							<span class="muted small"><i class="muted icon-lock"></i> {% trans "archived" %}</span>
+							{% if organization|can_admin:request.user %}
+								<small class="muted">[
+									<a class="muted" href="{% url "project_backlog_restore" project.pk backlog.pk %}">{% trans "restore" %}</a>
+								]</small>
+							{% endif %}
 						{% endif %}
 						{% if backlog.is_main %}
 							<span class="label label-inverse">{% trans "main" %}</span>
@@ -117,6 +129,17 @@
 			{% empty %}
 				{% trans "No backlog" %}
 			{% endfor %}
+			{% if archived_count %}
+				<li>
+					<a id="show-archived" href="javascript:show_archived()"><i class="icon-expand-alt"></i>
+						{% blocktrans count archived_count as counter %}
+							Show archived backlog
+						{% plural %}
+							Show {{ counter }} archived backlogs
+						{% endblocktrans %}
+					</a>
+				</li>
+			{% endif %}
 		</ul>
 	</div>
 	<div class="span6">

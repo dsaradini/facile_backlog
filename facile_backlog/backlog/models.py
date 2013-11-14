@@ -568,6 +568,10 @@ class Backlog(StatsMixin, WithThemeMixin, models.Model):
         self.is_archive = True
         self.save(update_fields=("is_archive",))
 
+    def restore(self):
+        self.is_archive = False
+        self.save(update_fields=("is_archive",))
+
     @property
     def can_modify(self):
         return not (self.is_archive or self.is_main)
