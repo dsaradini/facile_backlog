@@ -232,6 +232,7 @@ REST_FRAMEWORK = {
 if os.environ.get('HTTPS', False):
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 API_THROTTLE = "100/m"
 
