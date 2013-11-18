@@ -132,11 +132,7 @@ var show_archived = function(e) {
 			{% if archived_count %}
 				<li>
 					<a id="show-archived" href="javascript:show_archived()"><i class="icon-expand-alt"></i>
-						{% blocktrans count archived_count as counter %}
-							Show archived backlog
-						{% plural %}
-							Show {{ counter }} archived backlogs
-						{% endblocktrans %}
+						{% blocktrans count archived_count as counter %}Show archived backlog{% plural %}Show {{ counter }} archived backlogs{% endblocktrans %}
 					</a>
 				</li>
 			{% endif %}

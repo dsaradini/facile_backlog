@@ -13,7 +13,7 @@ from .views import (project_detail, project_create, project_edit,
                     org_backlog_edit, org_backlog_create, org_backlogs,
                     org_backlog_delete, org_stories, project_backlog_archive,
                     org_backlog_archive, org_invite_user, org_auth_delete,
-                    org_auth_edit, org_backlog_restore,
+                    org_auth_edit, org_backlog_restore, project_gen_stats,
                     project_backlog_restore)
 
 # root
@@ -113,6 +113,8 @@ urlpatterns += patterns(
     url(r'^projects/(?P<project_id>[\d]+)/stats/$', project_stats,
         name='project_stats'),
 
+    url(r'^projects/(?P<project_id>[\d]+)/gen_stats/$', project_gen_stats,
+        name='project_gen_stats'),
 
     url(r'^projects/(?P<project_id>[\d]+)/invite_user/$',
         project_invite_user,

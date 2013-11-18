@@ -854,6 +854,26 @@ class ProjectDelete(ProjectMixin, generic.DeleteView):
 project_delete = login_required(ProjectDelete.as_view())
 
 
+class ProjectGenStats(ProjectMixin, generic.DeleteView):
+    admin_only = True
+    template_name = "backlog/project_confirm_gen_stats.html"
+
+    def get_object(self):
+        return self.project
+
+    def post(self, request, *args, **kwargs):
+        self.project.generate_daily_statistics()
+        create_event(
+            self.request.user, project=self.project,
+            text=u"manually generated statistics for project backlog "
+                 u"{0}".format(self.project.name),
+        )
+        messages.success(request,
+                         _("Statistics successfully generated."))
+        return redirect(reverse('project_stats', args=(self.project.pk,)))
+project_gen_stats = login_required(ProjectGenStats.as_view())
+
+
 class ProjectUsers(ProjectMixin, generic.TemplateView):
     template_name = "backlog/project_users.html"
 

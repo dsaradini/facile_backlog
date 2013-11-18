@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django_webtest import WebTest
 
 from facile_backlog.backlog.models import (Project, AuthorizationAssociation,
-                                           UserStory, Event)
+                                           UserStory, Event, Statistic)
 
 from . import factories
 
@@ -168,6 +168,21 @@ class ProjectTest(WebTest):
         response = form.submit().follow()
         self.assertContains(response, u"Project successfully deleted.")
         self.assertFalse(Project.objects.filter(pk=project.pk).exists())
+
+    def test_project_gen_stats(self):
+        user = factories.UserFactory.create(
+            email='test@fake.ch', password='pass')
+        project = factories.create_sample_project(user)
+        url = reverse('project_gen_stats', args=(project.pk,))
+        self.assertFalse(Statistic.objects.filter(project=project).exists())
+        # login redirect
+        self.app.get(url, status=302)
+        response = self.app.get(url, user=user)
+        self.assertContains(response, u"Generate project statistics")
+        form = response.forms['gen_stats_form']
+        response = form.submit().follow()
+        self.assertContains(response, u"Statistics successfully generated.")
+        self.assertTrue(Statistic.objects.filter(project=project).exists())
 
     def test_security(self):
         user_1 = factories.UserFactory.create()

@@ -1,0 +1,20 @@
+{% extends "project_base.html" %}
+{% block title %}{% trans "Generate project statistics" %}{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+	<h1>{% trans "Generate project statistics" %}</h1>
+	<h2><i class="icon-book muted"></i> {{ project.name }}</h2>
+	<div class="alert alert-neutral">
+		{% trans "You are about to re-generate project daily statistics. Are you sure you want to replace them?" %}
+	</div>
+	<form method="post" id="gen_stats_form" action="{% url "project_gen_stats" project.pk %}">
+		{% csrf_token %}
+		{{ form }}
+		<div class="submit-delete actions">
+			<button class="btn btn-warning" type="submit">{% trans "Generte statistics" %}</button>
+			<a class="btn btn-link" href="{% url "project_stats" project.pk %}">{% trans "Cancel" %}</a>
+		</div>
+	</form>
+</div>
+{% endblock %}

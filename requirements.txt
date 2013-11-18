@@ -1,5 +1,5 @@
 argparse==1.2.1
-bleach==1.2.1
+bleach==1.2.2
 dj-database-url==0.2.1
 Django==1.5.4
 django-extensions==1.1.1
