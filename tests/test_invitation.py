@@ -365,7 +365,9 @@ class RegistrationTest(WebTest):
 
         url = reverse("dashboard")
         response = self.app.get(url, user=user_b)
-        self.assertContains(response, escape(project.name))
+        # verify the project is in project's list
+        p_name = response.pyquery("h4.inline-title").find("a").text().strip()
+        self.assertEqual(p_name, escape(project.name))
         event = Event.objects.get(
             project=project
         )
@@ -374,4 +376,4 @@ class RegistrationTest(WebTest):
 
         #ensure user cannot access organization
         url = reverse("org_detail", args=(org.pk,))
-        response = self.app.get(url, user=user_b, status=404)
+        self.app.get(url, user=user_b, status=404)

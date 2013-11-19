@@ -71,10 +71,18 @@ class Dashboard(generic.TemplateView):
             "project", "backlog", "user", "story", "story__project",
             "organization")[:10]
 
-        context['projects'] = get_projects(self.request.user).filter(
-            org=None
-        )
-        context['organizations'] = get_organizations(self.request.user)
+        all_projects = get_projects(self.request.user)
+        context['projects'] = all_projects.filter(org=None)
+
+        orgs = get_organizations(self.request.user)
+        context['organizations'] = orgs
+
+        # list projects where current user has access rights but not
+        # having access to the organization
+        my_org_pks = [o.pk for o in orgs]
+        guest_p = [p for p in all_projects if
+                   p.org_id and p.org_id not in my_org_pks]
+        context['guest_projects'] = guest_p
         return context
 dashboard = login_required(Dashboard.as_view())
 
