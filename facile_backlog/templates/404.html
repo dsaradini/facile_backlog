@@ -3,6 +3,13 @@
 {% block title %}{% trans "Page not found" %}{% endblock %}
 
 {% block content %}
-	<h1>{% trans "This page does not exist" %}</h1>
-	<a href="{% url "home" %}">{% trans "Get me back to home" %}</a>
+	<div class="alert alert-block alert-info">
+
+		<h3>{% trans "This page does not exist or you do not have the appropriate rights to see it" %}</h3>
+		{% if not request.user.is_authenticated %}
+			<a class="btn" href="{% url "auth_login" %}{% if next %}?next={{ next }}{% endif %}">{% trans "Sign-in" %}</a>
+		{% else %}
+			<a href="{% url "home" %}">{% trans "Get me back to home" %}</a>
+		{% endif %}
+	</div>
 {% endblock %}

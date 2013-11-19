@@ -10,6 +10,10 @@
 			<li><a href="{% url "org_detail" organization.pk %}">{{ organization.get_mini_logo }} {{ organization.name }}</a></li>
 			<li class="divider"><div class="inner"></div></li>
 		{% endif %}
+		{% if project %}
+			<li><a href="{% url "project_detail" project.pk %}"><i class="icon-book"></i> {{ project.name }}</a></li>
+			<li class="divider"><div class="inner"></div></li>
+		{% endif %}
 		<li class="active">{% trans "Edit authorization" %}</li>
 	</ul>
 
@@ -17,11 +21,19 @@
 	<div class="span6 offset3 base-form">
 		{% if object %}<h1>{% trans "Change authorization" %}</h1>{% endif %}
 		<h3>{{ object.user.full_name|default:object.user.email }}</h3>
-		<form method="post" id="edit_auth_form" action="{% url "org_auth_edit" organization.pk object.pk %}">
+		{% if organization and not project %}
+			<form method="post" id="edit_auth_form" action="{% url "org_auth_edit" organization.pk object.pk %}">
+		{% else %}
+			<form method="post" id="edit_auth_form" action="{% url "project_auth_edit" project.pk object.pk %}">
+		{% endif %}
 			{% include "form.html" %}
 			<div class="submit">
 				<input class="btn btn-success" type="submit" value="{% trans "Save changes" %}">
-				<a class="btn btn-link" href="{% url "org_detail" organization.pk %}">{% trans "Cancel" %}</a>
+				{% if organization and not project%}
+					<a class="btn btn-link" href="{% url "org_detail" organization.pk %}">{% trans "Cancel" %}</a>
+				{% else %}
+					<a class="btn btn-link" href="{% url "project_detail" project.pk %}">{% trans "Cancel" %}</a>
+				{% endif %}
 			</div>
 		</form>
 	</div>

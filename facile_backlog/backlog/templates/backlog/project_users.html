@@ -20,11 +20,17 @@
 				{% trans "Invite user" %}
 			</a>
 			{% else %}
-				<span class="text-warning">{% trans "This project is part of an organization, members must be managed by this organization" %}</span>
+				<div class="alert alert-info alert-block">
+					<p>
+						<a class="btn btn-primary btn-mini" href="{% url "project_invite_user" project.pk %}">{% trans "Invite guest user" %}</a>
+
+						{% blocktrans %}Guest users have only access to the project, they cannot see any information about organization, especially user stories scheduled in sprints{% endblocktrans %}
+					</p>
+				</div>
 			{% endif %}
 		{% endif %}
 	</div>
-	<table class="table table-striped">
+	<table class="table table-striped users-list">
 		<thead class="headers">
 			<tr>
 				<th class="user-image"></th>
@@ -32,20 +38,27 @@
 				<th class="user-email">{% trans "email" %}</th>
 				<th class="user-invitation">{% trans "Invitation" %}</th>
 				<th class="user-role">{% trans "Role" %}</th>
+				<th class="user-guest">{% trans "Guest" %}</th>
 				<th class="user-actions"></th>
 			</tr>
 		</thead>
 		<tbody>
 			{% for auth in project.authorizations.all %}
-				<tr id="auth-{{ auth.pk }}">
+				<tr id="auth-{{ auth.pk }}" class="{% if auth.user == request.user %}myself{% endif %}">
 					<td class="user-image"><img src="{{ auth.user.get_gravatar_url }}"></td>
 					<td class="user-name">{{ auth.user.full_name }}</td>
 					<td class="user-email">{{ auth.user.email }}</td>
 					<td class="user-invitation">{% if auth.is_active %}{% trans "Accepted" %}{% else %}{% trans "Pending" %}{% endif %}</td>
-					<td class="user-role">{% if auth.is_admin %}{% trans "Administrator" %}{% else %}{% trans "User" %}{% endif %}</td>
+					<td class="user-role">
+						{% if auth.is_admin %}{% trans "Administrator" %}{% else %}{% trans "User" %}{% endif %}
+					</td>
+					<td class="user-guest">
+						{% if auth.is_guest %}<i class="icon-certificate"></i>{% endif %}
+					</td>
 					<td class="user-actions">
-						{% if project|can_admin:request.user and auth.user_id != request.user.pk and not project.org_id %}
-						<a title="{% trans "Delete" %}" href="{% url "project_auth_delete" project.pk auth.pk %}"><i class="icon-remove"></i></a>
+						{% if project|can_admin:request.user and auth.user_id != request.user.pk and auth.update_allowed %}
+							<a class="btn btn-mini" title="{% trans "Edit" %}" href="{% url "project_auth_edit" project.pk auth.pk %}"><i class="icon-pencil"></i></a>
+							<a class="btn btn-mini btn-danger" title="{% trans "Delete" %}"  href="{% url "project_auth_delete" project.pk auth.pk %}"><i class="icon-remove"></i></a>
 						{% endif %}
 					</td>
 				</tr>

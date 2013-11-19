@@ -745,9 +745,7 @@ class ProjectCreate(generic.CreateView):
         if org_id:
             try:
                 self.org = Organization.my_organizations(
-                    self.request.user).get(
-                        pk=org_id
-                    )
+                    self.request.user).get(pk=org_id)
             except Organization.DoesNotExist:
                 raise Http404
             if not self.org.can_admin(request.user):
@@ -1007,6 +1005,43 @@ class ProjectStats(ProjectMixin, generic.TemplateView):
 
         return context
 project_stats = login_required(ProjectStats.as_view())
+
+
+class ProjectEditAuthorization(ProjectMixin, generic.UpdateView):
+    admin_only = True
+    template_name = "users/auth_edit.html"
+    form_class = AuthorizationAssociationForm
+
+    def get_success_url(self):
+        return reverse('project_users', args=(self.project.pk,))
+
+    def dispatch(self, request, *args, **kwargs):
+        self.auth = get_object_or_404(AuthorizationAssociation,
+                                      pk=kwargs['auth_id'])
+        return super(ProjectEditAuthorization, self).dispatch(request, *args,
+                                                              **kwargs)
+
+    def get_object(self, queryset=None):
+        return self.auth
+
+    def get_context_data(self, **kwargs):
+        data = super(ProjectEditAuthorization, self).get_context_data(**kwargs)
+        data['project'] = self.project
+        data['auth'] = self.auth
+        return data
+
+    def form_valid(self, form):
+        super(ProjectEditAuthorization, self).form_valid(form)
+        user = self.auth.user
+        create_event(self.request.user,
+                     _("Authorization changed for "
+                       "user {0}".format(user.email)),
+                     project=self.project)
+        messages.success(self.request,
+                         _('Authorization for user {0} has '
+                           'been changed.'.format(user.email)))
+        return redirect(reverse('project_users', args=(self.project.pk,)))
+project_auth_edit = login_required(ProjectEditAuthorization.as_view())
 
 
 # Backlogs

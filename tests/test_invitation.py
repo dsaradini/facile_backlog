@@ -311,3 +311,67 @@ class RegistrationTest(WebTest):
         self.assertFalse(auth_filter.exists())
         auth_filter = AuthorizationAssociation.objects.filter(pk=auth_p.pk)
         self.assertFalse(auth_filter.exists())
+
+    def test_guest_invite(self):
+        user_a = UserFactory.create(email="a@test.ch")
+        user_b = UserFactory.create(email="b@test.ch")
+        user_c = UserFactory.create(email="c@test.ch")
+        org = create_sample_organization(user_a, org_kwargs={
+            'name': u"My first org",
+        })
+        project = ProjectFactory.create(
+            name=u"Project 007",
+            owner=user_a,
+            org=org,
+        )
+        url = reverse('project_invite_user', args=(project.pk,))
+        # require login
+        self.app.get(url, status=302)
+        # not part of the project yet
+        self.app.get(url, user=user_b, status=404)
+        response = self.app.get(url, user=user_a)
+        self.assertContains(response, 'Invite')
+        form = response.forms['register_form']
+        # should handle uppercase email
+        for key, value in {
+            'email': 'b@TEST.ch',
+        }.iteritems():
+            form[key] = value
+        response = form.submit().follow()
+
+        self.assertContains(response, "Invitation has been sent")
+        message = mail.outbox[-1]
+        self.assertIn("b@test.ch", message.to)
+        self.assertTrue(
+            message.body.find(
+                "You have been invited to join the project") != -1
+        )
+        answer_url = line_starting(message.body, u"http://localhost:80/")
+        response = self.app.get(answer_url, user=user_a, status=200)
+        self.assertContains(
+            response,
+            u"You already accepted this invitation."
+        )
+        response = self.app.get(answer_url, user=user_c, status=200)
+        self.assertContains(
+            response,
+            u"This invitation does not match your current user"
+        )
+        response = self.app.get(answer_url, user=user_b)
+        self.assertContains(
+            response,
+            u"Invitation to project '{0}' has been".format(project.name)
+        )
+
+        url = reverse("dashboard")
+        response = self.app.get(url, user=user_b)
+        self.assertContains(response, escape(project.name))
+        event = Event.objects.get(
+            project=project
+        )
+        self.assertEqual(event.text, "joined the project as team member")
+        self.assertEqual(event.user, user_b)
+
+        #ensure user cannot access organization
+        url = reverse("org_detail", args=(org.pk,))
+        response = self.app.get(url, user=user_b, status=404)

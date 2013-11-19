@@ -291,6 +291,17 @@ ul.errorlist li {
 	}
 }
 
+.users-list {
+	.myself {
+		color: darkblue;
+	}
+	td.user-guest {
+		text-align: center;
+		color: black;
+	}
+}
+
+
 .project-users, .project-stories {
 	thead {
 		th {

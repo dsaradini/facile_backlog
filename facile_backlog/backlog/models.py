@@ -116,7 +116,7 @@ class AuthorizationAssociation(models.Model):
     is_active = models.BooleanField(default=False)
     is_admin = models.BooleanField(
         default=False,
-        help_text=_("Ability to modify the organization and its projects")
+        help_text=_("Ability to modify projects and its user stories")
     )
     date_joined = models.DateTimeField(auto_now_add=True)
 
@@ -184,6 +184,28 @@ class AuthorizationAssociation(models.Model):
                 user=self.user,
                 project__in=self.org.projects.values_list("pk", flat=True)
             ).delete()
+
+    @property
+    def is_guest(self):
+        """
+        Tell if this association belong to a user having rights on a project
+        that is part of an organization
+        """
+        if not hasattr(self, "_is_guest"):
+            self._is_guest = False
+            if self.project_id and self.project.org_id and \
+                    not AuthorizationAssociation.objects.filter(
+                        org_id=self.project.org_id,
+                        user=self.user
+                    ).exists():
+                self._is_guest = True
+        return self._is_guest
+
+    @property
+    def update_allowed(self):
+        if not self.project.org_id or self.is_guest:
+            return True
+        return False
 
 
 class AclMixin(object):

@@ -25,7 +25,7 @@
 			</a>
 		{% endif %}
 	</div>
-	<table class="table table-striped">
+	<table class="table table-striped users-list">
 		<thead class="headers">
 			<tr>
 				<th class="user-image"></th>
@@ -38,7 +38,7 @@
 		</thead>
 		<tbody>
 			{% for auth in organization.authorizations.all %}
-				<tr id="auth-{{ auth.pk }}">
+				<tr id="auth-{{ auth.pk }}" class="{% if auth.user == request.user %}myself{% endif %}">
 					<td class="user-image"><img src="{{ auth.user.get_gravatar_url }}"></td>
 					<td class="user-name">{{ auth.user.full_name }}</td>
 					<td class="user-email">{{ auth.user.email }}</td>
