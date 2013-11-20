@@ -127,7 +127,7 @@ class StoryEditionForm(BackMixin, ModelForm):
             self.initial['points'] = "" if self.instance.points == -1 \
                 else self.instance.points
         else:
-            self.initial['points'] = ""
+            self.initial['points'] = self.initial.get('points', "")
 
     class Meta:
         model = UserStory
@@ -147,9 +147,17 @@ class StoryCreationForm(StoryEditionForm):
     class Meta(StoryEditionForm.Meta):
         fields = ("as_a", "i_want_to", "so_i_can", "acceptances", "points",
                   "status", "theme", "color", "comments")
+        copy_fields = ("as_a", "i_want_to", "so_i_can", "acceptances",
+                       "points", "theme", "color", "comments")
 
-    def __init__(self, project, backlog=None, *args, **kwargs):
+    def __init__(self, project, backlog=None, source_story=None,
+                 *args, **kwargs):
         super(StoryCreationForm, self).__init__(*args, **kwargs)
+        if source_story:
+            for f in StoryCreationForm.Meta.copy_fields:
+                val = getattr(source_story, f, None)
+                if val:
+                    self.initial[f] = val
         self.project = project
         self.backlog = backlog
 

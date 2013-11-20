@@ -1375,12 +1375,27 @@ class StoryCreate(ProjectBacklogMixin, generic.CreateView):
     model = UserStory
     form_class = StoryCreationForm
 
+    def dispatch(self, request, *args, **kwargs):
+        src_story_id = request.GET.get('src_story_id', None)
+        if src_story_id:
+            try:
+                story = UserStory.objects.get(pk=src_story_id)
+                if not story.can_read(request.user):
+                    story = None
+            except UserStory.DoesNotExist:
+                story = None
+        else:
+            story = None
+        self.src_story = story
+        return super(StoryCreate, self).dispatch(request, *args, **kwargs)
+
     def get_form_kwargs(self):
         kwargs = super(StoryCreate, self).get_form_kwargs()
         kwargs['project'] = self.project
         if self.backlog:
             kwargs['backlog'] = self.backlog
         kwargs['_back'] = self.back
+        kwargs['source_story'] = self.src_story
         return kwargs
 
     def get_context_data(self, **kwargs):

@@ -60,6 +60,51 @@ class StoryTest(WebTest):
         self.assertEqual(event.text, "created this story")
         self.assertEqual(event.user, user)
 
+    def test_story_duplicate(self):
+        user = factories.UserFactory.create(
+            email='test@fake.ch', password='pass')
+        backlog = factories.create_project_sample_backlog(user)
+        story = factories.UserStoryFactory.create(
+            project=backlog.project,
+            backlog=backlog,
+            as_a='source story',
+            i_want_to='be duplicate',
+            so_i_can='meet requirements',
+            points='3',
+            status=Status.IN_PROGRESS,
+            theme='my theme',
+            color='#aabbcc'
+        )
+        url = reverse('story_create', args=(backlog.project.pk, backlog.pk))
+        url = "{0}?src_story_id={1}".format(url, story.pk)
+        # login redirect
+        self.app.get(url, status=302)
+        response = self.app.get(url, user=user)
+        self.assertContains(response, u"Add a new story")
+
+        form = response.forms['edit_story_form']
+        for key, value in {
+            'as_a': 'copied story',
+        }.iteritems():
+            form[key] = value
+        response = form.submit().follow()
+        self.assertContains(response, u"Story successfully created.")
+        self.assertContains(response, u"meet requirements")
+        story = UserStory.objects.get(as_a='copied story')
+        self.assertEqual(story.code, u"{0}-{1}".format(backlog.project.code,
+                                                       story.number))
+        self.assertTrue(UserStory.objects.exists())
+        event = Event.objects.get(
+            project=backlog.project,
+            backlog=backlog,
+            story=story
+        )
+        self.assertEqual(event.text, "created this story")
+        self.assertEqual(event.user, user)
+        self.assertEqual(story.points, 3.0)
+        self.assertEqual(story.theme, 'my theme')
+        self.assertEqual(story.status, Status.TODO)  # not copied !
+
     def test_story_edit(self):
         user = factories.UserFactory.create(
             email='test@fake.ch', password='pass')
