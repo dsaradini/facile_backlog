@@ -12,7 +12,9 @@
 				<ul class="dropdown-menu">
 					<li><a href="{% url "story_detail" story.project_id story.pk %}">{% trans "Details" %}</a></li>
 					<li><a class="dblclick" href="{% url "story_edit" story.project_id story.pk %}?_back={{ back_mode }}">{% trans "Edit" %}</a></li>
-					<li><a href="{% url "story_create" story.project_id backlog.pk %}?_back=project&src_story_id={{ story.pk }}">{% trans "Duplicate story" %}</a></li>
+					{% if backlog.project_id  %}
+						<li><a href="{% url "story_create" story.project_id backlog.pk %}?_back=project&src_story_id={{ story.pk }}">{% trans "Duplicate story" %}</a></li>
+					{% endif %}
 					<li class="divider"></li>
 					<li><a href="{% url "story_delete" story.project_id story.pk %}?_back={{ back_mode }}">{% trans "Delete" %}</a></li>
 
