@@ -486,8 +486,17 @@ textarea[name=i_want_to] {
 		width: auto;
 		margin:0;
 	}
+	.top-right {
+		position:absolute;
+		top: 1px;
+		right: 1px;
+	}
 	.backlog-lanes {
 		float: left;
+	}
+	.center-lane {
+		float: none;
+		margin: 0 auto;
 	}
 	.backlog-lanes-source {
 		clear: both;

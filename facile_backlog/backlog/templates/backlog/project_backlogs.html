@@ -36,7 +36,11 @@
 			<a class="btn btn-primary btn-small" href="{% url "project_backlog_create" project.pk %}">{% trans "Create backlog" %}</a>
 		{% endif %}
 	</form>
-	<div class="backlog-lanes" style="width:{% widthratio backlog_list|length 1 320 %}px">
+
+{% endblock %}
+{% block outer_content %}
+
+	<div class="backlog-lanes center-lane" style="width:{% widthratio backlog_list|length 1 320 %}px">
 		{% for backlog in backlog_list %}
 			<article class="{% if backlog.is_main %}main{% endif %} backlog" id="backlog-{{ backlog.pk }}" backlog-id="{{ backlog.pk }}">
 				<div class="backlog-title">
@@ -61,7 +65,7 @@
 
 
 					{% if backlog.is_main %}
-						<span class="label label-inverse pull-right">{% trans "main" %}</span>
+						<span class="top-right label label-inverse pull-right">{% trans "main" %}</span>
 					{% else %}
 						<a class="close pull-right close-lane" href="#">&times;</a>
 					{% endif %}
