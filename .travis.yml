@@ -3,9 +3,11 @@ language: python
 python:
   - "2.7"
 
+services:
+  - redis-server
+
 before_install:
   - sudo apt-get install daemontools
-  - sudo apt-get install redis
 
 install:
   - pip install -r requirements-dev.txt
