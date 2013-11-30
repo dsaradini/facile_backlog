@@ -13,7 +13,9 @@ $(function() {
 		tooltip: {
 			formatter: function() {
 				return 	'<b>'+ this.point.name +'</b>: '+Highcharts.numberFormat(this.percentage, 2, ',')+'%<br>' +
-						'<b>{% trans "Points" %}</b>: '+this.y+"<br>" +
+						{% if show_points %}
+							'<b>{% trans "Points" %}</b>: '+this.y+"<br>" +
+						{% endif %}
 						'<b>{% trans "Stories" %}</b>: '+this.point.count;
 			}
 		},

@@ -34,6 +34,10 @@ class Dashboard(models.Model):
         help_text=_("Display stories currently in progress"),
         default=True
     )
+    show_completed = models.BooleanField(
+        help_text=_("Display completed stories"),
+        default=True
+    )
     show_next = models.BooleanField(
         help_text=_("Display stories next in current iteration. Only"
                     " for project in an organization"),

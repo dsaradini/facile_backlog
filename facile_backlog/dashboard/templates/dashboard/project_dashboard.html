@@ -14,7 +14,7 @@
 
 {% addtoblock "js" %}
 <script src="{% static "core/js/highcharts.js" %}"></script>
-{% include "graph/_pie_status.html" with graph_title=" " series=project_status_pie element_id="#graph-project-pie" %}
+{% include "graph/_pie_status.html" with graph_title=" " series=project_status_pie element_id="#graph-project-pie" show_points=dashboard.show_points%}
 {% endaddtoblock %}
 
 <div class="row row-fluid">
@@ -25,6 +25,23 @@
 <div class="row row-fluid">
 
 	<div class="span7">
+	{% if dashboard.show_completed %}
+		<div>
+			<h3>{% trans "Completed stories" %}</h3>
+			<div class="dashboard-stories-list">
+				<div>
+					{% for story in completed_stories %}
+						{% include "dashboard/_story_big_cell.html" with show_points=dashboard.show_points %}
+					{% empty %}
+						<p class="alert">
+							{% trans "There is currently no story completed in this sprint" %}
+						</p>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	{% endif %}
+
 	{% if dashboard.show_in_progress %}
 		<div>
 			<h3>{% trans "In progress stories" %}</h3>

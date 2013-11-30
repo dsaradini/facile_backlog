@@ -18,6 +18,7 @@ class DashboardEditionForm(BackMixin, ModelForm):
         model = Dashboard
         fields = [
             "slug", "mode", "authorizations", "show_in_progress",
+            "show_completed",
             "show_next", "show_scheduled", "show_points", "show_story_status"
         ]
 

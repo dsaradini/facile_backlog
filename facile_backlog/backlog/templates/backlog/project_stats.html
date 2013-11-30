@@ -8,8 +8,8 @@
 <script src="{% static "core/js/highcharts.js" %}"></script>
 {% include "graph/_stack_status.html" with graph_title="Story points in project" series=all_points element_id="#graph-project-points" %}
 {% include "graph/_stack_status.html" with graph_title="Story points in main backlog" series=main_points element_id="#graph-main-points" %}
-{% include "graph/_pie_status.html" with graph_title="Current project status" series=project_status_pie element_id="#graph-project-pie" %}
-{% include "graph/_pie_status.html" with graph_title="Current main backlog status" series=main_status_pie element_id="#graph-main-pie" %}
+{% include "graph/_pie_status.html" with graph_title="Current project status" series=project_status_pie element_id="#graph-project-pie" show_points=True%}
+{% include "graph/_pie_status.html" with graph_title="Current main backlog status" series=main_status_pie element_id="#graph-main-pie" show_points=True%}
 
 {% endaddtoblock %}
 

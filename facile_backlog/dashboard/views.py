@@ -56,6 +56,11 @@ class ProjectDashboard(generic.TemplateView):
                     status=Status.IN_PROGRESS,
                     project=self.project,
                 ).order_by("order").all()
+                context['completed_stories'] = main_backlog.stories.filter(
+                    status__in=(Status.ACCEPTED, Status.COMPLETED,
+                                Status.REJECTED),
+                    project=self.project,
+                ).order_by("order").all()
             if self.project.org_id and self.dashboard.show_next:
                 context['next_stories'] = main_backlog.stories.filter(
                     status=Status.TODO,
@@ -95,7 +100,8 @@ class ProjectDashboard(generic.TemplateView):
             l = list(self.project.statistics.all()[:1])
             if l:
                 info = l[0].data['all']
-                context['project_points'] = info['points']
+                if self.dashboard.show_points:
+                    context['project_points'] = info['points']
                 context['project_stories'] = info['stories']
                 context['project_status_pie'] = \
                     [pie_element(k, v) for k, v in info['by_status'].items()]

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-19 19:57+0100\n"
+"POT-Creation-Date: 2013-11-30 14:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,17 +49,17 @@ msgstr ""
 msgid "Use markdown list format: line with '-' in front"
 msgstr ""
 
-#: backlog/forms.py:167 core/forms.py:54 core/models.py:40
+#: backlog/forms.py:175 core/forms.py:54 core/models.py:40
 msgid "Email address"
 msgstr ""
 
-#: backlog/forms.py:168 backlog/models.py:142
+#: backlog/forms.py:176 backlog/models.py:142
 #: backlog/templates/backlog/org_users.html:46
 #: backlog/templates/backlog/project_users.html:53
 msgid "Administrator"
 msgstr ""
 
-#: backlog/forms.py:176
+#: backlog/forms.py:184
 msgid "Grant administrator role"
 msgstr ""
 
@@ -280,7 +280,7 @@ msgstr ""
 
 #: backlog/views.py:160 backlog/views.py:256 backlog/views.py:694
 #: backlog/views.py:761 backlog/views.py:1074 backlog/views.py:1239
-#: dashboard/views.py:163 storymap/views.py:41
+#: dashboard/views.py:168 storymap/views.py:41
 msgid "Not authorized"
 msgstr ""
 
@@ -316,11 +316,11 @@ msgstr ""
 msgid "Backlog successfully restored."
 msgstr ""
 
-#: backlog/views.py:582 backlog/views.py:1609
+#: backlog/views.py:582 backlog/views.py:1624
 msgid "Invitation has been sent to {0}."
 msgstr ""
 
-#: backlog/views.py:636 backlog/views.py:1707
+#: backlog/views.py:636 backlog/views.py:1722
 msgid "User {0} has been revoked."
 msgstr ""
 
@@ -337,6 +337,7 @@ msgid "This is the main backlog for the project."
 msgstr ""
 
 #: backlog/views.py:791
+#: dashboard/templates/dashboard/project_dashboard.html:30
 msgid "Completed stories"
 msgstr ""
 
@@ -364,38 +365,38 @@ msgstr ""
 msgid "Backlog successfully set as main."
 msgstr ""
 
-#: backlog/views.py:1403
+#: backlog/views.py:1418
 msgid "Story successfully created."
 msgstr ""
 
-#: backlog/views.py:1458
+#: backlog/views.py:1473
 msgid "Story successfully updated."
 msgstr ""
 
-#: backlog/views.py:1478
+#: backlog/views.py:1493
 msgid "Story successfully deleted."
 msgstr ""
 
-#: backlog/views.py:1645
+#: backlog/views.py:1660
 #, python-format
 msgid ""
 "This invitation does not match your current user (%s). Check that you're "
 "logged in with the same user as the email you received."
 msgstr ""
 
-#: backlog/views.py:1652
+#: backlog/views.py:1667
 msgid "You already accepted this invitation."
 msgstr ""
 
-#: backlog/views.py:1735
+#: backlog/views.py:1750
 msgid "You are now a member of this project"
 msgstr ""
 
-#: backlog/views.py:1738
+#: backlog/views.py:1753
 msgid "You are now a member of this organization"
 msgstr ""
 
-#: backlog/views.py:1752
+#: backlog/views.py:1767
 msgid "Invitation has been declined"
 msgstr ""
 
@@ -416,29 +417,29 @@ msgstr ""
 #: backlog/templates/backlog/org_stories.html:18
 #: backlog/templates/backlog/print_stories.html:3
 #: backlog/templates/backlog/print_stories.html:65
-#: backlog/templates/backlog/project_backlogs.html:49
+#: backlog/templates/backlog/project_backlogs.html:53
 #: backlog/templates/backlog/project_stories.html:13
 msgid "Print stories"
 msgstr ""
 
 #: backlog/templates/backlog/_backlog_lane.html:26
-#: backlog/templates/backlog/project_backlogs.html:50
+#: backlog/templates/backlog/project_backlogs.html:54
 msgid "Priority view"
 msgstr ""
 
 #: backlog/templates/backlog/_backlog_lane.html:28
 #: backlog/templates/backlog/_story_small.html:14
 #: backlog/templates/backlog/org_users.html:49
-#: backlog/templates/backlog/project_backlogs.html:52
+#: backlog/templates/backlog/project_backlogs.html:56
 #: backlog/templates/backlog/project_users.html:60
 #: backlog/templates/backlog/story_detail.html:41
 msgid "Edit"
 msgstr ""
 
 #: backlog/templates/backlog/_backlog_lane.html:29
-#: backlog/templates/backlog/_story_small.html:15
+#: backlog/templates/backlog/_story_small.html:19
 #: backlog/templates/backlog/org_users.html:50
-#: backlog/templates/backlog/project_backlogs.html:53
+#: backlog/templates/backlog/project_backlogs.html:57
 #: backlog/templates/backlog/project_users.html:61
 #: backlog/templates/backlog/story_detail.html:42
 #: storymap/templates/storymap/_story.html:6
@@ -457,8 +458,8 @@ msgstr ""
 #: backlog/templates/backlog/backlog_detail.html:96
 #: backlog/templates/backlog/org_sprint_planning.html:129
 #: backlog/templates/backlog/org_sprint_planning.html:186
-#: backlog/templates/backlog/project_backlogs.html:114
-#: backlog/templates/backlog/project_backlogs.html:170
+#: backlog/templates/backlog/project_backlogs.html:118
+#: backlog/templates/backlog/project_backlogs.html:174
 #: storymap/templates/storymap/storymap_detail.html:239
 msgid "Server return an error."
 msgstr ""
@@ -537,11 +538,15 @@ msgstr ""
 msgid "Details"
 msgstr ""
 
-#: backlog/templates/backlog/_story_small.html:17
-msgid "Bring back to project"
+#: backlog/templates/backlog/_story_small.html:16
+msgid "Duplicate story"
 msgstr ""
 
 #: backlog/templates/backlog/_story_small.html:22
+msgid "Bring back to project"
+msgstr ""
+
+#: backlog/templates/backlog/_story_small.html:27
 msgid "Get this story"
 msgstr ""
 
@@ -703,21 +708,21 @@ msgstr ""
 
 #: backlog/templates/backlog/backlog_detail.html:170
 #: backlog/templates/backlog/org_sprint_planning.html:263
-#: backlog/templates/backlog/project_backlogs.html:249
+#: backlog/templates/backlog/project_backlogs.html:253
 #: storymap/templates/storymap/storymap_detail.html:688
 msgid "online"
 msgstr ""
 
 #: backlog/templates/backlog/backlog_detail.html:173
 #: backlog/templates/backlog/org_sprint_planning.html:266
-#: backlog/templates/backlog/project_backlogs.html:252
+#: backlog/templates/backlog/project_backlogs.html:256
 #: storymap/templates/storymap/storymap_detail.html:691
 msgid "offline"
 msgstr ""
 
 #: backlog/templates/backlog/backlog_detail.html:179
 #: backlog/templates/backlog/org_sprint_planning.html:272
-#: backlog/templates/backlog/project_backlogs.html:258
+#: backlog/templates/backlog/project_backlogs.html:262
 #: storymap/templates/storymap/storymap_detail.html:697
 msgid "Online users"
 msgstr ""
@@ -858,7 +863,7 @@ msgid "archive"
 msgstr ""
 
 #: backlog/templates/backlog/org_detail.html:80
-#: backlog/templates/backlog/project_backlogs.html:64
+#: backlog/templates/backlog/project_backlogs.html:68
 #: backlog/templates/backlog/project_detail.html:110
 msgid "main"
 msgstr ""
@@ -1014,7 +1019,7 @@ msgstr ""
 msgid "backlogs"
 msgstr ""
 
-#: backlog/templates/backlog/project_backlogs.html:75
+#: backlog/templates/backlog/project_backlogs.html:79
 msgid "Add story"
 msgstr ""
 
@@ -1733,47 +1738,51 @@ msgid "Display stories currently in progress"
 msgstr ""
 
 #: dashboard/models.py:38
+msgid "Display completed stories"
+msgstr ""
+
+#: dashboard/models.py:42
 msgid ""
 "Display stories next in current iteration. Only for project in an "
 "organization"
 msgstr ""
 
-#: dashboard/models.py:43
+#: dashboard/models.py:47
 msgid "Display scheduled and estimated stories in main backlog"
 msgstr ""
 
-#: dashboard/models.py:48
+#: dashboard/models.py:52
 msgid "Display overall status graph"
 msgstr ""
 
-#: dashboard/models.py:53
+#: dashboard/models.py:57
 msgid "Display stories points"
 msgstr ""
 
-#: dashboard/models.py:58
+#: dashboard/models.py:62
 msgid "URL name"
 msgstr ""
 
-#: dashboard/models.py:59
+#: dashboard/models.py:63
 msgid ""
 "This is the dashboard URL extension path used to publish the dashboard. /"
 "dashboard/[THIS FIELD]. It can only contains alphanumeric characters and _ . "
 "or -"
 msgstr ""
 
-#: dashboard/views.py:118
+#: dashboard/views.py:123
 msgid "Dashboard already exist"
 msgstr ""
 
-#: dashboard/views.py:143
+#: dashboard/views.py:148
 msgid "Dashboard successfully created."
 msgstr ""
 
-#: dashboard/views.py:202
+#: dashboard/views.py:207
 msgid "Dashboard successfully updated."
 msgstr ""
 
-#: dashboard/views.py:221
+#: dashboard/views.py:226
 msgid "Dashboard successfully deleted."
 msgstr ""
 
@@ -1819,31 +1828,35 @@ msgstr ""
 msgid "Project status"
 msgstr ""
 
-#: dashboard/templates/dashboard/project_dashboard.html:30
+#: dashboard/templates/dashboard/project_dashboard.html:37
+msgid "There is currently no story completed in this sprint"
+msgstr ""
+
+#: dashboard/templates/dashboard/project_dashboard.html:47
 msgid "In progress stories"
 msgstr ""
 
-#: dashboard/templates/dashboard/project_dashboard.html:37
+#: dashboard/templates/dashboard/project_dashboard.html:54
 msgid "There is currently no story in progress for this sprint"
 msgstr ""
 
-#: dashboard/templates/dashboard/project_dashboard.html:48
+#: dashboard/templates/dashboard/project_dashboard.html:65
 msgid "Next stories in this iteration"
 msgstr ""
 
-#: dashboard/templates/dashboard/project_dashboard.html:55
+#: dashboard/templates/dashboard/project_dashboard.html:72
 msgid "There is no story scheduled for this sprint"
 msgstr ""
 
-#: dashboard/templates/dashboard/project_dashboard.html:66
+#: dashboard/templates/dashboard/project_dashboard.html:83
 msgid "Scheduled stories"
 msgstr ""
 
-#: dashboard/templates/dashboard/project_dashboard.html:73
+#: dashboard/templates/dashboard/project_dashboard.html:90
 msgid "There is no story scheduled"
 msgstr ""
 
-#: dashboard/templates/dashboard/project_dashboard.html:83
+#: dashboard/templates/dashboard/project_dashboard.html:100
 msgid "Stories status"
 msgstr ""
 
