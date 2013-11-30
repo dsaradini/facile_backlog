@@ -73,7 +73,8 @@ class BacklogSerializer(serializers.ModelSerializer):
     class Meta:
         model = Backlog
         fields = ('id', 'url', 'name', 'description', 'organization_id',
-                  'project_id', 'available_themes', 'stats')
+                  'project_id', 'available_themes', 'stats', 'is_archive',
+                  'is_main')
 
     def _url(self, obj):
         return reverse("api_backlog_detail", args=[obj.pk],
