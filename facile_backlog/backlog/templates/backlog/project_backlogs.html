@@ -33,7 +33,7 @@
 		</select>
 		<a href=".">{% trans "Refresh" %}</a>
 		{% if project|can_admin:request.user %}
-			<a class="btn btn-primary btn-small" href="{% url "project_backlog_create" project.pk %}">{% trans "Create backlog" %}</a>
+			<a class="btn btn-success btn-sm" href="{% url "project_backlog_create" project.pk %}">{% trans "Create backlog" %}</a>
 		{% endif %}
 	</form>
 
@@ -57,7 +57,7 @@
 							<li><a href="{% url "project_backlog_delete" project.pk backlog.pk %}?_back=project">{% trans "Delete" %}</a></li>
 						</ul>
 					</div>
-					<small class="muted small">
+					<small class="text-muted small">
 						<span class="backlog-stories">{{ backlog.stats.total_stories }}</span>
 						<i class="icon-circle"></i>
 						<span class="backlog-points">{{ backlog.stats.total_points }}</span> pts
@@ -66,8 +66,6 @@
 
 					{% if backlog.is_main %}
 						<span class="top-right label label-inverse pull-right">{% trans "main" %}</span>
-					{% else %}
-						<a class="close pull-right close-lane" href="#">&times;</a>
 					{% endif %}
 				</div>
 				<div class="stories" story-backlog-id="{{ backlog.pk }}">
@@ -76,7 +74,7 @@
 					{%  endfor %}
 				</div>
 				<div class="backlog-action">
-					<a href="{% url "story_create" project.pk backlog.pk %}?_back=project" class="btn btn-primary btn-small">{% trans "Add story" %}</a>
+					<a href="{% url "story_create" project.pk backlog.pk %}?_back=project" class="btn btn-success btn-sm">{% trans "Add story" %}</a>
 				</div>
 			</article>
 		{% endfor %}
@@ -216,9 +214,6 @@
 				})
 			});
         });
-		$(".close-lane").click(function() {
-			$(this).parents("article.backlog").fadeOut()
-		});
 
 		$.ws_sbscribe({
 			url: '{{ ws_url }}projects/{{ project.pk }}/',

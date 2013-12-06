@@ -23,7 +23,7 @@ var show_archived = function(e) {
 	<div class="org-head">
 		<h1 class="inline-title">{{ organization.get_big_logo }} {{ organization.name }}</h1>
 		{% if organization|can_admin:request.user %}
-			<small class="muted">[
+			<small class="text-muted">[
 			<a class="btn-link" href="{% url "org_edit" organization.pk %}">
 				{% trans "edit" %}
 			</a>|
@@ -40,12 +40,12 @@ var show_archived = function(e) {
 		{% endif %}
 	</div>
 
-<div class="row-fluid">
+<div class="row">
 
-	<div class="span6">
+	<div class="col-md-6">
 		<h2>{% trans "Backlogs" %}
 			{% if organization|can_admin:request.user %}
-				<a class="btn btn-primary btn-small" href="{% url "org_backlog_create" organization.pk %}?">
+				<a class="btn btn-success btn-sm" href="{% url "org_backlog_create" organization.pk %}?">
 					{% trans "Create backlog" %}
 				</a>
 			{% endif %}
@@ -57,10 +57,10 @@ var show_archived = function(e) {
 					<div class="title">
 						{% if backlog.is_archive %}
 							<h4 class="archived"><i class="icon-list-ul muted"></i> {{ backlog.name }}
-								<span class="muted small"><i class="muted icon-lock"></i> {% trans "archived" %}</span>
+								<span class="text-muted small"><i class="muted icon-lock"></i> {% trans "archived" %}</span>
 								{% if organization|can_admin:request.user %}
-									<small class="muted">[
-										<a class="muted" href="{% url "org_backlog_restore" organization.pk backlog.pk %}">{% trans "restore" %}</a>
+									<small class="text-muted">[
+										<a class="text-muted" href="{% url "org_backlog_restore" organization.pk backlog.pk %}">{% trans "restore" %}</a>
 									]</small>
 								{% endif %}
 							</h4>
@@ -68,12 +68,12 @@ var show_archived = function(e) {
 							<H4>
 							<a href="{% url "backlog_detail" backlog.pk %}"> <i class="icon-list-ul black"></i> {{ backlog.name }}</a>
 							{% if organization|can_admin:request.user and backlog.can_modify%}
-								<small class="muted">[
-									<a class="muted" href="{% url "backlog_set_main" backlog.pk %}">{% trans "set main" %}</a>
+								<small class="text-muted">[
+									<a class="text-muted" href="{% url "backlog_set_main" backlog.pk %}">{% trans "set main" %}</a>
 									{% if not main.is_archive %}
-										| <a class="muted" href="{% url "org_backlog_archive" organization.pk backlog.pk %}">{% trans "archive" %}</a>
+										| <a class="text-muted" href="{% url "org_backlog_archive" organization.pk backlog.pk %}">{% trans "archive" %}</a>
 									{% endif %}
-									| <a class="muted" href="{% url "org_backlog_delete" organization.pk backlog.pk %}">{% trans "delete" %}</a>
+									| <a class="text-muted" href="{% url "org_backlog_delete" organization.pk backlog.pk %}">{% trans "delete" %}</a>
 								]</small>
 							{% endif %}
 							{% if backlog.is_main %}
@@ -112,10 +112,10 @@ var show_archived = function(e) {
 		</ul>
 
 	</div>
-	<div class="span6">
+	<div class="col-md-6">
 		<h2>{% trans "Projects" %}
 			{% if organization|can_admin:request.user %}
-				<a class="btn btn-primary btn-small" href="{% url "project_create" %}?org={{ organization.pk }}">{% trans "New project" %}</a>
+				<a class="btn btn-success btn-sm" href="{% url "project_create" %}?org={{ organization.pk }}">{% trans "New project" %}</a>
 			{% endif %}
 		</h2>
 		<div class="actions"></div>
@@ -128,15 +128,15 @@ var show_archived = function(e) {
 						<a href="{% url 'project_detail' object.pk %}"> {{ object.name }}</a>
 						{% if object|can_admin:request.user %}
 							<small>[
-								<a class="muted" href="{% url 'project_edit' object.pk %}">{% trans "edit" %}</a>
+								<a class="text-muted" href="{% url 'project_edit' object.pk %}">{% trans "edit" %}</a>
 								|
-								<a class="muted" href="{% url 'project_delete' object.pk %}">{% trans "delete" %}</a>
+								<a class="text-muted" href="{% url 'project_delete' object.pk %}">{% trans "delete" %}</a>
 							]</small>
 						{% endif %}
 					</h4>
 				</div>
 				<div class="margin-left">
-					<div class="span12 muted small"><i class="icon-time"></i> {% trans "Last update" %}  {{ object.last_modified|naturaltime }}</div>
+					<div class="col-md-12 text-muted small"><i class="icon-time"></i> {% trans "Last update" %}  {{ object.last_modified|naturaltime }}</div>
 				</div>
 				{% endfor %}
 			</div>

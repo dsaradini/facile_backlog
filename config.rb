@@ -1,4 +1,3 @@
-require 'less'
 require 'bootstrap-sass'
 
 http_path = '/'

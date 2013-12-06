@@ -38,9 +38,9 @@
 				<option value="{{ proj.pk }}">{{ proj.name }}</option>
 			{% endfor %}
 		</select>
-		<a href=".">{% trans "Refresh" %}</a>
+		<a class="btn btn-default btn-sm" href=".">{% trans "Refresh" %}</a>
 		{% if organization|can_admin:request.user %}
-			<a class="btn btn-primary btn-small" href="{% url "org_backlog_create" organization.pk %}">{% trans "Create backlog" %}</a>
+			<a class="btn btn-success btn-sm" href="{% url "org_backlog_create" organization.pk %}">{% trans "Create backlog" %}</a>
 		{% endif %}
 	</form>
 	<div class="lanes" style="width:{{ backlog_width }}px">
@@ -226,10 +226,6 @@
 				$("article[project-id='"+project_id+"']").addClass("filter-highlighted").removeClass("filter-opacified")
 			}
 		});
-		$(".close-lane").click(function() {
-			$(this).parents("article.backlog").fadeOut()
-		})
-
 		$.ws_sbscribe({
 			url: '{{ ws_url }}organizations/{{ organization.pk }}/',
 			on_message: function(message) {

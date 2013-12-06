@@ -22,7 +22,7 @@
 			{% else %}
 				<div class="alert alert-info alert-block">
 					<p>
-						<a class="btn btn-primary btn-mini" href="{% url "project_invite_user" project.pk %}">{% trans "Invite guest user" %}</a>
+						<a class="btn btn-success btn-sm" href="{% url "project_invite_user" project.pk %}">{% trans "Invite guest user" %}</a>
 
 						{% blocktrans %}Guest users have only access to the project, they cannot see any information about organization, especially user stories scheduled in sprints{% endblocktrans %}
 					</p>

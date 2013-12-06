@@ -11,10 +11,10 @@
 	{% if field.is_hidden %}
 		{{ field }}
 	{% else %}
-		<div class="control-group field {% if field.errors %}error{% endif %}">
-			<label class="control-label"><h4>{{ field.label }} {% if field.field.required %}<small class="muted">({% trans "required" %})</small>{% endif %}</h4></label>
-			{{ field }}
-			{% if field.help_text %}<span class="muted">{{ field.help_text|safe }}</span>{% endif %}
+		<div class="form-group field {% if field.errors %}error{% endif %}">
+			<label class="control-label" for="{{ field.id }}"><h4>{{ field.label }} {% if field.field.required %}<small class="text-muted">({% trans "required" %})</small>{% endif %}</h4></label>
+			<div>{{ field }}</div>
+			{% if field.help_text %}<span class="text-muted">{{ field.help_text|safe }}</span>{% endif %}
 			{% if field.errors %}
 				{% for error in field.errors %}
 					<span class="help-inline">{{ error|escape }}</span>

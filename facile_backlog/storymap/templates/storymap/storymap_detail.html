@@ -24,7 +24,7 @@
 			<tr>
 				<th class="table-corner">
 					{% if storymap|can_admin:request.user %}
-						<a class="btn btn-primary btn-mini create_theme" href="#">{% trans "Add theme" %} &nbsp;<i class="icon-arrow-right"></i></a>
+						<a class="btn btn-success btn-sm create_theme" href="#">{% trans "Add theme" %} &nbsp;<i class="icon-arrow-right"></i></a>
 					{% endif %}
 				</th>
 			{% for theme in themes.all %}
@@ -34,7 +34,7 @@
 		</thead>
 		<caption class="text-left caption-bottom">
 			{% if storymap|can_admin:request.user %}
-				<a class="btn btn-primary btn-mini create_phase" href="#">{% trans "Add phase" %} &nbsp;<i class="icon-arrow-up"></i></a>
+				<a class="btn btn-success btn-sm create_phase" href="#">{% trans "Add phase" %} &nbsp;<i class="icon-arrow-up"></i></a>
 			{% endif %}
 		</caption>
 		<tbody>

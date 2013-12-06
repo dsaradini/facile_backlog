@@ -5,39 +5,39 @@
 
 {% block content %}
 <div class="row">
-	<div class="span8">
-		<div class="row-fluid">
+	<div class="col-md-8">
+		<div class="row">
 			<h2>{% trans "Organizations" %}
-			<a class="btn btn-primary btn-small" href="{% url "org_create" %}">
+			<a class="btn btn-success btn-sm" href="{% url "org_create" %}">
 				{% trans "Create organization" %}
 			</a>
 			</h2>
 		{% if organizations %}
-			<div class="span12">
+			<div class="col-md-12">
 				{% for org in organizations %}
 				<div style="clear:both;">
 					<div>
-						<h4 class="inline-title">
+						<h3 class="inline-title">
 							{{ org.get_logo }}
 							<a href="{% url 'org_detail' org.pk %}"> {{ org.name }}</a>
 							{% if org|can_admin:request.user %}
 								<small>[
-									<a class="muted" href="{% url 'org_edit' org.pk %}">{% trans "edit" %}</a>
+									<a class="text-muted" href="{% url 'org_edit' org.pk %}">{% trans "edit" %}</a>
 									|
-									<a class="muted" href="{% url 'org_delete' org.pk %}">{% trans "delete" %}</a>
+									<a class="text-muted" href="{% url 'org_delete' org.pk %}">{% trans "delete" %}</a>
 									|
-									<a class="muted" href="{% url "project_create" %}?org={{ org.pk }}">{% trans "new organization project" %}</a>
+									<a class="text-muted" href="{% url "project_create" %}?org={{ org.pk }}">{% trans "new organization project" %}</a>
 								]</small>
 							{% endif %}
-						</h4>
+						</h3>
 					</div>
 
 					<div class="margin-left">
-						<div>
+						<div class="row">
 						{% for project in org.ordered_projects %}
-								<div class="span4"><i class="icon-book"></i> <a href="{% url "project_detail" project.pk %}">{{ project.name }}</a></div>
+								<div class="col-md-4"><i class="icon-book"></i> <a href="{% url "project_detail" project.pk %}">{{ project.name }}</a></div>
 							{% if forloop.counter|divisibleby:3 %}
-								</div><div>
+								</div><div class="row">
 							{% endif %}
 						{% empty %}
 							<div class="text-warning">
@@ -56,14 +56,14 @@
 		{% endif %}
 		</div>
 
-		<div class="row-fluid">
+		<div class="row">
 		<h2>{% trans "Projects" %}
-		<a class="btn btn-primary btn-small" href="{% url "project_create" %}">
+		<a class="btn btn-success btn-sm" href="{% url "project_create" %}">
 			{% trans "New project" %}
 		</a>
 		</h2>
 		{% if projects or guest_projects%}
-			<div class="span12">
+			<div class="col-md-12">
 				{% for object in projects %}
 				<div>
 					<h4 class="inline-title">
@@ -71,15 +71,15 @@
 						<a href="{% url 'project_detail' object.pk %}"> {{ object.name }}</a>
 						{% if object|can_admin:request.user %}
 							<small>[
-								<a class="muted" href="{% url 'project_edit' object.pk %}">{% trans "edit" %}</a>
+								<a class="text-muted" href="{% url 'project_edit' object.pk %}">{% trans "edit" %}</a>
 								|
-								<a class="muted" href="{% url 'project_delete' object.pk %}">{% trans "delete" %}</a>
+								<a class="text-muted" href="{% url 'project_delete' object.pk %}">{% trans "delete" %}</a>
 							]</small>
 						{% endif %}
 					</h4>
 				</div>
 				<div class="margin-left">
-					<div class="span12 muted small"><i class="icon-time"></i> {% trans "Last update" %}  {{ object.last_modified|naturaltime }}</div>
+					<div class="col-md-12 text-muted small"><i class="icon-time"></i> {% trans "Last update" %}  {{ object.last_modified|naturaltime }}</div>
 				</div>
 				{% endfor %}
 				{% for object in guest_projects %}
@@ -88,7 +88,7 @@
 						<i class="icon-book"></i>
 						<a href="{% url 'project_detail' object.pk %}"> {{ object.name }}</a>
 						<span class="label">{% trans "Guest" %}</span>
-						<span class="muted">{{  object.org.get_logo }} {{ object.org.name }}</span>
+						<span class="text-muted">{{  object.org.get_logo }} {{ object.org.name }}</span>
 					</h4>
 				</div>
 				{% endfor %}
@@ -100,7 +100,7 @@
 		{% endif %}
 		</div>
 	</div>
-	<div class="span4">
+	<div class="col-md-4">
 		<h3>{% trans "Recent activities" %}</h3>
 		<div class="actions"></div>
 		{% include "backlog/_events.html" with events=events gravatar=True%}

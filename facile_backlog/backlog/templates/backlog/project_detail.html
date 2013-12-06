@@ -29,7 +29,8 @@ var show_archived = function(e) {
 		{% endif %}
 	</div>
 	{% if project.lang %}
-		<span class="pull-right label small muted">{{ project.get_lang_display }}</span>
+		<span class="pull-right label label-default small text-muted">{{ project.get_lang_display }}</span>
+		&nbsp;
 	{% endif %}
 	<div class="description">
 		{% if project.description %}
@@ -47,10 +48,10 @@ var show_archived = function(e) {
 				{% elif dashboard.mode == "private" %}
 					<span class="label label-inverse">{% trans "private" %}</span>
 				{% endif %}
-				<a target="backlogman_dash_{{ project.pk }}" href="{% url "project_dashboard" dashboard.slug %}" class="btn btn-mini muted"><i class="icon-eye-open"></i></a>
+				<a target="backlogman_dash_{{ project.pk }}" href="{% url "project_dashboard" dashboard.slug %}" class="btn btn-xs btn-default text-muted"><i class="icon-eye-open"></i></a>
 				<code>{{ dashboard.absolute_url }}</code>
 					{% if project|can_admin:request.user %}
-						<small class="muted">[
+						<small class="text-muted">[
 						<a class="btn-link" href="{% url "dashboard_edit" project.pk dashboard.pk %}">
 							{% trans "edit" %}
 						</a>|
@@ -68,13 +69,13 @@ var show_archived = function(e) {
 		{% endif %}
 	</div>
 
-<div class="row-fluid">
+<div class="row">
 
-	<div class="span6">
+	<div class="col-md-6">
 		<h2>{% trans "Backlogs" %}</h2>
 		<div class="actions">
 			{% if project|can_admin:request.user %}
-				<a class="btn btn-primary" href="{% url "project_backlog_create" project.pk %}">
+				<a class="btn btn-success" href="{% url "project_backlog_create" project.pk %}">
 					{% trans "Create backlog" %}
 				</a>
 			{% endif %}
@@ -90,19 +91,19 @@ var show_archived = function(e) {
 							<i class="icon-list-ul muted"></i> {{ backlog.name }}
 						{% endif %}
 						{% if project|can_admin:request.user and backlog.can_modify %}
-							<small class="muted">[
-								<a class="muted" href="{% url "backlog_set_main" backlog.pk %}">{% trans "set main" %}</a>
+							<small class="text-muted">[
+								<a class="text-muted" href="{% url "backlog_set_main" backlog.pk %}">{% trans "set main" %}</a>
 								{% if not backlog.is_archive %}
-									| <a class="muted" href="{% url "project_backlog_archive" project.pk backlog.pk %}">{% trans "archive" %}</a>
+									| <a class="text-muted" href="{% url "project_backlog_archive" project.pk backlog.pk %}">{% trans "archive" %}</a>
 								{% endif %}
-								| <a class="muted" href="{% url "project_backlog_delete" project.pk backlog.pk %}">{% trans "delete" %}</a>
+								| <a class="text-muted" href="{% url "project_backlog_delete" project.pk backlog.pk %}">{% trans "delete" %}</a>
 							]</small>
 						{% endif %}
 						{% if backlog.is_archive %}
-							<span class="muted small"><i class="muted icon-lock"></i> {% trans "archived" %}</span>
+							<span class="text-muted small"><i class="muted icon-lock"></i> {% trans "archived" %}</span>
 							{% if organization|can_admin:request.user %}
-								<small class="muted">[
-									<a class="muted" href="{% url "project_backlog_restore" project.pk backlog.pk %}">{% trans "restore" %}</a>
+								<small class="text-muted">[
+									<a class="text-muted" href="{% url "project_backlog_restore" project.pk backlog.pk %}">{% trans "restore" %}</a>
 								]</small>
 							{% endif %}
 						{% endif %}
@@ -138,7 +139,7 @@ var show_archived = function(e) {
 			{% endif %}
 		</ul>
 	</div>
-	<div class="span6">
+	<div class="col-md-6">
 		<h2>{% trans "Last activities" %}</h2>
 		<div class="actions"></div>
 		{% include "backlog/_events.html" with events=events %}

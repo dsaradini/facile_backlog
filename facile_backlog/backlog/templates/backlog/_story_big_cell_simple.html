@@ -2,10 +2,10 @@
 <article class="story" id="story-{{ story.pk }}" story-id="{{ story.pk }}" theme-id="{{ story.theme }}" color-story="{{ story.color }}" color-theme="{{ story.theme|hashcolor }}">
     <div class="handle" style="background-color:{{ story.color }}"></div>
     <div class="handled">
-			<div class="row-fluid">
-				<div class="code span10">
-					<div class="row-fluid">
-						<div class="text span12">
+			<div class="row">
+				<div class="code col-md-10">
+					<div class="row">
+						<div class="text col-md-12">
 							<div>
 								<h4 class="inline-title">{{ story.code }}</h4>
 								{% if story|can_admin:request.user %}
@@ -17,7 +17,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="text-right span2">
+				<div class="text-right col-md-2">
 					{% if not hide_status_change %}
 					<div class="status">
 						<div class="btn-group dropdown-right">

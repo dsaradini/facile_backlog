@@ -112,6 +112,7 @@ class StoryEditionForm(BackMixin, ModelForm):
         super(StoryEditionForm, self).__init__(*args, **kwargs)
         self.fields['as_a'].widget = TextInput()
         self.fields['as_a'].widget.attrs['autofocus'] = ''
+        self.fields['as_a'].widget.attrs['class'] = 'form-control input-large'
         self.fields['color'].widget.attrs['colorpicker'] = 'true'
         self.fields['as_a'].widget.attrs['placeholder'] = _("a user")
         self.fields['i_want_to'].widget.attrs['placeholder'] = _(

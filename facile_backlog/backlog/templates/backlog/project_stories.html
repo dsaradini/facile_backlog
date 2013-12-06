@@ -10,7 +10,7 @@
 
 	<h2 class="inline-title">{% trans "Stories" %}</h2>
 	<h2 class="inline-title muted"> ({{ page_obj.paginator.count }})</h2>
-	<a class="btn btn-link" href="{% url "print_stories" %}?project_id={{ project.pk }}">{% trans "Print stories" %}</a>
+	<a class="btn btn-primary btn-xs" href="{% url "print_stories" %}?project_id={{ project.pk }}">{% trans "Print stories" %}</a>
 
 	<div class="description">
 		<p>{% blocktrans %}Here is the list of all stories in this project. Those stories are not sorted, to have a sorted "view" of project sotries, use backlogs.{% endblocktrans %}</p>
@@ -33,8 +33,8 @@
 			<label class="checkbox">
 				<input type="checkbox" name="sa" value="True" {% if query.sa %}checked{% endif %}> {% trans "Show archived" %}
 			</label>
-			<button type="submit" class="btn btn-small btn-inverse">{% trans "apply filters" %}</button>
-			<a class="btn btn-small" href=".">{% trans "reset filters" %}</a>
+			<button type="submit" class="btn btn-sm btn-primary">{% trans "apply filters" %}</button>
+			<a class="btn btn-sm btn-default" href=".">{% trans "reset filters" %}</a>
 		</form>
 	</div>
 
@@ -105,8 +105,8 @@
 	</table>
 	{% if is_paginated %}
 	<div>
-		<div class="pagination pagination-centered">
-		  	<ul>
+		<div class="text-center">
+		  	<ul class="pagination">
 				<li class="{% if not page_obj.has_previous %}disabled{% endif %}"><a href="?page=1&{{ current_sort }}&{{ current_query }}"><i class="icon-double-angle-left"></i></a>
 				<li class="{% if not page_obj.has_previous %}disabled{% endif %}"><a href="?page=1&{{ current_sort }}&{{ current_query }}"><i class="icon-angle-left"></i></a>
 				{% for p in page_obj.paginator.page_range %}

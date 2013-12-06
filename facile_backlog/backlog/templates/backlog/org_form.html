@@ -13,8 +13,8 @@
 		{% endif %}
 	</ul>
 
-<div class="row-fluid">
-	<div class="span6 offset3 base-form">
+<div class="row">
+	<div class="col-md-6  col-md-offset-3 base-form">
 		{% if not object %}<h1>{% trans "Create organization" %}</h1>{% endif %}
 		<form method="post" id="edit_org_form" action="{% if object %}{% url "org_edit" object.pk %}{% else %}{% url "org_create" %}{% endif %}">
 

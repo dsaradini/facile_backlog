@@ -90,3 +90,7 @@
 	border-color: #ccc;
 	color: #777;
 }
+
+.breadcrumb>li+li:before {
+	content: none;
+}

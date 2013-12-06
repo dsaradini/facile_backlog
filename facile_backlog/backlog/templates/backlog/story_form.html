@@ -25,8 +25,8 @@
 	<li class="active">{% if not object %}{% trans "Add a new story" %}{% else %}{{ object.code }}{% endif %}</li>
 </ul>
 
-<div class="row-fluid">
-	<div class="span6 offset3 base-form">
+<div class="row">
+	<div class="col-md-6 col-md-offset-3 base-form">
 	{% if not object %}<h1>{% trans "Add a new story" %}</h1>{% endif %}
 	{% if object %}
 		{% url "story_edit" project.pk object.pk as target_url%}
@@ -54,22 +54,24 @@
 $(function(){
 	$('[name="as_a"]').attr("autocomplete", "off");
 	$('[name="as_a"]').typeahead({
-		source: {{ project.all_as_a|jsonify }}
+		name: "{% trans "as a" %}",
+		local: {{ project.all_as_a|jsonify }}
 	});
 	$('[name="theme"]').attr("autocomplete", "off");
 	$('[name="theme"]').typeahead({
-		source: {{ project.all_themes|jsonify }}
+		local: {{ project.all_themes|jsonify }}
 	});
 	$('[name="points"]').attr("autocomplete", "off");
 	$('[name="points"]').typeahead({
-		source: ["0", "1", "2", "3", "5", "8", "13", "20", "40", "100", "999"]
+		local: ["0", "1", "2", "3", "5", "8", "13", "20", "40", "100", "999"]
 	});
 	$('[name="color"]').simpleColorPicker({
 		picker: true
 	});
 	$('[name="status"]').select2({
-		width: "200px"
+		local: "200px"
 	});
+	$('.tt-hint').addClass('form-control');
 })
 </script>
 {% endaddtoblock %}

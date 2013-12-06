@@ -345,7 +345,6 @@ if DEBUG:
             'debug_toolbar.panels.sql.SQLDebugPanel',
             'debug_toolbar.panels.signals.SignalDebugPanel',
             'debug_toolbar.panels.logger.LoggingPanel',
-            'template_timings_panel.panels.TemplateTimings.TemplateTimings'
         )
 
         TEMPLATE_TIMINGS_SETTINGS = {
