@@ -6,3 +6,13 @@ def gravatar_url(email, size=32):
         hashlib.md5(email).hexdigest(),
         size,
     )
+
+
+def setup_bootstrap_fields(form, fields=None):
+    for name in form.fields:
+        if fields and name not in fields:
+            continue
+        field = form.fields[name]
+        clazz = field.widget.attrs.get("class", "")
+        clazz = "{0} {1}".format(clazz, "form-control input-large")
+        field.widget.attrs["class"] = clazz

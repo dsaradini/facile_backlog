@@ -5,12 +5,13 @@
 {% block content_class %}login-background{% endblock %}
 
 {% block content %}
+<div class="row">
 	<h1>{% trans "Backlogman sign-in" %}</h1>
 
 	{% if next %}
 		<p class="alert">{% trans "You must be logged in to see this page." %}</p>
 	{% endif %}
-	<div class="span6 offset3 base-form">
+	<div class="col-md-6 col-md-offset-3 base-form">
 		<form class="home-login" id="login_form" method="POST" action="{% url "auth_login" %}">
 			{% include "form.html" %}
 			{% if next %}

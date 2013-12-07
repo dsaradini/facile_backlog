@@ -2,10 +2,10 @@
 <article class="story" id="story-{{ story.pk }}" story-id="{{ story.pk }}" theme-id="{{ story.theme }}" color-story="{{ story.color }}" color-theme="{{ story.theme|hashcolor }}">
     <div class="handle" style="background-color:{{ story.color }}"></div>
     <div class="handled">
-			<div class="row-fluid">
-				<div class="code {% if show_points %}span10{% else %}span12{% endif %}">
-					<div class="row-fluid">
-						<div class="text span4">
+			<div class="row">
+				<div class="code {% if show_points %}col-md-10{% else %}col-md-12{% endif %}">
+					<div class="row">
+						<div class="text col-md-4">
 							<div>
 								<h4 class="inline-title">{{ story.code }}</h4>
 								{% if story|can_admin:request.user %}
@@ -18,14 +18,14 @@
 							{% endif %}
 						</div>
 						{% if show_comments %}
-							<div class="acceptances span4">
+							<div class="acceptances col-md-4">
 								{% if story.acceptances %}
 									{{ story.acceptances|markdown }}
 								{% else %}
 									<h4 class="muted-more text-center">{% trans "No acceptance criterias" %}</h4>
 								{% endif %}
 							</div>
-							<div class="comments span4">
+							<div class="comments col-md-4">
 								{% if story.comments %}
 									{{ story.comments|markdown }}
 								{% else %}
@@ -33,7 +33,7 @@
 								{% endif %}
 							</div>
 						{% else %}
-							<div class="acceptances span8">
+							<div class="acceptances col-md-8">
 								{% if story.acceptances %}
 									{{ story.acceptances|markdown }}
 								{% else %}
@@ -44,7 +44,7 @@
 					</div>
 				</div>
 				{% if show_points %}
-					<div class="span2 text-center">
+					<div class="col-md-2 text-center">
 
 						<div class="points {% if story.points == -1 %}no-points{% endif %}">
 							{% if story.points >= 0%}

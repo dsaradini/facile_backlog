@@ -2,10 +2,13 @@
 
 
 <ul class="breadcrumb">
-	<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a><span class="divider">/</span></li>
+	<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a></li>
+	<li class="divider"><div class="inner"></div></li>
 	{% if story.project.org_id %}
-		<li><a href="{% url "org_detail" project.org_id %}">{{ project.org.get_mini_logo }} {{ project.org.name }}</a><span class="divider">/</span></li>
+		<li><a href="{% url "org_detail" project.org_id %}">{{ project.org.get_mini_logo }} {{ project.org.name }}</a></li>
+		<li class="divider"><div class="inner"></div></li>
 	{% endif %}
-	<li><a href="{% url "project_backlogs" story.project_id %}"><i class="icon-book"></i> {{ story.project.name }}</a><span class="divider">/</span></li>
+	<li><a href="{% url "project_backlogs" story.project_id %}"><i class="icon-book"></i> {{ story.project.name }}</a></li>
+	<li class="divider"><div class="inner"></div></li>
 	<li class="active"><i class="icon-list-ul"></i> {{ story.code }}<span class="divider"></span></li>
 </ul>

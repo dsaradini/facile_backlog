@@ -10,7 +10,7 @@
 
 	<h2 class="inline-title">{% trans "Stories" %}</h2>
 	<h2 class="inline-title muted"> ({{ page_obj.paginator.count }})</h2>
-	<a class="btn btn-primary btn-xs" href="{% url "print_stories" %}?project_id={{ project.pk }}">{% trans "Print stories" %}</a>
+	<a class="btn btn-primary btn-sm" href="{% url "print_stories" %}?project_id={{ project.pk }}">{% trans "Print stories" %}</a>
 
 	<div class="description">
 		<p>{% blocktrans %}Here is the list of all stories in this project. Those stories are not sorted, to have a sorted "view" of project sotries, use backlogs.{% endblocktrans %}</p>
@@ -19,16 +19,21 @@
 	{% url "project_stories" project.pk as base_url %}
 	<div class="">
 		<form class="form-inline" action="{% url "project_stories" project.pk %}" method="get">
-			<input class="input-medium" type="text" placeholder="find story..." name="q" value="{{ query.q }}">
-			<label for="status-select">{% trans "Status" %}</label>
-			<select name="st" id="status-select" class="input-medium">
-				<option value="">{% trans "Any" %}</option>
-				{% for status, text in project.all_status %}
-					<option value="{{ status }}" {% if query.st == status %}selected{% endif %}>{{ text }}</option>
-				{% endfor %}
-			</select>
-			<input class="input-medium" autocomplete="off" type="text" placeholder="find theme..." name="t" value="{{ query.t }}"
-				   data-provide="typeahead" data-source='{{ project.all_themes|jsonify }}'>
+			<div class="form-group">
+				<input class="input-medium form-control" type="text" placeholder="find story..." name="q" value="{{ query.q }}">
+			</div>
+			<div class="form-group">
+				<label for="status-select">{% trans "Status" %}</label>
+				<select name="st" id="status-select" class="input-medium form-control">
+					<option value="">{% trans "Any" %}</option>
+					{% for status, text in project.all_status %}
+						<option value="{{ status }}" {% if query.st == status %}selected{% endif %}>{{ text }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div class="form-group">
+				<input class="input-medium form-control" autocomplete="off" type="text" placeholder="find theme..." name="t" value="{{ query.t }}">
+			</div>
 			<input name="s" type="hidden" value="{% if sort_sign == '-' %}-{% endif %}{{ sort }}">
 			<label class="checkbox">
 				<input type="checkbox" name="sa" value="True" {% if query.sa %}checked{% endif %}> {% trans "Show archived" %}
@@ -118,4 +123,15 @@
 		</div>
 	</div>
 	{% endif %}
+{% addtoblock "js" %}
+<script type="text/javascript">
+	$(function() {
+		$('input[name="t"]').typeahead({
+             items:4,
+             local: {{ project.all_themes|jsonify }}
+          });
+		$('.tt-hint').addClass('form-control');
+	})
+</script>
+{% endaddtoblock %}
 {% endblock %}

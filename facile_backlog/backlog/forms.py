@@ -8,6 +8,7 @@ from django.utils.translation import ugettext as _
 
 from .models import (Project, Backlog, UserStory, Organization,
                      AuthorizationAssociation)
+from ..util import setup_bootstrap_fields
 
 
 class BackMixin(object):
@@ -28,6 +29,7 @@ class OrgEditionForm(ModelForm):
         self.fields['name'].widget.attrs["autocomplete"] = 'off'
         self.fields['email'].widget.attrs["autocomplete"] = 'off'
         self.fields['web_site'].widget.attrs["autocomplete"] = 'off'
+        setup_bootstrap_fields(self)
 
     class Meta:
         model = Organization
@@ -44,6 +46,7 @@ class ProjectEditionForm(ModelForm):
         super(ProjectEditionForm, self).__init__(*args, **kwargs)
         self.fields['name'].widget.attrs['autofocus'] = ''
         self.fields['name'].widget.attrs["autocomplete"] = 'off'
+        setup_bootstrap_fields(self)
 
     class Meta:
         model = Project
@@ -86,6 +89,7 @@ class BacklogCreationForm(BacklogEditionForm):
         super(BacklogCreationForm, self).__init__(*args, **kwargs)
         self.fields['name'].widget.attrs['autofocus'] = ''
         self.holder = holder
+        setup_bootstrap_fields(self)
 
     def save(self, commit=True):
         backlog = super(BacklogCreationForm, self).save(commit=False)
@@ -114,7 +118,6 @@ class StoryEditionForm(BackMixin, ModelForm):
         self.fields['as_a'].widget.attrs['autofocus'] = ''
         self.fields['as_a'].widget.attrs['class'] = 'form-control input-large'
         self.fields['color'].widget.attrs['colorpicker'] = 'true'
-        self.fields['as_a'].widget.attrs['placeholder'] = _("a user")
         self.fields['i_want_to'].widget.attrs['placeholder'] = _(
             "be able to input text here")
         self.fields['so_i_can'].widget.attrs['placeholder'] = _(
@@ -129,6 +132,7 @@ class StoryEditionForm(BackMixin, ModelForm):
                 else self.instance.points
         else:
             self.initial['points'] = self.initial.get('points', "")
+        setup_bootstrap_fields(self)
 
     class Meta:
         model = UserStory
@@ -177,12 +181,19 @@ class InviteUserForm(Form):
     admin = BooleanField(label=_('Administrator'),
                          initial=False, required=False)
 
+    def __init__(self, *args, **kwargs):
+        super(InviteUserForm, self).__init__(*args, **kwargs)
+        self.fields['email'].widget.attrs['autofocus'] = ''
+        self.fields['email'].widget.attrs["autocomplete"] = 'off'
+        setup_bootstrap_fields(self)
+
 
 class AuthorizationAssociationForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(AuthorizationAssociationForm, self).__init__(*args, **kwargs)
         self.fields['is_admin'].label = _("Grant administrator role")
+        setup_bootstrap_fields(self)
 
     class Meta:
         model = AuthorizationAssociation

@@ -29,11 +29,11 @@
 			<option value="color-theme">{% trans "Theme color" %}</option>
 		</select>
 		{% if simple %}
-			<a class="btn btn-link" href=".">{% trans "Full view" %}</a>
+			<a class="btn btn-default btn-sm" href=".">{% trans "Full view" %}</a>
 		{% else %}
-			<a class="btn btn-link" href="./?simple=True">{% trans "Simple view" %}</a>
+			<a class="btn btn-default btn-sm" href="./?simple=True">{% trans "Simple view" %}</a>
 		{% endif %}
-		<a class="btn btn-link" href="{% url "print_stories" %}?backlog_id={{ backlog.pk }}">{% trans "Print stories" %}</a>
+		<a class="btn btn-default btn-sm" href="{% url "print_stories" %}?backlog_id={{ backlog.pk }}">{% trans "Print stories" %}</a>
 	</form>
     <div class="stories">
         {% for story in stories %}

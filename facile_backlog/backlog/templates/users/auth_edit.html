@@ -17,8 +17,8 @@
 		<li class="active">{% trans "Edit authorization" %}</li>
 	</ul>
 
-<div class="row-fluid">
-	<div class="span6 offset3 base-form">
+<div class="row">
+	<div class="col-md-6 col-md-offset-3 base-form">
 		{% if object %}<h1>{% trans "Change authorization" %}</h1>{% endif %}
 		<h3>{{ object.user.full_name|default:object.user.email }}</h3>
 		{% if organization and not project %}

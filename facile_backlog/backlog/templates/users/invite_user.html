@@ -3,8 +3,8 @@
 {% block title %}{% trans "Invite user" %}{% endblock %}
 
 {% block content %}
-<div class="row-fluid">
-	<div class="span6 offset3 base-form">
+<div class="row">
+	<div class="col-md-6 col-md-offset-3 base-form">
 	<h1>{% trans "Send invitation" %}</h1>
 	{% if project %}
 		<h3>{% trans "Invite to project," %} "<span class="text-info">{{ project.name }}</span>"</h3>
@@ -22,7 +22,7 @@
 	<form method="post" id="register_form" action="{{ action_url }}">
 		{% include "form.html" %}
 		<div class="submit">
-			<input class="btn btn-primary" type="submit" value="{% trans "Invite" %}">
+			<input class="btn btn-success" type="submit" value="{% trans "Invite" %}">
 			<a class="btn btn-link" href="{{ cancel_url }}">{% trans "Cancel" %}</a>
 		</div>
 	</form>

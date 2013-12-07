@@ -64,21 +64,23 @@ var show_archived = function(e) {
 		{% else %}
 			<span>{% trans "This project has currently no status dashboard" %}</span>
 			{% if project|can_admin:request.user %}
-				<a class="btn btn-small" href="{% url "dashboard_create" project.pk %}">{% trans "Create a status dashboard" %}</a>
+				<a class="btn btn-xs btn-success" href="{% url "dashboard_create" project.pk %}">{% trans "Create a status dashboard" %}</a>
 			{% endif %}
 		{% endif %}
 	</div>
 
-<div class="row">
+	<div class="row">
 
 	<div class="col-md-6">
-		<h2>{% trans "Backlogs" %}</h2>
-		<div class="actions">
+		<h2>{% trans "Backlogs" %}
 			{% if project|can_admin:request.user %}
-				<a class="btn btn-success" href="{% url "project_backlog_create" project.pk %}">
+				<a class="btn btn-sm btn-success" href="{% url "project_backlog_create" project.pk %}">
 					{% trans "Create backlog" %}
 				</a>
 			{% endif %}
+		</h2>
+		<div class="actions">
+
 		</div>
 		<ul class="backlog-list">
 			{% for backlog in backlogs %}

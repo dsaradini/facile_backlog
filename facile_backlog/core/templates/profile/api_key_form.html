@@ -3,6 +3,8 @@
 {% block title %}{% trans "Change API key" %}{% endblock %}
 
 {% block content %}
+<div class="row"><div class="col-md-6 col-md-offset-3">
+
 	<h1>{% trans "Change API key" %}</h1>
 	<p class="description">
 	{% if has_token %}
@@ -18,4 +20,5 @@
 			<a class="btn btn-link" href="{% url "auth_profile" %}">{% trans "cancel" %}</a>
 		</div>
 	</form>
+</div></div>
 {% endblock %}

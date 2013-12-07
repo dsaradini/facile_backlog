@@ -17,14 +17,14 @@
 {% include "graph/_pie_status.html" with graph_title=" " series=project_status_pie element_id="#graph-project-pie" show_points=dashboard.show_points%}
 {% endaddtoblock %}
 
-<div class="row row-fluid">
+<div class="row">
 	<h1><span class="small muted">{% trans "Project status" %}</span> {{ project.name }}</h1>
 	<div class="small muted">{% now "SHORT_DATETIME_FORMAT" %}</div>
 </div>
 
-<div class="row row-fluid">
+<div class="row">
 
-	<div class="span7">
+	<div class="col-md-7">
 	{% if dashboard.show_completed %}
 		<div>
 			<h3>{% trans "Completed stories" %}</h3>
@@ -95,7 +95,7 @@
 		</div>
 	{% endif %}
 	</div>
-	<div class="span5">
+	<div class="col-md-5">
 	{% if dashboard.show_story_status %}
 		<h3>{% trans "Stories status" %}</h3>
 		<div class="graph400" id="graph-project-pie"></div>

@@ -11,6 +11,7 @@ from password_reset.forms import (PasswordRecoveryForm as BaseRecovery,
                                   PasswordResetForm as BaseReset)
 
 from .models import User
+from ..util import setup_bootstrap_fields
 
 
 class UserCreationForm(forms.ModelForm):
@@ -44,6 +45,11 @@ class UserChangeForm(forms.ModelForm):
 
 
 class ProfileEditionForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(ProfileEditionForm, self).__init__(*args, **kwargs)
+        setup_bootstrap_fields(self)
+
     class Meta:
         model = get_user_model()
         fields = ['full_name', 'lang']

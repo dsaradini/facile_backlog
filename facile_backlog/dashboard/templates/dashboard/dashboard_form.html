@@ -4,19 +4,21 @@
 
 {% block content %}
 	<ul class="breadcrumb">
-		<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a><span class="divider">/</span></li>
+		<li><a href="{% url "dashboard" %}"> {% trans "Dashboard" %}</a></li>
+		<li class="divider"><div class="inner"></div></li>
 		{% if project %}
-			<li><a href="{% url "project_detail" project.pk %}"><i class="icon-book"></i> {{ project.name }}</a><span class="divider">/</span></li>
+			<li><a href="{% url "project_detail" project.pk %}"><i class="icon-book"></i> {{ project.name }}</a></li>
+			<li class="divider"><div class="inner"></div></li>
 		{% endif %}
 		{% if object %}
-			<li class="active"><i class="icon-book"></i> {% trans "Edit dashboard" %}<span class="divider"></span></li>
+			<li class="active"><i class="icon-book"></i> {% trans "Edit dashboard" %}</li>
 		{% else %}
-			<li class="active"><i>{% trans "Create dashboard" %}</i><span class="divider"></span></li>
+			<li class="active"><i>{% trans "Create dashboard" %}</i></li>
 		{% endif %}
 	</ul>
 
-<div class="row-fluid">
-	<div class="span6 offset3 base-form">
+<div class="row">
+	<div class="col-md-6 col-md-offset-3 base-form">
 		{% if not object %}
 			<h1>{% trans "Create status dashboard" %}</h1>
 			<div class="alert alert-info">

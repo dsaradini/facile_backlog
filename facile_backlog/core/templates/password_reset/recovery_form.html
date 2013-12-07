@@ -3,7 +3,8 @@
 {% block title %}{% trans "Password recovery" %}{% endblock %}
 
 {% block content %}
-<div class="row-fluid">
+<div class="row"><div class="col-md-6 col-md-offset-3">
+
 	<h1>{% trans "Password recovery" %}</h1>
 
 	<p>{% trans "If you have forgotten your password, simply enter your email address in the field below to recover it." %}</p>
@@ -15,5 +16,5 @@
 			<a class="btn btn-link" href="{% url "auth_login" %}">{% trans "Back to login" %}</a>
 		</div>
 	</form>
-</div>
+</div></div>
 {% endblock %}

@@ -274,7 +274,7 @@ ul.errorlist li {
 		background-color: #333;
 		color: #eee;
 		padding: 0;
-		border-radius: 2rem;
+		border-radius: 2em;
 	}
 	.no-points {
 		background-color: mix($text-color, $background-color, 10%);
@@ -753,7 +753,7 @@ article.story {
 		line-height: 40px;
 		font-weight: bold;
 		text-align: center;
-		font-size: 1.25rem;
+		font-size: 1.25em;
 		background-color: white;
 		display: inline-block;
 	}
