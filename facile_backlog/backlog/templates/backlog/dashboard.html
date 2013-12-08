@@ -20,13 +20,12 @@
 						<h3 class="inline-title">
 							{{ org.get_logo }}
 							<a href="{% url 'org_detail' org.pk %}"> {{ org.name }}</a>
+							<a class="btn btn-xs text-muted" title="{% trans "Backlogs" %}" href="{% url "org_sprint_planning" org.pk %}"><i class="icon-trello"></i></a>
 							{% if org|can_admin:request.user %}
 								<small class="smaller">[
 									<a class="text-muted" href="{% url 'org_edit' org.pk %}">{% trans "edit" %}</a>
 									|
 									<a class="text-muted" href="{% url 'org_delete' org.pk %}">{% trans "delete" %}</a>
-									|
-									<a class="text-muted" href="{% url "project_create" %}?org={{ org.pk }}">{% trans "new organization project" %}</a>
 								]</small>
 							{% endif %}
 						</h3>
@@ -35,7 +34,10 @@
 					<div class="margin-left">
 						<div class="row">
 						{% for project in org.ordered_projects %}
-								<div class="col-md-4"><i class="icon-book"></i> <a href="{% url "project_detail" project.pk %}">{{ project.name }}</a></div>
+								<div class="col-md-4"><i class="icon-book"></i>
+									<a href="{% url "project_detail" project.pk %}">{{ project.name }}</a>
+									<a class="btn btn-xs text-muted" title="{% trans "Backlogs" %}" href="{% url "project_backlogs" project.pk %}"><i class="icon-trello"></i></a>
+								</div>
 							{% if forloop.counter|divisibleby:3 %}
 								</div><div class="row">
 							{% endif %}
@@ -59,7 +61,7 @@
 		<div class="row">
 		<h1>{% trans "Projects" %}
 		<a class="btn btn-success btn-sm" href="{% url "project_create" %}">
-			{% trans "New project" %}
+			{% trans "Create project" %}
 		</a>
 		</h1>
 		{% if projects or guest_projects%}
