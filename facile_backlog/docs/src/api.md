@@ -274,7 +274,7 @@ Type: application/json
 
 + **'target_backlog'** *(number|string)*
 		ID of the backlog to apply the ordering or the target backlog for a move
-		special value **project_main_backlog** to move the story directly in its project main backlog useful for rejected stories at the end of iteration
+		special value **project_main_backlog** to move the story directly in its project main backlog useful for rejected stories at the end of sprint
 + **'moved_story'** *(number)*
 		ID of the moved story
 + **'order'** *(array of number)*

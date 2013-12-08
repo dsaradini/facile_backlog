@@ -5,7 +5,7 @@ What is the lifecycle of a user story?
 --------------------------------------
 
 Stories are always tied to its original project, but can be associated to non project backlogs.
-This is the case when a stories is panned in an organization's iteration backlog.
+This is the case when a stories is panned in an organization's sprint backlog.
 
 When I archive a backlog, where the stories go?
 -----------------------------------------------
@@ -38,10 +38,10 @@ How the color is chosen for a theme?
 Color is chosen based on the hash value of the theme name.
 
 
-Why there is no way to manage iteration tasks in your tool?
+Why there is no way to manage sprints tasks in your tool?
 -----------------------------------------------------------
 
-The goal of backlogman is not to provide such kind of functionality, we are convinced that iteration management should be
+The goal of backlogman is not to provide such kind of functionality, we are convinced that sprint management should be
 	managed on a physical board, it is why we propose printing through PDF generation.
 
 

@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-11-30 14:34+0100\n"
-"PO-Revision-Date: 2013-11-30 14:37+0100\n"
+"PO-Revision-Date: 2013-12-08 15:46+0100\n"
 "Last-Translator: David Saradini <david@saradini.com>\n"
 "Language-Team: fr <info@backlogman.com>\n"
 "MIME-Version: 1.0\n"
@@ -39,11 +39,11 @@ msgstr "pouvoir saisir du texte ici"
 
 #: backlog/forms.py:120
 msgid "write user stories"
-msgstr "écrire des scénarios utilisateurs"
+msgstr "écrire des user stories"
 
 #: backlog/forms.py:122
 msgid "- user story readable by human"
-msgstr "- scénarios utilisateurs lisible par des humains"
+msgstr "- user story lisible par des humains"
 
 #: backlog/forms.py:124
 msgid "Use markdown list format: line with '-' in front"
@@ -86,7 +86,7 @@ msgstr "Refusée"
 
 #: backlog/models.py:119
 msgid "Ability to modify projects and its user stories"
-msgstr "Autorise la modification des projets et de ses scénarios utilisateurs"
+msgstr "Autorise la modification des projets et de ses user stories"
 
 #: backlog/models.py:142
 msgid "Team member"
@@ -132,7 +132,7 @@ msgstr "Code"
 
 #: backlog/models.py:363
 msgid "Prefix for all stories (maximum 5 characters)"
-msgstr "Préfixe pour tous les scénarios utilisateurs (maximum 5 caractères)"
+msgstr "Préfixe pour tous les user stories (maximum 5 caractères)"
 
 #: backlog/models.py:365 backlog/models.py:515 backlog/models.py:741
 #: backlog/templates/backlog/org_sprint_planning.html:3
@@ -249,7 +249,7 @@ msgstr "Quand"
 
 #: backlog/models.py:734
 msgid "Story"
-msgstr "Scénario"
+msgstr "Story"
 
 #: backlog/models.py:745
 msgid "Text"
@@ -341,11 +341,11 @@ msgstr "Ceci est le backlog principal du projet"
 #: backlog/views.py:791
 #: dashboard/templates/dashboard/project_dashboard.html:30
 msgid "Completed stories"
-msgstr "Scénarios complétés"
+msgstr "Stories complétées"
 
 #: backlog/views.py:792
 msgid "This is the backlog to hold completed stories."
-msgstr "Ceci est le backlog qui contient des scénarios complétés"
+msgstr "Ceci est le backlog qui contient des stories complétées"
 
 #: backlog/views.py:823
 msgid "Project successfully created."
@@ -369,15 +369,15 @@ msgstr "Backlog assigné avec succès"
 
 #: backlog/views.py:1418
 msgid "Story successfully created."
-msgstr "Scénario créé avec succès"
+msgstr "Story créée avec succès"
 
 #: backlog/views.py:1473
 msgid "Story successfully updated."
-msgstr "Scénario modifié avec succès"
+msgstr "Story modifiée avec succès"
 
 #: backlog/views.py:1493
 msgid "Story successfully deleted."
-msgstr "Scénario supprimé avec succès"
+msgstr "Story supprimée avec succès"
 
 #: backlog/views.py:1660
 #, python-format
@@ -407,11 +407,11 @@ msgstr "L'invitation à été déclinée"
 
 #: backlog/management/commands/easy_import.py:83
 msgid "Accepted stories"
-msgstr "Scénarios acceptés"
+msgstr "Stories acceptées"
 
 #: backlog/management/commands/easy_import.py:84
 msgid "This is the backlog for accepted stories"
-msgstr "Ceci est le backlog des scénarios acceptés"
+msgstr "Ceci est le backlog des stories acceptés"
 
 #: backlog/management/commands/easy_import.py:93
 msgid "This is the main backlog for the project"
@@ -425,7 +425,7 @@ msgstr "Ceci est le backlog principal du projet"
 #: backlog/templates/backlog/project_backlogs.html:53
 #: backlog/templates/backlog/project_stories.html:13
 msgid "Print stories"
-msgstr "Imprimer les scénarios"
+msgstr "Imprimer les user stories"
 
 #: backlog/templates/backlog/_backlog_lane.html:26
 #: backlog/templates/backlog/project_backlogs.html:54
@@ -494,7 +494,7 @@ msgstr "Membres"
 #: backlog/templates/backlog/project_stories.html:11
 #: backlog/templates/graph/_pie_status.html:17
 msgid "Stories"
-msgstr "Scénarios"
+msgstr "Stories"
 
 #: backlog/templates/backlog/_project_tabs.html:6
 msgid "Statistics"
@@ -545,7 +545,7 @@ msgstr "Détails"
 
 #: backlog/templates/backlog/_story_small.html:16
 msgid "Duplicate story"
-msgstr "Dupliquer le scénario"
+msgstr "Dupliquer la story"
 
 #: backlog/templates/backlog/_story_small.html:22
 msgid "Bring back to project"
@@ -553,7 +553,7 @@ msgstr "Retourner dans le projet"
 
 #: backlog/templates/backlog/_story_small.html:27
 msgid "Get this story"
-msgstr "Prendre ce scénario"
+msgstr "Prendre la story"
 
 #: backlog/templates/backlog/backlog_confirm_archive.html:2
 #: backlog/templates/backlog/backlog_confirm_archive.html:6
@@ -562,7 +562,8 @@ msgstr "Archiver le backlog"
 
 #: backlog/templates/backlog/backlog_confirm_archive.html:10
 msgid "Are you sure you want to archive this backlog and all its stories?"
-msgstr "Etes vous sûr de vouloir archiver ce backlog et tous ses scénarios ?"
+msgstr ""
+"Etes vous sûr de vouloir archiver ce backlog et tous ses user stories ?"
 
 #: backlog/templates/backlog/backlog_confirm_archive.html:13
 msgid "Archived backlogs are not shown in backlog management views"
@@ -600,7 +601,8 @@ msgstr "Supprimer le backlog"
 
 #: backlog/templates/backlog/backlog_confirm_delete.html:9
 msgid "Are you sure you want to delete this backlog and all its stories?"
-msgstr "Etes vous sûr de vouloir supprimer ce backlog et tous ses scénarios ?"
+msgstr ""
+"Etes vous sûr de vouloir supprimer ce backlog et tous ses user stories ?"
 
 #: backlog/templates/backlog/backlog_confirm_delete.html:10
 #: backlog/templates/backlog/org_confirm_delete.html:10
@@ -680,7 +682,7 @@ msgstr "Colorisé par"
 #: backlog/templates/backlog/backlog_detail.html:28
 #: backlog/templates/backlog/project_backlogs.html:31
 msgid "Story color"
-msgstr "Couleur du scénario"
+msgstr "Couleur de la story"
 
 #: backlog/templates/backlog/backlog_detail.html:29
 #: backlog/templates/backlog/project_backlogs.html:32
@@ -697,7 +699,7 @@ msgstr "Vue simple"
 
 #: backlog/templates/backlog/backlog_detail.html:47
 msgid "No story in this backlog"
-msgstr "Aucun scénario dans ce backlog"
+msgstr "Aucune story dans ce backlog"
 
 #: backlog/templates/backlog/backlog_detail.html:52
 msgid "This view is targeted for backlog prioritization."
@@ -709,15 +711,15 @@ msgid ""
 "To add a new story, please use <a href=\"%(view_url)s\">the project backlogs "
 "view</a>"
 msgstr ""
-"Pour ajouter un scénario, utilisez <a href=\"%(view_url)s\">cette page</a>"
+"Pour ajouter une story, utilisez <a href=\"%(view_url)s\">cette page</a>"
 
 #: backlog/templates/backlog/backlog_detail.html:57
 msgid ""
 "Stories can only be created on a project backlogs view, <b>not on "
 "organization backlogs</b>"
 msgstr ""
-"Les scénarios peuvent être créés uniquement à partir de backlog de projets, "
-"<b> pas depuis un backlog d'oganization</b>"
+"Les user stories peuvent être créés uniquement à partir de backlogs de "
+"projets, <b> pas depuis un backlog d'oganization</b>"
 
 #: backlog/templates/backlog/backlog_detail.html:170
 #: backlog/templates/backlog/org_sprint_planning.html:263
@@ -843,7 +845,7 @@ msgid ""
 "backlogs and stories?"
 msgstr ""
 "Etes vous sûr de vouloir supprimer cette organisation avec tous ces "
-"backlogs, projets et scénarios ?"
+"backlogs, projets et stories ?"
 
 #: backlog/templates/backlog/org_confirm_delete.html:16
 msgid "Delete this organization"
@@ -925,8 +927,8 @@ msgid ""
 "Here is the list of all stories in this organization. Those stories are not "
 "sorted, to have a sorted \"view\" of project stories, use backlogs."
 msgstr ""
-"Voici la liste des scénarios dans cette organisation. Ces scénarios ne "
-"peuvent pas être trier ici, utilisez les backlogs pour ce faire."
+"Voici la liste des user stories dans cette organisation. Ces user stories ne "
+"peuvent pas être triées ici, utilisez les backlogs pour cela."
 
 #: backlog/templates/backlog/org_stories.html:30
 #: backlog/templates/backlog/project_stories.html:25
@@ -951,7 +953,7 @@ msgstr "pas de filtre"
 #: backlog/templates/backlog/org_stories.html:110
 #: backlog/templates/backlog/project_stories.html:100
 msgid "No story matching criterias"
-msgstr "Aucun scénario ne correspond aux critères"
+msgstr "Aucune story ne correspond aux critères"
 
 #: backlog/templates/backlog/org_users.html:16
 #: backlog/templates/backlog/project_users.html:11
@@ -1000,7 +1002,7 @@ msgstr "Générer un PDF pour l'impression"
 
 #: backlog/templates/backlog/print_stories.html:7
 msgid "Select the stories you want to see on your PDF"
-msgstr "Sélectionnez les scénarios que vous désirez avoir dans votre PDF"
+msgstr "Sélectionnez les user stories que vous désirez avoir dans votre PDF"
 
 #: backlog/templates/backlog/print_stories.html:10
 msgid "Paper format"
@@ -1040,7 +1042,7 @@ msgstr "backlogs"
 
 #: backlog/templates/backlog/project_backlogs.html:79
 msgid "Add story"
-msgstr "Ajouter un scénario"
+msgstr "Ajouter une story"
 
 #: backlog/templates/backlog/project_confirm_delete.html:2
 #: backlog/templates/backlog/project_confirm_delete.html:6
@@ -1054,7 +1056,7 @@ msgid ""
 "stories?"
 msgstr ""
 "Etes vous sûr de vouloir supprimer ce projet avec tous ces backlogs et "
-"scénarios ?"
+"stories ?"
 
 #: backlog/templates/backlog/project_confirm_delete.html:16
 msgid "Delete this project"
@@ -1133,8 +1135,8 @@ msgid ""
 "Here is the list of all stories in this project. Those stories are not "
 "sorted, to have a sorted \"view\" of project sotries, use backlogs."
 msgstr ""
-"Voici la liste des scénarios dans ce projet. Ces scénarios ne peuvent pas "
-"être triés ici, utilisez les backlogs pour ce faire."
+"Voici la liste des user stories dans ce projet. Ces stories ne peuvent pas "
+"être triés ici, utilisez les backlogs pour cela."
 
 #: backlog/templates/backlog/project_users.html:14
 msgid "Here is the list of all users participating to this project."
@@ -1150,28 +1152,28 @@ msgid ""
 "about organization, especially user stories scheduled in sprints"
 msgstr ""
 "Les utilisateurs (Guest) ont uniquement accès au projet, ils ne peuvent voir "
-"ni modifier l'organization, en particulier, les scénarios utilisateurs "
-"planifié dans des itérations."
+"ni modifier l'organization, en particulier, les user stories planifiées dans "
+"des itérations."
 
 #: backlog/templates/backlog/story_confirm_delete.html:2
 msgid "Delete user story"
-msgstr "Supprimer le scénario"
+msgstr "Supprimer la story"
 
 #: backlog/templates/backlog/story_confirm_delete.html:6
 msgid "Delete story"
-msgstr "Supprimer le scénario"
+msgstr "Supprimer la story"
 
 #: backlog/templates/backlog/story_confirm_delete.html:8
 msgid "Are you sure you want to delete this user story?"
-msgstr "Etes vous sûr de vouloir supprimer ce scénario utilisateur ?"
+msgstr "Etes vous sûr de vouloir supprimer cette story ?"
 
 #: backlog/templates/backlog/story_confirm_delete.html:17
 msgid "Delete this user story"
-msgstr "Supprimer ce scénario utilisateur"
+msgstr "Supprimer cette story"
 
 #: backlog/templates/backlog/story_detail.html:4
 msgid "User Story"
-msgstr "Scénario utilisateur"
+msgstr "User story"
 
 #: backlog/templates/backlog/story_detail.html:28
 msgid "Acceptance criteri"
@@ -1179,17 +1181,17 @@ msgstr "Critères d'acceptation "
 
 #: backlog/templates/backlog/story_form.html:5
 msgid "Edit story"
-msgstr "Editer un scénario"
+msgstr "Editer la story"
 
 #: backlog/templates/backlog/story_form.html:5
 #: backlog/templates/backlog/story_form.html:25
 #: backlog/templates/backlog/story_form.html:30
 msgid "Add a new story"
-msgstr "Ajouter un nouveau scénario"
+msgstr "Ajouter une nouvelle story"
 
 #: backlog/templates/backlog/story_form.html:46
 msgid "Create story"
-msgstr "Créer un scénario"
+msgstr "Créer une story"
 
 #: backlog/templates/graph/_stack_status.html:47
 msgid "Total:"
@@ -1819,31 +1821,32 @@ msgstr "Mode"
 
 #: dashboard/models.py:34
 msgid "Display stories currently in progress"
-msgstr "Affiche les scénarios en cours de progression"
+msgstr "Affiche les user stories en cours de progression"
 
 #: dashboard/models.py:38
 msgid "Display completed stories"
-msgstr "Affiche les scénarios complétés"
+msgstr "Affiche les user stories complétées"
 
 #: dashboard/models.py:42
 msgid ""
 "Display stories next in current iteration. Only for project in an "
 "organization"
 msgstr ""
-"Affiche les prochains scénarios dans l'itération courante. Uniquenemnt pour "
-"les projets dans une organization."
+"Affiche les prochaines user stories dans l'itération courante. Uniquenemnt "
+"pour les projets dans une organization."
 
 #: dashboard/models.py:47
 msgid "Display scheduled and estimated stories in main backlog"
-msgstr "Affiche les scénarios estimés et planifiés dans le backlog principal"
+msgstr ""
+"Affiche les user stories estimées et planifiées dans le backlog principal"
 
 #: dashboard/models.py:52
 msgid "Display overall status graph"
-msgstr "Affiche le graphique du status des scénarios."
+msgstr "Affiche le graphique du status des stories."
 
 #: dashboard/models.py:57
 msgid "Display stories points"
-msgstr "Affiche les points de scénarios"
+msgstr "Affiche les points de stories"
 
 #: dashboard/models.py:62
 msgid "URL name"
@@ -1912,9 +1915,8 @@ msgid ""
 "A status dashboard is used to publish project information to users who are "
 "not members of the project; usually external customers or TV screen displays."
 msgstr ""
-"Le tableau de bord est utilisé pour publier des informations sur le projet à "
-"des utilisateurs qui ne son pas membre du projet, en générale, des clients "
-"externes ou écrans TV."
+"Le tableau de bord est utilisé pour publier des informations sur le projet a "
+"des clients externes à votre organization."
 
 #: dashboard/templates/dashboard/project_dashboard.html:21
 msgid "Project status"
@@ -1922,35 +1924,35 @@ msgstr "Status du projet"
 
 #: dashboard/templates/dashboard/project_dashboard.html:37
 msgid "There is currently no story completed in this sprint"
-msgstr "Il n'y a aucun scénario complèté dans cette itération"
+msgstr "Il n'y a aucune story complètée dans cette itération"
 
 #: dashboard/templates/dashboard/project_dashboard.html:47
 msgid "In progress stories"
-msgstr "Scénarios en cours"
+msgstr "Stories en cours"
 
 #: dashboard/templates/dashboard/project_dashboard.html:54
 msgid "There is currently no story in progress for this sprint"
-msgstr "Il n'y a aucun scénario en cours pour cette itération"
+msgstr "Il n'y a aucune story en cours pour cette itération"
 
 #: dashboard/templates/dashboard/project_dashboard.html:65
 msgid "Next stories in this iteration"
-msgstr "Prochains scénarios dans cette itération"
+msgstr "Prochaines stories dans cette itération"
 
 #: dashboard/templates/dashboard/project_dashboard.html:72
 msgid "There is no story scheduled for this sprint"
-msgstr "Il n'y a aucun scénario planifié pour cette itération"
+msgstr "Il n'y a aucune story planifiée pour cette itération"
 
 #: dashboard/templates/dashboard/project_dashboard.html:83
 msgid "Scheduled stories"
-msgstr "Scénarios planifiés"
+msgstr "Stories planifiées"
 
 #: dashboard/templates/dashboard/project_dashboard.html:90
 msgid "There is no story scheduled"
-msgstr "Il n'y a aucun scénario planifié"
+msgstr "Il n'y a aucune story planifiée"
 
 #: dashboard/templates/dashboard/project_dashboard.html:100
 msgid "Stories status"
-msgstr "Status des scénarios utilisateur"
+msgstr "Status des stories"
 
 #: storymap/models.py:48
 msgid "Title"
@@ -1994,7 +1996,7 @@ msgstr "Assigner une couleur"
 
 #: storymap/templates/storymap/_story_td.html:12
 msgid "New story"
-msgstr "Ajouter un scénario"
+msgstr "Ajouter une story"
 
 #: storymap/templates/storymap/storymap_create.html:3
 #: storymap/templates/storymap/storymap_create.html:15

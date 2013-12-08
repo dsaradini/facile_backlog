@@ -1743,7 +1743,7 @@ msgstr ""
 
 #: dashboard/models.py:42
 msgid ""
-"Display stories next in current iteration. Only for project in an "
+"Display stories next in current sprint. Only for project in an "
 "organization"
 msgstr ""
 
@@ -1841,7 +1841,7 @@ msgid "There is currently no story in progress for this sprint"
 msgstr ""
 
 #: dashboard/templates/dashboard/project_dashboard.html:65
-msgid "Next stories in this iteration"
+msgid "Next stories in this sprint"
 msgstr ""
 
 #: dashboard/templates/dashboard/project_dashboard.html:72

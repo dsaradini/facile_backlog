@@ -107,7 +107,7 @@ $tab-content-color: #eee;
 }
 
 .events-list {
-	font-size: 1em;
+	font-size: 0.8em;
 	line-height: 1.2em;
 	border-collapse:collapse;
 	td {
@@ -943,6 +943,9 @@ article.backlog.org-backlog {
 .nav-crumb {
 	border-radius: 0px;
 	border-color: $navbar-default-border;
+	li > a {
+		padding: 5px 10px;
+	}
 }
 
 .archived {

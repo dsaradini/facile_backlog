@@ -7,11 +7,11 @@
 <div class="row">
 	<div class="col-md-8">
 		<div class="row">
-			<h2>{% trans "Organizations" %}
+			<h1>{% trans "Organizations" %}
 			<a class="btn btn-success btn-sm" href="{% url "org_create" %}">
 				{% trans "Create organization" %}
 			</a>
-			</h2>
+			</h1>
 		{% if organizations %}
 			<div class="col-md-12">
 				{% for org in organizations %}
@@ -21,7 +21,7 @@
 							{{ org.get_logo }}
 							<a href="{% url 'org_detail' org.pk %}"> {{ org.name }}</a>
 							{% if org|can_admin:request.user %}
-								<small>[
+								<small class="smaller">[
 									<a class="text-muted" href="{% url 'org_edit' org.pk %}">{% trans "edit" %}</a>
 									|
 									<a class="text-muted" href="{% url 'org_delete' org.pk %}">{% trans "delete" %}</a>
@@ -57,26 +57,26 @@
 		</div>
 
 		<div class="row">
-		<h2>{% trans "Projects" %}
+		<h1>{% trans "Projects" %}
 		<a class="btn btn-success btn-sm" href="{% url "project_create" %}">
 			{% trans "New project" %}
 		</a>
-		</h2>
+		</h1>
 		{% if projects or guest_projects%}
 			<div class="col-md-12">
 				{% for object in projects %}
 				<div>
-					<h4 class="inline-title">
+					<h3 class="inline-title">
 						<i class="icon-book"></i>
 						<a href="{% url 'project_detail' object.pk %}"> {{ object.name }}</a>
 						{% if object|can_admin:request.user %}
-							<small>[
+							<small class="smaller">[
 								<a class="text-muted" href="{% url 'project_edit' object.pk %}">{% trans "edit" %}</a>
 								|
 								<a class="text-muted" href="{% url 'project_delete' object.pk %}">{% trans "delete" %}</a>
 							]</small>
 						{% endif %}
-					</h4>
+					</h3>
 				</div>
 				<div class="margin-left">
 					<div class="col-md-12 text-muted small"><i class="icon-time"></i> {% trans "Last update" %}  {{ object.last_modified|naturaltime }}</div>
@@ -84,12 +84,12 @@
 				{% endfor %}
 				{% for object in guest_projects %}
 				<div>
-					<h4 class="inline-title">
+					<h3 class="inline-title">
 						<i class="icon-book"></i>
 						<a href="{% url 'project_detail' object.pk %}"> {{ object.name }}</a>
 						<span class="label">{% trans "Guest" %}</span>
 						<span class="text-muted">{{  object.org.get_logo }} {{ object.org.name }}</span>
-					</h4>
+					</h3>
 				</div>
 				{% endfor %}
 			</div>
@@ -101,7 +101,7 @@
 		</div>
 	</div>
 	<div class="col-md-4">
-		<h3>{% trans "Recent activities" %}</h3>
+		<h2>{% trans "Recent activities" %}</h2>
 		<div class="actions"></div>
 		{% include "backlog/_events.html" with events=events gravatar=True%}
 	</div>

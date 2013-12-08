@@ -127,10 +127,12 @@ var show_archived = function(e) {
 						<i class="icon-book"></i>
 						<a href="{% url 'project_detail' object.pk %}"> {{ object.name }}</a>
 						{% if object|can_admin:request.user %}
-							<small>[
+							<small class="small">[
 								<a class="text-muted" href="{% url 'project_edit' object.pk %}">{% trans "edit" %}</a>
 								|
 								<a class="text-muted" href="{% url 'project_delete' object.pk %}">{% trans "delete" %}</a>
+								|
+								<a class="text-muted" href="{% url 'project_backlogs' object.pk %}"><i class="icon-trello"></i></a>
 							]</small>
 						{% endif %}
 					</h4>

@@ -33,7 +33,7 @@
 		{% else %}
 			<a class="btn btn-default btn-sm" href="./?simple=True">{% trans "Simple view" %}</a>
 		{% endif %}
-		<a class="btn btn-default btn-sm" href="{% url "print_stories" %}?backlog_id={{ backlog.pk }}">{% trans "Print stories" %}</a>
+		<a class="btn btn-primary btn-sm" href="{% url "print_stories" %}?backlog_id={{ backlog.pk }}">{% trans "Print stories" %}</a>
 	</form>
     <div class="stories">
         {% for story in stories %}
