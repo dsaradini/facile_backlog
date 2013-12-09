@@ -57,8 +57,8 @@
 					</td>
 					<td class="user-actions">
 						{% if project|can_admin:request.user and auth.user_id != request.user.pk and auth.update_allowed %}
-							<a class="btn btn-mini" title="{% trans "Edit" %}" href="{% url "project_auth_edit" project.pk auth.pk %}"><i class="icon-pencil"></i></a>
-							<a class="btn btn-mini btn-danger" title="{% trans "Delete" %}"  href="{% url "project_auth_delete" project.pk auth.pk %}"><i class="icon-remove"></i></a>
+							<a class="btn btn-xs" title="{% trans "Edit" %}" href="{% url "project_auth_edit" project.pk auth.pk %}"><i class="icon-pencil"></i></a>
+							<a class="btn btn-xs btn-danger" title="{% trans "Delete" %}"  href="{% url "project_auth_delete" project.pk auth.pk %}"><i class="icon-remove"></i></a>
 						{% endif %}
 					</td>
 				</tr>
