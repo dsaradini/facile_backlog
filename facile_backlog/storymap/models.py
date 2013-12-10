@@ -22,8 +22,8 @@ class StoryMap(AclMixin, models.Model):
     def stories(self):
         if not hasattr(self, "_stories"):
             self._stories = list(Story.objects.filter(
-                theme__story_map=self).prefetch_related(
-                "theme", "phase").all())
+                theme__story_map=self
+            ).prefetch_related("theme", "phase").all())
         return self._stories
 
 
