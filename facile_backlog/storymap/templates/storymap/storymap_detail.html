@@ -27,7 +27,7 @@
 						<a class="btn btn-success btn-sm create_theme" href="#">{% trans "Add theme" %} &nbsp;<i class="icon-arrow-right"></i></a>
 					{% endif %}
 				</th>
-			{% for theme in themes.all %}
+			{% for theme in themes %}
 				{% include "storymap/_theme_cell.html" %}
 			{% endfor %}
 			</tr>
@@ -38,10 +38,10 @@
 			{% endif %}
 		</caption>
 		<tbody>
-			{% for phase in phases.all %}
+			{% for phase in phases %}
 				<tr>
 					{% include "storymap/_phase_cell.html" %}
-					{% for theme in themes.all %}
+					{% for theme in themes %}
 						{% include "storymap/_story_td.html" %}
 					{% endfor %}
 				</tr>
@@ -268,7 +268,7 @@
 		};
 
 		{% if storymap|can_admin:request.user %}
-			$(".create_story").on("click", function() {
+			$(document).on("click", ".create_story", function() {
 				create_story($(this));
 			});
 		{% endif %}
@@ -304,7 +304,11 @@
 			$this.height((this.rows * 22)+"px");
 		};
 
-		$.fn.edit_element_text = function(done) {
+		$.fn.edit_element_text = function(e, done) {
+			if (typeof(e) == 'function') {
+				done = e;
+				e = null;
+			}
 			var $this = $(this);
 			if ($this.attr("editing")) {
 				return
@@ -352,8 +356,8 @@
 		};
 
 		// Story
-		var edit_story = function($this, new_story) {
-			$this.edit_element_text(function(text) {
+		var edit_story = function($this, new_story, e) {
+			$this.edit_element_text(e, function(text) {
 				var $to_remove = $this.closest(".story-cell");
 				var theme_id = $this.closest("[theme-id]").attr("theme-id");
 			    var phase_id = $this.closest("[phase-id]").attr("phase-id");
@@ -404,13 +408,12 @@
 		};
 
 		{% if storymap|can_admin:request.user %}
-			$(document).on("dblclick", ".story", function() {
+			$(document).on("click", ".story", function(e) {
 				var $this = $(this);
-				event.preventDefault();
-				event.stopPropagation();
-				edit_story($this, false);
+				edit_story($this, false, e);
+				e.preventDefault();
+				e.stopPropagation();
 			});
-
 			$(document).on("click", ".delete_story", function() {
 				var $this = $(this);
 				delete_story($this);
@@ -453,9 +456,10 @@
 		};
 
 		{% if storymap|can_admin:request.user %}
-			$(document).on("dblclick", ".theme", function() {
+			$(document).on("click", ".theme", function(e) {
 				var $this = $(this);
 				edit_theme($this);
+				e.stopPropagation();
 			});
 			$(document).on("click", ".delete_theme", function() {
 				var $this = $(this);
@@ -499,9 +503,10 @@
 		};
 
 		{% if storymap|can_admin:request.user %}
-			$(document).on("dblclick", ".phase", function() {
+			$(document).on("click", ".phase", function(e) {
 				var $this = $(this);
 				edit_phase($this, false);
+				e.stopPropagation();
 			});
 
 			$(document).on("click", ".delete_phase", function() {

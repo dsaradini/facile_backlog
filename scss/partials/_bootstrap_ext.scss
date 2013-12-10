@@ -94,3 +94,9 @@
 .breadcrumb>li+li:before {
 	content: none;
 }
+
+.alert-error {
+	background-color: #f2dede;
+	border-color: #ebccd1;
+	color: #a94442;
+}

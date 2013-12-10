@@ -425,18 +425,18 @@ class StoryMapLiveTest(SeleniumTestCase):
 
         # Edit story
         actionChains = ActionChains(self.browser)
-        actionChains.double_click(self.sel_query(
+        actionChains.click(self.sel_query(
             '.story-cell[story-id="{0}"] .story'.format(
                 story.pk
             )
         ))
         actionChains.perform()
         actionChains = ActionChains(self.browser)
-        actionChains.send_keys("Edited \n")
+        actionChains.send_keys(" Edited\n")
         actionChains.perform()
         time.sleep(1)
 
-        self.assertTrue(Story.objects.get(title="Edited My first story"))
+        self.assertTrue(Story.objects.get(title="My first story Edited"))
 
         # delete theme 1
         theme = Theme.objects.get(name="Theme 1")

@@ -62,6 +62,7 @@ class StoryMapDetail(StoryMapMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super(StoryMapDetail, self).get_context_data(**kwargs)
         context['storymap'] = self.story_map
+        context['stories'] = self.story_map.stories()
         context['project'] = self.story_map.project
         context['active'] = "story_map"
         context['themes'] = self.story_map.themes.all()

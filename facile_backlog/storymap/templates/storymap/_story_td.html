@@ -3,7 +3,7 @@
 <td class="story-td">
 	<div class="stories-zone" theme-id="{{ theme.pk }}" phase-id="{{ phase.pk }}">
 		<!-- All stories in theme and phase -->
-		{% for story in theme|story_in:phase %}
+		{% for story in stories|filter_theme:theme|filter_phase:phase %}
 			{% include "storymap/_story.html" %}
 		{% endfor %}
 

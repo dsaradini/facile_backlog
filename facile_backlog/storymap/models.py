@@ -19,6 +19,12 @@ class StoryMap(AclMixin, models.Model):
     def get_absolute_url(self):
         return reverse("storymap_detail", args=(self.pk,))
 
+    def stories(self):
+        if not hasattr(self, "_stories"):
+            self._stories = list(Story.objects.filter(
+                theme__story_map=self).prefetch_related("theme", "phase").all())
+        return self._stories
+
 
 class Theme(models.Model):
     name = models.CharField(_("Name"), max_length=128)
