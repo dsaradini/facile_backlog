@@ -32,6 +32,7 @@ from .forms import (ProjectCreationForm, ProjectEditionForm,
 
 from ..core.models import User
 from .pdf import generate_pdf
+from .excel import export_excel
 
 
 AUTH_TYPE_PROJECT = "prj"
@@ -1496,9 +1497,7 @@ class StoryDelete(StoryMixin, generic.DeleteView):
 story_delete = login_required(StoryDelete.as_view())
 
 
-class PrintStories(generic.TemplateView):
-    template_name = "backlog/print_stories.html"
-
+class StoriesMixin(object):
     def dispatch(self, request, *args, **kwargs):
         backlog_id = request.GET.get('backlog_id', None)
         project_id = request.GET.get('project_id', None)
@@ -1526,10 +1525,14 @@ class PrintStories(generic.TemplateView):
         self.stories = self.stories.filter(
             backlog__is_archive=False
         ).select_related("project", "backlog", "project__org")
-        return super(PrintStories, self).dispatch(request, *args, **kwargs)
+        self.pre_dispatch()
+        return super(StoriesMixin, self).dispatch(request, *args, **kwargs)
+
+    def pre_dispatch(self):
+        pass
 
     def get_context_data(self, **kwargs):
-        data = super(PrintStories, self).get_context_data(**kwargs)
+        data = super(StoriesMixin, self).get_context_data(**kwargs)
         data['stories'] = self.stories.all()
         if self.object_type == "project":
             data['back_url'] = reverse("project_stories", args=(
@@ -1546,6 +1549,10 @@ class PrintStories(generic.TemplateView):
                     self.object.org_id,))
         return data
 
+
+class PrintStories(StoriesMixin, generic.TemplateView):
+    template_name = "backlog/print_stories.html"
+
     def post(self, request, *args, **kwargs):
         ids = []
         for k, v in request.POST.items():
@@ -1559,6 +1566,21 @@ class PrintStories(generic.TemplateView):
         return generate_pdf(stories, name, print_side=print_side,
                             print_format=print_format)
 print_stories = login_required(PrintStories.as_view())
+
+
+class ExportStories(StoriesMixin, generic.TemplateView):
+    template_name = "backlog/export_stories.html"
+
+    def post(self, request, *args, **kwargs):
+        ids = []
+        for k, v in request.POST.items():
+            if k.find("story-") == 0:
+                ids.append(k.split("-")[1])
+        # potential security problem here
+        stories = UserStory.objects.filter(pk__in=ids)
+        name = "Backlogman-user-stories"
+        return export_excel(stories, name)
+export_stories = login_required(ExportStories.as_view())
 
 
 class ProjectInviteUser(ProjectMixin, generic.FormView):

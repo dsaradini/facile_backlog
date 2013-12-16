@@ -1,0 +1,71 @@
+{% extends "project_base.html" %}
+{% load sekizai_tags static %}
+{% block title %}{% trans "Export stories" %}{% endblock %}
+
+{% block content %}
+	<h1>{% trans "Export stories" %}</h1>
+	<p class="description">{% trans "Select the stories you want to export" %}</p>
+	<form method="post" id="export_stories_form" action="{% url "export_stories" %}">
+		<table class="table table-striped project-stories">
+			<thead class="headers">
+				<tr>
+					<th class="story-code" style="width:120px;">
+						<input type="checkbox" id="select-all" checked>
+						{% trans "ID" %}
+					</th>
+					<th class="story-desc">
+						{% trans "Description" %}
+					</th>
+					<th class="story-backlog">
+						{% trans "Backlog" %}
+					</th>
+					<th class="story-status">
+						{% trans "Status" %}
+					</th>
+					<th class="story-theme">
+						{% trans "Theme" %}
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for story in stories %}
+					<tr id="story-{{ story.pk }}">
+						<td class="story-code story" style="border-left: 3px solid {{ story.color }}">
+							<input type="checkbox" id="story-{{ story.pk }}" name="story-{{ story.pk }}" checked>
+							{{ story.code }}
+						</td>
+						<td class="story-desc">
+							{% include "backlog/user_story_text.html" %}
+						</td>
+						<td class="story-backlog">
+							{{story.backlog.name }}
+						</td>
+						<td class="story-status">
+							<span class="label" status="{{ story.status }}">{{ story.get_status_display }}</span>
+						</td>
+						<td class="story-theme">{{ story.theme }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% csrf_token %}
+		<div class="submit-delete actions">
+			<button class="btn btn-inverse" type="submit">{% trans "Export" %}</button>
+			<a class="btn btn-link" href="{{ back_url }}">{% trans "Back to backlog" %}</a>
+		</div>
+	</form>
+{% addtoblock "js" %}
+<script type="text/javascript">
+$(function(){
+	$("#select-all").click(function(){
+		var checked = $(this).attr("checked");
+		if (checked) {
+			$("td.story input[type=checkbox]").attr("checked", "")
+		} else {
+			$("td.story input[type=checkbox]").removeAttr("checked")
+		}
+	})
+})
+</script>
+{% endaddtoblock %}
+{% endblock %}
