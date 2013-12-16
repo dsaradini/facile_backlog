@@ -1,5 +1,5 @@
 from django.http.response import HttpResponse
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, activate
 
 from xlwt import Workbook, XFStyle, Borders, Pattern, Font
 
@@ -47,11 +47,18 @@ def export_excel(stories, file_name):
 
     row = 2
     for story in stories:
+        if story.project.lang:
+            activate(story.project.lang)
+
+        if story.points >= 0:
+            points_str = story.points
+        else:
+            points_str = ""
         r = sheet1.row(row)
         r.write(0, story.code)
         r.write(1, story.text)
         r.write(2, story.theme)
-        r.write(3, story.points)
+        r.write(3, points_str)
         r.write(4, story.get_status_display())
         row += 1
 

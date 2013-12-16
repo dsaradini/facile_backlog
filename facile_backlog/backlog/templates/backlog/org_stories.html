@@ -15,8 +15,8 @@
 
 	<h2 class="inline-title">{% trans "Stories" %}</h2>
 	<h2 class="inline-title muted"> ({{ page_obj.paginator.count }})</h2>
-	<a class="btn btn-primary btn-sm" href="{% url "print_stories" %}?org_id={{ organization.pk }}">{% trans "Print stories" %}</a>
-	<a class="btn btn-primary btn-xs" href="{% url "export_stories" %}?org_id={{ organization.pk }}">{% trans "Export to excel" %}</a>
+	<a class="btn btn-primary btn-xs" href="{% url "print_stories" %}?org_id={{ organization.pk }}"><i class="icon-print"></i> {% trans "Print stories" %}</a>
+	<a class="btn btn-primary btn-xs" href="{% url "export_stories" %}?org_id={{ organization.pk }}"><i class="icon-download"></i> {% trans "Export to excel" %}</a>
 
 	<div class="description">
 		<p>{% blocktrans %}Here is the list of all stories in this organization. Those stories are not sorted, to have a sorted "view" of project stories, use backlogs.{% endblocktrans %}</p>
