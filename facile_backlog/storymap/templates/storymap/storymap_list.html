@@ -1,0 +1,33 @@
+{% extends "project_base.html" %}
+{% load staticfiles sekizai_tags markup acl %}
+
+{% block title %}{% trans "Project" %} &mdash; {{ project.name }}{% endblock %}
+{% block content %}
+{% addtoblock "js" %}
+<script type="text/javascript">
+var show_archived = function(e) {
+	$(".archived").show("fast");
+	$("#show-archived").hide();
+}
+</script>
+{% endaddtoblock %}
+	{% include "backlog/_project_head.html" %}
+	{% include "backlog/_project_tabs.html" with active="detail" %}
+
+	<div class="project-head">
+		<h1 class="inline-title">{% trans "Boards" %}</h1>
+
+		{% if project|can_admin:request.user %}
+			<a class="btn btn-success btn-sm" href="#">{% trans "Create board" %}</a>
+		{% endif %}
+	</div>
+
+
+
+	<div class="row">
+		{% for sm in objects %}
+			{{ sm.name }}
+		{% endfor %}
+	</div>
+
+{% endblock %}

@@ -7,8 +7,12 @@ from ..backlog.models import AclMixin, Project
 
 class StoryMap(AclMixin, models.Model):
     authorization_association_field = "project"
-    project = models.OneToOneField(Project, related_name="story_map",
+    project = models.ForeignKey(Project, related_name="story_map",
                                    null=True)
+    name = models.CharField(max_length=64, blank=False)
+
+    class Meta:
+        ordering = ("name",)
 
     def get_acl_owner(self):
         return self.project if self.project else Project.objects.none()

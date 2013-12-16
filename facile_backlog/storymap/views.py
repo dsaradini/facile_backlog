@@ -20,7 +20,7 @@ from django.db import transaction
 
 
 from ..backlog.views import NoCacheMixin, ProjectMixin
-from ..backlog.models import create_event
+from ..backlog.models import create_event, Project
 from ..api.notify import notify_changes
 
 from models import (StoryMap, Story, Theme, Phase)
@@ -51,6 +51,14 @@ class StoryMapMixin(NoCacheMixin):
 
     def pre_dispatch(self):
         pass
+
+
+class StoryMapList(ProjectMixin, generic.ListView):
+    template_name = "storymap/storymap_list.html"
+
+    def get_queryset(self):
+        return StoryMap.objects.filter(project=self.project)
+storymap_list = login_required(StoryMapList.as_view())
 
 
 class StoryMapDetail(StoryMapMixin, generic.DetailView):
