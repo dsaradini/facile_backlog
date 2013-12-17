@@ -27,3 +27,4 @@ South==0.8.4
 xhtml2pdf==0.0.5
 tornado==3.1
 tornado-redis==2.4.2
+xlwt==0.7.5

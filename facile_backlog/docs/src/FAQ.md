@@ -32,10 +32,17 @@ Can I move a project into an organisation?
 
 Currently, you can't, but this will probably be possible soon.
 
+
 How the color is chosen for a theme?
 ------------------------------------
 
 Color is chosen based on the hash value of the theme name.
+
+
+Is there a way to export stories?
+---------------------------------
+
+Yes, stories can be exported in microsoft excel format using the "export stories" located under the "stories" tab of projects and organizations
 
 
 Why there is no way to manage sprints tasks in your tool?

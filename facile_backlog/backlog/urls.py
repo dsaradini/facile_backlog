@@ -15,7 +15,7 @@ from .views import (project_detail, project_create, project_edit,
                     org_backlog_delete, org_stories, project_backlog_archive,
                     org_backlog_archive, org_invite_user, org_auth_delete,
                     org_auth_edit, org_backlog_restore, project_gen_stats,
-                    project_backlog_restore)
+                    project_backlog_restore, export_stories)
 
 # root
 urlpatterns = patterns(
@@ -215,4 +215,8 @@ urlpatterns += patterns(
     url(r'^print_stories/$',
         print_stories,
         name='print_stories'),
+
+    url(r'^export_stories/$',
+        export_stories,
+        name='export_stories'),
 )
