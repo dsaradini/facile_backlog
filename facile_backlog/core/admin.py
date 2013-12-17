@@ -3,6 +3,7 @@ from django.contrib.admin.models import ADDITION, CHANGE, DELETION
 from django.contrib.auth.admin import UserAdmin
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
+from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.shortcuts import get_object_or_404
@@ -44,7 +45,7 @@ class UserAdmin(UserAdmin):
     )
     filter_horizontal = ()
 
-    @sensitive_post_parameters()
+    @method_decorator(sensitive_post_parameters())
     def user_change_password(self, request, id, form_url=''):
         if not self.has_change_permission(request):
             raise PermissionDenied
