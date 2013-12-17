@@ -1520,6 +1520,7 @@ class StoriesMixin(object):
         if backlog_id:
             self.object = get_object_or_404(Backlog, pk=backlog_id)
             self.stories = self.object.stories
+            self.sort = "order"
             self.object_type = "backlog"
         elif project_id:
             self.object = get_object_or_404(Project, pk=project_id)

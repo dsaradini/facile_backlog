@@ -15,7 +15,12 @@
 {% block content %}
     {% include "backlog/_backlog_head.html" %}
 
-	<form class="form-inline boxed">
+	<div class="well well-sm">
+		<a class="btn btn-primary btn-sm" href="{% url "print_stories" %}?backlog_id={{ backlog.pk }}"><i class="icon-print"></i> {% trans "Print stories" %}</a>
+		<a class="pull-right btn btn-primary btn-sm" href="{% url "export_stories" %}?backlog_id={{ backlog.pk }}" download><i class="icon-download"></i> {% trans "Export for excel" %}</a>
+	</div>
+
+	<form class="form-inline well well-sm">
 		<label>{% trans "Highlight theme" %}</label>&nbsp;
 		<select class="select-mini" id="theme-select">
 			<option value="">{% trans "No filter" %}</option>
@@ -33,8 +38,8 @@
 		{% else %}
 			<a class="btn btn-default btn-sm" href="./?simple=True">{% trans "Simple view" %}</a>
 		{% endif %}
-		<a class="btn btn-primary btn-sm" href="{% url "print_stories" %}?backlog_id={{ backlog.pk }}">{% trans "Print stories" %}</a>
 	</form>
+
     <div class="stories">
         {% for story in stories %}
 			{% if simple %}
