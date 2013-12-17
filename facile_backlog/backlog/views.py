@@ -116,6 +116,56 @@ class BackMixin(object):
         return kwargs
 
 
+class FilteredStoriesMixin(object):
+
+    def __init__(self, *args, **kwargs):
+        self.sort = ""
+        self.query = {}
+
+    def setup_filter(self, request):
+        self.sort = request.GET.get('s', "")
+        self.query = {
+            'q': request.GET.get('q', ""),
+            't': request.GET.get('t', ""),
+            'st': request.GET.get('st', ""),
+            'sa': request.GET.get('sa', "")
+        }
+
+    def get_stories_query(self):
+        return self.query
+
+    def get_stories_sort(self):
+        return self.sort
+
+    def get_stories(self):
+        raise NotImplemented
+
+    def get_queryset(self):
+        query = self.get_stories_query()
+        sort = self.get_stories_sort()
+        stories_qs = self.get_stories().select_related("backlog", "project")
+        if not query['sa']:
+            stories_qs = stories_qs.filter(backlog__is_archive=False)
+        if sort:
+            stories_qs = stories_qs.extra(order_by=["{0}".format(sort)])
+        if query['t']:
+            stories_qs = stories_qs.filter(
+                theme__icontains=query['t']
+            )
+        if query['st']:
+            stories_qs = stories_qs.filter(
+                status=query['st']
+            )
+        if query['q']:
+            stories_qs = stories_qs.filter(
+                Q(as_a__icontains=query['q']) |
+                Q(i_want_to__icontains=query['q']) |
+                Q(so_i_can__icontains=query['q']) |
+                Q(number__icontains=query['q'])
+            )
+        return stories_qs
+
+
 class OrgCreate(generic.CreateView):
     template_name = "backlog/org_form.html"
     model = Organization
@@ -453,43 +503,22 @@ class OrgBacklogRestore(OrgBacklogMixin, generic.DeleteView):
 org_backlog_restore = login_required(OrgBacklogRestore.as_view())
 
 
-class OrgStories(OrgMixin, generic.ListView):
+class OrgStories(OrgMixin, FilteredStoriesMixin, generic.ListView):
     template_name = "backlog/org_stories.html"
     paginate_by = 30
 
     def dispatch(self, request, *args, **kwargs):
-        self.sort = request.GET.get('s', "")
-        self.query = {
-            'q': request.GET.get('q', ""),
-            't': request.GET.get('t', ""),
-            'st': request.GET.get('st', ""),
-            'sa': request.GET.get('sa', ""),
-        }
+        self.setup_filter(request)
         return super(OrgStories, self).dispatch(request, *args, **kwargs)
 
-    def get_queryset(self):
-        stories_qs = self.organization.stories.select_related(
-            "backlog", "project")
-        if not self.query['sa']:
-            stories_qs = stories_qs.filter(backlog__is_archive=False)
-        if self.sort:
-            stories_qs = stories_qs.extra(order_by=["{0}".format(self.sort)])
-        if self.query['t']:
-            stories_qs = stories_qs.filter(
-                theme__icontains=self.query['t']
-            )
-        if self.query['st']:
-            stories_qs = stories_qs.filter(
-                status=self.query['st']
-            )
-        if self.query['q']:
-            stories_qs = stories_qs.filter(
-                Q(as_a__icontains=self.query['q']) |
-                Q(i_want_to__icontains=self.query['q']) |
-                Q(so_i_can__icontains=self.query['q']) |
-                Q(number__icontains=self.query['q'])
-            )
-        return stories_qs
+    def get_stories_query(self):
+        return self.query
+
+    def get_stories_sort(self):
+        return self.sort
+
+    def get_stories(self):
+        return self.organization.stories
 
     def get_context_data(self, **kwargs):
         context = super(OrgStories, self).get_context_data(**kwargs)
@@ -891,42 +920,22 @@ class ProjectUsers(ProjectMixin, generic.TemplateView):
 project_users = login_required(ProjectUsers.as_view())
 
 
-class ProjectStories(ProjectMixin, generic.ListView):
+class ProjectStories(ProjectMixin, FilteredStoriesMixin, generic.ListView):
     template_name = "backlog/project_stories.html"
     paginate_by = 30
 
     def dispatch(self, request, *args, **kwargs):
-        self.sort = request.GET.get('s', "")
-        self.query = {
-            'q': request.GET.get('q', ""),
-            't': request.GET.get('t', ""),
-            'st': request.GET.get('st', ""),
-            'sa': request.GET.get('sa', "")
-        }
+        self.setup_filter(request)
         return super(ProjectStories, self).dispatch(request, *args, **kwargs)
 
-    def get_queryset(self):
-        stories_qs = self.project.stories.select_related("backlog", "project")
-        if not self.query['sa']:
-            stories_qs = stories_qs.filter(backlog__is_archive=False)
-        if self.sort:
-            stories_qs = stories_qs.extra(order_by=["{0}".format(self.sort)])
-        if self.query['t']:
-            stories_qs = stories_qs.filter(
-                theme__icontains=self.query['t']
-            )
-        if self.query['st']:
-            stories_qs = stories_qs.filter(
-                status=self.query['st']
-            )
-        if self.query['q']:
-            stories_qs = stories_qs.filter(
-                Q(as_a__icontains=self.query['q']) |
-                Q(i_want_to__icontains=self.query['q']) |
-                Q(so_i_can__icontains=self.query['q']) |
-                Q(number__icontains=self.query['q'])
-            )
-        return stories_qs
+    def get_stories_query(self):
+        return self.query
+
+    def get_stories_sort(self):
+        return self.sort
+
+    def get_stories(self):
+        return self.project.stories
 
     def get_context_data(self, **kwargs):
         context = super(ProjectStories, self).get_context_data(**kwargs)
@@ -1574,13 +1583,19 @@ class PrintStories(StoriesMixin, generic.TemplateView):
 print_stories = login_required(PrintStories.as_view())
 
 
-class ExportStories(StoriesMixin, generic.TemplateView):
+class ExportStories(StoriesMixin, FilteredStoriesMixin, generic.TemplateView):
     template_name = "backlog/export_stories.html"
 
+    def dispatch(self, request, *args, **kwargs):
+        self.setup_filter(request)
+        return super(ExportStories, self).dispatch(request, *args, **kwargs)
+
+    def get_stories(self):
+        return self.stories
+
     def get(self, request, *args, **kwargs):
-        stories = self.stories
         name = "Backlogman-user-stories"
-        return export_excel(stories, name)
+        return export_excel(self.get_queryset(), name)
 export_stories = login_required(ExportStories.as_view())
 
 
