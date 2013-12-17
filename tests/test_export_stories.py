@@ -22,11 +22,6 @@ class ExportTest(WebTest):
         url_plus = "{0}?backlog_id={1}".format(url, backlog.pk)
         self.app.get(url_plus, status=302)
         response = self.app.get(url_plus, user=user)
-        form = response.forms['export_stories_form']
-        for k, f in form.fields.items():
-            if k and "story-" in k:
-                form[k] = True
-        response = form.submit()
         self.assertEqual(response['Content-Type'], "application/vnd.ms-excel")
         workbook = open_workbook(
             file_contents=response.content

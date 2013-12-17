@@ -1499,9 +1499,15 @@ story_delete = login_required(StoryDelete.as_view())
 
 class StoriesMixin(object):
     def dispatch(self, request, *args, **kwargs):
-        backlog_id = request.GET.get('backlog_id', None)
-        project_id = request.GET.get('project_id', None)
-        org_id = request.GET.get('org_id', None)
+        if request.method == "GET":
+            source = request.GET
+        elif request.method == "POST":
+            source = request.POST
+        else:
+            source = {}
+        backlog_id = source.get('backlog_id', None)
+        project_id = source.get('project_id', None)
+        org_id = source.get('org_id', None)
         if backlog_id:
             self.object = get_object_or_404(Backlog, pk=backlog_id)
             self.stories = self.object.stories
@@ -1571,13 +1577,8 @@ print_stories = login_required(PrintStories.as_view())
 class ExportStories(StoriesMixin, generic.TemplateView):
     template_name = "backlog/export_stories.html"
 
-    def post(self, request, *args, **kwargs):
-        ids = []
-        for k, v in request.POST.items():
-            if k.find("story-") == 0:
-                ids.append(k.split("-")[1])
-        # potential security problem here
-        stories = UserStory.objects.filter(pk__in=ids)
+    def get(self, request, *args, **kwargs):
+        stories = self.stories
         name = "Backlogman-user-stories"
         return export_excel(stories, name)
 export_stories = login_required(ExportStories.as_view())
