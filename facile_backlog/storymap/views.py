@@ -58,6 +58,11 @@ class StoryMapList(ProjectMixin, generic.ListView):
 
     def get_queryset(self):
         return StoryMap.objects.filter(project=self.project)
+
+    def get_context_data(self, **kwargs):
+        context = super(StoryMapList, self).get_context_data(**kwargs)
+        context['project'] = self.project
+        return context
 storymap_list = login_required(StoryMapList.as_view())
 
 
