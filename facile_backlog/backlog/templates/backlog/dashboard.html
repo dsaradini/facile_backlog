@@ -20,14 +20,19 @@
 						<h3 class="inline-title">
 							{{ org.get_logo }}
 							<a href="{% url 'org_detail' org.pk %}"> {{ org.name }}</a>
-							<a class="btn btn-xs text-muted" title="{% trans "Backlogs" %}" href="{% url "org_sprint_planning" org.pk %}"><i class="icon-trello"></i></a>
-							{% if org|can_admin:request.user %}
-								<small class="smaller">[
-									<a class="text-muted" href="{% url 'org_edit' org.pk %}">{% trans "edit" %}</a>
-									|
-									<a class="text-muted" href="{% url 'org_delete' org.pk %}">{% trans "delete" %}</a>
-								]</small>
-							{% endif %}
+								<span class="smaller">[&nbsp;
+									<a class="text-muted" title="{% trans "Backlogs" %}" href="{% url "org_sprint_planning" org.pk %}"><i class="icon-trello"></i></a>
+									{% if org.main_backlog %}
+										&nbsp;|&nbsp;
+										<a class="text-muted" title="{% trans "Current Iteration" %}" href="{% url "backlog_detail" org.main_backlog.pk %}"><i class="icon-list-ul"></i></a>
+									{% endif %}
+									{% if org|can_admin:request.user %}
+										&nbsp;|&nbsp;
+										<a class="text-muted" href="{% url 'org_edit' org.pk %}">{% trans "edit" %}</a>
+										&nbsp;|&nbsp;
+										<a class="text-muted" href="{% url 'org_delete' org.pk %}">{% trans "delete" %}</a>
+									{% endif %}
+								&nbsp;]</span>
 						</h3>
 					</div>
 
