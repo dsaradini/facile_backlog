@@ -19,12 +19,16 @@
 	{% endif %}
 {% endblock %}
 {% block outer_content %}
+	<div class="container">
+		<h5 class="navbar-text"><i class="icon-table"></i> {{ storymap.name }}</h5>
+	</div>
+
 	<table class="story-map">
 		<thead>
 			<tr>
 				<th class="table-corner">
 					{% if storymap|can_admin:request.user %}
-						<a class="btn btn-success btn-sm create_theme" href="#">{% trans "Add theme" %} &nbsp;<i class="icon-arrow-right"></i></a>
+						<a class="btn btn-success btn-sm create_theme" href="#">{% trans "Add column" %} &nbsp;<i class="icon-arrow-right"></i></a>
 					{% endif %}
 				</th>
 			{% for theme in themes %}
@@ -34,7 +38,7 @@
 		</thead>
 		<caption class="text-left caption-bottom">
 			{% if storymap|can_admin:request.user %}
-				<a class="btn btn-success btn-sm create_phase" href="#">{% trans "Add phase" %} &nbsp;<i class="icon-arrow-up"></i></a>
+				<a class="btn btn-success btn-sm create_phase" href="#">{% trans "Add line" %} &nbsp;<i class="icon-arrow-up"></i></a>
 			{% endif %}
 		</caption>
 		<tbody>
@@ -53,10 +57,10 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h3>{% trans "Create theme" %}</h3>
+					<h3>{% trans "Create column" %}</h3>
 				</div>
 				<div class="modal-body">
-					<textarea class="form-control fit" placeholder="{% trans "Theme name" %}"></textarea>
+					<textarea class="form-control fit" placeholder="{% trans "name" %}"></textarea>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-link" data-dismiss="modal">{% trans "Close" %}</button>
@@ -71,10 +75,10 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h3>{% trans "Create phase" %}</h3>
+					<h3>{% trans "Create line" %}</h3>
 				</div>
 				<div class="modal-body">
-					<textarea class="form-control fit" placeholder="{% trans "Phase name" %}"></textarea>
+					<textarea class="form-control fit" placeholder="{% trans "name" %}"></textarea>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-link" data-dismiss="modal">{% trans "Close" %}</button>

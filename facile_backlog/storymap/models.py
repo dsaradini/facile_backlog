@@ -7,9 +7,8 @@ from ..backlog.models import AclMixin, Project
 
 class StoryMap(AclMixin, models.Model):
     authorization_association_field = "project"
-    project = models.ForeignKey(Project, related_name="story_map",
-                                   null=True)
-    name = models.CharField(max_length=64, blank=False)
+    project = models.ForeignKey(Project, related_name="story_maps", null=True)
+    name = models.CharField(max_length=64, blank=False, verbose_name=_("Name"))
 
     class Meta:
         ordering = ("name",)

@@ -54,7 +54,6 @@
 $(function(){
 	$('[name="as_a"]').attr("autocomplete", "off");
 	$('[name="as_a"]').typeahead({
-		name: "{% trans "as a" %}",
 		local: {{ project.all_as_a|jsonify }}
 	});
 	$('[name="theme"]').attr("autocomplete", "off");

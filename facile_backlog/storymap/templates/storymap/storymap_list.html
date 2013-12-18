@@ -18,24 +18,28 @@ var show_archived = function(e) {
 		<h1 class="inline-title">{% trans "Boards" %}
 
 		{% if project|can_admin:request.user %}
-			<a class="btn btn-success btn-sm" href="#">{% trans "Create board" %}</a>
+			<a class="btn btn-success btn-sm" href="{% url "storymap_create" project.pk %}">{% trans "Create board" %}</a>
 		{% endif %}
 		</h1>
 	</div>
 	<div class="actions"></div>
 
-	<div class="container">
-		<div class="row">
-			{% for sm in object_list %}
-				<h4><i class="icon-table"></i> <a href="{% url "storymap_detail" sm.pk %}">{{ sm.name }}</a>
-				{% if project|can_admin:request.user %}
-					<small class="text-muted">[
-						<a class="text-muted" href="#">{% trans "edit" %}</a>
-						| <a class="text-muted" href="#">{% trans "delete" %}</a>
-					]</small>
-				{% endif %}
-				</h4>
-			{% endfor %}
+	<div class="row">
+		<div class="col-md-12">
+		{% for sm in object_list %}
+			<h4><i class="icon-table"></i> <a href="{% url "storymap_detail" sm.pk %}">{{ sm.name }}</a>
+			{% if project|can_admin:request.user %}
+				<small class="text-muted">[
+					<a class="text-muted" href="{% url "storymap_edit" sm.pk %}">{% trans "change name" %}</a>
+					| <a class="text-muted" href="{% url "storymap_delete" sm.pk %}">{% trans "delete" %}</a>
+				]</small>
+			{% endif %}
+			</h4>
+		{% empty %}
+		<div class="alert alert-info">
+			{% trans "You don't have any board for this project. Boards are simple tables where you can attach notes in cells. They can be used as story map, iteration boards, task kanban, ..." %}
+		</div>
+		{% endfor %}
 		</div>
 	</div>
 

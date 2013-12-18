@@ -34,14 +34,77 @@ class StoryMapTest(WebTest):
 
         response = self.app.get(url, user=user)
         form = response.forms['edit_story_map_form']
+        form['name'] = "My story map"
         form.submit().follow()
 
-        self.assertTrue(project.story_map)
+        self.assertTrue(project.story_maps.exists())
         event = Event.objects.get(
             project=project
         )
-        self.assertEqual(event.text, "created a story map")
+        self.assertEqual(event.text, "created a board")
         self.assertEqual(event.user, user)
+        board = StoryMap.objects.get()
+        self.assertEqual(board.name, "My story map")
+
+    def test_edit_story_map(self):
+        user = factories.UserFactory.create(
+            email='test@fake.ch', password='pass')
+        user_no = factories.UserFactory.create()
+        user_simple = factories.UserFactory.create()
+        project = factories.create_sample_project(user, project_kwargs={
+            'active': True,
+        })
+        project.add_user(user_simple)
+        storymap = StoryMap.objects.create(
+            project=project,
+            name="Test"
+        )
+        url = reverse("storymap_edit", args=(storymap.pk,))
+        self.app.get(url, status=302)
+        self.app.get(url, user=user_no, status=404)
+        self.app.get(url, user=user_simple, status=403)
+
+        response = self.app.get(url, user=user)
+        form = response.forms['edit_story_map_form']
+        form['name'] = "Changed"
+        form.submit().follow()
+
+        event = Event.objects.get(
+            project=project
+        )
+        self.assertEqual(event.text, "edited a board")
+        self.assertEqual(event.user, user)
+        board = StoryMap.objects.get()
+        self.assertEqual(board.name, "Changed")
+
+    def test_delete_story_map(self):
+        user = factories.UserFactory.create(
+            email='test@fake.ch', password='pass')
+        user_no = factories.UserFactory.create()
+        user_simple = factories.UserFactory.create()
+        project = factories.create_sample_project(user, project_kwargs={
+            'active': True,
+        })
+        project.add_user(user_simple)
+        storymap = StoryMap.objects.create(
+            project=project,
+            name="Test"
+        )
+        url = reverse("storymap_delete", args=(storymap.pk,))
+        self.app.get(url, status=302)
+        self.app.get(url, user=user_no, status=404)
+        self.app.get(url, user=user_simple, status=403)
+
+        response = self.app.get(url, user=user)
+        form = response.forms['delete_form']
+        form.submit().follow()
+
+        event = Event.objects.get(
+            project=project
+        )
+        self.assertEqual(event.text, "deleted a board")
+        self.assertEqual(event.user, user)
+        self.assertFalse(StoryMap.objects.exists())
 
     def test_story_map_display_guest(self):
         user = factories.UserFactory.create(
@@ -91,14 +154,14 @@ class StoryMapTest(WebTest):
         self.assertContains(response, "Theme 2")
         self.assertContains(response, "My first story")
         self.assertContains(response, "My second story")
-        self.assertContains(response, "Add theme")
-        self.assertContains(response, "Add phase")
-        self.assertContains(response, "New story")
+        self.assertContains(response, "Add column")
+        self.assertContains(response, "Add line")
+        self.assertContains(response, "New note")
 
         response = self.app.get(url, user=user_guest)
-        self.assertNotContains(response, "Add theme")
-        self.assertNotContains(response, "Add phase")
-        self.assertNotContains(response, "New story")
+        self.assertNotContains(response, "Add column")
+        self.assertNotContains(response, "Add line")
+        self.assertNotContains(response, "New note")
 
 
 class StoryMapAPITest(WebTest):

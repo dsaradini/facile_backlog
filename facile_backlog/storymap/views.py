@@ -20,11 +20,11 @@ from django.db import transaction
 
 
 from ..backlog.views import NoCacheMixin, ProjectMixin
-from ..backlog.models import create_event, Project
+from ..backlog.models import create_event
 from ..api.notify import notify_changes
 
 from models import (StoryMap, Story, Theme, Phase)
-from forms import StoryMapCreationForm
+from forms import StoryMapCreationForm, StoryMapEditForm
 
 
 class StoryMapMixin(NoCacheMixin):
@@ -88,7 +88,7 @@ storymap_detail = login_required(StoryMapDetail.as_view())
 
 class StoryMapCreate(ProjectMixin, generic.CreateView):
     admin_only = True
-    template_name = "storymap/storymap_create.html"
+    template_name = "storymap/storymap_form.html"
     form_class = StoryMapCreationForm
 
     def get_form_kwargs(self):
@@ -104,19 +104,61 @@ class StoryMapCreate(ProjectMixin, generic.CreateView):
     def form_valid(self, form):
         super(StoryMapCreate, self).form_valid(form)
         Phase.objects.create(
-            name=_("MVP"),
+            name=_("First line"),
             story_map=self.object
         )
         Theme.objects.create(
-            name=_("General"),
+            name=_("First column"),
             story_map=self.object
         )
-        create_event(self.request.user, _("created a story map"),
+        create_event(self.request.user, _("created a board"),
                      project=self.project)
         messages.success(self.request,
-                         _("Story map successfully created."))
+                         _("Board successfully created."))
         return redirect(reverse("storymap_detail", args=(self.object.pk,)))
 storymap_create = login_required(StoryMapCreate.as_view())
+
+
+class StoryMapEdit(StoryMapMixin, generic.UpdateView):
+    admin_only = True
+    template_name = "storymap/storymap_form.html"
+    form_class = StoryMapEditForm
+
+    def get_object(self, queryset=None):
+        return self.story_map
+
+    def get_context_data(self, **kwargs):
+        context = super(StoryMapEdit, self).get_context_data(**kwargs)
+        context['project'] = self.story_map.project
+        return context
+
+    def form_valid(self, form):
+        super(StoryMapEdit, self).form_valid(form)
+        create_event(self.request.user, _("edited a board"),
+                     project=self.story_map.project_id)
+        messages.success(self.request,
+                         _("Board successfully modified."))
+        return redirect(reverse("storymap_list",
+                                args=(self.object.project_id,)))
+storymap_edit = login_required(StoryMapEdit.as_view())
+
+
+class StoryMapDelete(StoryMapMixin, generic.DeleteView):
+    admin_only = True
+    template_name = "storymap/storymap_confirm_delete.html"
+
+    def get_object(self):
+        return self.story_map
+
+    def delete(self, request, *args, **kwargs):
+        self.story_map.delete()
+        create_event(self.request.user, _("deleted a board"),
+                     project=self.story_map.project_id)
+        messages.success(request,
+                         _("Board successfully deleted."))
+        return redirect(reverse("storymap_list",
+                                args=(self.story_map.project_id,)))
+storymap_delete = login_required(StoryMapDelete.as_view())
 
 
 def get_or_errors(dic, value, errors=[]):

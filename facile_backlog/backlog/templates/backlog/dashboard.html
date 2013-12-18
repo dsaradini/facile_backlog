@@ -24,7 +24,7 @@
 									<a class="text-muted" title="{% trans "Backlogs" %}" href="{% url "org_sprint_planning" org.pk %}"><i class="icon-trello"></i></a>
 									{% if org.main_backlog %}
 										&nbsp;|&nbsp;
-										<a class="text-muted" title="{% trans "Current Iteration" %}" href="{% url "backlog_detail" org.main_backlog.pk %}"><i class="icon-list-ul"></i></a>
+										<a class="text-muted" title="{% trans "Current sprint" %}" href="{% url "backlog_detail" org.main_backlog.pk %}"><i class="icon-list-ul"></i></a>
 									{% endif %}
 									{% if org|can_admin:request.user %}
 										&nbsp;|&nbsp;

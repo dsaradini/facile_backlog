@@ -1,0 +1,21 @@
+{% extends "project_base.html" %}
+{% block title %}{% trans "Delete board" %}{% endblock %}
+
+{% block content %}
+<div class="row">
+	<h1>{% trans "Delete board" %}</h1>
+	<h2><i class="icon-book muted"></i> {{ object.name }}</h2>
+	<div class="alert alert-danger">
+		{% trans "Are you sure you want to delete this board and all its elements?" %}
+		<h4>{% trans "This operation cannot be undone" %}</h4>
+	</div>
+	<form method="post" id="delete_form" action="{% url "storymap_delete" object.pk %}">
+		{% csrf_token %}
+		{{ form }}
+		<div class="submit-delete actions">
+			<button class="btn btn-danger" type="submit">{% trans "Delete this board" %}</button>
+			<a class="btn btn-link" href="{% url "storymap_list" object.project_id %}">{% trans "Cancel" %}</a>
+		</div>
+	</form>
+</div>
+{% endblock %}
