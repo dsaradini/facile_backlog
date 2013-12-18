@@ -1655,7 +1655,7 @@ class ProjectInviteUser(ProjectMixin, generic.FormView):
             AuthorizationAssociation.objects.create(
                 project=self.project,
                 user=user,
-                is_active=True,
+                is_active=False,
                 is_admin=admin,
             )
         self.send_notification(user, admin)
