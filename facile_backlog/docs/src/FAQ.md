@@ -1,5 +1,5 @@
-FAQ
-===
+Backlogman FAQ
+==============
 
 What is the lifecycle of a user story?
 --------------------------------------
@@ -46,10 +46,19 @@ Yes, stories can be exported in microsoft excel format using the "export stories
 
 
 Why there is no way to manage sprints tasks in your tool?
------------------------------------------------------------
+---------------------------------------------------------
 
 The goal of backlogman is not to provide such kind of functionality, we are convinced that sprint management should be
 	managed on a physical board, it is why we propose printing through PDF generation.
+
+You can also use the project's boards tool to manage your tasks in a sprint
+
+
+A project is marked as "guest" in my dashboard, what's that?
+------------------------------------------------------------
+
+A "guest" project is a project that is part of an organisation you do not have access too.
+It is a way for companies to invite external customers to participate in a project without giving access to the organisation itself.
 
 
 I found a bug, how can I report it?

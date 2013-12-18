@@ -21,16 +21,16 @@
 							{{ org.get_logo }}
 							<a href="{% url 'org_detail' org.pk %}"> {{ org.name }}</a>
 								<span class="smaller">[&nbsp;
-									<a class="text-muted" title="{% trans "Backlogs" %}" href="{% url "org_sprint_planning" org.pk %}"><i class="icon-trello"></i></a>
+									<a class="text-muted" title="{% trans "Sprint planning" %}" href="{% url "org_sprint_planning" org.pk %}"><i class="icon-trello"></i></a>
 									{% if org.main_backlog %}
 										&nbsp;|&nbsp;
 										<a class="text-muted" title="{% trans "Current sprint" %}" href="{% url "backlog_detail" org.main_backlog.pk %}"><i class="icon-list-ul"></i></a>
 									{% endif %}
 									{% if org|can_admin:request.user %}
 										&nbsp;|&nbsp;
-										<a class="text-muted" href="{% url 'org_edit' org.pk %}">{% trans "edit" %}</a>
+										<a class="text-muted" title="{% trans "edit" %}" href="{% url 'org_edit' org.pk %}"><i class="icon-pencil"></i></a>
 										&nbsp;|&nbsp;
-										<a class="text-muted" href="{% url 'org_delete' org.pk %}">{% trans "delete" %}</a>
+										<a class="text-muted" title="{% trans "delete" %}" href="{% url 'org_delete' org.pk %}">{% trans "delete" %}</a>
 									{% endif %}
 								&nbsp;]</span>
 						</h3>
@@ -39,7 +39,7 @@
 					<div class="margin-left">
 						<div class="row">
 						{% for project in org.ordered_projects %}
-								<div class="col-md-4"><i class="icon-book"></i>
+								<div class="project-cell col-md-4"><i class="icon-book"></i>
 									<a href="{% url "project_detail" project.pk %}">{{ project.name }}</a>
 									<a class="btn btn-xs text-muted" title="{% trans "Backlogs" %}" href="{% url "project_backlogs" project.pk %}"><i class="icon-trello"></i></a>
 								</div>
@@ -78,7 +78,7 @@
 						<a href="{% url 'project_detail' object.pk %}"> {{ object.name }}</a>
 						{% if object|can_admin:request.user %}
 							<small class="smaller">[
-								<a class="text-muted" href="{% url 'project_edit' object.pk %}">{% trans "edit" %}</a>
+								<a class="text-muted" title="{% trans "edit" %}" href="{% url 'project_edit' object.pk %}"><i class="icon-pencil"></i></a>
 								|
 								<a class="text-muted" href="{% url 'project_delete' object.pk %}">{% trans "delete" %}</a>
 							]</small>
@@ -86,7 +86,7 @@
 					</h3>
 				</div>
 				<div class="margin-left">
-					<div class="col-md-12 text-muted small"><i class="icon-time"></i> {% trans "Last update" %}  {{ object.last_modified|naturaltime }}</div>
+					<div class="text-muted small"><i class="icon-time"></i> {% trans "Last update" %}  {{ object.last_modified|naturaltime }}</div>
 				</div>
 				{% endfor %}
 				{% for object in guest_projects %}
@@ -94,9 +94,11 @@
 					<h3 class="inline-title">
 						<i class="icon-book"></i>
 						<a href="{% url 'project_detail' object.pk %}"> {{ object.name }}</a>
-						<span class="label">{% trans "Guest" %}</span>
-						<span class="text-muted">{{  object.org.get_logo }} {{ object.org.name }}</span>
+						<small class="label label-default smaller valign-middle">{% trans "Guest" %}</small>
 					</h3>
+				</div>
+				<div class="margin-left">
+					<div class="text-muted small"><i class="icon-time"></i> {% trans "Last update" %}  {{ object.last_modified|naturaltime }}</div>
 				</div>
 				{% endfor %}
 			</div>
@@ -113,4 +115,11 @@
 		{% include "backlog/_events.html" with events=events gravatar=True%}
 	</div>
 <div>
+{% addtoblock "js" %}
+<script type="text/javascript">
+$(function() {
+	$('[title]').tooltip()
+});
+</script>
+{% endaddtoblock %}
 {% endblock %}
