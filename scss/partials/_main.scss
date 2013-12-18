@@ -340,7 +340,9 @@ ul.errorlist li {
 			&[status=in_progress] {
 				background-color: #444;
 			}
-
+			&[status=to_do] {
+				background-color: #888;
+			}
 		}
 		.story-theme {
 			color: gray;
@@ -970,4 +972,11 @@ article.backlog.org-backlog {
 
 .valign-middle {
 	vertical-align: middle;
+}
+
+.label {
+	border-radius: 0px;
+	border: 1px solid rgba(0,0,0,0.5);
+	box-shadow:0 0 1px white;
+	box-sizing: border-box;
 }
