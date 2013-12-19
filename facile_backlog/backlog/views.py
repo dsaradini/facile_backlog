@@ -73,7 +73,9 @@ class Dashboard(generic.TemplateView):
             "organization")[:10]
 
         all_projects = get_projects(self.request.user)
-        context['projects'] = all_projects.filter(org=None)
+        context['projects'] = all_projects.filter(org=None, is_archive=False)
+        context['archived_projects'] = all_projects.filter(
+            org=None, is_archive=True)
 
         orgs = get_organizations(self.request.user)
         context['organizations'] = orgs
@@ -228,8 +230,11 @@ class OrgDetail(OrgMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super(OrgDetail, self).get_context_data(**kwargs)
         context['organization'] = self.organization
-        context['projects'] = self.organization.projects.order_by(
+        context['projects'] = self.organization.active_projects.order_by(
             "-last_modified")
+        context['archived_projects'] = self.organization.projects.filter(
+            is_archive=True
+        ).order_by("-last_modified")
         backlogs = self.organization.backlogs.order_by(
             "-is_main", "is_archive", "order"
         ).all()
@@ -422,7 +427,8 @@ class OrgBacklogs(OrgMixin, generic.TemplateView):
         context['backlog_of_interest'] = backlog
         backlogs = Backlog.objects.filter(
             is_main=True,
-            project__org=self.organization
+            project__org=self.organization,
+            project__is_archive=False,
         ).select_related("project").order_by("project__name")
         context['projects_with_main'] = [b.project for b in backlogs.all()]
 
@@ -816,13 +822,6 @@ class ProjectCreate(generic.CreateView):
             kind=Backlog.TODO,
             is_main=True,
             order=1,
-        )
-        Backlog.objects.create(
-            name=_("Completed stories"),
-            description=_("This is the backlog to hold completed stories."),
-            project=self.object,
-            kind=Backlog.COMPLETED,
-            order=10,
         )
         org = form.instance.org
         if org:
@@ -1229,6 +1228,28 @@ class ProjectBacklogRestore(ProjectBacklogMixin, generic.DeleteView):
                          _("Backlog successfully restored."))
         return redirect(reverse('project_detail', args=(self.project.pk,)))
 project_backlog_restore = login_required(ProjectBacklogRestore.as_view())
+
+
+class ProjectRestore(ProjectMixin, generic.DeleteView):
+    admin_only = True
+    template_name = "backlog/project_confirm_restore.html"
+
+    def get_object(self):
+        return self.project
+
+    def post(self, request, *args, **kwargs):
+        self.project.restore()
+        create_event(
+            self.request.user, project=self.project,
+            text=u"restored project {0}".format(self.project.name),
+        )
+        messages.success(request,
+                         _("Project successfully restored."))
+        if self.project.org_id:
+            return redirect(reverse('org_detail', args=(self.project.org_id,)))
+        else:
+            return redirect(reverse('dashboard'))
+project_restore = login_required(ProjectRestore.as_view())
 
 
 #############

@@ -3,6 +3,7 @@
 
 {% block content %}
 <div class="row">
+	<div class="col-md-6 col-md-offset-3">
 	<h1>{% trans "Delete organization" %}</h1>
 	<h2><i class="icon-building muted"></i> {{ organization.name }}</h2>
 	<div class="alert alert-danger">
@@ -12,10 +13,11 @@
 	<form method="post" id="delete_form" action="{% url "org_delete" organization.pk %}">
 		{% csrf_token %}
 		{{ form }}
-		<div class="submit-delete actions">
+		<div class="submit">
 			<button class="btn btn-danger" type="submit">{% trans "Delete this organization" %}</button>
 			<a class="btn btn-link" href="{% url "dashboard" %}">{% trans "Cancel" %}</a>
 		</div>
 	</form>
+	</div>
 </div>
 {% endblock %}

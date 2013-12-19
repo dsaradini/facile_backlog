@@ -7,11 +7,12 @@
 <div class="row">
 	<div class="col-md-8">
 		<div class="row">
-			<h1>{% trans "Organizations" %}
+			<h2>{% trans "Organizations" %}
 			<a class="btn btn-success btn-sm" href="{% url "org_create" %}">
 				{% trans "Create organization" %}
 			</a>
-			</h1>
+			</h2>
+		<div class="actions"></div>
 		{% if organizations %}
 			<div class="col-md-12">
 				{% for org in organizations %}
@@ -38,7 +39,7 @@
 
 					<div class="margin-left">
 						<div class="row">
-						{% for project in org.ordered_projects %}
+						{% for project in org.active_projects %}
 								<div class="project-cell col-md-4"><i class="icon-book"></i>
 									<a href="{% url "project_detail" project.pk %}">{{ project.name }}</a>
 									<a class="btn btn-xs text-muted" title="{% trans "Backlogs" %}" href="{% url "project_backlogs" project.pk %}"><i class="icon-trello"></i></a>
@@ -64,26 +65,27 @@
 		</div>
 
 		<div class="row">
-		<h1>{% trans "Projects" %}
+		<h2>{% trans "Projects" %}
 		<a class="btn btn-success btn-sm" href="{% url "project_create" %}">
 			{% trans "Create project" %}
 		</a>
-		</h1>
+		</h2>
+		<div class="actions"></div>
 		{% if projects or guest_projects%}
 			<div class="col-md-12">
 				{% for object in projects %}
 				<div>
-					<h3 class="inline-title">
+					<h4 class="inline-title">
 						<i class="icon-book"></i>
 						<a href="{% url 'project_detail' object.pk %}"> {{ object.name }}</a>
 						{% if object|can_admin:request.user %}
-							<small class="smaller">[
+							<small class="small">[
 								<a class="text-muted" title="{% trans "edit" %}" href="{% url 'project_edit' object.pk %}"><i class="icon-pencil"></i></a>
 								|
 								<a class="text-muted" href="{% url 'project_delete' object.pk %}">{% trans "delete" %}</a>
 							]</small>
 						{% endif %}
-					</h3>
+					</h4>
 				</div>
 				<div class="margin-left">
 					<div class="text-muted small"><i class="icon-time"></i> {% trans "Last update" %}  {{ object.last_modified|naturaltime }}</div>
@@ -91,11 +93,29 @@
 				{% endfor %}
 				{% for object in guest_projects %}
 				<div>
-					<h3 class="inline-title">
+					<h4 class="inline-title">
 						<i class="icon-book"></i>
 						<a href="{% url 'project_detail' object.pk %}"> {{ object.name }}</a>
-						<span class="label label-default smaller valign-middle">{% trans "Guest" %}</span>
-					</h3>
+						<span class="label label-default valign-middle">{% trans "Guest" %}</span>
+					</h4>
+				</div>
+				<div class="margin-left">
+					<div class="text-muted small"><i class="icon-time"></i> {% trans "Last update" %}  {{ object.last_modified|naturaltime }}</div>
+				</div>
+				{% endfor %}
+				{% for object in archived_projects %}
+				<div>
+					<h4 class="inline-title">
+						<i class="icon-book"></i>
+						<span class="text-muted">{{ object.name }} <span class="text-muted small"><i class="muted icon-lock"></i> {% trans "archived" %}</span></span>
+						{% if object|can_admin:request.user %}
+							<small class="small">[
+								<a class="text-muted" title="{% trans "restore" %}" href="{% url 'project_restore' object.pk %}">{% trans "restore" %}</a>
+								|
+								<a class="text-muted" href="{% url 'project_delete' object.pk %}">{% trans "delete" %}</a>
+							]</small>
+						{% endif %}
+					</h4>
 				</div>
 				<div class="margin-left">
 					<div class="text-muted small"><i class="icon-time"></i> {% trans "Last update" %}  {{ object.last_modified|naturaltime }}</div>

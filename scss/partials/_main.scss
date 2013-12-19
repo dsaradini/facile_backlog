@@ -204,7 +204,6 @@ $tab-content-color: #eee;
 }
 
 .actions {
-	padding: 1em 0;
 	border-top: 1px solid rgba(0,0,0,0.3);
 }
 
@@ -972,11 +971,4 @@ article.backlog.org-backlog {
 
 .valign-middle {
 	vertical-align: middle;
-}
-
-.label {
-	border-radius: 0px;
-	border: 1px solid rgba(0,0,0,0.5);
-	box-shadow:0 0 1px white;
-	box-sizing: border-box;
 }

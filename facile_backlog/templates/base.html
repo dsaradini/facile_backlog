@@ -13,19 +13,21 @@
 	</head>
 	<body class="{% block content_class %}{% endblock %}">
 		<div class="navbar navbar-inverse navbar-static-top main-navbar">
-		  	<div class="navbar-inner">
 		  	<div class="container">
+		  	<div class="navbar-header">
+				<a class="navbar-brand" href="{% url "home" %}"
+						style="background: url({% static "core/img/backlogman_32.png" %}) no-repeat 17px center; padding-left:60px;">
+					Backlogman
+				</a>
 				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-topmenu">
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="{% url "home" %}"
-						style="background: url({% static "core/img/backlogman_32.png" %}) no-repeat 8px center; padding-left:48px;">
-					Backlogman
-				</a>
-				<div class="navbar-collapse collapse navbar-collapse-topmenu">
-					<ul class="nav navbar-nav"">
+			</div>
+
+				<div class="navbar-collapse collapse navbar-collapse-topmenu" role="navigation">
+					<ul class="nav navbar-nav">
 						{% block navbar %}
 							{% if request.user.is_authenticated %}
 								<li class="active"><a href="{% url "dashboard" %}">{% trans "Dashboard" %}</a></li>
@@ -36,7 +38,7 @@
 							<li><a href="{% url "blog_index" %}">{% trans "News" %}</a></li>
 						{% endblock %}
 					</ul>
-					<ul class="nav navbar-nav pull-right">
+					<ul class="nav navbar-nav navbar-right">
 						{% if user.is_authenticated %}
 							{% with notification_count=request.user.notification_count %}
 								{% if notification_count %}
@@ -72,7 +74,6 @@
 					</ul>
 				</div>
 			</div>
-		    </div>
 		</div>
 		<div class="container">
 			<div id="messages">

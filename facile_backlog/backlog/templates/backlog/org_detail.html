@@ -5,12 +5,17 @@
 {% block content %}
 {% addtoblock "js" %}
 <script type="text/javascript">
-var show_archived = function(e) {
-	$(".archived").show("fast");
-	$("#show-archived").hide();
-}
+$(function() {
+	$(".show-enabler").click(function(){
+		var $this = $(this);
+		var target = $(this).attr("show-target");
+		$(target).show("fast");
+		$this.hide();
+	})
+});
 </script>
 {% endaddtoblock %}
+
 	{% include "backlog/_org_head.html" %}
 
 	<ul class="nav nav-pills nav-crumb">
@@ -104,7 +109,7 @@ var show_archived = function(e) {
 			{% endfor %}
 			{% if archived_count %}
 				<li>
-					<a id="show-archived" href="javascript:show_archived()"><i class="icon-expand-alt"></i>
+					<a class="show-enabler" href="javascript:void(0);" show-target=".archived"><i class="icon-expand-alt"></i>
 						{% blocktrans count archived_count as counter %}Show archived backlog{% plural %}Show {{ counter }} archived backlogs{% endblocktrans %}
 					</a>
 				</li>
@@ -145,6 +150,32 @@ var show_archived = function(e) {
 		{%  else %}
 			<div class="text-warning margin-left">
 				{% trans "You have no active project in this organization" %}
+			</div>
+		{% endif %}
+		{% if archived_projects %}
+			<a class="show-enabler" href="javascript:void(0);" show-target=".project-archived"><i class="icon-expand-alt"></i>
+				{% blocktrans count archived_projects.count as counter %}Show archived project{% plural %}Show {{ counter }} archived projects{% endblocktrans %}
+			</a>
+			<div class="span12">
+				{% for object in archived_projects %}
+				<div class="project-archived" hidden>
+					<h4 class="inline-title">
+						<i class="icon-book"></i>
+						{{ object.name }} <span class="text-muted small"><i class="muted icon-lock"></i> {% trans "archived" %}</span>
+						{% if organization|can_admin:request.user %}
+							<small class="small">[
+								<a class="text-muted" href="{% url 'project_restore' object.pk %}">{% trans "restore" %}</a>
+								|
+								<a class="text-muted" href="{% url 'project_delete' object.pk %}">{% trans "delete" %}</a>
+							]</small>
+						{% endif %}
+					</h4>
+
+					<div class="margin-left">
+						<div class="col-md-12 text-muted small"><i class="icon-time"></i> {% trans "Last update" %}  {{ object.last_modified|naturaltime }}</div>
+					</div>
+				</div>
+				{% endfor %}
 			</div>
 		{% endif %}
 	</div>

@@ -323,3 +323,60 @@ class ProjectTest(WebTest):
             response,
             u"<span>En tant que</span>&nbsp;default lang story"
         )
+
+    def test_project_archive(self):
+        user = factories.UserFactory.create()
+        org = factories.create_sample_organization(user)
+        proj_arch = factories.ProjectFactory.create(
+            is_archive=True,
+            owner=user
+        )
+        proj_not_arch = factories.ProjectFactory.create(
+            is_archive=False,
+            owner=user
+        )
+        org_proj_arch = factories.ProjectFactory.create(
+            is_archive=True,
+            org=org,
+            owner=user,
+        )
+        org_proj_not_arch = factories.ProjectFactory.create(
+            is_archive=False,
+            org=org,
+            owner=user,
+        )
+        url = reverse("dashboard")
+        response = self.app.get(url, user=user)
+        self.assertNotContains(response, org_proj_arch.name)
+        self.assertContains(response, org_proj_not_arch.name)
+        restore_url = reverse("project_restore", args=(proj_arch.pk,))
+        self.assertContains(response, restore_url)
+        restore_url = reverse("project_restore", args=(proj_not_arch.pk,))
+        self.assertNotContains(response, restore_url)
+
+        url = reverse("org_detail", args=(org.pk,))
+        response = self.app.get(url, user=user)
+        restore_url = reverse("project_restore", args=(org_proj_arch.pk,))
+        self.assertContains(response, restore_url)
+        restore_url = reverse("project_restore", args=(org_proj_not_arch.pk,))
+        self.assertNotContains(response, restore_url)
+
+    def test_project_restore(self):
+        user = factories.UserFactory.create()
+        user_ro = factories.UserFactory.create()
+        user_none = factories.UserFactory.create()
+        proj = factories.ProjectFactory.create(
+            is_archive=True,
+            owner=user
+        )
+        proj.add_user(user_ro)
+
+        url = reverse("project_restore", args=(proj.pk,))
+        self.app.get(url, status=302)
+        self.app.get(url, user=user_ro, status=403)
+        self.app.get(url, user=user_none, status=404)
+        response = self.app.get(url, user=user)
+        form = response.forms['restore_form']
+        form.submit().follow()
+        proj = Project.objects.get(pk=proj.pk)
+        self.assertFalse(proj.is_archive)

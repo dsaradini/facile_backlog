@@ -352,6 +352,10 @@ class Organization(AclMixin, WithThemeMixin, models.Model):
             )
         project.save()
 
+    @property
+    def active_projects(self):
+        return self.projects.filter(is_archive=False).order_by("name")
+
 
 class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
     authorization_association_field = "project"
@@ -375,6 +379,10 @@ class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
 
     lang = models.CharField(_("Language"), max_length=3, blank=True,
                             choices=settings.LANGUAGES)
+    is_archive = models.BooleanField(
+        _("Archived"), default=False,
+        help_text=_("Archived project are not displayed anymore in planning")
+    )
 
     class Meta:
         ordering = ("name",)
@@ -497,6 +505,10 @@ class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
             if prev and prev.same_data(s):
                 s.delete()
             prev = s
+
+    def restore(self):
+        self.is_archive = False
+        self.save(update_fields=("is_archive",))
 
 
 class Backlog(StatsMixin, WithThemeMixin, models.Model):

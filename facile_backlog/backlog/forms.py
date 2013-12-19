@@ -50,13 +50,13 @@ class ProjectEditionForm(ModelForm):
 
     class Meta:
         model = Project
-        fields = ["name", "code", "lang",  "description"]
+        fields = ["name", "is_archive", "code", "lang",  "description"]
 
 
 class ProjectCreationForm(ProjectEditionForm):
 
     class Meta(ProjectEditionForm.Meta):
-        fields = ProjectEditionForm.Meta.fields + ["org"]
+        fields = ["name", "code", "lang",  "description", "org"]
 
     def __init__(self, request, org, *args, **kwargs):
         super(ProjectCreationForm, self).__init__(*args, **kwargs)

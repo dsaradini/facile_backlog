@@ -3,6 +3,7 @@
 
 {% block content %}
 <div class="row">
+	<div class="col-md-6 col-md-offset-3">
 	<h1>{% trans "Delete backlog" %}</h1>
 	<h2><i class="icon-list-ul muted"></i> {{ backlog.name }}</h2>
 	<div class="alert alert-danger">
@@ -19,10 +20,11 @@
 	<form method="post" id="delete_form" action="{{ action_url }}">
 		{% csrf_token %}
 		{{ form }}
-		<div class="submit-delete actions">
+		<div class="submit">
 			<button class="btn btn-danger" type="submit">{% trans "Delete this backlog" %}</button>
 			<a href="{{ cancel_url }}">{% trans "Cancel" %}</a>
 		</div>
 	</form>
+	</div>
 </div>
 {% endblock %}

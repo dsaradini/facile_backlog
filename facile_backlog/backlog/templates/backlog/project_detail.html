@@ -25,7 +25,15 @@ var show_archived = function(e) {
 			<a class="btn-link" href="{% url "project_delete" project.pk %}">
 				{% trans "delete" %}
 			</a>
+			{% if project.is_archive %}
+				|
+				<a class="btn-link" href="{% url 'project_restore' project.pk %}">{% trans "restore" %}</a>
+			{% endif %}
 			]</small>
+		{% endif %}
+
+		{% if project.is_archive %}
+			<h1 class="pull-right text-muted"><i class="icon-archive"></i> {% trans "Archived" %}</h1>
 		{% endif %}
 	</div>
 	{% if project.lang %}
@@ -37,14 +45,14 @@ var show_archived = function(e) {
 			{{ project.description|markdown }}
 		{% endif %}
 	</div>
-
+	{% if not project.is_archive %}
 	<div class="alert alert-block alert-neutral">
 
 		{% if dashboards %}
 			<strong>{% trans "Status dashboard:" %}</strong>&nbsp;
 			{% for dashboard in dashboards %}
 				{% if dashboard.mode == "public" %}
-					<span class="label label-success">{% trans "public" %}</span>
+					<span class="label label-default">{% trans "public" %}</span>
 				{% elif dashboard.mode == "private" %}
 					<span class="label label-inverse">{% trans "private" %}</span>
 				{% endif %}
@@ -68,12 +76,12 @@ var show_archived = function(e) {
 			{% endif %}
 		{% endif %}
 	</div>
-
+	{% endif %}
 	<div class="row">
 
 	<div class="col-md-6">
 		<h2>{% trans "Backlogs" %}
-			{% if project|can_admin:request.user %}
+			{% if project|can_admin:request.user and not project.is_archive %}
 				<a class="btn btn-sm btn-success" href="{% url "project_backlog_create" project.pk %}">
 					{% trans "Create backlog" %}
 				</a>
