@@ -13,8 +13,11 @@
 {% endaddtoblock %}
 
 {% addtoblock "js" %}
-<script src="{% static "core/js/highcharts.js" %}"></script>
-{% include "graph/_pie_status.html" with graph_title=" " series=project_status_pie element_id="#graph-project-pie" show_points=dashboard.show_points%}
+<script type="text/javascript">
+$(function() {
+	$("[title]").tooltip()
+});
+</script>
 {% endaddtoblock %}
 
 <div class="row">
@@ -22,9 +25,21 @@
 	<div class="small muted">{% now "SHORT_DATETIME_FORMAT" %}</div>
 </div>
 
-<div class="row">
 
-	<div class="col-md-7">
+<div class="row">
+	{% if dashboard.show_story_status %}
+	<h3>{% trans "Overall progress" %}
+	<span class="pull-right text-muted">{% if dashboard.show_points %} {{ project_status_bar.total }} {% trans "pts" %}{% endif %}</span>
+	</h3>
+	<div class="progress">
+		{% for item in project_status_bar.items %}
+			<div class="progress-bar" style="width: {{ item.percent }}%; background-color:{{ item.color }};"
+				 title="{{ item.percent }}% {{ item.name }} {% if dashboard.show_points %} : {{ item.y }} {% trans "pts" %}{% endif %}">
+				<span>{{ item.percent }}% {{ item.name }} {% if dashboard.show_points %} <i class="icon-circle"></i> {{ item.y }}{% endif %}</span>
+			</div>
+		{% endfor %}
+	</div>
+	{% endif %}
 	{% if dashboard.show_completed %}
 		<div>
 			<h3>{% trans "Completed stories" %}</h3>
@@ -94,12 +109,5 @@
 			</div>
 		</div>
 	{% endif %}
-	</div>
-	<div class="col-md-5">
-	{% if dashboard.show_story_status %}
-		<h3>{% trans "Stories status" %}</h3>
-		<div class="graph400" id="graph-project-pie"></div>
-	{% endif %}
-	</div>
 </div>
 {% endblock %}

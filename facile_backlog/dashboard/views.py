@@ -1,4 +1,5 @@
 import itertools
+import math
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -13,10 +14,30 @@ from django.views import generic
 
 from ..backlog.models import (Status, create_event, Project)
 from ..backlog.views import (ProjectMixin, BackMixin, get_my_object_or_404,
-                             pie_element)
+                             status_for, STATUS_COLORS)
 
 from models import Dashboard
 from forms import DashboardEditionForm, DashboardCreationForm
+
+
+def bar_element(elements):
+    sum = 0
+    items = []
+    for name, value in elements:
+        sum += value['points']
+        if name != Status.TODO:
+            items.append({
+                'name': status_for(name),
+                'color': STATUS_COLORS[name],
+                'count': value['stories'],
+                'y': value['points']
+            })
+    for i in items:
+        i['percent'] = int(math.floor((float(i['y'])/float(sum)) * 100))
+    return {
+        'total': sum,
+        'items': items,
+    }
 
 
 class ProjectDashboard(generic.TemplateView):
@@ -103,10 +124,11 @@ class ProjectDashboard(generic.TemplateView):
                 if self.dashboard.show_points:
                     context['project_points'] = info['points']
                 context['project_stories'] = info['stories']
-                context['project_status_pie'] = \
-                    [pie_element(k, v) for k, v in info['by_status'].items()]
+                context['project_status_bar'] = bar_element(
+                    info['by_status'].items()
+                )
             else:
-                context['project_status_pie'] = []
+                context['project_status_bar'] = {}
         else:
             context['project_status_pie'] = []
         return context
