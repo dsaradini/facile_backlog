@@ -366,7 +366,7 @@ class RegistrationTest(WebTest):
         url = reverse("dashboard")
         response = self.app.get(url, user=user_b)
         # verify the project is in project's list
-        p_name = response.pyquery("h3.inline-title").find("a").text().strip()
+        p_name = response.pyquery("h4.inline-title").find("a").text().strip()
         self.assertEqual(p_name, escape(project.name))
         event = Event.objects.get(
             project=project
