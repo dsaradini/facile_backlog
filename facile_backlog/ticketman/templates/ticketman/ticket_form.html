@@ -1,0 +1,12 @@
+{% extends "ticketman/base.html" %}
+{% block content %}
+<h1>{% trans "Ticket create" %}</h1>
+<form method="post" action="{% url "ticket_add" %}">
+	{% csrf_token %}
+	{{ form }}
+	<div class="submit">
+		<button type="submit" class="btn btn-success">{% trans "Submit" %}</button>
+		<a href="{% url "ticket_list" %}" class="btn btn-link">{% trans "Cancel" %}</a>
+	</div>
+</form>
+{% endblock %}

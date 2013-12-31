@@ -1,0 +1,31 @@
+{% extends "ticketman/base.html" %}
+
+{% load i18n %}
+{% block content %}
+<a href="{% url "ticket_list" %}">{% trans "Back to list" %}</a>
+
+	<h2>{{ object.get_category_display }}</h2>
+<div>
+	{{ object.text }}
+</div>
+<ul>
+	{% for mess in object.root_messages %}
+		{% include "ticketman/inc/message_item.html" with message=mess %}
+	{% endfor %}
+	<hr>
+	<div>
+		<form method="POST" action="{% url "message_add" object.pk %}">
+			{% csrf_token %}
+			<textarea class="form-control" name="text"></textarea>
+			<div class="checkbox">
+				<label>
+				  <input type="checkbox" name="close_it"> {% trans "Close ticket" %}
+				</label>
+			  </div>
+			<div class="submit">
+				<button class="btn btn-success pull-right" type="submit" >{% trans "Post comment" %}</button>
+			</div>
+		</form>
+	</div>
+</ul>
+{% endblock %}

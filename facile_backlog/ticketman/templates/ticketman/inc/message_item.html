@@ -1,0 +1,7 @@
+{% load humanize %}
+<li>
+	<h4>{{ message.text }}</h4>
+	<div class="text-muted">{{ message.owner.email }}</div>
+	<div class="text-muted"><i class="icon-time"></i> {{ message.creation_date|naturaltime }} </div>
+	<div class="text-muted"><i class="icon-calendar"></i> {{ message.creation_date }} </div>
+</li>

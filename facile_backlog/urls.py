@@ -34,6 +34,8 @@ urlpatterns = patterns(
 
     url(r'^blog/', include('facile_backlog.blog.urls')),
 
+    url(r'^ticketing/', include('facile_backlog.ticketman.urls')),
+
     url(r'^', include('facile_backlog.storymap.urls')),
 
     url(r'^', include('facile_backlog.dashboard.urls')),

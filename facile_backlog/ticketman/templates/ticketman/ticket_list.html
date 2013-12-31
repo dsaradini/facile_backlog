@@ -1,0 +1,20 @@
+{% extends "ticketman/base.html" %}
+{% block content %}
+<h1>{% trans "Ticket list" %}</h1>
+
+<ul class="ticket-list">
+{% for ticket in object_list %}
+	<li><a href="{% url "ticket_detail" ticket.pk %}">{{ ticket.text }}</a>
+		{% with ticket.root_messages.count as comment_count %}
+			{% if ticket.is_new %}
+				<span class="label label-warning">{{ ticket.get_status_display }}</span>
+			{% elif ticket.is_closed %}
+				<span class="label label-default">{{ ticket.get_status_display }}</span>
+			{% elif comment_count %}
+				<span class="label label-info"><i class="icon-comment-alt"></i> {{ comment_count }}</span>
+			{% endif %}
+		{% endwith %}
+	</li>
+{% endfor %}
+</ul>
+{% endblock %}
