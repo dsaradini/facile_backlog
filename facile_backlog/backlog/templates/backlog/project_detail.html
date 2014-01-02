@@ -72,7 +72,7 @@ var show_archived = function(e) {
 		{% else %}
 			<span>{% trans "This project has currently no status dashboard" %}</span>
 			{% if project|can_admin:request.user %}
-				<a class="btn btn-xs btn-success" href="{% url "dashboard_create" project.pk %}">{% trans "Create a status dashboard" %}</a>
+				<a class="btn btn-xs btn-default pull-right" href="{% url "dashboard_create" project.pk %}"><i class="icon-dashboard"></i> {% trans "Create a status dashboard" %}</a>
 			{% endif %}
 		{% endif %}
 	</div>
@@ -80,16 +80,13 @@ var show_archived = function(e) {
 	<div class="row">
 
 	<div class="col-md-6">
-		<h2>{% trans "Backlogs" %}
-			{% if project|can_admin:request.user and not project.is_archive %}
-				<a class="btn btn-sm btn-success" href="{% url "project_backlog_create" project.pk %}">
-					{% trans "Create backlog" %}
-				</a>
-			{% endif %}
-		</h2>
-		<div class="actions">
 
-		</div>
+		{% if project|can_admin:request.user and not project.is_archive %}
+			{% url "project_backlog_create" project.pk as bs_action_href %}
+			{% include "bootstrap/navbar.html" with bs_nav_title=_("Backlogs") bs_action_title=_("Create backlog") has_action=True %}
+		{% else %}
+			{% include "bootstrap/navbar.html" with bs_nav_title=_("Backlogs") %}
+		{% endif %}
 		<ul class="backlog-list">
 			{% for backlog in backlogs %}
 				<li {% if backlog.is_archive %}class="archived" style="display:none;"{% endif %}>
@@ -151,8 +148,7 @@ var show_archived = function(e) {
 		</ul>
 	</div>
 	<div class="col-md-6">
-		<h2>{% trans "Last activities" %}</h2>
-		<div class="actions"></div>
+		{% include "bootstrap/navbar.html" with bs_nav_title=_("Last activities") %}
 		{% include "backlog/_events.html" with events=events %}
 	</div>
 </div>

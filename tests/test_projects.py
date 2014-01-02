@@ -80,12 +80,12 @@ class ProjectTest(WebTest):
             'name': "Org wrong"
         })
         org_ok.add_user(user_3)
-        url = reverse('project_create')
+        url = reverse('org_project_create', args=(999,))
         # login redirect
         self.app.get(url, status=302)
-        self.app.get("{0}?org=999".format(url), user=user, status=404)
-        response = self.app.get(
-            "{0}?org={1}".format(url, org_ok.pk), user=user)
+        self.app.get(url, user=user, status=404)
+        url = reverse('org_project_create', args=(org_ok.pk,))
+        response = self.app.get(url, user=user)
         self.assertContains(response, u"Add a new project")
 
         form = response.forms['edit_project_form']

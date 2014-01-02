@@ -7,12 +7,8 @@
 <div class="row">
 	<div class="col-md-8">
 		<div class="row">
-			<h2>{% trans "Organizations" %}
-			<a class="btn btn-success btn-sm" href="{% url "org_create" %}">
-				{% trans "Create organization" %}
-			</a>
-			</h2>
-		<div class="actions"></div>
+			{% url "org_create" as bs_action_href %}
+			{% include "bootstrap/navbar.html" with bs_nav_title=_("Organizations") bs_action_title=_("Create organization") has_action=True%}
 		{% if organizations %}
 			<div class="col-md-12">
 				{% for org in organizations %}
@@ -65,12 +61,8 @@
 		</div>
 
 		<div class="row">
-		<h2>{% trans "Projects" %}
-		<a class="btn btn-success btn-sm" href="{% url "project_create" %}">
-			{% trans "Create project" %}
-		</a>
-		</h2>
-		<div class="actions"></div>
+			{% url "project_create" as bs_action_href %}
+			{% include "bootstrap/navbar.html" with bs_nav_title=_("Projects") bs_action_title=_("Create project") has_action=True %}
 		{% if projects or guest_projects%}
 			<div class="col-md-12">
 				{% for object in projects %}
@@ -130,6 +122,8 @@
 		</div>
 	</div>
 	<div class="col-md-4">
+		{% trans "Recent activities" as bs_nav_title %}
+		{% include "bootstrap/navbar.html"%}
 		<h2>{% trans "Recent activities" %}</h2>
 		<div class="actions"></div>
 		{% include "backlog/_events.html" with events=events gravatar=True%}
