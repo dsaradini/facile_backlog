@@ -20,3 +20,5 @@ PASSWORD_HASHERS = [
 
 LOGGING['loggers']['facile_backlog']['level'] = 'ERROR'
 LOGGING['loggers']['raven']['level'] = 'ERROR'
+
+INSTALLED_APPS = [x for x in INSTALLED_APPS if x != "debug_toolbar"]

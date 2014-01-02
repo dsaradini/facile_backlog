@@ -10,12 +10,12 @@ register = Library()
 
 # Whitelist from HTML::Pipeline project
 # https://github.com/jch/html-pipeline
-TAGS = set([
+TAGS = (
     'a', 'b', 'blockquote', 'br', 'code', 'dd', 'del', 'div', 'dl', 'dt',
     'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'hr', 'i', 'img',
     'ins', 'kbd', 'li', 'ol', 'p', 'pre', 'q', 'samp', 'strong', 'sub', 'sup',
     'table', 'tbody', 'tfoot', 'td', 'th', 'thead', 'tr', 'tt', 'ul', 'var',
-])
+)
 
 ATTRIBUTES = {
     'a': ['href'],
