@@ -1,20 +1,61 @@
 {% extends "ticketman/base.html" %}
+{% load humanize %}
 {% block content %}
-<h1>{% trans "Ticket list" %}</h1>
+<h1>{% trans "Ticket list" %}
+	{% if request.user.is_staff %}
+		&nbsp;<span class="text-muted">( {% trans "Support staff" %} )</span>
+	{% endif %}
+</h1>
 
-<ul class="ticket-list">
+<div class="ticket-list">
 {% for ticket in object_list %}
-	<li><a href="{% url "ticket_detail" ticket.pk %}">{{ ticket.text }}</a>
-		{% with ticket.root_messages.count as comment_count %}
-			{% if ticket.is_new %}
-				<span class="label label-warning">{{ ticket.get_status_display }}</span>
-			{% elif ticket.is_closed %}
-				<span class="label label-default">{{ ticket.get_status_display }}</span>
-			{% elif comment_count %}
-				<span class="label label-info"><i class="icon-comment-alt"></i> {{ comment_count }}</span>
-			{% endif %}
-		{% endwith %}
-	</li>
+	<div class="ticket-item well well-sm" >
+		<div class="row">
+			<div class="col-md-10">
+				<strong><a href="{% url "ticket_detail" ticket.pk %}">{{ ticket.text|slice:":255" }}</a></strong>
+			</div>
+
+			<div class="col-md-2 text-right">
+
+				{% with ticket.root_messages.count as comment_count %}
+					{% if ticket.is_new %}
+						<span class="label label-warning">{{ ticket.get_status_display }}</span>
+					{% elif ticket.is_closed %}
+						<span class="label label-default">{{ ticket.get_status_display }}</span>
+					{% elif comment_count %}
+						<span class="label label-info"><i class="icon-comment-alt"></i> {{ comment_count }}</span>
+					{% endif %}
+				{% endwith %}
+
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-4">
+				<i class="icon-user"></i> {{ ticket.email }}
+			</div>
+
+			<div class="col-md-4">
+				{% with ticket.root_messages.0.owner as staff_user %}
+					{% if staff_user %}
+						<i class="icon-star"></i> {{ staff_user.full_name|default:staff_user }}
+					{% endif %}
+				{% endwith %}
+			</div>
+
+			<div class="col-md-4 text-right">
+				<i class="icon-time"></i> {{ ticket.modification_date|naturaltime }}
+			</div>
+
+		</div>
+	</div>
+{% empty %}
+	<div class="alert alert-info">
+		{% trans "You haven't any ticket" %}
+	</div>
 {% endfor %}
-</ul>
+</div>
+	<div class="submit">
+		<a class="btn btn-default" href="{% url "ticket_add" %}">{% trans "Contact us" %}</a>
+	</div>
 {% endblock %}

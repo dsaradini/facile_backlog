@@ -17,7 +17,7 @@ class TickerCreateForm(ModelForm):
 
 
 class MessageCreateForm(ModelForm):
-    close_it = BooleanField()
+    close_it = BooleanField(required=False)
 
     class Meta:
         model = Message

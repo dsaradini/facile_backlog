@@ -1,18 +1,41 @@
 {% extends "ticketman/base.html" %}
 
-{% load i18n %}
+{% load i18n markup humanize %}
 {% block content %}
-<a href="{% url "ticket_list" %}">{% trans "Back to list" %}</a>
 
-	<h2>{{ object.get_category_display }}</h2>
-<div>
-	{{ object.text }}
+
+<nav class="navbar navbar-default">
+	<p class="navbar-text"><strong>{% trans "Ticket #" %}{{ object.pk }}</strong></p>
+	<div class="navbar-collapse">
+		<a class="btn btn-default navbar-btn navbar-right" href="{% url "ticket_list" %}">{% trans "Back to list" %}</a>
+	</div>
+</nav>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<i class="icon-user"></i> {{ object.email }}
+		<span class="pull-right text-muted">
+			<strong>{{ object.modification_date }}</strong> ( {{ object.modification_date|naturaltime }} )
+		</span>
+	</div>
+	<div class="panel-body">
+		{{ object.text|markdown }}
+	</div>
+	<div class="panel-footer">
+		<span class="label label-default">{{ object.get_category_display|upper }}</span>
+	</div>
 </div>
-<ul>
+
+
+<h3>{% trans "Discussion" %}</h3>
+
+<ul class="list-group">
 	{% for mess in object.root_messages %}
-		{% include "ticketman/inc/message_item.html" with message=mess %}
+		<li class="list-group-item">
+			{% include "ticketman/inc/message_item.html" with message=mess %}
+		</li>
 	{% endfor %}
-	<hr>
+	<li class="list-group-item">
 	<div>
 		<form method="POST" action="{% url "message_add" object.pk %}">
 			{% csrf_token %}
@@ -23,9 +46,10 @@
 				</label>
 			  </div>
 			<div class="submit">
-				<button class="btn btn-success pull-right" type="submit" >{% trans "Post comment" %}</button>
+				&nbsp;<button class="btn btn-success pull-right" type="submit" >{% trans "Post comment" %}</button>
 			</div>
 		</form>
 	</div>
+	</li>
 </ul>
 {% endblock %}

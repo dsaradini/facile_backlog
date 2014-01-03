@@ -1,9 +1,34 @@
 {% extends "ticketman/base.html" %}
+{% load add_class %}
+{% block title %}{% trans "Content us" %}{% endblock %}
 {% block content %}
-<h1>{% trans "Ticket create" %}</h1>
+<h1>{% trans "Contact us" %}</h1>
 <form method="post" action="{% url "ticket_add" %}">
 	{% csrf_token %}
-	{{ form }}
+	{% if form.errors and not form.non_field_errors %}
+		<div class="alert alert-error errorlist">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+			<h4>{% trans "Form error" %}</h4>
+			{% trans "Please correct the errors below and submit the form again." %}
+		</div>
+	{% endif %}
+	{{ form.non_field_errors }}
+	{% for field in form %}
+		{% if field.is_hidden %}
+			{{ field }}
+		{% else %}
+			<div class="form-group field {% if field.errors %}error{% endif %}">
+				<label class="control-label" for="{{ field.id }}"><h4>{{ field.label }} {% if field.field.required %}<small class="text-muted">({% trans "required" %})</small>{% endif %}</h4></label>
+				<div>{{ field|add_class:"form-control" }}</div>
+				{% if field.help_text %}<span class="text-muted">{{ field.help_text|safe }}</span>{% endif %}
+				{% if field.errors %}
+					{% for error in field.errors %}
+						<span class="help-inline">{{ error|escape }}</span>
+					{% endfor %}
+				{% endif %}
+			</div>
+		{% endif %}
+	{% endfor %}
 	<div class="submit">
 		<button type="submit" class="btn btn-success">{% trans "Submit" %}</button>
 		<a href="{% url "ticket_list" %}" class="btn btn-link">{% trans "Cancel" %}</a>

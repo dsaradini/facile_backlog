@@ -1,7 +1,15 @@
-{% load humanize %}
-<li>
-	<h4>{{ message.text }}</h4>
-	<div class="text-muted">{{ message.owner.email }}</div>
-	<div class="text-muted"><i class="icon-time"></i> {{ message.creation_date|naturaltime }} </div>
-	<div class="text-muted"><i class="icon-calendar"></i> {{ message.creation_date }} </div>
-</li>
+{% load humanize markup %}
+<div class="message-item">
+	<div class="row">
+		<div class="col-md-12">
+			{{ message.text|markdown }}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-offset-6 col-md-6 text-right">
+			<div class="text-muted"><i class="icon-user"></i> {{ message.owner.full_name|default:message.owner.email }}</div>
+			<div class="text-muted"><i class="icon-time"></i> {{ message.creation_date|naturaltime }} </div>
+			<div class="text-muted"><i class="icon-calendar"></i> {{ message.creation_date }} </div>
+		</div>
+	</div>
+</div>

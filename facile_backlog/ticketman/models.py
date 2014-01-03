@@ -26,14 +26,14 @@ STATUS_CHOICES = (
 class Ticket(models.Model):
     category = models.CharField(choices=CATEGORY_CHOICES, max_length=16)
     email = models.EmailField()
-    text = models.TextField()
+    text = models.TextField(verbose_name=_("Message"))
     status = models.CharField(choices=STATUS_CHOICES, max_length=16,
                               default=STATUS_NEW)
     creation_date = models.DateTimeField(auto_now_add=True, editable=False)
     modification_date = models.DateTimeField(auto_now=True, editable=False)
 
     class Meta(object):
-        ordering = ("status", "-modification_date",)
+        ordering = ("status", "modification_date",)
 
     @property
     def root_messages(self):

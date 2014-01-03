@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views import generic
 from django.shortcuts import get_object_or_404
 
-from models import Ticket
+from models import Ticket, STATUS_CLOSED
 from forms import TickerCreateForm, MessageCreateForm
 
 
@@ -36,7 +36,7 @@ class TicketList(generic.ListView):
         user = self.request.user
         if user.is_authenticated():
             if user.is_staff:
-                return Ticket.objects.all()
+                return Ticket.objects.exclude(status=STATUS_CLOSED).all()
             else:
                 return Ticket.objects.filter(email=user.email)
         raise Http404
@@ -46,6 +46,11 @@ ticket_list = login_required(TicketList.as_view())
 class TicketMixin(object):
     def dispatch(self, request, *args, **kwargs):
         self.ticket = get_object_or_404(Ticket, pk=kwargs['ticket_id'])
+        if not request.user.is_authenticated():
+            raise Http404
+        if (not request.user.is_staff and
+                request.user.email != self.ticket.email):
+            raise Http404
         self.pre_dispatch()
         return super(TicketMixin, self).dispatch(request, *args, **kwargs)
 
