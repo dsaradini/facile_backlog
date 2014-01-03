@@ -4,6 +4,7 @@
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
+<div class="spacer-15"></div>
 <div class="row">
 	<div class="col-md-8">
 		<div class="row">
@@ -124,8 +125,6 @@
 	<div class="col-md-4">
 		{% trans "Recent activities" as bs_nav_title %}
 		{% include "bootstrap/navbar.html"%}
-		<h2>{% trans "Recent activities" %}</h2>
-		<div class="actions"></div>
 		{% include "backlog/_events.html" with events=events gravatar=True%}
 	</div>
 <div>

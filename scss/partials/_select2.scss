@@ -11,6 +11,11 @@ $border-color: #bbb;
     zoom: 1;
     *display: inline;
     vertical-align: top;
+
+	/* fix for bootstrap 3 */
+	border: none !important;
+	padding: 0 !important;
+	height: auto !important;
 }
 
 .select2-container,
