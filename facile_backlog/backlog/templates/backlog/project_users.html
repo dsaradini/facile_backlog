@@ -13,7 +13,7 @@
 	<div class="description">
 		<p>{% blocktrans %}Here is the list of all users participating to this project.{% endblocktrans %}</p>
 	</div>
-	<div class="actions">
+	<div>
 		{% if project|can_admin:request.user%}
 			{% if not project.org_id %}
 			<a class="btn btn-primary" href="{% url "project_invite_user" project.pk %}">
@@ -30,6 +30,8 @@
 			{% endif %}
 		{% endif %}
 	</div>
+		<hr>
+
 	<table class="table table-striped users-list">
 		<thead class="headers">
 			<tr>

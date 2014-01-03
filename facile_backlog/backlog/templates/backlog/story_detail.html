@@ -5,38 +5,42 @@
 
 {% block content %}
 	{% include "backlog/_story_head.html" %}
-	<div class="story-detail row">
-		<div style="border-left:10px solid {{ story.color }};" class="alert alert-neutral description col-md-10">
-			{% include "backlog/user_story_text.html" with story=story %}
-		</div>
-		<div class="col-md-2">
-			<div class="points">
-				{% if story.points >= 0 %}
-					<span>{{ story.points|floatformat:"0" }}</span>
-				{% else %}
-					&nbsp;&nbsp;
-				{% endif %}
+	<div class="story-detail">
+		<div class="row">
+			<div style="border-left:10px solid {{ story.color }};" class="alert alert-neutral description col-md-10">
+				{% include "backlog/user_story_text.html" with story=story %}
+			</div>
+			<div class="col-md-2 text-center">
+				<div class="points">
+					{% if story.points >= 0 %}
+						<span>{{ story.points|floatformat:"0" }}</span>
+					{% else %}
+						&nbsp;&nbsp;
+					{% endif %}
+				</div>
 			</div>
 		</div>
+
 		{% if story.theme %}
-		<div class="col-md-12 muted">
+		<div class="row muted">
 			<h4><i class="icon-tag"></i> {{ story.theme }}</h4>
 		</div>
 		{% endif %}
-		<div class="col-md-12">
-			<h3>{% trans "Acceptance criteri" %}a</h3>
+		<div class="row">
+			<h3>{% trans "Acceptance criteria" %}</h3>
 			<div class="acceptance-criteria markdown">
 				{{ story.acceptances|markdown }}
 			</div>
 		</div>
-		<div class="col-md-12">
+		<div class="row">
 			<h3>{% trans "Comments" %}</h3>
 			<div class="comments markdown">
 				{{ story.comments|markdown }}
 			</div>
 		</div>
 	</div>
-	<div class="actions">
+	<hr>
+	<div class="submit">
 		<a class="btn btn-primary" href="{% url "story_edit" project.pk object.pk %}">{% trans "Edit" %}</a>
 		<a class="btn btn-danger" href="{% url "story_delete" project.pk object.pk %}">{% trans "Delete" %}</a>
 	</div>

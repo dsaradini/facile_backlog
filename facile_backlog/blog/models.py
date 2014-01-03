@@ -2,7 +2,7 @@ from django.db import models
 
 
 class BlogPost(models.Model):
-    sticky = models.BooleanField()
+    sticky = models.BooleanField(default=False)
     body = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
 

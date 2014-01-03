@@ -785,7 +785,7 @@ class ProjectCreate(generic.CreateView):
     form_class = ProjectCreationForm
 
     def dispatch(self, request, *args, **kwargs):
-        org_id = request.GET.get("org", None)
+        org_id = kwargs.pop("org_id", None)
         if org_id:
             try:
                 self.org = Organization.my_organizations(

@@ -14,18 +14,10 @@ var show_archived = function(e) {
 	{% include "backlog/_project_head.html" %}
 	{% include "backlog/_project_tabs.html" with active="story_map" %}
 
-	<div class="project-head">
-		<h1 class="inline-title">{% trans "Boards" %}
-
-		{% if project|can_admin:request.user %}
-			<a class="btn btn-success btn-sm" href="{% url "storymap_create" project.pk %}">{% trans "Create board" %}</a>
-		{% endif %}
-		</h1>
-	</div>
-	<div class="actions"></div>
-
 	<div class="row">
 		<div class="col-md-12">
+		{% url "storymap_create" project.pk as bs_action_href %}
+		{% include "bootstrap/navbar.html" with bs_nav_title=_("Boards") bs_action_title=_("Create board") has_action=project|can_admin:request.user %}
 		{% for sm in object_list %}
 			<h4><i class="icon-table"></i> <a href="{% url "storymap_detail" sm.pk %}">{{ sm.name }}</a>
 			{% if project|can_admin:request.user %}
@@ -42,5 +34,4 @@ var show_archived = function(e) {
 		{% endfor %}
 		</div>
 	</div>
-
 {% endblock %}

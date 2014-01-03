@@ -48,14 +48,8 @@ $(function() {
 <div class="row">
 
 	<div class="col-md-6">
-		<h2>{% trans "Backlogs" %}
-			{% if organization|can_admin:request.user %}
-				<a class="btn btn-success btn-sm" href="{% url "org_backlog_create" organization.pk %}?">
-					{% trans "Create backlog" %}
-				</a>
-			{% endif %}
-		</h2>
-		<div class="actions"></div>
+		{% url "org_backlog_create" organization.pk as bs_action_href %}
+		{% include "bootstrap/navbar.html" with bs_nav_title=_("Backlogs") bs_action_title=_("Create backlog") has_action=organization|can_admin:request.user %}
 		<ul class="backlog-list">
 			{% for backlog in backlogs %}
 				<li {% if backlog.is_archive %}class="archived" style="display:none;"{% endif %}>
@@ -118,12 +112,8 @@ $(function() {
 
 	</div>
 	<div class="col-md-6">
-		<h2>{% trans "Projects" %}
-			{% if organization|can_admin:request.user %}
-				<a class="btn btn-success btn-sm" href="{% url "project_create" %}?org={{ organization.pk }}">{% trans "New project" %}</a>
-			{% endif %}
-		</h2>
-		<div class="actions"></div>
+		{% url "org_project_create" organization.pk as bs_action_href %}
+		{% include "bootstrap/navbar.html" with bs_nav_title=_("Projects") bs_action_title=_("New project") has_action=organization|can_admin:request.user %}
 		{% if projects %}
 			<div class="span12">
 				{% for object in projects %}

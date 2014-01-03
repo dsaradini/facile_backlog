@@ -84,6 +84,10 @@ urlpatterns += patterns(
     url(r'^orgs/(?P<org_id>[\d]+)/backlogs/new/$',
         org_backlog_create,
         name='org_backlog_create'),
+
+    url(r'^orgs/(?P<org_id>[\d]+)/projects/new/$',
+        project_create,
+        name='org_project_create'),
 )
 
 # projects
