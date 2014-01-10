@@ -1,0 +1,9 @@
+{% blocktrans with email=ticket.email %}New ticket from '{{email}}'{% endblocktrans %}
+
+{% blocktrans with domain=site.domain %}A new support ticket need to be treated for {{ domain }}.{% endblocktrans %}
+
+{% trans "You can see it by following this link:" %}
+
+http{% if secure %}s{% endif %}://{{ site.domain }}{% url "ticket_detail" ticket.pk %}
+
+{% include "email_footer.txt" %}

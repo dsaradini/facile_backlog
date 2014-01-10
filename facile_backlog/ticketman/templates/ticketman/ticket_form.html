@@ -3,7 +3,7 @@
 {% block title %}{% trans "Content us" %}{% endblock %}
 {% block content %}
 <h1>{% trans "Contact us" %}</h1>
-<form method="post" action="{% url "ticket_add" %}">
+<form method="post" id="ticket-form" action="{% url "ticket_add" %}">
 	{% csrf_token %}
 	{% if form.errors and not form.non_field_errors %}
 		<div class="alert alert-error errorlist">

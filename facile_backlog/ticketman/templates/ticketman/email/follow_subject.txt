@@ -1,0 +1,1 @@
+{% blocktrans with domain=site.domain ticket_id=ticket.pk%}{{ domain }} Support ticket updated [{{ticket_id}}]{% endblocktrans %}

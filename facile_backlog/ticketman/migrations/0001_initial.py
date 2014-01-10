@@ -14,9 +14,10 @@ class Migration(SchemaMigration):
             ('category', self.gf('django.db.models.fields.CharField')(max_length=16)),
             ('email', self.gf('django.db.models.fields.EmailField')(max_length=75)),
             ('text', self.gf('django.db.models.fields.TextField')()),
-            ('status', self.gf('django.db.models.fields.CharField')(max_length=16)),
+            ('status', self.gf('django.db.models.fields.CharField')(default='0_new', max_length=16)),
             ('creation_date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('modification_date', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
+            ('modification_user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.User'], null=True, blank=True)),
         ))
         db.send_create_signal(u'ticketman', ['Ticket'])
 
@@ -24,7 +25,7 @@ class Migration(SchemaMigration):
         db.create_table(u'ticketman_message', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('owner', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.User'])),
-            ('ticket', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['ticketman.Ticket'])),
+            ('ticket', self.gf('django.db.models.fields.related.ForeignKey')(related_name='messages', to=orm['ticketman.Ticket'])),
             ('parent', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['ticketman.Message'], null=True, blank=True)),
             ('text', self.gf('django.db.models.fields.TextField')()),
             ('creation_date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
@@ -55,22 +56,23 @@ class Migration(SchemaMigration):
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },
         u'ticketman.message': {
-            'Meta': {'object_name': 'Message'},
+            'Meta': {'ordering': "('creation_date',)", 'object_name': 'Message'},
             'creation_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['core.User']"}),
             'parent': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['ticketman.Message']", 'null': 'True', 'blank': 'True'}),
             'text': ('django.db.models.fields.TextField', [], {}),
-            'ticket': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['ticketman.Ticket']"})
+            'ticket': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'messages'", 'to': u"orm['ticketman.Ticket']"})
         },
         u'ticketman.ticket': {
-            'Meta': {'object_name': 'Ticket'},
+            'Meta': {'ordering': "('status', 'modification_date')", 'object_name': 'Ticket'},
             'category': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
             'creation_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modification_date': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'status': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
+            'modification_user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['core.User']", 'null': 'True', 'blank': 'True'}),
+            'status': ('django.db.models.fields.CharField', [], {'default': "'0_new'", 'max_length': '16'}),
             'text': ('django.db.models.fields.TextField', [], {})
         }
     }

@@ -35,7 +35,7 @@ class MessageCreateForm(ModelForm):
         obj.ticket = self.ticket
         obj.save()
         if self.request.user.is_staff and self.cleaned_data['close_it']:
-            obj.ticket.close()
+            obj.ticket.close(self.request.user)
         else:
-            obj.ticket.touch()
+            obj.ticket.touch(self.request.user)
         return obj

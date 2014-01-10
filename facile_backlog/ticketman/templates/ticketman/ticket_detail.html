@@ -37,18 +37,7 @@
 	{% endfor %}
 	<li class="list-group-item">
 	<div>
-		<form method="POST" action="{% url "message_add" object.pk %}">
-			{% csrf_token %}
-			<textarea class="form-control" name="text"></textarea>
-			<div class="checkbox">
-				<label>
-				  <input type="checkbox" name="close_it"> {% trans "Close ticket" %}
-				</label>
-			  </div>
-			<div class="submit">
-				&nbsp;<button class="btn btn-success pull-right" type="submit" >{% trans "Post comment" %}</button>
-			</div>
-		</form>
+		{% include "ticketman/message_form.html" with ticket=object %}
 	</div>
 	</li>
 </ul>

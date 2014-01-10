@@ -1,9 +1,11 @@
 {% extends "ticketman/base.html" %}
 {% load humanize %}
 {% block content %}
-<h1>{% trans "Ticket list" %}
+<h1>
 	{% if request.user.is_staff %}
-		&nbsp;<span class="text-muted">( {% trans "Support staff" %} )</span>
+		{% trans "All tickets list" %}
+	{% else %}
+		{% trans "My tickets" %}
 	{% endif %}
 </h1>
 
@@ -31,19 +33,24 @@
 		</div>
 
 		<div class="row">
-			<div class="col-md-4">
+			<div class="col-md-3">
 				<i class="icon-user"></i> {{ ticket.email }}
 			</div>
 
-			<div class="col-md-4">
-				{% with ticket.root_messages.0.owner as staff_user %}
+			<div class="col-md-6">
+				{% with ticket.modification_user as staff_user %}
 					{% if staff_user %}
-						<i class="icon-star"></i> {{ staff_user.full_name|default:staff_user }}
+						{% trans "Last comment" %} :
+						{% if staff_user == request.user %}
+							<span class="label label-success">{% trans "MYSELF" %}</span>
+						{% else %}
+							<b>{{ staff_user.full_name|default:staff_user }}</b>
+						{% endif %}
 					{% endif %}
 				{% endwith %}
 			</div>
 
-			<div class="col-md-4 text-right">
+			<div class="col-md-3 text-right">
 				<i class="icon-time"></i> {{ ticket.modification_date|naturaltime }}
 			</div>
 
@@ -51,11 +58,17 @@
 	</div>
 {% empty %}
 	<div class="alert alert-info">
+	{% if request.user.is_authenticated %}
 		{% trans "You haven't any ticket" %}
+	{% else %}
+		{% trans "You must be logged-in to see your tickets." %} <a href="{% url "auth_login" %}?next={% url "ticket_list" %}">{% trans "Sign-in" %}</a>
+	{% endif %}
 	</div>
 {% endfor %}
 </div>
-	<div class="submit">
-		<a class="btn btn-default" href="{% url "ticket_add" %}">{% trans "Contact us" %}</a>
-	</div>
+	{% if not request.user.is_staff %}
+		<div class="submit">
+			<a class="btn btn-default" href="{% url "ticket_add" %}">{% trans "Contact us" %}</a>
+		</div>
+	{% endif %}
 {% endblock %}

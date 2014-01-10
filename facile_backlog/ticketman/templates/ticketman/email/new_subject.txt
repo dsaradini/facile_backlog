@@ -1,0 +1,1 @@
+{% blocktrans with domain=site.domain %}New support ticket on {{ domain }}{% endblocktrans %}
