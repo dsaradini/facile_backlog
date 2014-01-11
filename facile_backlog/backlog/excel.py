@@ -4,10 +4,10 @@ from django.utils.translation import ugettext as _, activate
 from xlwt import Workbook, easyxf
 
 INDEXES = ('code', 'text', 'theme', 'points', 'status', 'backlog', 'criteria',
-           'comments')
+           'comments', 'archived')
 
 
-def export_excel(stories, file_name):
+def export_excel(stories, file_name, title=None):
     file_name = u"{0}.xls".format(file_name)
     response = HttpResponse(content_type='application/vnd.ms-excel')
     response['Content-Disposition'] = \
@@ -25,7 +25,9 @@ def export_excel(stories, file_name):
     )
 
     sheet1 = book.add_sheet('Sheet 1')
-    sheet1.write(0, 0, "Backlogman stories export", title_style)
+    if not title:
+        title = _("Backlogman stories export")
+    sheet1.write(0, 0, title, title_style)
     row_head = sheet1.row(1)
 
     row_head.write(INDEXES.index('code'), _("Code"), header_style)
@@ -36,6 +38,7 @@ def export_excel(stories, file_name):
     row_head.write(INDEXES.index('backlog'), _("Backlog"), header_style)
     row_head.write(INDEXES.index('criteria'), _("acceptances"), header_style)
     row_head.write(INDEXES.index('comments'), _("Comments"), header_style)
+    row_head.write(INDEXES.index('archived'), _("Archived"), header_style)
 
     wrap_style = easyxf(
         'alignment: wrap True;'
@@ -61,6 +64,10 @@ def export_excel(stories, file_name):
         r.write(INDEXES.index('backlog'), story.backlog.name)
         r.write(INDEXES.index('criteria'), story.acceptances, wrap_style)
         r.write(INDEXES.index('comments'), story.comments, wrap_style)
+        r.write(
+            INDEXES.index('archived'),
+            (_("Archived") if story.backlog.is_archive else "")
+        )
         row += 1
 
     sheet1.col(INDEXES.index('text')).width = 10000

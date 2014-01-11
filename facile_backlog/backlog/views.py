@@ -1559,9 +1559,8 @@ class StoriesMixin(object):
             self.stories = UserStory.objects.none()
         if self.object and not self.object.can_read(request.user):
             raise Http404
-        self.stories = self.stories.filter(
-            backlog__is_archive=False
-        ).select_related("project", "backlog", "project__org")
+        self.stories = self.stories.select_related(
+            "project", "backlog", "project__org")
         self.pre_dispatch()
         return super(StoriesMixin, self).dispatch(request, *args, **kwargs)
 
@@ -1616,8 +1615,14 @@ class ExportStories(StoriesMixin, FilteredStoriesMixin, generic.TemplateView):
         return self.stories
 
     def get(self, request, *args, **kwargs):
-        name = "Backlogman-user-stories"
-        return export_excel(self.get_queryset(), name)
+        name = u"Backlogman-user-stories-{0}[{0}]".format(
+            self.object_type, self.object.pk
+        )
+        title = u"Backlogman: {0} - {1}".format(
+            self.object_type,
+            self.object
+        )
+        return export_excel(self.get_queryset(), name, title)
 export_stories = login_required(ExportStories.as_view())
 
 
