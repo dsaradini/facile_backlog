@@ -57,6 +57,21 @@ class Ticket(models.Model):
         self.modification_user = user
         self.save()
 
+    @property
+    def user(self):
+        if not hasattr(self, "_user"):
+            try:
+                self._user = user_model.objects.get(email=self.email)
+            except user_model.DoesNotExist:
+                self._user = None
+        return self._user
+
+    @property
+    def lang(self):
+        if self.user and hasattr(self.user, "lang"):
+            return self.user.lang
+        return None
+
     def __str__(self):
         return "Ticket [{0}]".format(self.pk)
 

@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.sites.models import RequestSite
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import activate, ugettext_lazy as _
 from django.views import generic
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
@@ -48,6 +48,7 @@ class TicketCreate(generic.CreateView):
         }
 
     def send_notification(self):
+        activate(settings.LANGUAGE_CODE)
         staff_emails = get_staff_emails()
         context = self.get_notification_context()
         send_mail(
@@ -119,6 +120,8 @@ class MessageCreate(TicketMixin, generic.CreateView):
         }
 
     def send_notification(self):
+        if self.ticket.lang:
+            activate(self.ticket.lang)
         emails = [self.ticket.email]
         context = self.get_notification_context()
         send_mail(
