@@ -39,6 +39,7 @@
 
 {% endblock %}
 {% block outer_content %}
+<div class="container" style="width:100%; height:100%; overflow-x:visible !important; clear:both;">
 
 	<div class="backlog-lanes center-lane" style="width:{% widthratio backlog_list|length 1 320 %}px">
 		{% for backlog in backlog_list %}
@@ -79,7 +80,7 @@
 			</article>
 		{% endfor %}
 	</div>
-
+</div>
 {% include "backlog/_script_status_change.html" %}
 {% include "backlog/_script_show_errors.html" %}
 

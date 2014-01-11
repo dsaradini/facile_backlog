@@ -1,18 +1,17 @@
 {% blocktrans with email=ticket.email %}Hello '{{email}}'{% endblocktrans %}
 
-{% blocktrans with domain=site.domain %}Ticket #{{ticket_id}} for {{ domain }} has been updated.{% endblocktrans %}
-
+{% blocktrans with domain=site.domain ticket_id=ticket.pk %}Ticket #{{ticket_id}} for {{ domain }} has been updated.{% endblocktrans %}
 
 {{ticket.text}}
 
-{% for mess in ticket.messages %}
+{% for mess in ticket.messages.all %}
 --------------------- {{mess.owner.full_name|default:mess.owner.email}} - {{mess.creation_date}} ---------------------
 
 {{mess.text}}
-
 {% endfor %}
+--------------------------------------- END ----------------------------------------------
 
----------------------------------------------------------------
+{% blocktrans with domain=site.domain email=ticket.email %}DO NOT REPLAY TO THIS EMAIL, PLEASE CREATE AN ACCOUNT ON '{{domain}}' WITH YOUR CURRENT EMAIL ADDRESS '{{email}}'{% endblocktrans %}
 
 {% trans "You can see it by following this link:" %}
 

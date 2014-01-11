@@ -133,7 +133,9 @@ class TicketTest(WebTest):
         self.assertContains(response, "Message text one")
         ticket = Ticket.objects.get(pk=ticket.pk)
         self.assertEqual(ticket.status, STATUS_IN_PROCESS)
-        # TODO: A mail to the owner should have been sent
+        # An mail to the owner should have been sent
+        message = mail.outbox[-1]
+        self.assertIn(ticket.email, message.to)
 
         response = self.app.get(url, user=user)
         self.assertContains(response, "Support ticket one")

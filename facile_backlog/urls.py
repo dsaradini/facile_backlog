@@ -4,7 +4,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 from django.http import HttpResponsePermanentRedirect, HttpResponse
 
-from .views import home_view, root_view, page_404, page_500
+from .views import home_view, root_view, page_404, page_500, terms_conditions
 
 favicon = lambda _: HttpResponsePermanentRedirect(
     '{0}core/img/favicon.png'.format(settings.STATIC_URL)
@@ -19,6 +19,8 @@ urlpatterns = patterns(
     url(r'^favicon.ico$', favicon),
 
     url(r'^robots.txt$', robots),
+
+    url(r'^terms_conditions.html$', terms_conditions),
 
     url(r'^$', root_view, name='root'),
 

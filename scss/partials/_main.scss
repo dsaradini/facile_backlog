@@ -979,3 +979,78 @@ article.backlog.org-backlog {
 	height: 15px;
 	min-height: 15px;
 }
+
+/* Sticky footer styles
+-------------------------------------------------- */
+
+$footer-height: 30px;
+
+html,
+body {
+height: 100%;
+/* The html and body elements cannot have any padding or margin. */
+}
+
+/* Wrapper for page content to push down footer */
+#wrap {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	/* Negative indent footer by it's height */
+	margin: 0 auto  (-$footer-height) auto;
+}
+
+/* Set the fixed height of the footer here */
+#push,
+#footer {
+	height: $footer-height;
+	font-size: 12px;
+	a, span {
+		color: $navbar-inverse-color;
+	}
+	.item:not(:last-child) {
+		&:after {
+			content: "|";
+			text-shadow: 1px 0 1px $navbar-inverse-color;
+			padding-left:10px;
+			padding-right:10px;
+			color: black;
+			opacity: 0.6;
+		}
+	}
+	clear: both;
+	overflow: hidden;
+}
+#footer {
+	background-color: $header-background-color;
+	.container {
+		padding-top: 4px;
+		padding-bottom: 4px;
+		line-height: 20px;
+	}
+	table {
+		width: 100%;
+		td {
+			text-align:center;
+			color: $navbar-inverse-color;
+		}
+		td:first-child {
+			text-align:left;
+		}
+		td:last-child {
+			text-align:right;
+		}
+	}
+	a {
+		transition: color 0.3s ease;
+		&:hover {
+			transition: color 0.3s ease;
+			text-decoration: none;
+			color: white;
+		}
+	}
+}
+
+#wrap > *:last-child {
+	padding-bottom: $footer-height;
+}

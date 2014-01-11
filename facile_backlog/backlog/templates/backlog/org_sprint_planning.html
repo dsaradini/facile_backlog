@@ -43,6 +43,9 @@
 			<a class="btn btn-success btn-sm" href="{% url "org_backlog_create" organization.pk %}">{% trans "Create backlog" %}</a>
 		{% endif %}
 	</form>
+{% endblock %}
+{% block outer_content %}
+<div class="container" style="width:100%; height:100%; overflow-x:visible !important; clear:both;">
 	<div class="lanes" style="width:{{ backlog_width }}px">
 		{% if backlog_of_interest %}
 			<div class="backlog-lanes-source pull-left" style="width:320px">
@@ -70,6 +73,7 @@
 			</div>
 		{% endif %}
 	</div>
+</div>
 {% addtoblock "js" %}
 <script type="text/javascript">
 	$(function() {

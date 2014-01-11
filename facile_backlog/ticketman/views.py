@@ -119,20 +119,21 @@ class MessageCreate(TicketMixin, generic.CreateView):
         }
 
     def send_notification(self):
-        staff_emails = get_staff_emails()
+        emails = [self.ticket.email]
         context = self.get_notification_context()
         send_mail(
             render_to_string(self.notification_subject_template_name,
                              context).strip(),
             render_to_string(self.notification_template_name, context),
             settings.DEFAULT_FROM_EMAIL,
-            staff_emails,
+            emails,
         )
 
     def form_valid(self, form):
+        mess = super(MessageCreate, self).form_valid(form)
         messages.success(self.request,
                          _("Message successfully posted."))
         if self.object.owner.email != self.ticket.email:
             self.send_notification()
-        return super(MessageCreate, self).form_valid(form)
+        return mess
 message_add = login_required(MessageCreate.as_view())

@@ -12,95 +12,114 @@
 		<title>{% block title %}{% trans "Welcome" %}{% endblock %} &mdash; Backlogman</title>
 	</head>
 	<body class="{% block content_class %}{% endblock %}">
-		<div class="navbar navbar-inverse navbar-static-top main-navbar">
-		  	<div class="container">
-				<div class="navbar-header">
-					<a class="navbar-brand" href="{% url "home" %}"
-							style="background: url({% static "core/img/backlogman_32.png" %}) no-repeat 17px center; padding-left:60px;">
-						Backlogman
-					</a>
-					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-topmenu">
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-				</div>
+		<div id="wrap">
+			<div class="navbar navbar-inverse navbar-static-top main-navbar">
+				<div class="container">
+					<div class="navbar-header">
+						<a class="navbar-brand" href="{% url "home" %}"
+								style="background: url({% static "core/img/backlogman_32.png" %}) no-repeat 17px center; padding-left:60px;">
+							Backlogman
+						</a>
+						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-topmenu">
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
 
-				<div class="navbar-collapse collapse navbar-collapse-topmenu" role="navigation">
-					<ul class="nav navbar-nav">
-						{% block navbar %}
-							{% if request.user.is_authenticated %}
-								<li class="active"><a href="{% url "dashboard" %}">{% trans "Dashboard" %}</a></li>
-							{% else %}
-								<li class="active"><a href="{% url "home" %}">{% trans "Home" %}</a></li>
-							{% endif %}
-							<li class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans "Help" %} <b class="caret"></b></a>
-								<ul class="dropdown-menu">
-									<li><a href="{% url "docs_index" %}">{% trans "Documentation" %}</a></li>
-									<li class="divider"></li>
-									{% if request.user.is_staff %}
-										<li><a href="{% url "ticket_list" %}">{% trans "Support tickets" %}</a></li>
-									{% else %}
-										{% if request.user.is_authenticated %}
-											<li><a href="{% url "ticket_list" %}">{% trans "My tickets" %}</a></li>
+					<div class="navbar-collapse collapse navbar-collapse-topmenu" role="navigation">
+						<ul class="nav navbar-nav">
+							{% block navbar %}
+								{% if request.user.is_authenticated %}
+									<li class="active"><a href="{% url "dashboard" %}">{% trans "Dashboard" %}</a></li>
+								{% else %}
+									<li class="active"><a href="{% url "home" %}">{% trans "Home" %}</a></li>
+								{% endif %}
+								<li class="dropdown">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans "Help" %} <b class="caret"></b></a>
+									<ul class="dropdown-menu">
+										<li><a href="{% url "docs_index" %}">{% trans "Documentation" %}</a></li>
+										<li class="divider"></li>
+										{% if request.user.is_staff %}
+											<li><a href="{% url "ticket_list" %}">{% trans "Support tickets" %}</a></li>
+										{% else %}
+											{% if request.user.is_authenticated %}
+												<li><a href="{% url "ticket_list" %}">{% trans "My tickets" %}</a></li>
+											{% endif %}
+											<li><a href="{% url "ticket_add" %}">{% trans "Contact us" %}</a></li>
 										{% endif %}
-										<li><a href="{% url "ticket_add" %}">{% trans "Contact us" %}</a></li>
+									</ul>
+								</li>
+								<li><a href="{% url "blog_index" %}">{% trans "News" %}</a></li>
+							{% endblock %}
+						</ul>
+						<ul class="nav navbar-nav navbar-right">
+							{% if user.is_authenticated %}
+								{% with notification_count=request.user.notification_count %}
+									{% if notification_count %}
+										<li>
+											<a class="notif-link" href="{% url "my_notifications" %}" title="{% trans "Notifications" %}">
+												<span class="notification_count"><span class="bell"><i class="bell icon-bell"></i></span> {{ notification_count }}</span>
+											</a>
+										</li>
 									{% endif %}
+								{% endwith %}
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown"
+										style="background: url({{ user.get_gravatar_url }}) no-repeat left center ; padding-left:34px;">
+									{{ user.full_name }}
+									<b class="caret"></b>
+								</a>
+								<ul class="dropdown-menu">
+									<li><a href="{% url "auth_profile" %}">{% trans "Profile" %}</a></li>
+									{% if request.user.is_staff %}
+										<li><a href="{% url 'admin:index' %}">{% trans "Admin" %}</a></li>
+									{% endif %}
+									<li class="divider"></li>
+									<li><a href="#" onClick="document.getElementById('logout_form').submit()">{% trans "Sign out" %}</a>
+										<form style="display:none;" id="logout_form" method="POST" action="{% url 'auth_logout' %}">
+											{% csrf_token %}
+										</form>
+									</li>
 								</ul>
 							</li>
-							<li><a href="{% url "blog_index" %}">{% trans "News" %}</a></li>
-						{% endblock %}
-					</ul>
-					<ul class="nav navbar-nav navbar-right">
-						{% if user.is_authenticated %}
-							{% with notification_count=request.user.notification_count %}
-								{% if notification_count %}
-									<li>
-										<a class="notif-link" href="{% url "my_notifications" %}" title="{% trans "Notifications" %}">
-											<span class="notification_count"><span class="bell"><i class="bell icon-bell"></i></span> {{ notification_count }}</span>
-										</a>
-									</li>
-								{% endif %}
-							{% endwith %}
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown"
-									style="background: url({{ user.get_gravatar_url }}) no-repeat left center ; padding-left:34px;">
-								{{ user.full_name }}
-								<b class="caret"></b>
-							</a>
-							<ul class="dropdown-menu">
-								<li><a href="{% url "auth_profile" %}">{% trans "Profile" %}</a></li>
-								{% if request.user.is_staff %}
-									<li><a href="{% url 'admin:index' %}">{% trans "Admin" %}</a></li>
-								{% endif %}
-								<li class="divider"></li>
-								<li><a href="#" onClick="document.getElementById('logout_form').submit()">{% trans "Sign out" %}</a>
-									<form style="display:none;" id="logout_form" method="POST" action="{% url 'auth_logout' %}">
-										{% csrf_token %}
-									</form>
-								</li>
-							</ul>
-						</li>
-						{% else %}
-							<li><a href="{% url "auth_login" %}">{% trans "Sign in" %}</a></li>
-						{% endif %}
-					</ul>
+							{% else %}
+								<li><a href="{% url "auth_login" %}">{% trans "Sign in" %}</a></li>
+							{% endif %}
+						</ul>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="container">
-			<div id="messages">
-				{% for m in messages %}
-					<div class="alert alert-block alert-{{ m.tags }} alert-dismissable">
-						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-						{{ m|safe }}
-					</div>
-				{% endfor %}
+			<div class="container">
+				<div id="messages">
+					{% for m in messages %}
+						<div class="alert alert-block alert-{{ m.tags }} alert-dismissable">
+							<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+							{{ m|safe }}
+						</div>
+					{% endfor %}
+				</div>
+				{% block content %}{% endblock %}
 			</div>
-			{% block content %}{% endblock %}
+			{% block outer_content %}{% endblock %}
 		</div>
-		{% block outer_content %}{% endblock %}
+		<div id="footer">
+			<div class="container">
+				<table><tr>
+					<td>
+						<a class="item" href="mailto:david@saradini.ch" %}">&copy; David Saradini ( backlogman.com )</a>
+						<a class="item" href="{% url "docs_file" "FAQ (english)" %}">FAQ</a>
+						<a class="item" href="/terms_conditions.html">{% trans "Terms and conditions" %}</a>
+					</td>
+					<td>
+						<span class="muted">{{ version }}</span>
+					</td>
+					<td>
+						<a href="http://www.exoscale.ch/" class="logo-exoscale" target="_blank">hosted by exo<strong>scale</strong></a>
+					</td>
+				</tr></table>
+			</div>
+		</div>
 		<div class="progress-indicator">
    			<img src="{% static "core/img/icon_loading_75x75.gif" %}" alt="" />
 		</div>

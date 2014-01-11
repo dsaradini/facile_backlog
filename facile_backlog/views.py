@@ -31,6 +31,10 @@ class HomeView(TemplateView):
 home_view = HomeView.as_view()
 
 
+def terms_conditions(request):
+    return render(request, "terms_conditions.html")
+
+
 def page_404(request):
     response = render(request, "404.html")
     response.status_code = 404
