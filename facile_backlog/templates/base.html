@@ -5,7 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" media="all" href="{% static "core/css/main.css" %}">
 		<link rel="shortcut icon" href="{% static "core/img/favicon.png" %}">
-		<meta name="apple-mobile-web-app-title" content="Facile Backlog">
+		<meta name="apple-mobile-web-app-title" content="Backlogman">
 		<meta name="keywords" content="backlog, agile, SCRUM, lean, software">
 		<meta name="description" content="Agile backlog management for software development">
 		{% render_block "meta" %}
@@ -108,7 +108,7 @@
 				<table><tr>
 					<td>
 						<a class="item" href="mailto:david@saradini.ch" %}">&copy; David Saradini ( backlogman.com )</a>
-						<a class="item" href="{% url "docs_file" "FAQ (english)" %}">FAQ</a>
+						{% if request.user.is_authenticated %}<a class="item" href="{% url "docs_file" "FAQ" %}">FAQ</a>{% endif %}
 						<a class="item" href="/terms_conditions.html">{% trans "Terms and conditions" %}</a>
 					</td>
 					<td>
