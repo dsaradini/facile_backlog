@@ -115,18 +115,23 @@ class ProjectSerializer(ProjectListSerializer):
     stats = serializers.SerializerMethodField('_stats')
     users = MemberSerializer(many=True, allow_add_remove=False)
     backlogs = InnerBacklogSerializer(many=True, allow_add_remove=False)
+    org_name = serializers.SerializerMethodField('_org_name')
 
     class Meta(ProjectListSerializer.Meta):
         model = Project
         fields = ProjectListSerializer.Meta.fields + ('available_themes',
                                                       'stats',  'users',
-                                                      'backlogs', 'lang')
+                                                      'backlogs', 'lang',
+                                                      'code', 'org_name')
 
     def _stats(self, obj):
         return obj.stats
 
     def themes(self, obj):
         return obj.all_themes
+
+    def _org_name(self, obj):
+        return obj.org.name if obj.org else None
 
 
 class OrgListSerializer(serializers.ModelSerializer):

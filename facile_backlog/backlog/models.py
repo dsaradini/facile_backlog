@@ -2,6 +2,8 @@ import re
 import datetime
 import calendar
 
+import timedelta
+
 from collections import defaultdict
 
 from django.conf import settings
@@ -383,6 +385,11 @@ class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
         _("Archived"), default=False,
         help_text=_("Archived project are not displayed anymore in planning")
     )
+    workload_total = timedelta.fields.TimedeltaField(
+        blank=True, default="",
+        verbose_name=_("Workload"),
+        help_text=_("Total workload available fo this project.")
+    )
 
     class Meta:
         ordering = ("name",)
@@ -646,6 +653,12 @@ class UserStory(models.Model):
     status = models.CharField(_("Status"), max_length=20, default=Status.TODO,
                               choices=STATUS_CHOICE)
     code = models.CharField(_("Code"), max_length=20, null=False, blank=False)
+    workload_tbc = timedelta.fields.TimedeltaField(
+        _("Workload pending"), blank=True, default=""
+    )
+    workload_estimated = timedelta.fields.TimedeltaField(
+        _("Workload estimated"), blank=True, default=""
+    )
     # DOT NOT PUT META ORDERING HERE it will break the distinct theme
     # fetching !
 
@@ -798,6 +811,20 @@ class Statistic(models.Model):
         if other:
             return other.data == self.data
         return False
+
+
+class Workload(models.Model):
+    project = models.ForeignKey(Project, verbose_name=_("Project"))
+    user_story = models.ForeignKey(UserStory, verbose_name=_("User story"),
+                                   null=True, blank=True)
+    text = models.TextField(default="", blank=True,
+                            verbose_name=_("Description"))
+    amount = timedelta.fields.TimedeltaField(verbose_name=_("Amount"))
+    when = models.DateField(default=timezone.now, verbose_name=_("Date"))
+    user = models.ForeignKey(User, verbose_name=_("User"))
+
+    class Meta:
+        ordering = ("when",)
 
 
 def build_event_kwargs(values, **kwargs):

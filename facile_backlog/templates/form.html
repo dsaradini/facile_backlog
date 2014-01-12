@@ -17,9 +17,11 @@
 			<div>{{ field|addcss:"form-control" }}</div>
 			{% if field.help_text %}<span class="text-muted">{{ field.help_text|safe }}</span>{% endif %}
 			{% if field.errors %}
+				<div class="alert alert-danger">
 				{% for error in field.errors %}
-					<span class="help-inline">{{ error|escape }}</span>
+					<li>{{ error|escape }}</li>
 				{% endfor %}
+				</div>
 			{% endif %}
 		</div>
 	{% endif %}

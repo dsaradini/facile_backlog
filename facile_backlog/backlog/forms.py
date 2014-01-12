@@ -7,7 +7,7 @@ from django.forms.widgets import TextInput
 from django.utils.translation import ugettext as _
 
 from .models import (Project, Backlog, UserStory, Organization,
-                     AuthorizationAssociation)
+                     AuthorizationAssociation, Workload)
 from ..util import setup_bootstrap_fields
 
 
@@ -50,13 +50,15 @@ class ProjectEditionForm(ModelForm):
 
     class Meta:
         model = Project
-        fields = ["name", "is_archive", "code", "lang",  "description"]
+        fields = ["name", "is_archive", "code", "lang", "workload_total",
+                  "description"]
 
 
 class ProjectCreationForm(ProjectEditionForm):
 
     class Meta(ProjectEditionForm.Meta):
-        fields = ["name", "code", "lang",  "description", "org"]
+        fields = ["name", "code", "lang", "workload_total",
+                  "description", "org"]
 
     def __init__(self, request, org, *args, **kwargs):
         super(ProjectCreationForm, self).__init__(*args, **kwargs)
@@ -137,6 +139,7 @@ class StoryEditionForm(BackMixin, ModelForm):
     class Meta:
         model = UserStory
         fields = ("as_a", "i_want_to", "so_i_can", "acceptances", "points",
+                  "workload_estimated",
                   "status", "code", "theme", "color", "comments")
 
     def clean_points(self):
@@ -151,8 +154,10 @@ class StoryCreationForm(StoryEditionForm):
 
     class Meta(StoryEditionForm.Meta):
         fields = ("as_a", "i_want_to", "so_i_can", "acceptances", "points",
+                  "workload_estimated",
                   "status", "theme", "color", "comments")
         copy_fields = ("as_a", "i_want_to", "so_i_can", "acceptances",
+                       "workload_estimated",
                        "points", "theme", "color", "comments")
 
     def __init__(self, project, backlog=None, source_story=None,
@@ -170,6 +175,7 @@ class StoryCreationForm(StoryEditionForm):
         story = super(StoryCreationForm, self).save(commit=False)
         story.project = self.project
         story.backlog = self.backlog
+        story.workload_tbc = story.workflow_estimated
         story.order = self.backlog.end_position
         if commit:
             story.save()
@@ -198,3 +204,35 @@ class AuthorizationAssociationForm(ModelForm):
     class Meta:
         model = AuthorizationAssociation
         fields = ("is_admin", )
+
+
+class WorkloadEditionForm(BackMixin, ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(WorkloadEditionForm, self).__init__(*args, **kwargs)
+        setup_bootstrap_fields(self)
+
+    class Meta:
+        model = Workload
+        fields = ["amount", "text"]
+
+
+class WorkloadCreationForm(ModelForm):
+
+    class Meta:
+        model = Workload
+        fields = ["project", "when", "amount", "text"]
+
+    def __init__(self, user, *args, **kwargs):
+        super(WorkloadCreationForm, self).__init__(*args, **kwargs)
+        self.fields['project'].label = _("Project or user story")
+        self.fields['project'].widget = TextInput()
+        self.user = user
+        setup_bootstrap_fields(self)
+
+    def save(self, commit=True):
+        workload = super(WorkloadCreationForm, self).save(commit=False)
+        workload.user = self.user
+        if commit:
+            workload.save()
+        return workload

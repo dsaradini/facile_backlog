@@ -1,0 +1,100 @@
+{% extends "project_base.html" %}
+{% load sekizai_tags %}
+
+{% block title %}{% if object %}{% trans "Edit workload" %}{% else %}{% trans "Create workload" %}{% endif %}{% endblock %}
+
+{% block content %}
+	<ul class="breadcrumb">
+		<li><a href="{% url "dashboard" %}"><i class="icon-home"></i></a>&nbsp;&nbsp;</li>
+		<li class="divider"><div class="inner"></div></li>
+		<li><a href="{% url "workload_list" %}">{% trans "Workloads" %}</a></li>
+		<li class="divider"><div class="inner"></div></li>
+		{% if object %}
+			<li class="active">{% trans "Edit workload" %}</li>
+		{% else %}
+			<li class="active"><i>{% trans "Create workload" %}</i></li>
+		{% endif %}
+	</ul>
+
+<div class="row">
+	<div class="col-md-6  col-md-offset-3 base-form">
+		{% if not object %}<h1>{% trans "Create workload" %}</h1>{% endif %}
+		<form method="post" id="edit_workload_form" action="{% if object %}{% url "workload_edit" object.pk %}{% else %}{% url "workload_add" %}{% endif %}">
+
+			{% include "form.html" %}
+			<div class="submit">
+				<input class="btn btn-success" type="submit" value="{% if object %}{% trans "Save changes" %}{% else %}{% trans "Create workload" %}{% endif %}">
+				<a class="btn btn-link" href="{% url "workload_list" %}">{% trans "Cancel" %}</a>
+			</div>
+		</form>
+	</div>
+</div>
+{% addtoblock "js" %}
+<script type="text/javascript">
+$(function() {
+	$('#id_when').datepicker().on('changeDate', function(ev) {
+  		$(this).datepicker('hide');
+	});
+	$('#id_when').on('blur', function() {
+		var $this = $(this);
+		setTimeout( function() {
+			$this.datepicker('hide');
+		},200);
+	});
+
+	var $project = $("#id_project");
+
+	$project.select2({
+		placeholder: "{% trans "Select project or user story" %}",
+    	minimumInputLength: 1,
+		quietMillis: 100,
+		ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
+			url: "{% url "api_my_projects" %}",
+			dataType: 'json',
+			data: function (term, page) {
+				return {
+					q: term, // search term
+					page_limit: 10,
+					page: page // page number
+				};
+			},
+			results: function (data, page) {
+				var more = (page * 10) < data.total
+
+				return {results: data.rows, more: more};
+			}
+		},
+		initSelection: function(element, callback) {
+			var id=$(element).val();
+			if (id !== "") {
+				$.ajax("/api/projects/"+id+"/", {
+					dataType: "json"
+            	}).done(function(data) { callback(data); });
+			}
+        },
+		formatResult: function(data){
+			return "<div><span class='text-muted'>["+data.code+"]</span> <b>"+data.name+"</b> - "+data.org_name+"</div>"
+		},
+		formatSelection: function(data){
+			return "["+data.code+"] "+data.name+" - "+data.org_name
+		},
+		dropdownCssClass: "bigdrop", // apply css that makes the dropdown taller
+		escapeMarkup: function (m) { return m; } // we do not want to escape markup since we are displaying html
+	});
+	$project.on("change", function(){
+		setTimeout( function() {
+			$('#id_amount').select();
+		},10);
+	});
+	{% if project %}
+		$('#id_amount').select();
+	{% else %}
+		if (!$project.val()) {
+			$project.select2("open");
+		}
+	{% endif %}
+
+});
+</script>
+{% endaddtoblock %}
+{% endblock %}

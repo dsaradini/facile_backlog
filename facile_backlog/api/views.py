@@ -8,7 +8,9 @@ from rest_framework.permissions import BasePermission
 from rest_framework.throttling import UserRateThrottle
 
 from django.conf import settings
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import transaction
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect
 
@@ -409,4 +411,34 @@ def story_change_status(request, story_id):
     )
     return Response({
         'ok': True
+    }, content_type="application/json", status=200)
+
+
+@api_view(["GET"])
+@parser_classes((JSONParser,))
+@throttle_classes([GeneralUserThrottle])
+def my_projects(request):
+    queryset = Project.my_projects(request.user)
+
+    page_limit = int(request.GET.get('page_limit', 10))
+    page = int(request.GET.get('page', 0))
+
+    q = request.GET.get('q', "")
+    queryset = queryset.filter(
+        Q(name__icontains=q) | Q(code__icontains=q) | Q(org__name__icontains=q)
+    )
+    paginator = Paginator(queryset, page_limit)
+    try:
+        result = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        result = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        result = paginator.page(paginator.num_pages)
+    return Response({
+        'rows': [ProjectSerializer(p,
+                                   context={'request': request}).data
+                 for p in result],
+        'total': queryset.count()
     }, content_type="application/json", status=200)

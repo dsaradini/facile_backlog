@@ -15,7 +15,9 @@ from .views import (project_detail, project_create, project_edit,
                     org_backlog_delete, org_stories, project_backlog_archive,
                     org_backlog_archive, org_invite_user, org_auth_delete,
                     org_auth_edit, org_backlog_restore, project_gen_stats,
-                    project_backlog_restore, export_stories, project_restore)
+                    project_backlog_restore, export_stories, project_restore,
+                    workload_list, workload_add, workload_edit,
+                    workload_delete)
 
 # root
 urlpatterns = patterns(
@@ -197,6 +199,27 @@ urlpatterns += patterns(
     url(r'^backlog/(?P<backlog_id>[\d]+)/priority_view/$',
         backlog_detail,
         name='backlog_detail'),
+)
+
+#workloads
+urlpatterns += patterns(
+    '',
+
+    url(r'^workloads/$',
+        workload_list,
+        name='workload_list'),
+
+    url(r'^workloads/add/$',
+        workload_add,
+        name='workload_add'),
+
+    url(r'^workloads/(?P<id>[\d]+)/edit/$',
+        workload_edit,
+        name='workload_edit'),
+
+    url(r'^workloads/(?P<id>[\d]+)/delete/$',
+        workload_delete,
+        name='workload_delete'),
 )
 
 # utilities

@@ -16,18 +16,20 @@ from django.template import loader
 from django.template.context import RequestContext
 from django.utils.cache import patch_cache_control
 from django.utils.translation import ugettext as _
+from django.utils import timezone
 from django.views import generic
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect
 
 from .models import (Project, Backlog, UserStory, AuthorizationAssociation,
                      create_event, Organization, status_for, STATUS_COLORS,
-                     Status)
+                     Status, Workload)
 from .forms import (ProjectCreationForm, ProjectEditionForm,
                     BacklogCreationForm, BacklogEditionForm,
                     StoryEditionForm, StoryCreationForm, InviteUserForm,
                     OrgCreationForm, OrgEditionForm,
-                    AuthorizationAssociationForm)
+                    AuthorizationAssociationForm,
+                    WorkloadCreationForm, WorkloadEditionForm)
 
 
 from ..core.models import User
@@ -1831,3 +1833,87 @@ def invitation_decline(request, auth_id):
         auth.delete()
     messages.info(request, _("Invitation has been declined"))
     return redirect(reverse("my_notifications"))
+
+
+class Workloads(generic.TemplateView):
+    template_name = "workload/workload_list.html"
+
+    def get_context_data(self, **kwargs):
+        data = super(Workloads, self).get_context_data(**kwargs)
+        data['workloads'] = Workload.objects.filter(
+            user=self.request.user
+        )
+        data['today'] = timezone.now()
+        return data
+workload_list = login_required(Workloads.as_view())
+
+
+class WorkloadCreate(generic.CreateView):
+    admin_only = True
+    template_name = "workload/workload_form.html"
+    model = Workload
+    form_class = WorkloadCreationForm
+
+    def get_form_kwargs(self):
+        kwargs = super(WorkloadCreate, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkloadCreate, self).get_context_data(**kwargs)
+        return context
+
+    def form_valid(self, form):
+        self.object = form.save()
+        messages.success(self.request,
+                         _("Workload successfully created."))
+        return redirect(reverse("workload_list"))
+workload_add = login_required(WorkloadCreate.as_view())
+
+
+class WorkloadMixin(BackMixin):
+    def dispatch(self, request, *args, **kwargs):
+        workload_id = kwargs['id']
+        self.workload = get_object_or_404(Workload, pk=workload_id)
+        if self.workload.user != request.user:
+            raise Http404('No matches found.')
+        self.request = request
+        return super(WorkloadMixin, self).dispatch(request, *args, **kwargs)
+
+    def pre_dispatch(self, request, **kwargs):
+        pass
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkloadMixin, self).get_context_data(**kwargs)
+        context['workload'] = self.workload
+        return context
+
+
+class WorkloadDelete(WorkloadMixin, generic.DeleteView):
+    template_name = "workload/workload_confirm_delete.html"
+
+    def get_object(self):
+        return self.workload
+
+    def delete(self, request, *args, **kwargs):
+        self.workload.delete()
+        messages.success(request,
+                         _("Workload successfully deleted."))
+        return redirect(reverse('workload_list'))
+workload_delete = login_required(WorkloadDelete.as_view())
+
+
+class WorkloadEdit(WorkloadMixin, generic.UpdateView):
+    admin_only = True
+    template_name = "workload/workload_form.html"
+    form_class = WorkloadEditionForm
+
+    def get_object(self):
+        return self.workload
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request,
+                         _("Workload successfully updated."))
+        return redirect(reverse('workload_list'))
+workload_edit = login_required(WorkloadEdit.as_view())

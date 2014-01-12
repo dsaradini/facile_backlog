@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import (Project, Backlog, UserStory, AuthorizationAssociation,
-                     Event, Organization, Statistic)
+                     Event, Organization, Statistic, Workload)
 
 
 class OrganizationAdmin(admin.ModelAdmin):
@@ -85,6 +85,12 @@ class StatisticAdmin(admin.ModelAdmin):
         return qs.prefetch_related("project")
 
 
+class WorloadAdmin(admin.ModelAdmin):
+    list_display = ("project", "user", "amount", "when")
+    search_fields = ("project__name", "user_full_name", "user_email")
+    readonly_fields = ("project", "user", "amount", "when")
+
+
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Backlog, BacklogAdmin)
 admin.site.register(UserStory, UserStoryAdmin)
@@ -92,3 +98,4 @@ admin.site.register(AuthorizationAssociation, AuthorizationAssociationAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(Statistic, StatisticAdmin)
+admin.site.register(Workload, WorloadAdmin)

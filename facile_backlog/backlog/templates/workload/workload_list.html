@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load timed %}
+
+{% block content %}
+	{% regroup workloads by when as workload_by_date %}
+
+	{% for workload in workload_by_date %}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+					<h4>{{ workload.grouper }}
+						{% if workload.grouper.day == today.day %}<span class="label label-primary">{% trans "Today" %}</span>{% endif %}
+						<a href="{% url "workload_add" %}" class="pull-right btn btn-xs btn-success"><i class="icon-plus-sign"></i></a>
+					</h4>
+			</div>
+			<ul class="list-group">
+			{% for item in workload.list %}
+			 	<li class="list-group-item">
+					<span class="badge">{{ item.amount|timedelta }}</span>
+					{{ item.project }}
+					<a href="{% url "workload_edit" item.pk %}">{% trans "Edit" %}</a>
+					<a href="{% url "workload_delete" item.pk %}"><i class="icon-remove"></i></a>
+				</li>
+			{% endfor %}
+    		</ul>
+			<div class="panel-footer">
+				&nbsp;<span class="pull-right">Total: <span class="badge"><b>{{ workload.list|total:"amount"|timedelta }}</b></span></span>
+			</div>
+    	</div>
+	{% endfor %}
+
+
+{% endblock %}
