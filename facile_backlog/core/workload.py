@@ -19,7 +19,6 @@ def to_string(total_sec, by_day=0, display="long", sep=", "):
     minutes = seconds / 60
     seconds = seconds % 60
 
-
     if display == 'minimal':
         words = ["d", "h", "m", "s"]
     elif display == 'short':

@@ -1,5 +1,3 @@
-import datetime
-
 from django.template import Library
 from ..workload import to_string
 
@@ -29,4 +27,5 @@ def timedsign(obj):
     elif obj > 0:
         return "+"
     return ""
+
 

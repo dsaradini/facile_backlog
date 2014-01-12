@@ -432,6 +432,7 @@ def user_story_data(story):
         'id': "userstory.{0}".format(story.pk)
     }
 
+
 @api_view(["GET"])
 @parser_classes((JSONParser,))
 @throttle_classes([GeneralUserThrottle])

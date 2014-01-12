@@ -16,6 +16,7 @@ from ..util import setup_bootstrap_fields
 from widgets import WorkloadWidget
 from workload import parse
 
+
 class UserCreationForm(forms.ModelForm):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
 

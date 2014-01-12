@@ -17,7 +17,6 @@ from django.utils import timezone
 from json_field import JSONField
 
 from ..util import gravatar_url
-from ..core.templatetags.timed import totaltime
 
 User = settings.AUTH_USER_MODEL
 
@@ -573,14 +572,14 @@ class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
         if not self.workload_effective:
             return 0
         return (self._points_completed * self.workload_by_day) / \
-               self.workload_effective
+            self.workload_effective
 
     @property
     def needed_velocity(self):
         if not self.workload_remaining:
             return 0
         return (self.points_remaining * self.workload_by_day) / \
-               self.workload_remaining
+            self.workload_remaining
 
     @property
     def active_users(self):

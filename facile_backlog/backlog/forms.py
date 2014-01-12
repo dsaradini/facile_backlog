@@ -11,7 +11,6 @@ from django.utils.translation import ugettext as _
 from .models import (Project, Backlog, UserStory, Organization,
                      AuthorizationAssociation, Workload)
 from ..util import setup_bootstrap_fields
-from ..core import workload
 from ..core.forms import WorkloadFormField
 
 
