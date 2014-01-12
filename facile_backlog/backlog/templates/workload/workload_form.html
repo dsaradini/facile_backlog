@@ -20,7 +20,6 @@
 	<div class="col-md-6  col-md-offset-3 base-form">
 		{% if not object %}<h1>{% trans "Create workload" %}</h1>{% endif %}
 		<form method="post" id="edit_workload_form" action="{% if object %}{% url "workload_edit" object.pk %}{% else %}{% url "workload_add" %}{% endif %}">
-
 			{% include "form.html" %}
 			<div class="submit">
 				<input class="btn btn-success" type="submit" value="{% if object %}{% trans "Save changes" %}{% else %}{% trans "Create workload" %}{% endif %}">
@@ -32,7 +31,9 @@
 {% addtoblock "js" %}
 <script type="text/javascript">
 $(function() {
-	$('#id_when').datepicker().on('changeDate', function(ev) {
+	$('#id_when').datepicker({
+		format: "yyyy-mm-dd"
+	}).on('changeDate', function(ev) {
   		$(this).datepicker('hide');
 	});
 	$('#id_when').on('blur', function() {
@@ -42,46 +43,37 @@ $(function() {
 		},200);
 	});
 
-	var $project = $("#id_project");
+	var $source = $("#id_source");
 
-	$project.select2({
+	var server_data = null
+	jQuery.ajax({
+         url:    '{% url "api_workload_sources" %}',
+         success: function(data) {
+                      server_data = data.results
+                  },
+         async:   false
+    });
+
+	var format_project = function(data) {
+		if (data.type == 'org') {
+			return "<div>"+data.html_logo+" <b>"+data.name+"</b></div>"
+		} else if (data.type == 'sep') {
+			return "<div><b>"+data.title+"</b></div>"
+		} else {
+			return "<b class='select2-indent text-muted'>["+data.code+"]</b> "+data.name+""
+		}
+	};
+
+	$source.select2({
 		placeholder: "{% trans "Select project or user story" %}",
-    	minimumInputLength: 1,
-		quietMillis: 100,
-		ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
-			url: "{% url "api_my_projects" %}",
-			dataType: 'json',
-			data: function (term, page) {
-				return {
-					q: term, // search term
-					page_limit: 10,
-					page: page // page number
-				};
-			},
-			results: function (data, page) {
-				var more = (page * 10) < data.total
-
-				return {results: data.rows, more: more};
-			}
-		},
-		initSelection: function(element, callback) {
-			var id=$(element).val();
-			if (id !== "") {
-				$.ajax("/api/projects/"+id+"/", {
-					dataType: "json"
-            	}).done(function(data) { callback(data); });
-			}
-        },
-		formatResult: function(data){
-			return "<div><span class='text-muted'>["+data.code+"]</span> <b>"+data.name+"</b> - "+data.org_name+"</div>"
-		},
-		formatSelection: function(data){
-			return "["+data.code+"] "+data.name+" - "+data.org_name
-		},
+    	minimumInputLength: 0,
+		data: server_data,
+		formatResult: format_project,
+		formatSelection: format_project,
 		dropdownCssClass: "bigdrop", // apply css that makes the dropdown taller
 		escapeMarkup: function (m) { return m; } // we do not want to escape markup since we are displaying html
 	});
-	$project.on("change", function(){
+	$source.on("change", function(){
 		setTimeout( function() {
 			$('#id_amount').select();
 		},10);
@@ -89,8 +81,8 @@ $(function() {
 	{% if project %}
 		$('#id_amount').select();
 	{% else %}
-		if (!$project.val()) {
-			$project.select2("open");
+		if (!$source.val()) {
+			$source.select2("open");
 		}
 	{% endif %}
 

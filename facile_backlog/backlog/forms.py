@@ -1,3 +1,5 @@
+import re
+
 from django.core.exceptions import ValidationError
 from django.forms.fields import CharField
 from django.forms.models import ModelForm
@@ -9,6 +11,8 @@ from django.utils.translation import ugettext as _
 from .models import (Project, Backlog, UserStory, Organization,
                      AuthorizationAssociation, Workload)
 from ..util import setup_bootstrap_fields
+from ..core import workload
+from ..core.forms import WorkloadFormField
 
 
 class BackMixin(object):
@@ -41,17 +45,35 @@ class OrgCreationForm(OrgEditionForm):
 
 
 class ProjectEditionForm(ModelForm):
+    workload_total = WorkloadFormField(
+        required=False,
+        label=_("Workload total"),
+        help_text=_("Total time allowed for this project")
+    )
+    workload_by_day = WorkloadFormField(
+        required=False,
+        label=_("Workload by day"),
+        help_text=_("Workload representing a day of work on "
+                    "this project (8 hours by default)")
+    )
 
     def __init__(self, *args, **kwargs):
         super(ProjectEditionForm, self).__init__(*args, **kwargs)
         self.fields['name'].widget.attrs['autofocus'] = ''
         self.fields['name'].widget.attrs["autocomplete"] = 'off'
+        self.fields['workload_total'].set_by_day(
+            self.instance.workload_by_day
+        )
         setup_bootstrap_fields(self)
 
     class Meta:
         model = Project
-        fields = ["name", "is_archive", "code", "lang", "workload_total",
-                  "description"]
+        fields = ["name", "is_archive", "code", "lang", "workload_by_day",
+                  "workload_total", "description"]
+
+    def clean(self):
+        data = super(ProjectEditionForm, self).clean()
+        return data
 
 
 class ProjectCreationForm(ProjectEditionForm):
@@ -111,6 +133,17 @@ def validate_points(value):
 
 
 class StoryEditionForm(BackMixin, ModelForm):
+    workload_estimated = WorkloadFormField(
+        required=False,
+        label=_("Workload estimated"),
+        help_text=_("Workload estimated to complete this story, "
+                    "should not be changed afterwards")
+    )
+    workload_tbc = WorkloadFormField(
+        required=False,
+        label=_("Workload pending"),
+        help_text=_("Workload needed to complete this story")
+    )
     points = CharField(label=_("Points"), help_text=_("Estimated points"),
                        required=False, validators=[validate_points])
 
@@ -128,7 +161,13 @@ class StoryEditionForm(BackMixin, ModelForm):
             "- user story readable by human")
         self.fields['acceptances'].help_text = _(
             "Use markdown list format: line with '-' in front")
-
+        if self.instance.project_id:
+            self.fields['workload_estimated'].set_by_day(
+                self.instance.project.workload_by_day
+            )
+            self.fields['workload_tbc'].set_by_day(
+                self.instance.project.workload_by_day
+            )
         if self.instance:
             self.initial['points'] = "" if self.instance.points == -1 \
                 else self.instance.points
@@ -139,7 +178,7 @@ class StoryEditionForm(BackMixin, ModelForm):
     class Meta:
         model = UserStory
         fields = ("as_a", "i_want_to", "so_i_can", "acceptances", "points",
-                  "workload_estimated",
+                  "workload_estimated", "workload_tbc",
                   "status", "code", "theme", "color", "comments")
 
     def clean_points(self):
@@ -170,12 +209,15 @@ class StoryCreationForm(StoryEditionForm):
                     self.initial[f] = val
         self.project = project
         self.backlog = backlog
+        self.fields['workload_estimated'].set_by_day(
+            self.project.workload_by_day
+        )
 
     def save(self, commit=True):
         story = super(StoryCreationForm, self).save(commit=False)
         story.project = self.project
         story.backlog = self.backlog
-        story.workload_tbc = story.workflow_estimated
+        story.workload_tbc = story.workload_estimated
         story.order = self.backlog.end_position
         if commit:
             story.save()
@@ -207,6 +249,11 @@ class AuthorizationAssociationForm(ModelForm):
 
 
 class WorkloadEditionForm(BackMixin, ModelForm):
+    amount = WorkloadFormField(
+        required=True,
+        label=_("Amount"),
+        help_text=_("Time spent on this task")
+    )
 
     def __init__(self, *args, **kwargs):
         super(WorkloadEditionForm, self).__init__(*args, **kwargs)
@@ -217,22 +264,56 @@ class WorkloadEditionForm(BackMixin, ModelForm):
         fields = ["amount", "text"]
 
 
+PROJECT_REG = r"^project.(?P<pk>[\d]+)$"
+USER_STORY_REG = r"^userstory.(?P<pk>[\d]+)$"
+
+
 class WorkloadCreationForm(ModelForm):
+    source = CharField(widget=TextInput(), required=True)
+    amount = WorkloadFormField(required=True)
 
     class Meta:
         model = Workload
-        fields = ["project", "when", "amount", "text"]
+        fields = ["source", "when", "amount", "text"]
+
+    def clean_source(self):
+        source = self.cleaned_data['source']
+        self.project = None
+        self.user_story = None
+        m = re.match(PROJECT_REG, source)
+        if m:
+            project = Project.my_projects(self.user).get(pk=m.group('pk'))
+            self.project = project
+            return source
+        m = re.match(USER_STORY_REG, source)
+        if m:
+            story = UserStory.objects.get(pk=m.group('pk'))
+            if not story.can_read(self.user):
+                raise ValidationError(_('Invalid user story'),
+                                      code='unauthorized')
+            self.project = story.project
+            self.user_story = story
+            return source
+        raise ValidationError(_('Invalid workload source'), code='invalid')
 
     def __init__(self, user, *args, **kwargs):
         super(WorkloadCreationForm, self).__init__(*args, **kwargs)
-        self.fields['project'].label = _("Project or user story")
-        self.fields['project'].widget = TextInput()
+        self.fields['source'].label = _("Project or user story")
+        self.fields['when'].help_text = _(
+            "Date format yyyy-mm-dd (i.e.: 2012-07-23)"
+        )
+        self.fields['when'].input_formats = ['%Y-%m-%d']
+        self.fields['amount'].help_text = _(
+            u"1d, 1h, 1.5h, 1:30, 15m, 90 min"
+        )
         self.user = user
         setup_bootstrap_fields(self)
 
     def save(self, commit=True):
         workload = super(WorkloadCreationForm, self).save(commit=False)
         workload.user = self.user
+        workload.project = self.project
+        workload.user_story = self.user_story
         if commit:
             workload.save()
         return workload

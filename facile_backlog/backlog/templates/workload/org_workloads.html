@@ -1,0 +1,77 @@
+{% extends "project_base.html" %}
+{% load staticfiles sekizai_tags markup acl humanize timed %}
+
+{% block title %}{% trans "Organization" %} &mdash; {{ organization.name }} &mdash; {% trans "Workloads" %}{% endblock %}
+{% block content %}
+{% addtoblock "js" %}
+<script type="text/javascript">
+$(function() {
+	$(".show-enabler").click(function(){
+		var $this = $(this);
+		var target = $(this).attr("show-target");
+		$(target).show("fast");
+		$this.hide();
+	})
+});
+</script>
+{% endaddtoblock %}
+
+	{% include "backlog/_org_head.html" %}
+
+	<ul class="nav nav-pills nav-crumb">
+		<li><a href="{% url "org_detail" organization.pk %}">{% trans "General" %}</a></li>
+		<li><a href="{% url "org_sprint_planning" organization.pk %}">{% trans "Sprint planning" %} </a></li>
+		<li><a href="{% url "org_users" organization.pk %}">{% trans "Members" %} </a>
+		<li><a href="{% url "org_stories" organization.pk %}">{% trans "Stories" %}</a></li>
+		<li class="active"><a href="{% url "org_workloads" organization.pk %}">{% trans "Workload" %}</a></li>
+	</ul>
+
+	<div class="org-head">
+		<h1 class="inline-title">{{ organization.get_big_logo }} {{ organization.name }}</h1>
+	</div>
+
+<div>
+	{% for project in projects %}
+		<div class="panel {% if project.workload_remaining < 0 %}panel-danger{% else %}panel-default{% endif %}">
+			<div class="panel-heading">
+				<b><i class="icon-book"></i> <a href="{% url "project_detail" project.pk %}">{{ project.name }}</a></b>
+				<span class="text-muted">
+				{% if project.main_backlog %}
+					&nbsp;[ <a href="{% url "backlog_detail" project.main_backlog.pk %}"><icon class="icon-list-ul"></icon></a> ]
+				{% endif %}
+				</span>
+			</div>
+			<ul class="list-group">
+				<li class="list-group-item">
+					<span class="pull-right label label-inverse">{{ project.workload_by_day|timedelta }} / {% trans "day" %}</span>
+					{% trans "Total" %}: <b>{{ project.workload_total|timedelta:project.workload_by_day }}</b>
+					<i class="icon-circle text-muted"></i> {{ project.points_total }}
+				</li>
+				<li class="list-group-item">{% trans "Effective" %}:
+					{% for u in project.active_users %}
+						<span class="pull-right" title="{{ u.full_name }}">&nbsp;<img src="{{ u.get_mini_gravatar_url }}"></span>
+					{% endfor %}
+
+					<b>{{ project.workload_effective|timedelta:project.workload_by_day }}</b>
+					<i class="icon-circle text-muted"></i> {{ project.points_completed }}
+				</li>
+				<li class="list-group-item">{% trans "Current velocity" %}:
+					<b>{{ project.velocity|stringformat:".2f" }} {% trans "pts/d" %}</b>
+					<br>
+					{% trans "Needed" %}: <b>{{ project.needed_velocity|stringformat:".2f" }} {% trans "pts/d" %}</b>
+					{% if project.velocity < project.needed_velocity %}
+						<span class="pull-right label label-danger">{% trans "You are in trouble" %}</span>
+					{% else %}
+						<span class="pull-right label label-success">{% trans "So far so good" %}</span>
+					{% endif %}
+				</li>
+				<li class="list-group-item">{% trans "To complete" %}: <b>{{ project.workload_pending|timedelta:project.workload_by_day }}</b></li>
+				<li class="list-group-item">{% trans "Remaining" %}:
+					<b>{{ project.workload_remaining|timedelta:project.workload_by_day }}</b>
+					<i class="icon-circle text-muted"></i> {{ project.points_remaining }}
+				</li>
+			</ul>
+		</div>
+	{% endfor %}
+</div>
+{% endblock %}

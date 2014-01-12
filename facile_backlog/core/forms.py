@@ -13,6 +13,8 @@ from password_reset.forms import (PasswordRecoveryForm as BaseRecovery,
 from .models import User
 from ..util import setup_bootstrap_fields
 
+from widgets import WorkloadWidget
+from workload import parse
 
 class UserCreationForm(forms.ModelForm):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
@@ -122,3 +124,33 @@ class ChangeApiKeyForm(forms.Form):
             token.delete()
         Token.objects.get_or_create(user=self.user)
         return created
+
+
+class WorkloadFormField(forms.CharField):
+
+    default_error_messages = {
+        'invalid': _('Enter a valid time span: e.g. '
+                     '"4 hours, 2 minutes"')
+    }
+
+    def __init__(self, *args, **kwargs):
+        self.by_day = 0
+        defaults = {'widget': WorkloadWidget}
+        defaults.update(kwargs)
+        super(WorkloadFormField, self).__init__(*args, **defaults)
+
+    def set_by_day(self, value):
+        self.by_day = value
+        self.widget.set_by_day(value)
+
+    def clean(self, value):
+        super(WorkloadFormField, self).clean(value)
+        if value == '' and not self.required:
+            return 0
+        try:
+            return parse(
+                value, self.by_day
+            )
+        except TypeError:
+            raise forms.ValidationError(self.error_messages['invalid'],
+                                        code='invalid')

@@ -2,14 +2,13 @@ import re
 import datetime
 import calendar
 
-import timedelta
-
 from collections import defaultdict
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.core.validators import EmailValidator, URLValidator
 from django.db import models, transaction
+from django.db.models import Sum
 from django.db.models.loading import get_model
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
@@ -18,7 +17,7 @@ from django.utils import timezone
 from json_field import JSONField
 
 from ..util import gravatar_url
-
+from ..core.templatetags.timed import totaltime
 
 User = settings.AUTH_USER_MODEL
 
@@ -385,10 +384,17 @@ class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
         _("Archived"), default=False,
         help_text=_("Archived project are not displayed anymore in planning")
     )
-    workload_total = timedelta.fields.TimedeltaField(
-        blank=True, default="",
+
+    # workload in seconds
+    workload_total = models.PositiveIntegerField(
+        blank=True, null=True,
         verbose_name=_("Workload"),
-        help_text=_("Total workload available fo this project.")
+        help_text=_("Total workload available for this project.")
+    )
+    workload_by_day = models.PositiveIntegerField(
+        default=(8 * 60 * 60),
+        verbose_name=_("Workload per day"),
+        help_text=_("Number of workload unit in a day.")
     )
 
     class Meta:
@@ -516,6 +522,74 @@ class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
     def restore(self):
         self.is_archive = False
         self.save(update_fields=("is_archive",))
+
+    @property
+    def workload_effective(self):
+        if not hasattr(self, "_workload_effective"):
+            self._workload_effective = self.workloads.aggregate(
+                Sum('amount')).get('amount__sum', 0) or 0
+        return self._workload_effective
+
+    @property
+    def workload_pending(self):
+        if not hasattr(self, "_workload_pending"):
+            self._workload_pending = self.stories.aggregate(
+                Sum('workload_tbc')).get('workload_tbc__sum', None)
+        return self._workload_pending
+
+    @property
+    def workload_remaining(self):
+        total = self.workload_total or 0
+        tbc = self.workload_pending
+        return total - tbc - self.workload_effective
+
+    @property
+    def points_total(self):
+        if not hasattr(self, "_points_total"):
+            self._points_total = self.stories.aggregate(
+                Sum('points')).get('points__sum', 0) or 0
+        return self._points_total
+
+    @property
+    def points_completed(self):
+        if not hasattr(self, "_points_completed"):
+            self._points_completed = self.stories.filter(
+                status__in=(Status.ACCEPTED, Status.COMPLETED)
+            ).aggregate(
+                Sum('points')).get('points__sum', 0) or 0
+        return self._points_completed
+
+    @property
+    def points_remaining(self):
+        if not hasattr(self, "_points_remaining"):
+            self._points_remaining = self.stories.filter(
+                status__in=(Status.TODO, Status.IN_PROGRESS)
+            ).aggregate(
+                Sum('points')).get('points__sum', 0) or 0
+        return self._points_remaining
+
+    @property
+    def velocity(self):
+        if not self.workload_effective:
+            return 0
+        return (self._points_completed * self.workload_by_day) / \
+               self.workload_effective
+
+    @property
+    def needed_velocity(self):
+        if not self.workload_remaining:
+            return 0
+        return (self.points_remaining * self.workload_by_day) / \
+               self.workload_remaining
+
+    @property
+    def active_users(self):
+        if not hasattr(self, "_active_users"):
+            self._active_users = [
+                wl.user for wl in self.workloads.order_by(
+                    "user").distinct("user")
+            ]
+        return self._active_users
 
 
 class Backlog(StatsMixin, WithThemeMixin, models.Model):
@@ -653,11 +727,11 @@ class UserStory(models.Model):
     status = models.CharField(_("Status"), max_length=20, default=Status.TODO,
                               choices=STATUS_CHOICE)
     code = models.CharField(_("Code"), max_length=20, null=False, blank=False)
-    workload_tbc = timedelta.fields.TimedeltaField(
-        _("Workload pending"), blank=True, default=""
+    workload_tbc = models.PositiveIntegerField(
+        _("Workload pending"), blank=True, null=True, default=None
     )
-    workload_estimated = timedelta.fields.TimedeltaField(
-        _("Workload estimated"), blank=True, default=""
+    workload_estimated = models.PositiveIntegerField(
+        _("Workload estimated"), blank=True, null=True, default=None
     )
     # DOT NOT PUT META ORDERING HERE it will break the distinct theme
     # fetching !
@@ -679,11 +753,16 @@ class UserStory(models.Model):
             if not self.code:
                 self.code = self.get_initial_code()
 
+    def setup_tbc(self):
+        if self.status in [Status.ACCEPTED, Status.COMPLETED, Status.REJECTED]:
+            self.workload_tbc = 0
+
     def get_initial_code(self):
         return u"{0}-{1}".format(self.project.code, self.number)
 
     def save(self, *args, **kwargs):
         self.setup_number()
+        self.setup_tbc()
         return super(UserStory, self).save(*args, **kwargs)
 
     @property
@@ -814,17 +893,18 @@ class Statistic(models.Model):
 
 
 class Workload(models.Model):
-    project = models.ForeignKey(Project, verbose_name=_("Project"))
+    project = models.ForeignKey(Project, verbose_name=_("Project"),
+                                related_name="workloads")
     user_story = models.ForeignKey(UserStory, verbose_name=_("User story"),
                                    null=True, blank=True)
     text = models.TextField(default="", blank=True,
                             verbose_name=_("Description"))
-    amount = timedelta.fields.TimedeltaField(verbose_name=_("Amount"))
+    amount = models.PositiveIntegerField(verbose_name=_("Amount"))
     when = models.DateField(default=timezone.now, verbose_name=_("Date"))
     user = models.ForeignKey(User, verbose_name=_("User"))
 
     class Meta:
-        ordering = ("when",)
+        ordering = ("-when",)
 
 
 def build_event_kwargs(values, **kwargs):

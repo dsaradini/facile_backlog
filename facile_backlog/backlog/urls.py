@@ -17,7 +17,7 @@ from .views import (project_detail, project_create, project_edit,
                     org_auth_edit, org_backlog_restore, project_gen_stats,
                     project_backlog_restore, export_stories, project_restore,
                     workload_list, workload_add, workload_edit,
-                    workload_delete)
+                    workload_delete, org_workloads)
 
 # root
 urlpatterns = patterns(
@@ -220,6 +220,9 @@ urlpatterns += patterns(
     url(r'^workloads/(?P<id>[\d]+)/delete/$',
         workload_delete,
         name='workload_delete'),
+
+    url(r'^orgs/(?P<org_id>[\d]+)/workloads/$', org_workloads,
+        name='org_workloads'),
 )
 
 # utilities

@@ -8,11 +8,10 @@ from rest_framework.permissions import BasePermission
 from rest_framework.throttling import UserRateThrottle
 
 from django.conf import settings
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import transaction
-from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect
+from django.utils.translation import ugettext as _
 
 from .notify import notify_changes
 
@@ -414,31 +413,69 @@ def story_change_status(request, story_id):
     }, content_type="application/json", status=200)
 
 
+def project_data(project):
+    return {
+        'type': "project",
+        'text': project.name,
+        'name': project.name,
+        'code': project.code,
+        'id': "project.{0}".format(project.pk)
+    }
+
+
+def user_story_data(story):
+    return {
+        'type': "userstory",
+        'text': story.text,
+        'name': story.text,
+        'code': story.code,
+        'id': "userstory.{0}".format(story.pk)
+    }
+
 @api_view(["GET"])
 @parser_classes((JSONParser,))
 @throttle_classes([GeneralUserThrottle])
-def my_projects(request):
-    queryset = Project.my_projects(request.user)
-
-    page_limit = int(request.GET.get('page_limit', 10))
-    page = int(request.GET.get('page', 0))
-
-    q = request.GET.get('q', "")
-    queryset = queryset.filter(
-        Q(name__icontains=q) | Q(code__icontains=q) | Q(org__name__icontains=q)
+def workload_sources(request):
+    my_projects = Project.my_projects(request.user).filter(
+        is_archive=False, org=None
     )
-    paginator = Paginator(queryset, page_limit)
-    try:
-        result = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        result = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        result = paginator.page(paginator.num_pages)
+    my_orgs = Organization.my_organizations(request.user)
+    my_user_stories = []
+    for org in my_orgs:
+        if org.main_backlog:
+            for story in org.main_backlog.stories.all():
+                my_user_stories.append(story)
+
+    for p in my_projects:
+        if p.main_backlog:
+            for story in p.main_backlog.stories.all():
+                my_user_stories.append(story)
+
+    rows = []
+    for org in my_orgs:
+        rows.append({
+            'type': 'org',
+            'name': org.name,
+            'html_logo': org.get_mini_logo()
+        })
+        for p in org.projects.all():
+            rows.append(project_data(p))
+    rows.append({
+        'type': 'sep',
+        'title': _("Projects"),
+    })
+
+    for p in my_projects:
+        rows.append(project_data(p))
+
+    rows.append({
+        'type': 'sep',
+        'title': _("User stories"),
+    })
+
+    for story in my_user_stories:
+        rows.append(user_story_data(story))
+
     return Response({
-        'rows': [ProjectSerializer(p,
-                                   context={'request': request}).data
-                 for p in result],
-        'total': queryset.count()
+        'results': rows
     }, content_type="application/json", status=200)

@@ -1842,7 +1842,7 @@ class Workloads(generic.TemplateView):
         data = super(Workloads, self).get_context_data(**kwargs)
         data['workloads'] = Workload.objects.filter(
             user=self.request.user
-        )
+        )[:200]
         data['today'] = timezone.now()
         return data
 workload_list = login_required(Workloads.as_view())
@@ -1854,14 +1854,17 @@ class WorkloadCreate(generic.CreateView):
     model = Workload
     form_class = WorkloadCreationForm
 
+    def dispatch(self, request, *args, **kwargs):
+        return super(WorkloadCreate, self).dispatch(request, *args, **kwargs)
+
     def get_form_kwargs(self):
         kwargs = super(WorkloadCreate, self).get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
 
     def get_context_data(self, **kwargs):
-        context = super(WorkloadCreate, self).get_context_data(**kwargs)
-        return context
+        d = super(WorkloadCreate, self).get_context_data(**kwargs)
+        return d
 
     def form_valid(self, form):
         self.object = form.save()
@@ -1917,3 +1920,17 @@ class WorkloadEdit(WorkloadMixin, generic.UpdateView):
                          _("Workload successfully updated."))
         return redirect(reverse('workload_list'))
 workload_edit = login_required(WorkloadEdit.as_view())
+
+
+class OrgWorkloads(OrgMixin, generic.TemplateView):
+    admin_only = True
+    template_name = "workload/org_workloads.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(OrgWorkloads, self).get_context_data(**kwargs)
+        context['organization'] = self.organization
+        context['projects'] = self.organization.active_projects.filter(
+            workload_total__gt=0
+        )
+        return context
+org_workloads = login_required(OrgWorkloads.as_view())

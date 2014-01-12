@@ -11,10 +11,10 @@ class Migration(SchemaMigration):
         # Adding model 'Workload'
         db.create_table(u'backlog_workload', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('project', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['backlog.Project'])),
+            ('project', self.gf('django.db.models.fields.related.ForeignKey')(related_name='workloads', to=orm['backlog.Project'])),
             ('user_story', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['backlog.UserStory'], null=True, blank=True)),
             ('text', self.gf('django.db.models.fields.TextField')(default='', blank=True)),
-            ('amount', self.gf('timedelta.fields.TimedeltaField')()),
+            ('amount', self.gf('django.db.models.fields.PositiveIntegerField')()),
             ('when', self.gf('django.db.models.fields.DateField')(default=datetime.datetime.now)),
             ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.User'])),
         ))
@@ -22,17 +22,22 @@ class Migration(SchemaMigration):
 
         # Adding field 'UserStory.workload_tbc'
         db.add_column(u'backlog_userstory', 'workload_tbc',
-                      self.gf('timedelta.fields.TimedeltaField')(default=0, blank=True),
+                      self.gf('django.db.models.fields.PositiveIntegerField')(default=None, null=True, blank=True),
                       keep_default=False)
 
         # Adding field 'UserStory.workload_estimated'
         db.add_column(u'backlog_userstory', 'workload_estimated',
-                      self.gf('timedelta.fields.TimedeltaField')(default=0, blank=True),
+                      self.gf('django.db.models.fields.PositiveIntegerField')(default=None, null=True, blank=True),
                       keep_default=False)
 
         # Adding field 'Project.workload_total'
         db.add_column(u'backlog_project', 'workload_total',
-                      self.gf('timedelta.fields.TimedeltaField')(default=0, blank=True),
+                      self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True),
+                      keep_default=False)
+
+        # Adding field 'Project.workload_by_day'
+        db.add_column(u'backlog_project', 'workload_by_day',
+                      self.gf('django.db.models.fields.PositiveIntegerField')(default=28800),
                       keep_default=False)
 
 
@@ -48,6 +53,9 @@ class Migration(SchemaMigration):
 
         # Deleting field 'Project.workload_total'
         db.delete_column(u'backlog_project', 'workload_total')
+
+        # Deleting field 'Project.workload_by_day'
+        db.delete_column(u'backlog_project', 'workload_by_day')
 
 
     models = {
@@ -108,7 +116,8 @@ class Migration(SchemaMigration):
             'org': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'projects'", 'null': 'True', 'to': u"orm['backlog.Organization']"}),
             'story_counter': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'blank': 'True'}),
             'users': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'projects'", 'symmetrical': 'False', 'through': u"orm['backlog.AuthorizationAssociation']", 'to': u"orm['core.User']"}),
-            'workload_total': ('timedelta.fields.TimedeltaField', [], {'default': "''", 'blank': 'True'})
+            'workload_by_day': ('django.db.models.fields.PositiveIntegerField', [], {'default': '28800'}),
+            'workload_total': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'})
         },
         u'backlog.statistic': {
             'Meta': {'ordering': "('-day',)", 'object_name': 'Statistic'},
@@ -135,14 +144,14 @@ class Migration(SchemaMigration):
             'so_i_can': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'status': ('django.db.models.fields.CharField', [], {'default': "'to_do'", 'max_length': '20'}),
             'theme': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
-            'workload_estimated': ('timedelta.fields.TimedeltaField', [], {'default': "''", 'blank': 'True'}),
-            'workload_tbc': ('timedelta.fields.TimedeltaField', [], {'default': "''", 'blank': 'True'})
+            'workload_estimated': ('django.db.models.fields.PositiveIntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
+            'workload_tbc': ('django.db.models.fields.PositiveIntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'})
         },
         u'backlog.workload': {
-            'Meta': {'object_name': 'Workload'},
-            'amount': ('timedelta.fields.TimedeltaField', [], {}),
+            'Meta': {'ordering': "('-when',)", 'object_name': 'Workload'},
+            'amount': ('django.db.models.fields.PositiveIntegerField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'project': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['backlog.Project']"}),
+            'project': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'workloads'", 'to': u"orm['backlog.Project']"}),
             'text': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['core.User']"}),
             'user_story': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['backlog.UserStory']", 'null': 'True', 'blank': 'True'}),
