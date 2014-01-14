@@ -20,7 +20,9 @@ from .serializers import (ProjectSerializer, ProjectListSerializer,
                           StorySerializer, OrgSerializer)
 
 from ..backlog.models import (Project, Backlog, UserStory, Organization,
-                              create_event, STATUS_CHOICE)
+                              create_event, STATUS_CHOICE, Status)
+
+from ..core import workload
 
 
 def get_or_errors(dic, value, errors=[]):
@@ -404,6 +406,61 @@ def story_change_status(request, story_id):
     create_event(
         request.user,
         text=u"changed story status to {0}".format(status),
+        backlog=story.backlog_id,
+        project=story.project_id,
+        story=story,
+    )
+    return Response({
+        'ok': True
+    }, content_type="application/json", status=200)
+
+
+@api_view(["POST", "GET"])
+@parser_classes((JSONParser,))
+@throttle_classes([GeneralUserThrottle])
+@transaction.commit_on_success
+def story_change_workload(request, story_id):
+    story = get_object_or_404(UserStory, pk=story_id)
+    if request.method == "GET":
+        if story.can_read(request.user):
+            return Response({
+                'workload_tbc': workload.to_string(
+                    story.workload_tbc,
+                    by_day=story.project.workload_by_day
+                )
+            }, content_type="application/json", status=200)
+        else:
+            raise Http404
+    # POST
+    if not story.can_read(request.user):
+        if story.can_write(request.user):
+            return Response("You are not admin of this story", status=403)
+        # verify access rights on story project
+        raise Http404
+    errors = []
+    if story.status not in [Status.IN_PROGRESS, Status.TODO]:
+        errors.append(_("Story status does not allow workload change"))
+
+    workload_str = get_or_errors(request.DATA, 'workload_tbc', errors)
+    try:
+        workload_tcb = workload.parse(
+            workload_str,
+            by_day=story.project.workload_by_day
+        )
+    except TypeError as ex:
+        errors.append(unicode(ex))
+        workload_tcb = None
+    if errors:
+        return Response({
+            'errors': errors
+        }, content_type="application/json", status=400)
+    story.workload_tbc = int(workload_tcb)
+    story.save()
+    story.project.save(update_fields=("last_modified",))
+    notify_story_changed(request, story)
+    create_event(
+        request.user,
+        text=u"changed story pending workload to {0}".format(workload_str),
         backlog=story.backlog_id,
         project=story.project_id,
         story=story,

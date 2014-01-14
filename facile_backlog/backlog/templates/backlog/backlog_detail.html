@@ -45,7 +45,7 @@
 			{% if simple %}
 				{% include "backlog/_story_big_cell_simple.html" %}
 			{% else %}
-            	{% include "backlog/_story_big_cell.html" with show_comments=True %}
+            	{% include "backlog/_story_big_cell.html" with show_comments=True show_workload=True %}
 			{% endif %}
         {% empty %}
 			<div class="text-warning alert">
@@ -194,6 +194,30 @@
 				return WS_TOOLTIP;
 			}
 		});
+		$(".workload-tbc-cell").change(function() {
+			var $this = $(this);
+			var workload_val = $this.val();
+			var url = "/api/stories/"+$this.attr("story-id")+"/workload/";
+
+			$.ajax({
+				method: "POST",
+				contentType:"application/json; charset=utf-8",
+				dataType: "json",
+				url: url,
+				data: JSON.stringify({
+					workload_tbc: workload_val
+				}),
+				success: function(data) {
+					$this.closest(".input-group").addClass("has-success");
+					$this.blur()
+				},
+				error: function( jqXHR, textStatus, errorThrown ){
+					$.show_error( '{% trans "Server return an error."%}', jqXHR)
+					$this.closest(".input-group").addClass("has-error");
+				}
+			});
+		});
+		$("[title]").tooltip()
     });
 </script>
 {% endaddtoblock %}

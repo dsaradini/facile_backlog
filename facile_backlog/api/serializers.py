@@ -34,7 +34,8 @@ class StorySerializer(serializers.ModelSerializer):
         model = UserStory
         fields = ('id', 'url', 'code', 'as_a', 'i_want_to',
                   'so_i_can', 'color', 'comments', 'acceptances', 'points',
-                  'theme', 'status', 'backlog_id', 'project_id', 'lang')
+                  'theme', 'status', 'backlog_id', 'project_id', 'lang',
+                  'workload_estimated', 'workload_tbc')
 
     def _url(self, obj):
         return reverse("api_story_detail",

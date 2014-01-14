@@ -1,9 +1,9 @@
-{% load markup hashcolor acl%}
+{% load markup hashcolor timed acl%}
 <article class="story" id="story-{{ story.pk }}" story-id="{{ story.pk }}" theme-id="{{ story.theme }}" color-story="{{ story.color }}" color-theme="{{ story.theme|hashcolor }}">
     <div class="handle" style="background-color:{{ story.color }}"></div>
     <div class="handled">
 			<div class="row">
-				<div class="code col-md-11">
+				<div class="code col-md-10">
 					<div class="row">
 						<div class="text col-md-4">
 							<div>
@@ -43,7 +43,7 @@
 						{% endif %}
 					</div>
 				</div>
-				<div class="col-md-1 text-center">
+				<div class="col-md-2 text-center">
 					<div class="points {% if story.points == -1 %}no-points{% endif %}">
 						{% if story.points >= 0%}
 							{{ story.points|floatformat:"0" }}
@@ -65,6 +65,16 @@
 									<li><a onclick="javascript:set_story_status(this, {{ story.pk }}, '{{ s.0 }}')">{{ s.1 }}</a></li>
 								{% endfor %}
 							</ul>
+						</div>
+					</div>
+					{% endif %}
+					{% if show_workload and story.project.workload_total %}
+					<div class="workload">
+						<div class="input-group" title="{% trans "Workload pending / estimated" %}">
+  							<span class="input-group-addon"><i class="icon-wrench"></i></span>
+  							<input class="form-control workload-tbc-cell" type="text" story-id="{{ story.pk }}"
+								   name="workload-estimated-{{ story.pk }}" value="{{ story.workload_tbc|simple_timedelta:story.project.workload_by_day }}">
+							<span class="input-group-addon">/ {{ story.workload_estimated|simple_timedelta:story.project.workload_by_day }}</span>
 						</div>
 					</div>
 					{% endif %}

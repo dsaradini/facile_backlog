@@ -590,6 +590,20 @@ class Project(StatsMixin, WithThemeMixin, AclMixin, models.Model):
             ]
         return self._active_users
 
+    @property
+    def progress_percent(self):
+        return {
+            "workload": {
+                "total": self.workload_total,
+                "done": self.workload_effective,
+                "pending": self.workload_pending
+            },
+            "points": {
+                "total": self.points_total,
+                "done": self.points_completed,
+            }
+        }
+
 
 class Backlog(StatsMixin, WithThemeMixin, models.Model):
     TODO = "todo"

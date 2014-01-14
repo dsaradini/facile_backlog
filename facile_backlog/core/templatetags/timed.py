@@ -7,8 +7,15 @@ register = Library()
 @register.filter(is_safe=False)
 def timedelta(obj, by_day=0):
     if not obj:
-        return "N/A"
+        return ""
     return to_string(obj, by_day)
+
+
+@register.filter(is_safe=False)
+def simple_timedelta(obj, by_day=0):
+    if not obj:
+        return ""
+    return to_string(obj, by_day, display="minimal")
 
 
 @register.filter
@@ -27,5 +34,4 @@ def timedsign(obj):
     elif obj > 0:
         return "+"
     return ""
-
 
