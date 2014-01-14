@@ -251,6 +251,12 @@
 					}
 					if (message.moved_story_id) {
 						$("article.small-story[story-id="+message.moved_story_id+"]").flash("green", 500);
+						if(!$parent.length) {
+							var $item = $("article.small-story[story-id="+message.moved_story_id+"]")
+							$item.fadeOut('fast', function() {
+								$item.remove()
+							});
+						}
 					}
 					recalculate_lanes()
 				} else if (message.type == "user_join" || message.type == "user_leave") {
