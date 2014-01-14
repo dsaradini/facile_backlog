@@ -700,6 +700,12 @@ class OrgEditAuthorization(OrgMixin, generic.UpdateView):
     def form_valid(self, form):
         super(OrgEditAuthorization, self).form_valid(form)
         user = self.auth.user
+        projects_auth = AuthorizationAssociation.objects.filter(
+            user=self.object.user,
+            project__in=self.organization.projects.values_list('pk', flat=True)
+        )
+        for auth in projects_auth.all():
+            auth.is_admin = self.object.is_admin
         create_event(self.request.user,
                      _("Authorization changed for "
                        "user {0}".format(user.email)),

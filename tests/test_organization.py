@@ -163,6 +163,30 @@ class OrganizationTest(WebTest):
             self.assertEqual(elm.find("td.user-invitation").text(),
                              "Accepted" if auth.is_active else "Pending")
 
+    def test_org_users_edit(self):
+        user_1 = factories.UserFactory.create()
+        user_2 = factories.UserFactory.create()
+        org = factories.create_sample_organization(user_1)
+        org.add_user(user_2, is_admin=True)
+        project_1 = factories.ProjectFactory.create(
+            org=org
+        )
+        project_1.add_user(user_2, is_admin=True)
+        auth_1 = AuthorizationAssociation.objects.get(
+            user=user_2,
+            org=org
+        )
+        url = reverse("org_auth_edit", args=(org.pk, auth_1.pk))
+        response = self.app.get(url, user=user_1)
+        form = response.forms['edit_auth_form']
+        form['is_admin'] = False
+        form.submit().follow()
+        auth_2 = AuthorizationAssociation.objects.get(
+            user=user_2,
+            org=org
+        )
+        self.assertFalse(auth_2.is_admin)
+
     def test_project_stories(self):
         user_1 = factories.UserFactory.create()
         user_2 = factories.UserFactory.create()
