@@ -34,4 +34,3 @@ def timedsign(obj):
     elif obj > 0:
         return "+"
     return ""
-
