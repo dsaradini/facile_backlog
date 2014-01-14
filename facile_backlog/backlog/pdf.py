@@ -69,7 +69,7 @@ SIZE = (12.5, 8)
 TOP_HEIGHT = 2
 
 
-def draw_story_front(c, story, positions, position=0):
+def draw_story_front(c, story, positions, position=0, counter=0):
     c.saveState()
     pos = positions[position]
     size = SIZE
@@ -160,7 +160,7 @@ def draw_story_front(c, story, positions, position=0):
     # print order
     c.setStrokeColorRGB(0, 0, 0, alpha=0.2)
     p = Paragraph(u"<font size=8 color=#cccccc>{0}</font>".format(
-        story.order+1), normalStyle)
+        counter), normalStyle)
     p.wrap(0.5*cm, 0.5*cm)
     p.drawOn(c, 0.2*cm, 0.1*cm)
 
@@ -209,12 +209,14 @@ def generate_pdf(stories, file_name,
     front_positions = get_position(print_format, FRONT_SIDE)
     back_position = get_position(print_format, print_side)
     story_per_page = len(front_positions)
+    counter = 0
     while i < len(stories) or front:
         m = divmod(i, story_per_page)[1]
         if i < len(stories):
             story = stories[i]
             if front:
-                draw_story_front(c, story, front_positions, m)
+                counter += 1
+                draw_story_front(c, story, front_positions, m, counter)
             else:
                 draw_story_back(c, story, back_position, m)
         i += 1
