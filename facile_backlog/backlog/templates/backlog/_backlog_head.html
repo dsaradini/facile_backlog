@@ -29,6 +29,13 @@
 			<span class="backlog-stories">{{ backlog.stats.total_stories }}</span>
 			<i class="icon-circle"></i>
 			<span class="backlog-points">{{ backlog.stats.total_points }}</span> pts
+			[
+			{% if backlog.project_id %}
+				<a href="{% url "project_backlogs" backlog.project_id %}"><i class="icon-trello"></i></a>
+			{% elif backlog.org_id %}
+				<a href="{% url "org_sprint_planning" backlog.org_id %}"><i class="icon-trello"></i></a>
+			{% endif %}
+			]
 		</small>
 	</h2>
 </div>
