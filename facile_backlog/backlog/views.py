@@ -706,6 +706,7 @@ class OrgEditAuthorization(OrgMixin, generic.UpdateView):
         )
         for auth in projects_auth.all():
             auth.is_admin = self.object.is_admin
+            auth.save()
         create_event(self.request.user,
                      _("Authorization changed for "
                        "user {0}".format(user.email)),
