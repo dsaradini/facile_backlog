@@ -88,6 +88,11 @@ class RegistrationForm(forms.Form):
             user.set_password(self.cleaned_data['password'])
             user.save()
             return user
+        else:
+            user = self.cleaned_data['user']
+            user.set_password(self.cleaned_data['password'])
+            user.full_name = self.cleaned_data['full_name']
+            user.save()
         return self.cleaned_data['user']
 
 
