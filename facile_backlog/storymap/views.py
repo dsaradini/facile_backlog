@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
@@ -22,6 +21,7 @@ from django.db import transaction
 from ..backlog.views import NoCacheMixin, ProjectMixin
 from ..backlog.models import create_event
 from ..api.notify import notify_changes
+from ..util import get_websocket_url
 
 from models import (StoryMap, Story, Theme, Phase)
 from forms import StoryMapCreationForm, StoryMapEditForm
@@ -81,7 +81,7 @@ class StoryMapDetail(StoryMapMixin, generic.DetailView):
         context['themes'] = self.story_map.themes.all()
         context['phases'] = self.story_map.phases.all()
         context['story_colors'] = STORY_COLORS
-        context['ws_url'] = settings.WEBSOCKET_URL
+        context['ws_url'] = get_websocket_url(self.request)
         return context
 storymap_detail = login_required(StoryMapDetail.as_view())
 

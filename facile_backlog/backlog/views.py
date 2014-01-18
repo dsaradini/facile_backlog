@@ -33,7 +33,7 @@ from .forms import (ProjectCreationForm, ProjectEditionForm,
 from ..core.models import User
 from .pdf import generate_pdf
 from .excel import export_excel
-
+from ..util import get_websocket_url
 
 AUTH_TYPE_PROJECT = "prj"
 AUTH_TYPE_ORG = "org"
@@ -437,7 +437,7 @@ class OrgBacklogs(OrgMixin, generic.TemplateView):
         ).select_related("project").all()
         context['backlog_list'] = backlogs
         context['backlog_width'] = 320 * (max(len(backlogs)+1, 2))
-        context['ws_url'] = settings.WEBSOCKET_URL
+        context['ws_url'] = get_websocket_url(self.request)
         return context
 org_backlogs = login_required(OrgBacklogs.as_view())
 
@@ -972,7 +972,7 @@ class ProjectBacklogs(ProjectMixin, generic.TemplateView):
         context['project'] = self.project
         context['backlog_list'] = [b for b in self.project.backlogs.all()
                                    if not b.is_archive]
-        context['ws_url'] = settings.WEBSOCKET_URL
+        context['ws_url'] = get_websocket_url(self.request)
         return context
 project_backlogs = login_required(ProjectBacklogs.as_view())
 
@@ -1335,7 +1335,7 @@ class BacklogDetail(BacklogMixin, generic.TemplateView):
         context = super(BacklogDetail, self).get_context_data(**kwargs)
         context['stories'] = self.backlog.ordered_stories.select_related(
             "project", "backlog")
-        context['ws_url'] = settings.WEBSOCKET_URL
+        context['ws_url'] = get_websocket_url(self.request)
         context['simple'] = simple
         return context
 

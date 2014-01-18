@@ -1,5 +1,7 @@
 import hashlib
 
+from django.conf import settings
+
 
 def gravatar_url(email, size=32):
     return "https://www.gravatar.com/avatar/{0}?s={1}".format(
@@ -16,3 +18,11 @@ def setup_bootstrap_fields(form, fields=None):
         clazz = field.widget.attrs.get("class", "")
         clazz = "{0} {1}".format(clazz, "form-control input-large")
         field.widget.attrs["class"] = clazz
+
+
+def get_websocket_url(request):
+    websocket_url = settings.WEBSOCKET_URL
+    host = request.META.get("HTTP_HOST", "localhost")
+    return websocket_url.format({
+        'host': host
+    })
