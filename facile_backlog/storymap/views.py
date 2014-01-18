@@ -26,6 +26,8 @@ from ..util import get_websocket_url
 from models import (StoryMap, Story, Theme, Phase)
 from forms import StoryMapCreationForm, StoryMapEditForm
 
+from excel import export_excel
+
 
 class StoryMapMixin(NoCacheMixin):
     admin_only = False
@@ -348,3 +350,18 @@ def story_map_phase(request, story_map_id):
 def story_map_theme(request, story_map_id):
     theme_id = request.GET.get("theme_id", 0)
     return get_story_map_element(request, story_map_id, "theme", theme_id)
+
+
+class ExportBaord(StoryMapMixin, generic.TemplateView):
+    template_name = "backlog/export_stories.html"
+
+    def get(self, request, *args, **kwargs):
+        name = u"Backlogman-board-{0}-{1}".format(
+            self.story_map.project.name, self.story_map.name
+        )
+        title = u"Backlogman: {0} - {1}".format(
+            self.story_map.project.name,
+            self.story_map.name
+        )
+        return export_excel(self.story_map, name, title)
+export_board = login_required(ExportBaord.as_view())

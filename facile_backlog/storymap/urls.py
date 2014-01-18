@@ -2,7 +2,8 @@ from django.conf.urls import patterns, url
 
 from .views import (storymap_detail, story_map_action, storymap_create,
                     story_map_story, story_map_phase, story_map_theme,
-                    storymap_list, storymap_edit, storymap_delete)
+                    storymap_list, storymap_edit, storymap_delete,
+                    export_board)
 
 # root
 urlpatterns = patterns(
@@ -27,6 +28,10 @@ urlpatterns = patterns(
         storymap_delete,
         name='storymap_delete'),
 
+    url(r'^boards/(?P<storymap_id>[\w]+)/export/$',
+        export_board, name="story_map_export"),
+
+    # API
     url(r'^boards/(?P<story_map_id>[\w]+)/_action/$',
         story_map_action, name="api_story_map_action"),
 
@@ -38,4 +43,5 @@ urlpatterns = patterns(
 
     url(r'^boards/(?P<story_map_id>[\w]+)/theme/$',
         story_map_theme, name="api_story_map_theme"),
+
 )
