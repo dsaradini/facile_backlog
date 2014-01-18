@@ -16,8 +16,12 @@
     {% include "backlog/_backlog_head.html" %}
 
 	<div class="well well-sm">
-		<a class="btn btn-primary btn-sm" href="{% url "print_stories" %}?backlog_id={{ backlog.pk }}"><i class="icon-print"></i> {% trans "Print stories" %}</a>
-		<a class="pull-right btn btn-primary btn-sm" href="{% url "export_stories" %}?backlog_id={{ backlog.pk }}" download><i class="icon-download"></i> {% trans "Export for excel" %}</a>
+		{% if backlog.project_id %}
+			<a href="{% url "story_create" backlog.project_id backlog.pk %}?_back={% url "backlog_detail" backlog.pk %}" class="btn btn-success btn-sm">{% trans "Create story" %}</a>
+		{% endif %}
+		&nbsp;
+		<a class="pull-right btn btn-link btn-sm" href="{% url "print_stories" %}?backlog_id={{ backlog.pk }}"><i class="icon-print"></i> {% trans "Print stories" %}</a>
+		<a class="pull-right btn btn-link btn-sm" href="{% url "export_stories" %}?backlog_id={{ backlog.pk }}" download><i class="icon-download"></i> {% trans "Export for excel" %}</a>
 	</div>
 
 	<form class="form-inline well well-sm">
@@ -53,16 +57,11 @@
 			</div>
         {% endfor %}
     </div>
+	{% if not backlog.project_id %}
 	<div class="alert alert-info">
-		<p>{% blocktrans with view_url=view_url %}This view is targeted for backlog prioritization.{% endblocktrans %}
-		{% if backlog.project %}
-			{% url "project_backlogs" backlog.project.pk as view_url %}
-			{% blocktrans with view_url=view_url %}To add a new story, please use <a href="{{ view_url }}">the project backlogs view</a>{% endblocktrans %}
-		{% else %}
-			{% blocktrans %}Stories can only be created on a project backlogs view, <b>not on organization backlogs</b>{% endblocktrans %}
-		{% endif %}
-		</p>
+		{% blocktrans %}Stories can only be created on a project backlogs view, <b>not on organization backlogs</b>{% endblocktrans %}
 	</div>
+	{% endif %}
 {% include "backlog/_script_status_change.html" %}
 {% include "backlog/_script_show_errors.html" %}
 

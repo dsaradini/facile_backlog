@@ -1440,8 +1440,11 @@ class StoryCreate(ProjectBacklogMixin, generic.CreateView):
         context = super(StoryCreate, self).get_context_data(**kwargs)
         context['project'] = self.project
         context['_back'] = self.back
-        context['cancel_url'] = reverse("project_backlogs", args=(
-            self.project.pk,))
+        if self.back:
+            context['cancel_url'] = self.back
+        else:
+            context['cancel_url'] = reverse("project_backlogs", args=(
+                self.project.pk,))
         return context
 
     def form_valid(self, form):
@@ -1454,6 +1457,8 @@ class StoryCreate(ProjectBacklogMixin, generic.CreateView):
         )
         messages.success(self.request,
                          _("Story successfully created."))
+        if self.back:
+            return redirect(self.back)
         return redirect(
             "{0}#story-{1}".format(reverse("project_backlogs", args=(
                 self.project.pk,

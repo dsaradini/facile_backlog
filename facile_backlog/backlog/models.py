@@ -60,6 +60,15 @@ def status_for(key):
     raise KeyError("Unknown key {0}".format(key))
 
 
+def status_index_for(key):
+    i = 0
+    for k, v in STATUS_CHOICE:
+        if k == key:
+            return i
+        i += 1
+    raise KeyError("Unknown key {0}".format(key))
+
+
 class StatsMixin(object):
     @property
     def stats(self):

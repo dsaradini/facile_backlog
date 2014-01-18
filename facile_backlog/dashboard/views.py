@@ -12,7 +12,7 @@ from django.utils.translation import ugettext as _, activate
 from django.views import generic
 
 
-from ..backlog.models import (Status, create_event, Project)
+from ..backlog.models import (Status, create_event, Project, status_index_for)
 from ..backlog.views import (ProjectMixin, BackMixin, get_my_object_or_404,
                              status_for, STATUS_COLORS)
 
@@ -27,6 +27,7 @@ def bar_element(elements):
         sum += value['points']
         if name != Status.TODO:
             items.append({
+                'index': status_index_for(name),
                 'name': status_for(name),
                 'color': STATUS_COLORS[name],
                 'count': value['stories'],
@@ -34,6 +35,7 @@ def bar_element(elements):
             })
     for i in items:
         i['percent'] = int(math.floor((float(i['y'])/float(sum)) * 100))
+    items = sorted(items, key=lambda n: n['index'], reverse=True)
     return {
         'total': sum,
         'items': items,
