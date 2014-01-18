@@ -100,3 +100,19 @@
 	border-color: #ebccd1;
 	color: #a94442;
 }
+
+// Fix for x-editable ( bootstrap )
+.glyphicon-remove {
+	font-family: fontawesome;
+	&:before {
+		content: "\f00d";
+	}
+}
+
+.glyphicon-ok {
+	font-family: fontawesome;
+	&:before {
+		content: "\f00c";
+	}
+}
+// end fix
