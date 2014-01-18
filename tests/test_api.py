@@ -195,3 +195,34 @@ class APITest_Story(JsonTestCase):
                            content_type="application/json")
         story_count = UserStory.objects.count()
         self.assertEqual(story_count, 0)
+
+    def test_story_patch_xeditable(self):
+        user = UserFactory.create(email="test@test.ch")
+        no_write_user = UserFactory.create()
+        wrong_user = UserFactory.create()
+        story = create_sample_story(user)
+        story.project.add_user(no_write_user)
+        url = reverse("api_story_patch", args=(story.pk,))
+        data = {
+            'name': 'points',
+            'value': '123',
+        }
+        self.client.post(url, data=data, status=401)
+        self.client.post(url, data=data, status=404, user=wrong_user)
+        self.client.post(url, data=json.dumps(data),
+                         user=user, status=200,
+                         content_type="application/json")
+        story = UserStory.objects.get()
+        self.assertEqual(story.points, 123.0)
+
+    def test_story_patch_xeditable_error(self):
+        user = UserFactory.create(email="test@test.ch")
+        story = create_sample_story(user)
+        url = reverse("api_story_patch", args=(story.pk,))
+        data = {
+            'name': 'grok',
+            'value': 'hello',
+        }
+        response = self.client.post(url, user=user, data=data, status=400)
+        self.assertEqual(response.content,
+                         '"Unable to patch story attribute grok"')

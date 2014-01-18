@@ -45,10 +45,20 @@
 				</div>
 				<div class="col-md-1 text-center">
 					<div class="points {% if story.points == -1 %}no-points{% endif %}">
-						{% if story.points >= 0%}
-							{{ story.points|floatformat:"0" }}
+						{% if points_editable %}
+							<a href="#" data-name="points" class="xedit_change_points" data-type="text" data-pk="{{ story.pk }}" data-url="{% url "api_story_patch" story.pk %}" data-title="{% trans "User story points" %}">
+								{% if story.points >= 0 %}
+									{{ story.points|floatformat:"0" }}
+								{% else %}
+									&nbsp;
+								{% endif %}
+							</a>
 						{% else %}
-						&nbsp;
+							{% if story.points >= 0%}
+								{{ story.points|floatformat:"0" }}
+							{% else %}
+								&nbsp;
+							{% endif %}
 						{% endif %}
 					</div>
 					{% if not hide_status_change %}

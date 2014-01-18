@@ -49,7 +49,7 @@
 			{% if simple %}
 				{% include "backlog/_story_big_cell_simple.html" %}
 			{% else %}
-            	{% include "backlog/_story_big_cell.html" with show_comments=True %}
+            	{% include "backlog/_story_big_cell.html" with show_comments=True points_editable=True%}
 			{% endif %}
         {% empty %}
 			<div class="text-warning alert">
@@ -193,6 +193,9 @@
 				return WS_TOOLTIP;
 			}
 		});
+		$(".xedit_change_points").editable({
+
+		})
     });
 </script>
 {% endaddtoblock %}

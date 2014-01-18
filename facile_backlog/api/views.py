@@ -1,3 +1,5 @@
+import sys
+
 from rest_framework import viewsets
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
@@ -11,6 +13,7 @@ from django.conf import settings
 from django.db import transaction
 from django.http import Http404
 from django.shortcuts import redirect
+from django.utils.translation import ugettext as _
 
 from .notify import notify_changes
 
@@ -403,6 +406,84 @@ def story_change_status(request, story_id):
     create_event(
         request.user,
         text=u"changed story status to {0}".format(status),
+        backlog=story.backlog_id,
+        project=story.project_id,
+        story=story,
+    )
+    return Response({
+        'ok': True
+    }, content_type="application/json", status=200)
+
+
+class StoryPatcher(object):
+    def __init__(self, request, story):
+        self.story = story
+        self.request = request
+
+    def patch_points(self, value):
+        points = value or "-1.0"
+        try:
+            p = float(points)
+        except TypeError:
+            return Response(
+                _("%s is not a valid points") % points,
+                content_type="text/plain", status=400
+            )
+        self.story.points = p
+        self.story.save()
+
+    def patch_status(self, value):
+        status = value
+        choices = [s[0] for s in STATUS_CHOICE]
+        if status not in choices:
+            return Response({
+                'errors': ["Unknown status '{0}', "
+                           "should be in {1}".format(status, choices)]
+            }, content_type="application/json", status=400)
+        self.story.status = status
+        self.story.save()
+
+
+@api_view(["POST"])
+@parser_classes((JSONParser,))
+@throttle_classes([GeneralUserThrottle])
+@transaction.commit_on_success
+def story_patch(request, story_id):
+    story = get_object_or_404(UserStory, pk=story_id)
+    # POST
+    if not story.can_read(request.user):
+        if story.can_write(request.user):
+            return Response("You are not admin of this story", status=403)
+        # verify access rights on story project
+        raise Http404
+    if "name" not in request.DATA:
+        return Response(
+            _("Missing name attribute"),
+            content_type="text/plain", status=400
+        )
+    if "value" not in request.DATA:
+        return Response(
+            _("Missing value attribute"),
+            content_type="text/plain", status=400
+        )
+    name = request.DATA.get("name")
+    value = request.DATA.get("value")
+    patcher = StoryPatcher(request, story)
+
+    call = getattr(patcher, "patch_{0}".format(name), None)
+    if not call:
+        return Response(
+            _("Unable to patch story attribute %s") % name,
+            content_type="text/plain", status=400
+        )
+    result = call(value)
+    if result:
+        return result
+    story.project.save(update_fields=("last_modified",))
+    notify_story_changed(request, story)
+    create_event(
+        request.user,
+        text=u"changed story attribute {0}".format(name),
         backlog=story.backlog_id,
         project=story.project_id,
         story=story,
