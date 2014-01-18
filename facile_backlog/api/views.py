@@ -424,6 +424,8 @@ class StoryPatcher(object):
         points = value or "-1.0"
         try:
             p = float(points)
+        except ValueError:
+            p = -1.0
         except TypeError:
             return Response(
                 _("%s is not a valid points") % points,
