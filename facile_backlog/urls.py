@@ -20,7 +20,7 @@ urlpatterns = patterns(
 
     url(r'^robots.txt$', robots),
 
-    url(r'^terms_conditions.html$', terms_conditions),
+    url(r'^terms_conditions.html$', terms_conditions, name="terms_of_service"),
 
     url(r'^$', root_view, name='root'),
 

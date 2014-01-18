@@ -1,81 +1,87 @@
 {% extends "base.html" %}
+{% load i18n_include %}
 
 {% block title %}{% trans "Home" %}{% endblock %}
 
 {% block content_class %}home-background{% endblock %}
 
 
-
-{% block content %}
-<div class="row">
-	<h1>{% trans "Welcome to Backlogman." %}</h1>
-	<p class="col-md-12" style="font-size:1.3em;">
-		<i class="icon-quote-left"></i>
-		{% trans "A easy way to manage your agile projects backlogs" %}
-		<i class="icon-quote-right"></i>
-	</p>
-
-	<div class="col-md-6" class="home-blog">
-		<h2>What is backlogman</h2>
+{% block outer_content %}
+	<div class="text-center jumbotron jumbotron-main">
+		<h1>Backlogman</h1>
 		<p>
-			Backlogman is targeted to help managing your agile backlogs.
-		</p>
-		<p>
-			As a <b>PRODUCT OWNER</b>, it will simplify your backlogs management by having an easy way to order user stories
-		</p>
-		<p>
-			As a <b>TEAM MEMBER</b>, it will enhance user stories visibility and help understanding priorities in a project.
-		</p>
-		<h2>Agility in mind</h2>
-		<p>
-			Backlogman is not another tool to track time and team productivity, it simply focus on managing the backlog and
-			 add capability to export and print those backlogs in various ways.
-		</p>
-		<p>
-			Backlogman was developed with agility in mind. Its main target is software development but it may be used in
-			 other domain, feel free to experiment...
-		</p>
-		<p>
-			If you are new in agile methodologies, let's start by reading the <a href="http://agilemanifesto.org/">agile manifesto</a>.
-			 then, let's the journey begin, <a href="{% url "registration_register" %}">register</a> to backlogman...
+			{% trans "A easy way to manage your agile projects backlogs" %}
 		</p>
 	</div>
-	<div class="col-md-6">
+	<div class="container">
 		<div class="row">
-			<form class="home-login" method="POST" action="{% url "auth_login" %}">
-				<h3>{% trans "Already an account?" %}</h3>
-				{% csrf_token %}
-				<div class="form-group">
-					<input class="form-control" id="id_username" maxlength="254" name="username" type="text" placeholder="{% trans "username or email" %}">
-				</div>
-				<div class="form-group">
-					<input class="form-control" id="id_password" name="password" type="password" placeholder="{% trans "Password" %}">
-				</div>
-				<div>
-					<button class="btn btn-primary pull-right" type="submit">{% trans "Login" %}</button>
-					<a class="btn btn-link" href="{% url "password_reset_recover" %}">{% trans "Forgot your password?" %}</a>
-				</div>
-			</form>
+			<div class="col-md-6" class="home-blog">
+				{% i18n_include "inc/home_info.html" %}
+
+			</div>
+			<div class="col-md-6">
+				<div class="row">
+					<form class="home-login" method="POST" action="{% url "auth_login" %}">
+						<h3>{% trans "Already an account?" %}</h3>
+						{% csrf_token %}
+						<div class="form-group">
+							<input class="form-control" id="id_username" maxlength="254" name="username" type="text" placeholder="{% trans "username or email" %}">
+						</div>
+						<div class="form-group">
+							<input class="form-control" id="id_password" name="password" type="password" placeholder="{% trans "Password" %}">
+						</div>
+						<div>
+							<button class="btn btn-primary pull-right" type="submit">{% trans "Login" %}</button>
+							<a class="btn btn-link" href="{% url "password_reset_recover" %}">{% trans "Forgot your password?" %}</a>
+						</div>
+					</form>
 
 
-			<form class="home-login" method="POST" action="{% url "registration_register" %}">
-				<h3>{% trans "New to backlogman?" %}</h3> <p>{% trans "Register now." %}</p>
-				{% csrf_token %}
-				<div class="form-group">
-					<input class="form-control" id="id_full_name" name="full_name" type="text" placeholder="{% trans "Full name" %}">
+					<form class="home-login" method="POST" action="{% url "registration_register" %}">
+						<h3>{% trans "New to backlogman?" %}</h3> <p>{% trans "Register now." %}</p>
+						{% csrf_token %}
+						<div class="form-group">
+							<input class="form-control" id="id_full_name" name="full_name" type="text" placeholder="{% trans "Full name" %}">
+						</div>
+						<div class="form-group">
+							<input class="form-control" id="id_email" maxlength="254" name="email" type="text" placeholder="{% trans "Email" %}">
+						</div>
+						<div class="form-group">
+							<input class="form-control" id="register_id_password" class="full" name="password" type="password" placeholder="{% trans "Password" %}">
+						</div>
+						<div class="submit">
+							<button class="center btn btn-primary pull-right" type="submit">{% trans "Register" %}</button>
+							&nbsp;
+						</div>
+					</form>
 				</div>
-				<div class="form-group">
-					<input class="form-control" id="id_email" maxlength="254" name="email" type="text" placeholder="{% trans "Email" %}">
-				</div>
-				<div class="form-group">
-					<input class="form-control" id="register_id_password" class="full" name="password" type="password" placeholder="{% trans "Password" %}">
-				</div>
-				<div class="submit">
-					<button class="center btn btn-primary pull-right" type="submit">{% trans "Register" %}</button>
-					&nbsp;
-				</div>
-			</form>
+			</div>
 		</div>
 	</div>
-</div>
+	<div class="jumbotron-footer">
+		<div class="container">
+			<div class="col-md-4">
+				<h5>HOME</h5>
+				<li><a href="{% url "auth_login" %}">{% trans "Sign in" %}</a></li>
+				<li><a href="{% url "registration_register" %}">{% trans "Register" %}</a></li>
+				<li><a href="{% url "password_reset_recover" %}">{% trans "Forgot your password?" %}</a></li>
+			</div>
+			<div class="col-md-4">
+				<h5>INFO</h5>
+				<li><a href="{% url "blog_index" %}">{% trans "Blog" %}</a></li>
+				<li><a href="{% url "ticket_add" %}">{% trans "Contact us" %}</a></li>
+				<li><a href="{% url "docs_file" "faq" %}">{% trans "FAQ" %}</a></li>
+				<li><a href="{% url "terms_of_service" %}">{% trans "Terms and conditions" %}</a></li>
+			</div>
+			<div class="col-md-4">
+				<h5>CONTACT</h5>
+				<address>
+				  <strong>David Saradini</strong><br>
+				  Rue de Lausanne 24<br>
+				  CH-1950 Switzerland<br>
+				  <a href="mailto:david@saradini.ch">david@saradini.ch</a>
+				</address>
+			</div>
+		</div>
+	</div>
 {% endblock %}

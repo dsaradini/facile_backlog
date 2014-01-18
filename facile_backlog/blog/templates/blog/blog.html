@@ -11,7 +11,11 @@
 	<li class="active"><a href="{% url "blog_index" %}">{% trans "News" %}</a></li>
 {% endblock %}
 
-{% block content %}
+{% block outer_content %}
+<div class="jumbotron jumbotron-main text-center">
 	<h1>Backlogman news</h1>
+</div>
+<div class="container">
 	{% include "blog/blog_list.html" with blog_list=object_list%}
+</div>
 {% endblock %}

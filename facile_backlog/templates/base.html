@@ -6,7 +6,8 @@
 		<link rel="stylesheet" media="all" href="{% static "core/css/main.css" %}">
 		<link rel="shortcut icon" href="{% static "core/img/favicon.png" %}">
 		<meta name="apple-mobile-web-app-title" content="Backlogman">
-		<meta name="keywords" content="backlog, agile, SCRUM, lean, software">
+		<meta name="keywords" content="backlog, agile, SCRUM, lean">
+		<meta name="author" content="David Saradini">
 		<meta name="description" content="Agile backlog management for software development">
 		{% render_block "meta" %}
 		<title>{% block title %}{% trans "Welcome" %}{% endblock %} &mdash; Backlogman</title>
@@ -84,7 +85,7 @@
 								</ul>
 							</li>
 							{% else %}
-								<li><a href="{% url "auth_login" %}">{% trans "Sign in" %}</a></li>
+								<a class="btn btn-warning btn-sm navbar-btn" href="{% url "auth_login" %}">{% trans "Sign in" %}</a>
 							{% endif %}
 						</ul>
 					</div>
