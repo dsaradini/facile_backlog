@@ -10,14 +10,18 @@ class HomeTest(WebTest):
             email='test@fake.ch', password='pass')
         url = reverse('home')
         response = self.app.get(url)
-        self.assertContains(response, "Welcome")
+        self.assertContains(response,
+                            "Backlogman is targeted to help managing your "
+                            "agile backlogs")
 
     def test_root(self):
         factories.UserFactory.create(
             email='test@fake.ch', password='pass')
         url = reverse('root')
         response = self.app.get(url, auto_follow=True)
-        self.assertContains(response, "Welcome")
+        self.assertContains(response,
+                            "Backlogman is targeted to help managing your "
+                            "agile backlogs")
 
     def test_500(self):
         response = self.app.get("/500", status=500)

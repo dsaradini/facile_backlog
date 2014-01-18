@@ -239,7 +239,7 @@ API_THROTTLE = "100/m"
 
 # WebScokets
 
-WEBSOCKET_URL = os.environ.get("WEBSOCKET_URL", None)
+WEBSOCKET_URL = os.environ.get("WEBSOCKET_URL", "ws://localhost:8081/ws/")
 WEBSOCKET_PORT = os.environ.get("WEBSOCKET_PORT", "8001")
 
 
