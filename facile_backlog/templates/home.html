@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n_include %}
+{% load i18n_include sekizai_tags %}
 
 {% block title %}{% trans "Home" %}{% endblock %}
 
@@ -57,23 +57,24 @@
 				</div>
 			</div>
 		</div>
+		{% i18n_include "inc/features.html" %}
 	</div>
 	<div class="jumbotron-footer">
 		<div class="container">
-			<div class="col-md-4">
+			<div class="col-sm-4">
 				<h5>HOME</h5>
 				<li><a href="{% url "auth_login" %}">{% trans "Sign in" %}</a></li>
 				<li><a href="{% url "registration_register" %}">{% trans "Register" %}</a></li>
 				<li><a href="{% url "password_reset_recover" %}">{% trans "Forgot your password?" %}</a></li>
 			</div>
-			<div class="col-md-4">
+			<div class="col-sm-4">
 				<h5>INFO</h5>
 				<li><a href="{% url "blog_index" %}">{% trans "Blog" %}</a></li>
 				<li><a href="{% url "ticket_add" %}">{% trans "Contact us" %}</a></li>
 				<li><a href="{% url "docs_file" "faq" %}">{% trans "FAQ" %}</a></li>
 				<li><a href="{% url "terms_of_service" %}">{% trans "Terms and conditions" %}</a></li>
 			</div>
-			<div class="col-md-4">
+			<div class="col-sm-4">
 				<h5>CONTACT</h5>
 				<address>
 				  <strong>David Saradini</strong><br>
@@ -84,4 +85,34 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="modal-screenhost" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h4 class="modal-title" id="modal-screenshot-title"></h4>
+		  </div>
+		  <div class="modal-body">
+				<img id="modal-screenshot-img" src="">
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+		  </div>
+		</div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+{% addtoblock "js" %}
+<script>
+  $( document ).ready(function() {
+    $('.img-screenshot').click(function() {
+		$("#modal-screenshot-title").text($(this).attr("title"));
+		$("#modal-screenshot-img").attr("src", $(this).attr("src"));
+		$("#modal-screenhost").modal();
+	});
+  });
+
+</script>
+{% endaddtoblock %}
+
+
 {% endblock %}
