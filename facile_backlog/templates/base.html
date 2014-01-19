@@ -9,6 +9,9 @@
 		<meta name="keywords" content="agile backlog management, user story, SCRUM, lean software development, agile story board">
 		<meta name="author" content="David Saradini">
 		<meta name="description" content="Agile backlog and story map management for software development">
+		{% if google_site_verify %}
+			<meta name="google-site-verification" content="{{ google_site_verify }}" />
+		{% endif %}
 		{% render_block "meta" %}
 		<title>{% block title %}{% trans "Welcome" %}{% endblock %} &mdash; Backlogman</title>
 	</head>

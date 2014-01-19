@@ -160,6 +160,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
     'sekizai.context_processors.sekizai',
+    'facile_backlog.context_processor.backlogman',
 )
 
 INSTALLED_APPS = (
@@ -242,6 +243,7 @@ API_THROTTLE = "100/m"
 WEBSOCKET_URL = os.environ.get("WEBSOCKET_URL", "ws://localhost:8081/ws/")
 WEBSOCKET_PORT = os.environ.get("WEBSOCKET_PORT", "8001")
 
+GOOGLE_SITE_VERIFY = os.environ.get("GOOGLE_SITE_VERIFY", "")
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
