@@ -1,14 +1,30 @@
 from django.conf import settings
 from django.conf.urls import patterns, include, url
+from django.contrib.sitemaps import Sitemap
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
+from django.core.urlresolvers import reverse
 from django.http import HttpResponsePermanentRedirect, HttpResponse
 
 from .views import home_view, root_view, page_404, page_500, terms_conditions
 
+from .blog.sitemap import BlogSitemap
+
 favicon = lambda _: HttpResponsePermanentRedirect(
     '{0}core/img/favicon.png'.format(settings.STATIC_URL)
 )
+
+
+class StaticViewSitemap(Sitemap):
+    priority = 0.5
+    changefreq = 'daily'
+
+    def items(self):
+        return ['home']
+
+    def location(self, item):
+        return reverse(item)
+
 
 robots = lambda _: HttpResponse('User-agent: *\nDisallow:\n',
                                 mimetype='text/plain')
@@ -16,6 +32,15 @@ admin.autodiscover()
 
 urlpatterns = patterns(
     '',
+
+    url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap',
+        {
+            'sitemaps': {
+                'static': StaticViewSitemap,
+                'news': BlogSitemap
+            }
+        }),
+
     url(r'^favicon.ico$', favicon),
 
     url(r'^robots.txt$', robots),

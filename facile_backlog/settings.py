@@ -172,6 +172,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+    'django.contrib.sitemaps',
     'django_extensions',
     'sekizai',
     'facile_backlog',
