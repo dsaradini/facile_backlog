@@ -9,6 +9,8 @@ User = settings.AUTH_USER_MODEL
 CATEGORY_CHOICES = getattr(settings, "TICKET_CATEGORIES", (
     ("general", _("General")),
     ("suggestion", _("Suggestion")),
+    ("api", _("API")),
+    ("bug", _("Bug")),
 ))
 
 STATUS_NEW = "0_new"

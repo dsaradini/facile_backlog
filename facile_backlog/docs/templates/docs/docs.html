@@ -13,8 +13,11 @@
 	<li><a href="{% url "blog_index" %}">{% trans "News" %}</a></li>
 {% endblock %}
 
-{% block content %}
+{% block outer_content %}
+<div class="container">
 	<div class="site-documentation markup">
 		{{ markdown|markdown }}
 	</div>
+</div>
 {% endblock %}
+
