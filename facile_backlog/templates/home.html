@@ -8,9 +8,9 @@
 
 {% block outer_content %}
 	<div class="text-center jumbotron jumbotron-main">
-		<h1>Backlogman</h1>
+		<h1><span itemprop="name">Backlogman</span></h1>
 		<p>
-			{% trans "An easy way to manage your agile projects backlogs" %}
+			<span itemprop="description">{% trans "An easy way to manage your agile projects backlogs" %}</span>
 		</p>
 	</div>
 	<div class="container">
@@ -77,13 +77,14 @@
 			<div class="col-sm-4">
 				<h5>CONTACT</h5>
 				<address>
-				  <strong>David Saradini</strong><br>
+				  <strong><span itemprop="author">David Saradini</span></strong><br>
 				  Valais - Switzerland<br>
 				  <a href="mailto:david@saradini.ch">david@saradini.ch</a>
 				</address>
 			</div>
 		</div>
 	</div>
+	<link itemprop="SoftwareApplicationCategory" href="http://schema.org/BusinessApplication"/>
 	<div class="modal fade" id="modal-screenhost" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	  <div class="modal-dialog">
 		<div class="modal-content">
