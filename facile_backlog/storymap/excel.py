@@ -1,4 +1,5 @@
 from django.http.response import HttpResponse
+from django.template.defaultfilters import slugify
 
 from xlwt import Workbook, easyxf, add_palette_colour
 from palette import Color
@@ -9,10 +10,12 @@ from models import Story
 def export_excel(story_map, file_name, title=None):
     colors = Story.objects.filter(
         theme__story_map=story_map
-    ).order_by('color').values("color").distinct('color')
+    ).order_by('color').values("color")
+    # we could use distinct here but as we want to support
+    # sqlite, we use list(set(x)) instead.
     color_list = [c['color'] for c in colors]
-
-    file_name = u"{0}.xls".format(file_name)
+    color_list = list(set(color_list))
+    file_name = u"{0}.xls".format(slugify(file_name))
     response = HttpResponse(content_type='application/vnd.ms-excel')
     response['Content-Disposition'] = \
         'attachment; filename="{0}"'.format(file_name)
@@ -65,7 +68,6 @@ def export_excel(story_map, file_name, title=None):
             row_index = row
             for story in stories:
                 color = "board_color_{0}".format(color_list.index(story.color))
-                print "COLOR", color
                 style = easyxf(
                     'alignment: wrap True, horizontal center, vertical top;'
                     'border: left thin, top thin, right thin, bottom thin;'
