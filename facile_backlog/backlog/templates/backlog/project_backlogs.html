@@ -75,7 +75,7 @@
 					{%  endfor %}
 				</div>
 				<div class="backlog-action">
-					<a href="{% url "story_create" project.pk backlog.pk %}?_back=project" class="btn btn-success btn-xs">{% trans "Add story" %}</a>
+					<a href="{% url "story_create" project.pk backlog.pk %}?_back={% url "project_backlogs" project.pk %}" class="btn btn-success btn-xs">{% trans "Add story" %}</a>
 				</div>
 			</article>
 		{% endfor %}
