@@ -23,9 +23,12 @@ def setup_bootstrap_fields(form, fields=None):
 def get_websocket_url(request):
     websocket_url = settings.WEBSOCKET_URL
     host = request.META.get("HTTP_HOST", "localhost")
-    index = host.index(":")
-    if index:
-        host = host[:index]
+    try:
+        index = host.index(":")
+        if index:
+            host = host[:index]
+    except Exception:
+        pass
     return websocket_url.format(**{
         'host': host
     })
