@@ -8,9 +8,7 @@
 						<div class="text col-md-4">
 							<div>
 								<h4 class="inline-title">{{ story.code }}</h4>
-								{% if story|can_admin:request.user %}
-									<small class="text-muted">[ <a href="{% url "story_edit" story.project_id story.pk %}?_back=backlog">{% trans "edit" %}</a> ]</small>
-								{% endif %}
+								<small class="text-muted">[ <a href="{% url "story_edit" story.project_id story.pk %}?_back=backlog">{% trans "edit" %}</a> ]</small>
 							</div>
 							{% include "backlog/user_story_text.html" %}
 							{% if story.theme %}
