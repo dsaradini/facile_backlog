@@ -2,7 +2,7 @@ import StringIO
 
 from django.core.urlresolvers import reverse
 from django_webtest import WebTest
-from pyPdf2 import PdfFileReader
+from pyPdf import PdfFileReader
 
 from . import factories
 
