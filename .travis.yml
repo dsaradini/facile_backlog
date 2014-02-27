@@ -10,7 +10,8 @@ before_install:
   - sudo apt-get install daemontools
 
 install:
-  - pip install -r requirements-dev.txt
+  - pip install pip --upgrade
+  - pip install -r requirements-dev.txt --allow-unverified pyPdf
   - pip install coveralls
 
 before_script:
