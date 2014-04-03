@@ -31,7 +31,7 @@
 
 	{% url "project_stories" project.pk as base_url %}
 	<div class="">
-		<form class="form-inline" action="{% url "project_stories" project.pk %}" method="get">
+		<form class="form-inline" action="{% url "project_stories" project.pk %}" method="get" accept-charset="utf-8">
 			<div class="form-group">
 				<input class="input-medium form-control" type="text" placeholder="find story..." name="q" value="{{ query.q }}">
 			</div>

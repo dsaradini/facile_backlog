@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
+
 import urllib
+import urllib2
 
 from django.conf import settings
 from django.contrib import messages
@@ -537,7 +540,9 @@ class OrgStories(OrgMixin, FilteredStoriesMixin, generic.ListView):
                 context['sort_sign'] = "+"
                 context['sort'] = self.sort
         context['query'] = self.query
-        context['current_query'] = urllib.urlencode(self.query)
+        context['current_query'] = urllib.urlencode(
+            encoded_dict(self.query)
+        )
         if self.sort:
             context['current_sort'] = urllib.urlencode({
                 's': self.sort[1:] if self.sort[0] == '-' else self.sort
@@ -954,7 +959,9 @@ class ProjectStories(ProjectMixin, FilteredStoriesMixin, generic.ListView):
                 context['sort_sign'] = "+"
                 context['sort'] = self.sort
         context['query'] = self.query
-        context['current_query'] = urllib.urlencode(self.query)
+        context['current_query'] = urllib.urlencode(
+            encoded_dict(self.query)
+        )
         if self.sort:
             context['current_sort'] = urllib.urlencode({
                 's': self.sort[1:] if self.sort[0] == '-' else self.sort
@@ -1843,3 +1850,15 @@ def invitation_decline(request, auth_id):
         auth.delete()
     messages.info(request, _("Invitation has been declined"))
     return redirect(reverse("my_notifications"))
+
+
+def encoded_dict(in_dict):
+    out_dict = {}
+    for k, v in in_dict.iteritems():
+        if isinstance(v, unicode):
+            v = v.encode('utf8')
+        elif isinstance(v, str):
+            # Must be encoded in UTF-8
+            v.decode('utf8')
+        out_dict[k] = v
+    return out_dict
