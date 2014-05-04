@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import urllib
-import urllib2
 
 from django.conf import settings
 from django.contrib import messages

@@ -26,10 +26,10 @@ class UserAdmin(UserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
     list_display = ['email', 'full_name', 'is_active', 'is_staff',
-                    'is_superuser', 'auth_token']
+                    'is_superuser', 'auth_token', 'last_login', 'date_joined']
     list_filter = ['is_staff', 'is_superuser', 'is_active']
     search_fields = ['email', 'full_name']
-    ordering = ['email']
+    ordering = ['-last_login']
     fieldsets = (
         (None, {'fields': ('email', 'full_name', 'password')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff',
@@ -84,4 +84,8 @@ class UserAdmin(UserAdmin):
             'admin/auth/user/change_password.html'
         ], context, current_app=self.admin_site.name)
 
+    def get_queryset(self, request):
+        qs = super(UserAdmin, self).get_queryset(request)
+        qs = qs.select_related("auth_token")
+        return qs
 admin.site.register(User, UserAdmin)

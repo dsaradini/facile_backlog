@@ -58,12 +58,8 @@
 <script type="text/javascript">
 $(function(){
 	$("#select-all").click(function(){
-		var checked = $(this).attr("checked");
-		if (checked) {
-			$("td.story input[type=checkbox]").attr("checked", "")
-		} else {
-			$("td.story input[type=checkbox]").removeAttr("checked")
-		}
+		var checked = $(this).is(":checked");
+		$("td.story input[type=checkbox]").prop("checked", checked);
 	})
 })
 </script>

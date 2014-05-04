@@ -79,7 +79,7 @@ def draw_story_front(c, story, positions, position=0, counter=0):
     c.line(0, (SIZE[1]-TOP_HEIGHT)*cm, size[0]*cm, (SIZE[1]-TOP_HEIGHT)*cm)
 
     stylesheet = getSampleStyleSheet()
-    normalStyle = stylesheet['Normal']
+    normal_style = stylesheet['Normal']
     # Color
     try:
         color = toColor(story.color)
@@ -93,7 +93,7 @@ def draw_story_front(c, story, positions, position=0, counter=0):
 
     # theme
     p = Paragraph(u"<font color=gray size=15>{0}</font>".format(story.theme),
-                  normalStyle)
+                  normal_style)
     p.wrap(SIZE[0]*cm, 2*cm)
     p.drawOn(c, 1.1*cm, (SIZE[1]-TOP_HEIGHT+0.4)*cm)
 
@@ -114,13 +114,13 @@ def draw_story_front(c, story, positions, position=0, counter=0):
     p = Paragraph(
         u"<para fontSize=20 textColor={0} alignment=center>{1}</font>".format(
             txt_color, txt
-        ), normalStyle)
+        ), normal_style)
     p.wrap(rad*2*cm, 2*cm)
     p.drawOn(c, (SIZE[0]-(rad*2)-0.29)*cm, (SIZE[1] - TOP_HEIGHT/2 + 0.05)*cm)
     c.setStrokeColorRGB(0, 0, 0, alpha=1.0)
 
     # Code
-    p = Paragraph(u"<font size=25>{0}</font>".format(story.code), normalStyle)
+    p = Paragraph(u"<font size=25>{0}</font>".format(story.code), normal_style)
     p.wrap(5*cm, 2*cm)
     p.drawOn(c, 1.1*cm, (SIZE[1]-TOP_HEIGHT+1.5)*cm)
 
@@ -130,7 +130,7 @@ def draw_story_front(c, story, positions, position=0, counter=0):
     leading = 20
     while not found:
         style = ParagraphStyle(name='Custom',
-                               parent=normalStyle,
+                               parent=normal_style,
                                fontSize=font_size,
                                leading=leading,
                                rightIndent=20,
@@ -147,10 +147,10 @@ def draw_story_front(c, story, positions, position=0, counter=0):
             }
         }))
         p = Paragraph(text, style)
-        aW = SIZE[0]*cm
-        aH = (SIZE[1]-TOP_HEIGHT)*cm
-        w, h = p.wrap(aW, aH)  # find required space
-        if w <= aW and h <= aH:
+        a_w = SIZE[0]*cm
+        a_h = (SIZE[1]-TOP_HEIGHT)*cm
+        w, h = p.wrap(a_w, a_h)  # find required space
+        if w <= a_w and h <= a_h:
             p.drawOn(c, 0, (SIZE[1]-TOP_HEIGHT)*cm - h - 0.1*cm)
             found = True
         else:
@@ -160,7 +160,7 @@ def draw_story_front(c, story, positions, position=0, counter=0):
     # print order
     c.setStrokeColorRGB(0, 0, 0, alpha=0.2)
     p = Paragraph(u"<font size=8 color=#cccccc>{0}</font>".format(
-        counter), normalStyle)
+        counter), normal_style)
     p.wrap(0.5*cm, 0.5*cm)
     p.drawOn(c, 0.2*cm, 0.1*cm)
 
@@ -176,10 +176,10 @@ def draw_story_back(c, story, positions, position=0):
     c.rect(0, 0, size[0]*cm, size[1]*cm, fill=0)
 
     stylesheet = getSampleStyleSheet()
-    normalStyle = stylesheet['Normal']
+    normal_style = stylesheet['Normal']
 
      # Code
-    p = Paragraph(u"<font size=15>{0}</font>".format(story.code), normalStyle)
+    p = Paragraph(u"<font size=15>{0}</font>".format(story.code), normal_style)
     p.wrap(5*cm, 2*cm)
     p.drawOn(c, 1.1*cm, (SIZE[1]-TOP_HEIGHT+1.5)*cm)
 
