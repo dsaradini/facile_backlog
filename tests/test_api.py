@@ -246,7 +246,7 @@ class APITest_Organization(JsonTestCase):
         self.assertEqual(len(response.json), 1)
         self.assertEqual(response.json[0]['name'], "Test Org API")
         self.assertEqual(response.json[0]['description'],
-            "test organization for API tests")
+                         "test organization for API tests")
         self.assertEqual(response.json[0]['email'], "test@test.ch")
         self.assertEqual(response.json[0]['web_site'], "http://www.test.ch")
 
@@ -268,7 +268,7 @@ class APITest_Organization(JsonTestCase):
         response = self.client.get(url, user=user)
         self.assertJsonKeyEqual(response, 'name', "Test Org API")
         self.assertJsonKeyEqual(response, 'description',
-            "test organization for API tests")
+                                "test organization for API tests")
         self.assertJsonKeyEqual(response, 'id', org.pk)
         self.assertContains(response.json[0]['users'],
-            "test@test.ch")
+                            "test@test.ch")
