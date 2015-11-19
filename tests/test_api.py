@@ -2,7 +2,8 @@ import json
 from django.core.urlresolvers import reverse
 
 from .factories import (UserFactory, create_sample_project,
-                        create_project_sample_backlog, create_sample_story)
+                        create_project_sample_backlog, create_sample_story,
+                        OrganizationFactory, create_sample_organization)
 
 from facile_backlog.backlog.models import UserStory
 
@@ -226,3 +227,48 @@ class APITest_Story(JsonTestCase):
         response = self.client.post(url, user=user, data=data, status=400)
         self.assertEqual(response.content,
                          '"Unable to patch story attribute grok"')
+
+
+class APITest_Organization(JsonTestCase):
+    def test_org_list(self):
+        user = UserFactory.create(email="test@test.ch")
+        wrong_user = UserFactory.create()
+        org = create_sample_organization(user, org_kwargs={
+            'name': "Test Org API",
+            'description': "test organization for API tests",
+            'email': "test@test.ch",
+            'web_site': "http://www.test.ch"
+        })
+        url = reverse("api_org_list")
+        self.client.get(url, status=401)
+        self.client.get(url, status=404, user=wrong_user)
+        response = self.client.get(url, user=user)
+        self.assertEqual(len(response.json), 1)
+        self.assertEqual(response.json[0]['name'], "Test Org API")
+        self.assertEqual(response.json[0]['description'],
+            "test organization for API tests")
+        self.assertEqual(response.json[0]['email'], "test@test.ch")
+        self.assertEqual(response.json[0]['web_site'], "http://www.test.ch")
+
+    def test_org_detail(self):
+        user = UserFactory.create(email="test@test.ch")
+        wrong_user = UserFactory.create()
+        read_only_user = UserFactory.create()
+        org = create_sample_organization(user, org_kwargs={
+            'name': "Test Org API",
+            'description': "test organization for API tests",
+            'email': "test@test.ch",
+            'web_site': "http://www.test.ch"
+        })
+        org.add_user(read_only_user)
+        org.save()
+        url = reverse("api_org_detail", args=(org.pk))
+        self.client.get(url, status=401)
+        self.client.get(url, status=404, user=wrong_user)
+        response = self.client.get(url, user=user)
+        self.assertJsonKeyEqual(response, 'name', "Test Org API")
+        self.assertJsonKeyEqual(response, 'description',
+            "test organization for API tests")
+        self.assertJsonKeyEqual(response, 'id', org.pk)
+        self.assertContains(response.json[0]['users'],
+            "test@test.ch")
