@@ -134,7 +134,7 @@ class OrgListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Organization
-        fields = ('id', 'url', 'name', 'email', 'web_site')
+        fields = ('id', 'url', 'name', 'email', 'web_site', 'description')
 
     def _url(self, obj):
         return reverse("api_org_detail", args=[obj.pk],
@@ -147,7 +147,7 @@ class OrgSerializer(OrgListSerializer):
     backlogs = InnerBacklogSerializer(many=True, allow_add_remove=False)
 
     class Meta(OrgListSerializer.Meta):
-        fields = OrgListSerializer.Meta.fields + ('description', 'users',
+        fields = OrgListSerializer.Meta.fields + ('users',
                                                   'projects', 'backlogs')
 
     def _url(self, obj):
