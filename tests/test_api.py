@@ -251,14 +251,13 @@ class APITest_Organization(JsonTestCase):
     def test_org_detail(self):
         user = UserFactory.create(email="test@test.ch")
         wrong_user = UserFactory.create()
-        read_only_user = UserFactory.create()
         org = create_sample_organization(user, org_kwargs={
             'name': "Test Org API",
             'description': "test organization for API tests",
             'email': "test@test.ch",
             'web_site': "http://www.test.ch"
         })
-        org.add_user(read_only_user)
+        org.add_user(user)
         org.save()
         url = reverse("api_org_detail", args=(org.pk,))
         self.client.get(url, status=401)
