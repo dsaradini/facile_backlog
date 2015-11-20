@@ -232,7 +232,6 @@ class APITest_Story(JsonTestCase):
 class APITest_Organization(JsonTestCase):
     def test_org_list(self):
         user = UserFactory.create(email="test@test.ch")
-        wrong_user = UserFactory.create()
         org = create_sample_organization(user, org_kwargs={
             'name': "Test Org API",
             'description': "test organization for API tests",
@@ -241,7 +240,6 @@ class APITest_Organization(JsonTestCase):
         })
         url = reverse("api_org_list")
         self.client.get(url, status=401)
-        self.client.get(url, status=404, user=wrong_user)
         response = self.client.get(url, user=user)
         self.assertEqual(len(response.json), 1)
         self.assertEqual(response.json[0]['name'], "Test Org API")
@@ -262,7 +260,7 @@ class APITest_Organization(JsonTestCase):
         })
         org.add_user(read_only_user)
         org.save()
-        url = reverse("api_org_detail", args=(org.pk))
+        url = reverse("api_org_detail", args=(org.pk,))
         self.client.get(url, status=401)
         self.client.get(url, status=404, user=wrong_user)
         response = self.client.get(url, user=user)
