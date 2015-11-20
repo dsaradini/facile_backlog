@@ -257,8 +257,6 @@ class APITest_Organization(JsonTestCase):
             'email': "test@test.ch",
             'web_site': "http://www.test.ch"
         })
-        org.add_user(user)
-        org.save()
         url = reverse("api_org_detail", args=(org.pk,))
         self.client.get(url, status=401)
         self.client.get(url, status=404, user=wrong_user)
